@@ -1,0 +1,528 @@
+%
+% digits
+%
+% die Bilder werden in der Form digit.xnn erzeugt,
+% wobei x von 0 bis 9 läuft und nn von 00 bis 59.
+%
+% von 01 bis 30 Veränderung der alten Form, von 31 bis 59
+% Veränderung zur neuen, bei 00 dann neue Form
+%
+numeric d,phi,q,t,u;
+pair C;
+pen pu;
+u := 10cm;
+C := (0,0.5u);
+pu := pencircle scaled 0.1u;
+
+beginfig(000);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+         
+   z21 = (0.25u,0.5u);
+   z12 = (-0.25u,0.5u);
+   z1 = (0,u);
+   z2 = (0,0);
+       
+   draw z1 .. z12 .. z2 .. z21  .. cycle;
+      
+endfig;
+
+for i = 001 upto 030:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := i/30;
+       
+       z21 = ((0.25-0.245d)*u,0.5u); %.245 statt .25 um einen Glitch (i=30) zu vermeiden
+       z12 = ((-0.25+0.245d)*u,0.5u);
+       z1 = (0,u);
+       z2 = (0,0);
+       
+       draw z1 ... z12 ... z2 ... z21 ... cycle;
+      
+    endfig;
+endfor
+
+for i = 031 upto 059:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-30)/30;
+       
+       z1 = (-0.25d*u,(1-0.25d)*u);
+       z2 = (0,u); % war z1
+       z3 = (0,0); % war z2
+       
+       draw z1 -- z2 -- z3;
+      
+    endfig;
+endfor
+
+beginfig(100);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+
+   z1 = (-0.25u,0.75u);
+   z12 = (0,1u);
+   z2 = (0,0);
+
+   draw z1 -- z12 -- z2;
+endfig;
+
+for i = 101 upto 130:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-100)/30;
+       z1 = (-0.25u,0.75u + 0.05d*u);
+       z12 = (d*0.25u,(1-0.25d)*u);
+       z2 = (-d*0.25u,0);
+   
+       draw z1 -- z12 -- z2;
+    endfig;
+endfor
+
+for i = 131 upto 159:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       
+       d := (i-130)/30;
+       t := 1/d;
+       
+       z1 = (-0.25u,0.8u);
+       z12 = (0.25u,0.75u);
+       z2 = (-0.25u,0);
+       z3 = ((d*0.5-0.25)*u,0);
+       
+       draw z1  .. tension t .. z12 .. tension 2t .. z2;
+       draw z2 -- z3;
+    endfig;
+endfor
+
+beginfig(200);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z1 = (-0.25u,0.8u);
+   z12 = (0.25u,0.75u);
+   z2 = (-0.25u,0);
+   z3 = (0.25u,0);
+
+   draw z1  .. tension 1 .. z12 .. tension 2 .. z2;
+   draw z2 -- z3;
+endfig;
+
+for i = 201 upto 230:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+           
+       d := (i-200)/30;
+
+       z1 = (-0.25u,0.85u);
+       z12 = (0.25u,0.75u);
+       z2 = (-0.25u,0);
+       z3 = ((0.25 + d * 0.5)*u,0);
+       
+       draw z1  .. tension 1 .. z12 .. tension 2 .. z2;
+       draw z2 -- z3 rotatedaround (z2,-90*d);
+    endfig;
+endfor
+
+for i = 231 upto 259:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       
+       d := (i-230)/30;
+       t := 1/d;
+       
+       z1 = (-0.25u,0.85u);
+       z12 = (0.25u,0.75u);
+       z2 = ((d*0.1-0.25)*u,0);
+       z23 = ((-0.25+0.5*d)*u,-0.75u);
+       z3 = (-0.25u,(0.15*d-1)*u);
+       
+       draw z1 .. tension 1 .. z12 .. tension (2-d) .. z2;
+       draw z2 .. tension 1 .. z23 .. tension 1 .. z3;
+    endfig;
+endfor
+
+beginfig(300);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z1 = (-0.25u,0.85u);
+   z12 = (0.25u,0.75u);
+   z2 = (-0.15u,0);
+   z23 = (0.25u,-0.75u);
+   z3 = (-0.25u,-0.85u);
+
+   draw z1 .. tension 1 .. z12 .. tension 1 .. z2;
+   draw z2 .. tension 1 .. z23 .. tension 1 .. z3;
+endfig;
+
+for i = 301 upto 330:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       
+       d := (i-300)/30;
+       t := 100*d*d*d; if t < 1: t := 1 fi;
+
+       z1 = ((0.1*d-0.25)*u,(0.85-0.85d)*u);
+       z12 = (0.25u,0.75u);
+       z2 = (-0.15u,0);
+       z23 = (0.25u,(-0.75+0.75d)*u);
+       z3 = (-0.25u,-0.85u);
+
+       draw z1 .. tension t .. z12 .. {dir 180}z2 if i=330: .. cycle fi;
+       
+       draw z2{dir 0}  ..  z23 .. z3;
+       
+    endfig;
+endfor
+
+for i = 331 upto 359:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       
+       d := (i-330)/30;
+       t := 100*d*d; if t < 1: t := 1 fi;
+       
+       z1 = (-0.15u,0);
+       z12 = (0.25u,0.75u);
+       z2 = ((0.4d-0.15)*u,0);
+       z23 = z4 = (0.25u,0);
+       z3 = ((-0.25+0.5d)*u,-0.85u);
+       z5 = ((0.25+0.15d*d)*u,0);
+       
+
+       draw z1 .. tension 100 .. z12 .. tension t .. {dir 180}z2 -- cycle;
+       draw z2{dir 0}  ..  z23 .. tension t .. z3;
+       draw z4 -- z5;
+       
+    endfig;
+endfor    
+
+
+beginfig(400);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z1 = (-0.15u,0);
+   z13 = z12 = (0.25u,0.75u);
+   %z2 = (0.25u,0);
+   %z4 = z23 = (0.25u,0);
+   z3 = (0.25u,-0.85u);
+   z5 = (0.4u,0);
+
+   draw z5 -- z1 -- z13 -- z3;
+       
+endfig;
+
+for i = 401 upto 430:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-400)/30;
+       
+       z1 = (-0.15u,0);
+       z21 = z12 = (0.25u,0.75u);
+       z2 = (0.25u,0.75d*u);
+       z13 = z4 = (0.25u,0u);
+       z3 = (0.25u,-0.85u);
+       z5 = ((0.4-0.15d)*u,0);
+
+       draw z2 -- z21 -- z1 -- z13 -- z3;
+       draw z4 -- z5;
+       
+    endfig;
+endfor
+
+for i = 431 upto 459:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-430)/30;
+       t := 30-30*sqrt(d); if t < 1: t := 1 fi;
+       
+       z1 = (-0.15u,0);
+       z12 = ((0.25-0.4d)*u,0.75u);
+       z2 = (0.25u,0.75u);
+       z13 = (0.25u,-0.15d*u);
+       z3 = ((0.25-0.4d)*u,-0.85u);
+
+       draw z1 -- z12 -- z2;
+       draw z1 .. tension t .. z13 .. tension t .. z3;
+    endfig;
+endfor    
+
+beginfig(500);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z1 = (-0.15u,0);
+   z12 = (-0.15u,0.75u);
+   z2 = (0.25u,0.75u);
+   z13 = (0.25u,-0.15u);
+   z3 = (-0.15u,-0.85u);
+
+   draw z1 -- z12 -- z2;
+   draw z1 .. tension 1 .. z13 .. tension 1 .. z3;
+endfig;
+
+for i = 501 upto 530:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-500)/30;
+              
+       z1 = ((-0.15-0.25d)*u,0.5d*u);
+       z12 = ((-0.15-0.25d)*u,(0.75+0.75d)*u);
+       z2 = (0.25u,(0.75+0.75d)*u);
+       z13 = ((0.25+0.15d)*u,(-0.15+0.75d)*u);
+       z3 = ((-0.15-0.25d)*u,(-0.85+0.85d+0.5d)*u);
+
+       draw z1 -- z12 -- z2;
+       draw z1 .. tension 1 .. z13 .. tension 1 .. z3 if i=530: .. cycle fi;
+    endfig;
+endfor
+
+for i = 531 upto 559:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-530)/30;
+       t := 1/d; 
+              
+       z1 = (-0.4u,0.5u);
+       z12 = ((-0.4+0.3d)*u,(1.5-0.25d)*u);
+       z2 = (0.25u,1.5u);
+       z13 = (0.4u,0.6u);
+       %z3 = (-0.4u,0.5u);
+
+       draw z1 .. tension t .. z12 .. tension t .. z2;
+       draw z1 .. tension 1 .. z13 .. tension 1 ..  cycle ;
+    endfig;
+endfor
+
+beginfig(600);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z1 = (-0.4u,0.5u);
+   z12 = (-0.1u,1.25u);
+   z2 = (0.25u,1.5u);
+   z13 = (0.4u,0.6u);
+   
+   draw z1 .. tension 1 .. z12 .. tension 1 .. z2;
+   draw z1 .. tension 1 .. z13 .. tension 1 ..  cycle ;
+endfig;
+
+for i = 601 upto 630:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-600)/30;
+       q := 2*d*d -2d +1; % Parabelabschnitt, der im Bereich d = 0...1 die Werte 1 ... 0.5 ... 1 überstreicht
+       phi := 180d;
+       z1 = (-0.4u,0.5u) rotatedaround (C,phi);
+       z21 = z12 = (-0.1u,(0.75q +0.5)*u) rotatedaround (C,phi);
+       z2 = (0.25u,(1q + 0.5)*u) rotatedaround (C,phi);
+       z13 = (0.4u,0.6u) rotatedaround (C,phi/2);
+       z3 = ((-0.4+0.25d)*u,(0.5+0.1d)*u);
+       
+       draw z2 .. z21 .. z1{dir (phi-90)} .. z13  .. z3;
+       
+    endfig;
+endfor
+
+for i = 631 upto 659:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-630)/30;
+       t := 30 * d * d; if t < 1: t :=1 fi;
+              
+       z1 = (0.4u,(0.5+0.5d)*u);
+       z21 = (0.1u,(-0.25+0.4d)*u);
+       z2 = ((-0.25+0.25d)*u,(-0.5-0.25d)*u);
+       z13 = ((-0.1-0.3d)*u,(0.9+0.1d)*u);
+       z3 = ((-0.15-0.25d)*u,(0.6+0.15d)*u);
+       
+       draw z2 .. tension 1 .. z21 .. tension 1 .. z1{up} .. tension t .. z13 .. tension t .. z3;
+      
+    endfig;
+endfor
+
+beginfig(700);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z1 = (0.4u,1u);
+   z21 = (0.1u,0.15u);
+   z2 = (0u,-0.75u);
+   z13 = (-0.4u,1u);
+   z3 = (-0.4u,0.75u);
+      
+   draw z2 ..tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3;
+      
+endfig;
+
+for i = 701 upto 730:
+    beginfig(i);
+       numeric tmp;
+       pair inter;
+       path seven;
+    
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-700)/30;
+       
+       z1 = (0.4u,1u);
+       z21 = (0.1u,0.15u);
+       z2 = (0u,-0.75u);
+       z13 = (-0.4u,1u);
+       z3 = (-0.4u,(0.75+0.25d)*u); % wandert zu z31 und ersetzt diesen
+         
+       seven := z2 .. tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3;
+       
+       inter := ((-infinity,0)--(infinity,0)) intersectionpoint seven;
+       tmp := xpart( inter );
+       
+       z4 = (tmp+(-0.25u-tmp)*d,0);
+       z5 = (tmp+(0.25u-tmp)*d,0);
+       
+       draw seven;
+       draw z4 -- z5; 
+      
+    endfig;
+endfor
+
+for i = 731 upto 759:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-730)/30;
+       t := 1/d; 
+       tt := t/2; if tt < 1: tt := 1 fi;
+       
+       % schiebe um 0.9u nach oben (1u minus Liniendicke 0.1u)
+       z1 = (0.4u,(1-0.5d+0.9d)*u);
+       z21 = ((0.1-0.5d)*u,(0.15-0.65d+0.9d)*u);
+       z2 = (0.4d*u,(-0.75+0.25d+0.9d)*u);
+       z3 = (-0.4u,(1-0.5d+0.9d)*u);       
+       z4 = ((-0.25-0.15d)*u,(0.5d+0.9d)*u);
+       z45 = (0,0.9d*u);
+       z5 = ((0.25+0.15d)*u,(-0.5d+0.9d)*u);
+       
+       draw z2 ..tension 1 .. z21 .. tension 1 .. z1{up} .. tension t .. z3;
+       draw z4{down} .. tension tt .. z45 .. tension tt .. {down}z5;
+       
+    endfig;
+endfor
+
+beginfig(800);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+   
+   z12 = z34 = (0,0.9u); % war z45
+   z1 = (0.4u,1.4u);
+   z2 = (-0.4u,0.4u); % war z21
+   z3 = (0.4u,0.4u);
+   z4 = (-0.4u,1.4u);
+   
+      
+   draw z1 .. z12 .. z2 .. z3 .. z34 .. z4 .. cycle;
+      
+endfig;
+
+for i = 801 upto 830:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-800)/30;
+       phi := -90d*d; C := (0,0.5u);
+       z12 = z34 = (0,0.9u) rotatedabout (C,phi);
+       z1 = ((0.4-0.4d)*u,(1.4-0.5d)*u) rotatedabout (C,phi);
+       z2 = (-0.4u,0.4u) rotatedabout (C,phi);
+       z3 = (0.4u,0.4u) rotatedabout (C,phi);
+       z4 = ((-0.4+0.4d)*u,(1.4-0.5d)*u) rotatedabout (C,phi);
+       
+       draw z1 .. z12 .. z2 .. z3 .. z34 .. z4 .. cycle;
+      
+    endfig;
+endfor
+
+for i = 831 upto 859:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-830)/30;
+              
+       z32 = (0.4u,0.5u); % war z12 und z34
+       z1 = ((0.4-0.65d*d)*u,(0.5-1.25d)*u);
+       z2 = (-0.1u,0.9u);
+       z3 = (-0.1u,0.1u);
+       %z4 = (0.4u,0.5u);
+       
+       draw z2 .. z3 .. z32  .. cycle;
+       draw z32{down} .. z1;
+      
+    endfig;
+endfor
+
+beginfig(900);
+   draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+   pickup pencircle scaled 0.1u;
+            
+   z32 = (0.4u,0.5u);
+   z1 = (-0.25u,-0.75u);
+   z2 = (-0.1u,0.9u);
+   z3 = (-0.1u,0.1u);
+      
+   draw z2 .. z3 .. z32  .. cycle;
+   draw z32{down} .. z1;
+      
+endfig;
+
+for i = 901 upto 930:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-900)/30;
+       q := -4*d*d + 4d +1; % Scheitel bei (0.5,2), f(0)=f(1)=1
+       
+       z32 = (0.4u,0.5u);
+       z1 = ((-0.25-0.15*q)*u,(-0.75+1.25d)*u);
+       z2 = ((-0.1+0.1d)*u,0.9u);
+       z3 = ((-0.1+0.1d)*u,0.1u);
+       
+       draw z2 .. z3 .. z32  .. cycle;
+       draw z32{down} .. z1;
+      
+    endfig;
+endfor
+
+for i = 931 upto 959:
+    beginfig(i);
+       draw (-u,-u)--(-u,u)--(u,u)--(u,-u)--cycle; draw (-u,0)--(u,0);
+       pickup pencircle scaled 0.1u;
+       d := (i-930)/30;
+       
+       z32 = ((0.4-0.15d)*u,0.5u);
+       z23 = ((-0.4+0.15d)*u,0.5u);
+       z2 = (0,(0.9+0.1d)*u);
+       z3 = (0,(0.1-0.1d)*u);
+       
+       draw z2 .. z23 .. z3 .. z32  .. cycle;
+      
+    endfig;
+endfor
+
+
+
+end;
