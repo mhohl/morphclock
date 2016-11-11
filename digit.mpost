@@ -7,33 +7,46 @@
 % von 01 bis 30 Veränderung der alten Form, von 31 bis 59
 % Veränderung zur neuen, bei 00 dann neue Form
 %
-numeric f; % [f]rame rate
-numeric m; % [m]orph factor
-numeric d,phi,q,t,u;
-pair C;    % [C]enter of rotation
-pen pn;
+numeric f;   % [f]rame rate
+numeric m;   % [m]orph factor
+numeric t;   % [t]ension
+numeric phi; % rotation angle [phi]
+numeric u;   % [u]nit
 u := 5cm;
+numeric d,q;
+pair C;      % [C]enter of rotation
 C := (0,0.5u);
-pn := pencircle scaled 0.1u;
+pen pc;      % [p]en[c]ircle
+pc := pencircle scaled 0.1u;
+
+%
+% TODO:
+%
+% * die Drei unten bauchiger
+% * Übergang 3/4 besser
+% % Rundungen und Positionen
+% * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
+%
+%
 
 def draw_grid(expr u) =
     draw (-0.6u,-u) -- (-0.6u,2u) -- (0.6u,2u) -- (0.6u,-u) -- cycle;
-    draw (-0.6u,0) -- (0.6	u,0);
+    draw (-0.6u,0) -- (0.6u,0);
     draw (-0.6u,u) -- (0.6u,u);
     draw (-0.25u,-u)--(-0.25u,2u);
     draw (0.25u,-u)--(0.25u,2u);
 enddef;
 
-def faster(expr x) = sqrt x enddef;
+def accel(expr x) = sqrt x enddef;
 
-def slower(expr x) = x*x enddef;
+def decel(expr x) = x*x enddef;
 
 %
 % Null
 %
 beginfig(000);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
 
    z21 = (0.25u,0.5u);
    z12 = (-0.25u,0.5u);
@@ -44,12 +57,12 @@ beginfig(000);
 endfig;
 
 %
-% Null -> Eins: erste Hälfte
+% Null -> Eins (1/2)
 %
 for i = 001 upto 030:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
 
        f := i/30;
        m := f;
@@ -63,14 +76,14 @@ for i = 001 upto 030:
 endfor
 
 %
-% Null -> Eins: zweite Hälfte
+% Null -> Eins (2/2)
 %
 for i = 031 upto 059:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-30)/30;
-       m := slower(f);
+       m := decel(f);
 
        z1 = (-0.25m*u,(1-0.25m)*u);
        z2 = (0,u); % war z1
@@ -85,7 +98,7 @@ endfor
 %
 beginfig(100);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
 
    z1 = (-0.25u,0.75u);
    z12 = (0,1u);
@@ -95,14 +108,14 @@ beginfig(100);
 endfig;
 
 %
-% Eins -> Zwei: erste Hälfte
+% Eins -> Zwei (1/2)
 %
 for i = 101 upto 130:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-100)/30;
-       m := slower(f);
+       m := decel(f);
 
        z1 = (-0.25u,(0.75-0.1m)*u);
        z12 = (0.25m*u,(1-0.35m)*u);
@@ -113,15 +126,15 @@ for i = 101 upto 130:
 endfor
 
 %
-% Eins -> Zwei: zweite Hälfte
+% Eins -> Zwei (2/2)
 %
 for i = 131 upto 159:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        
        f := (i-130)/30;
-       m := faster(f);
+       m := accel(f);
        t := 1/m;
        
        z1 = (-0.25u,0.65u);
@@ -139,7 +152,7 @@ endfor
 %
 beginfig(200);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z1 = (-0.25u,0.65u);
    z12 = (0.25u,0.65u);
@@ -151,14 +164,14 @@ beginfig(200);
 endfig;
 
 %
-% Zwei -> Drei: erste Hälfte
+% Zwei -> Drei (1/2)
 %
 for i = 201 upto 230:
     beginfig(i);
        draw_grid(u);
-       pickup pn;         
+       pickup pc;         
        f := (i-200)/30;
-       m := slower(f);
+       m := decel(f);
        phi := -90m;
 
        z1 = (-0.25u,0.65u);
@@ -172,12 +185,12 @@ for i = 201 upto 230:
 endfor
 
 %
-% Zwei -> Drei: zweite Hälfte
+% Zwei -> Drei (2/2)
 %
 for i = 231 upto 259:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-230)/30;
        m := f;
        t := 1/m;
@@ -198,7 +211,7 @@ endfor
 %
 beginfig(300);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z1 = (-0.25u,0.65u);
    z12 = (0.25u,0.65u);
@@ -211,34 +224,34 @@ beginfig(300);
 endfig;
 
 %
-% Drei -> Vier: erste Hälfte
+% Drei -> Vier (1/2)
 %
 for i = 301 upto 330:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        
        f := (i-300)/30;
-       t := 10*f* f; if t < 1: t := 1 fi;
+       t := 10*f*f; if t < 1: t := 1 fi;
 
-       z1 = ((0.1*f-0.25)*u,(0.65-0.65f)*u);
+       z1 = ((0.1f-0.25)*u,(0.65-0.65f)*u);
        z12 = (0.25u,0.65u);
        z2 = (-0.15u,0);
        z23 = (0.25u,(-0.65+0.65f)*u);
        z3 = (-0.25u,-0.65u);
 
        draw z1 .. tension t .. z12 .. {dir 180}z2 if i=330: .. cycle fi;
-       draw z2{dir 0}  ..  z23 .. z3;
+       draw z2{dir 0} .. z23 .. z3;
     endfig;
 endfor
 
 %
-% Drei -> Vier: zweite Hälfte
+% Drei -> Vier (2/2)
 %
 for i = 331 upto 359:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        
        f := (i-330)/30;
        t := 100*f*f; if t < 1: t := 1 fi;
@@ -249,7 +262,6 @@ for i = 331 upto 359:
        z23 = z4 = (0.25u,0);
        z3 = ((-0.25+0.5f)*u,-0.65u);
        z5 = ((0.25+0.15f*f)*u,0);
-       
 
        draw z1 .. tension 100 .. z12 .. tension t .. {dir 180}z2 -- cycle;
        draw z2{dir 0}  ..  z23 .. tension t .. z3;
@@ -258,10 +270,12 @@ for i = 331 upto 359:
     endfig;
 endfor    
 
-
+%
+% Vier
+%
 beginfig(400);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z1 = (-0.15u,0);
    z13 = z12 = (0.25u,0.65u);
@@ -270,14 +284,16 @@ beginfig(400);
    z3 = (0.25u,-0.85u);
    z5 = (0.4u,0);
 
-   draw z5 -- z1 -- z13 -- z3;
-       
+   draw z5 -- z1 -- z13 -- z3;       
 endfig;
 
+%
+% Vier -> Fünf (1/2)
+%
 for i = 401 upto 430:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-400)/30;
        
        z1 = (-0.15u,0);
@@ -293,10 +309,13 @@ for i = 401 upto 430:
     endfig;
 endfor
 
+%
+% Vier -> Fünf (2/2)
+%
 for i = 431 upto 459:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-430)/30;
        t := 30-30*sqrt(f); if t < 1: t := 1 fi;
        
@@ -311,9 +330,12 @@ for i = 431 upto 459:
     endfig;
 endfor    
 
+%
+% Fünf
+%
 beginfig(500);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z1 = (-0.15u,0);
    z12 = (-0.15u,0.75u);
@@ -325,10 +347,13 @@ beginfig(500);
    draw z1 .. tension 1 .. z13 .. tension 1 .. z3;
 endfig;
 
+%
+% Fünf -> Sechs (1/2)
+%
 for i = 501 upto 530:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-500)/30;
               
        z1 = ((-0.15-0.25f)*u,0.5f*u);
@@ -342,27 +367,32 @@ for i = 501 upto 530:
     endfig;
 endfor
 
+%
+% Fünf -> Sechs (2/2)
+%
 for i = 531 upto 559:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-530)/30;
        t := 1/f; 
               
-       z1 = (-0.4u,0.5u);
+       z1 = z3 = (-0.4u,0.5u);
        z12 = ((-0.4+0.3f)*u,(1.5-0.25f)*u);
        z2 = (0.25u,1.5u);
        z13 = (0.4u,0.6u);
-       %z3 = (-0.4u,0.5u);
-
+      
        draw z1 .. tension t .. z12 .. tension t .. z2;
-       draw z1 .. tension 1 .. z13 .. tension 1 ..  cycle ;
+       draw z1 .. tension 1 .. z13 .. tension 1 .. cycle ;
     endfig;
 endfor
 
+%
+% Sechs
+%
 beginfig(600);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z1 = (-0.4u,0.5u);
    z12 = (-0.1u,1.25u);
@@ -370,31 +400,38 @@ beginfig(600);
    z13 = (0.4u,0.6u);
    
    draw z1 .. tension 1 .. z12 .. tension 1 .. z2;
-   draw z1 .. tension 1 .. z13 .. tension 1 ..  cycle ;
+   draw z1 .. tension 1 .. z13 .. tension 1 .. cycle ;
 endfig;
 
+%
+% Sechs -> Sieben (1/2)
+%
 for i = 601 upto 630:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-600)/30;
-       q := 2*f*f -2f +1; % Parabelabschnitt, der im Bereich f = 0...1 die Werte 1 ... 0.5 ... 1 überstreicht
-       phi := 180f;
+       m := f;
+       q := (8/3)*m*m-(8/3)*m+1 ;
+         % Parabelabschnitt y = 1 .. 1/3 .. 1 für x = 0 .. 0.5 .. 1;
+       phi := 180m;
        z1 = (-0.4u,0.5u) rotatedaround (C,phi);
-       z21 = z12 = (-0.1u,(0.75q +0.5)*u) rotatedaround (C,phi);
+       z21 = z12 = (-0.1u,(0.5q+0.75)*u) rotatedaround (C,phi);
        z2 = (0.25u,(1q + 0.5)*u) rotatedaround (C,phi);
        z13 = (0.4u,0.6u) rotatedaround (C,phi/2);
-       z3 = ((-0.4+0.25f)*u,(0.5+0.1f)*u);
+       z3 = ((-0.4+0.3m)*u,(0.5+0.1m)*u);
        
-       draw z2 .. z21 .. z1{dir (phi-90)} .. z13  .. z3;
-       
+       draw z2 ... z21 ... z1{dir (phi-90)} .. z13  .. z3;
     endfig;
 endfor
 
+%
+% Sechs -> Sieben (2/2)
+%
 for i = 631 upto 659:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-630)/30;
        t := 30 * f * f; if t < 1: t :=1 fi;
               
@@ -402,16 +439,19 @@ for i = 631 upto 659:
        z21 = (0.1u,(-0.25+0.4f)*u);
        z2 = ((-0.25+0.25f)*u,(-0.5-0.25f)*u);
        z13 = ((-0.1-0.3f)*u,(0.9+0.1f)*u);
-       z3 = ((-0.15-0.25f)*u,(0.6+0.15f)*u);
+       z3 = ((-0.1-0.25f)*u,(0.6+0.15f)*u);
        
        draw z2 .. tension 1 .. z21 .. tension 1 .. z1{up} .. tension t .. z13 .. tension t .. z3;
       
     endfig;
 endfor
 
+%
+% Sieben
+%
 beginfig(700);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z1 = (0.4u,1u);
    z21 = (0.1u,0.15u);
@@ -423,6 +463,9 @@ beginfig(700);
       
 endfig;
 
+%
+% Sieben -> Acht (1/2)
+%
 for i = 701 upto 730:
     beginfig(i);
        numeric tmp;
@@ -430,7 +473,7 @@ for i = 701 upto 730:
        path seven;
     
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-700)/30;
        
        z1 = (0.4u,1u);
@@ -453,10 +496,13 @@ for i = 701 upto 730:
     endfig;
 endfor
 
+%
+% Sieben -> Acht (2/2)
+%
 for i = 731 upto 759:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-730)/30;
        t := 1/f; 
        tt := t/2; if tt < 1: tt := 1 fi;
@@ -476,9 +522,12 @@ for i = 731 upto 759:
     endfig;
 endfor
 
+%
+% Acht
+%
 beginfig(800);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
    
    z12 = z34 = (0,0.9u); % war z45
    z1 = (0.4u,1.4u);
@@ -491,10 +540,13 @@ beginfig(800);
       
 endfig;
 
+%
+% Acht -> Neun (1/2)
+%
 for i = 801 upto 830:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-800)/30;
        phi := -90f*f; C := (0,0.5u);
        z12 = z34 = (0,0.9u) rotatedabout (C,phi);
@@ -508,10 +560,13 @@ for i = 801 upto 830:
     endfig;
 endfor
 
+%
+% Acht -> Neun (2/2)
+%
 for i = 831 upto 859:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-830)/30;
               
        z32 = (0.4u,0.5u); % war z12 und z34
@@ -526,9 +581,12 @@ for i = 831 upto 859:
     endfig;
 endfor
 
+%
+% Neun
+%
 beginfig(900);
    draw_grid(u);
-   pickup pn;
+   pickup pc;
             
    z32 = (0.4u,0.5u);
    z1 = (-0.25u,-0.75u);
@@ -540,10 +598,13 @@ beginfig(900);
       
 endfig;
 
+%
+% Neun -> Null (1/2)
+%
 for i = 901 upto 930:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-900)/30;
        q := -4*f*f + 4f +1; % Scheitel bei (0.5,2), f(0)=f(1)=1
        
@@ -558,10 +619,13 @@ for i = 901 upto 930:
     endfig;
 endfor
 
+%
+% Neun -> Null (2/2)
+%
 for i = 931 upto 959:
     beginfig(i);
        draw_grid(u);
-       pickup pn;
+       pickup pc;
        f := (i-930)/30;
        
        z32 = ((0.4-0.15f)*u,0.5u);
