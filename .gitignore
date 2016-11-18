@@ -1,3 +1,7 @@
 *.png
 *.log
+*.aux
+*.mps
+*.pdf
 digit.[0-9]*
+

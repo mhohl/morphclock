@@ -1,0 +1,101 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage[margin=1cm]{geometry}
+\usepackage{graphicx}
+\usepackage{pgffor}
+\begin{document}
+\section{Ziffern 0 bis 9}
+\newlength\digitwidth
+\digitwidth=2.5cm
+\includegraphics[width=\digitwidth]{digit-0.mps}
+\includegraphics[width=\digitwidth]{digit-100.mps}
+\includegraphics[width=\digitwidth]{digit-200.mps}
+\includegraphics[width=\digitwidth]{digit-300.mps}
+\includegraphics[width=\digitwidth]{digit-400.mps}
+\includegraphics[width=\digitwidth]{digit-500.mps}
+\includegraphics[width=\digitwidth]{digit-600.mps}
+\includegraphics[width=\digitwidth]{digit-700.mps}
+\includegraphics[width=\digitwidth]{digit-800.mps}
+\includegraphics[width=\digitwidth]{digit-900.mps}
+
+\newpage
+\section{Übergang 0 … 1 }
+
+\foreach \n in {0,...,99}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 1 … 2 }
+
+\foreach \n in {100,...,199}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 2 … 3 }
+
+\foreach \n in {200,...,299}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 3 … 4 }
+
+\foreach \n in {300,...,399}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 4 … 5 }
+
+\foreach \n in {400,...,499}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 5 … 6 }
+
+\foreach \n in {500,...,599}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 6 … 7 }
+
+\foreach \n in {600,...,699}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 7 … 8 }
+
+\foreach \n in {700,...,799}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 8 … 9 }
+
+\foreach \n in {800,...,899}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 9 … 0 }
+
+\foreach \n in {900,...,999}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+
+\end{document}
+

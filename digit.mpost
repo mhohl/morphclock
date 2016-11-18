@@ -7,6 +7,9 @@
 % von 01 bis 30 Veränderung der alten Form, von 31 bis 59
 % Veränderung zur neuen, bei 00 dann neue Form
 %
+
+outputtemplate := "%j-%c.mps";
+
 numeric f;   % [f]rame rate
 numeric m;   % [m]orph factor
 numeric t;   % [t]ension
