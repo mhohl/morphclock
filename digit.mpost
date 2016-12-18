@@ -33,11 +33,11 @@ pc := pencircle scaled 0.1u;
 %
 
 def draw_grid(expr u) =
-    draw (-0.6u,-u) -- (-0.6u,2u) -- (0.6u,2u) -- (0.6u,-u) -- cycle;
+    draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
     draw (-0.6u,0) -- (0.6u,0);
-    draw (-0.6u,u) -- (0.6u,u);
-    draw (-0.25u,-u)--(-0.25u,2u);
-    draw (0.25u,-u)--(0.25u,2u);
+    draw (-0.6u,0.85u) -- (0.6u,0.85u);
+    draw (-0.25u,-u)--(-0.25u,1.7u);
+    draw (0.25u,-u)--(0.25u,1.7u);
 enddef;
 
 def accel(expr x) = sqrt x enddef;
@@ -51,9 +51,9 @@ beginfig(000);
    draw_grid(u);
    pickup pc;
 
-   z21 = (0.25u,0.5u);
-   z12 = (-0.25u,0.5u);
-   z1 = (0,u);
+   z21 = (0.25u,0.425u);
+   z12 = (-0.25u,0.425u);
+   z1 = (0,0.85u);
    z2 = (0,0);
 
    draw z1 .. z12 .. z2 .. z21  .. cycle;
@@ -69,9 +69,9 @@ for i = 001 upto 030:
 
        f := i/30;
        m := f;
-       z21 = ((0.25-0.245m)*u,0.5u); %.245 statt .25 um einen Glitch (i=30) zu vermeiden
-       z12 = ((-0.25+0.245m)*u,0.5u);
-       z1 = (0,u);
+       z21 = ((0.25-0.245m)*u,0.425u); %.245 statt .25 um einen Glitch (i=30) zu vermeiden
+       z12 = ((-0.25+0.245m)*u,0.425u);
+       z1 = (0,0.85u);
        z2 = (0,0);
 
        draw z1 ... z12 ... z2 ... z21 ... cycle;
@@ -88,11 +88,11 @@ for i = 031 upto 059:
        f := (i-30)/30;
        m := decel(f);
 
-       z1 = (-0.25m*u,(1-0.25m)*u);
-       z2 = (0,u); % war z1
-       z3 = (0,0); % war z2
+       z1 = (-0.25m*u,(0.85-0.3m)*u); % war z12
+       z12 = (0,0.85u); % war z1
+       z2 = (0,0);
 
-       draw z1 -- z2 -- z3;    
+       draw z1 -- z12 -- z2;    
     endfig;
 endfor
 
@@ -103,9 +103,9 @@ beginfig(100);
    draw_grid(u);
    pickup pc;
 
-   z1 = (-0.25u,0.75u);
-   z12 = (0,1u);
-   z2 = (0,0);
+   z1 = (-0.25u,0.55u);
+   z12 = (0,0.85u); % war z12
+   z2 = (0,0); % war z3
 
    draw z1 -- z12 -- z2;
 endfig;
@@ -120,8 +120,8 @@ for i = 101 upto 130:
        f := (i-100)/30;
        m := decel(f);
 
-       z1 = (-0.25u,(0.75-0.1m)*u);
-       z12 = (0.25m*u,(1-0.35m)*u);
+       z1 = (-0.25u,0.55u);
+       z12 = (0.25m*u,(0.85-0.3m)*u);
        z2 = (-0.25m*u,0);
    
        draw z1 -- z12 -- z2;
@@ -140,13 +140,14 @@ for i = 131 upto 159:
        m := accel(f);
        t := 1/m;
        
-       z1 = (-0.25u,0.65u);
-       z12 = (0.25u,0.65u);
-       z2 = (-0.25u,0);
-       z3 = ((0.5m-0.25)*u,0);
+       z1 = ((-0.25+0.025m)*u,0.55u);
+       z12 = (0,(0.55+0.3f)*u); % Scheitelpunkt
+       z2 = ((0.25-0.025m)*u,0.55u); % war z12
+       z3 = (-0.25u,0); % war z2
+       z4 = ((0.5m-0.25)*u,0);
        
-       draw z1  .. tension t .. z12 .. tension 2t .. z2;
-       draw z2 -- z3;
+       draw z1  .. tension t .. z12 .. tension t .. z2 .. tension 2t .. z3;
+       draw z3 -- z4;
     endfig;
 endfor
 
@@ -157,13 +158,14 @@ beginfig(200);
    draw_grid(u);
    pickup pc;
    
-   z1 = (-0.25u,0.65u);
-   z12 = (0.25u,0.65u);
-   z2 = (-0.25u,0);
-   z3 = (0.25u,0);
+   z1 = (-0.225u,0.55u);
+   z12 = (0,0.85u);
+   z2 = (0.225u,0.55u);
+   z3 = (-0.25u,0);
+   z4 = (0.25u,0);
 
-   draw z1  .. tension 1 .. z12 .. tension 2 .. z2;
-   draw z2 -- z3;
+   draw z1  .. z12 .. z2 .. tension 2 .. z3;
+   draw z3 -- z4;
 endfig;
 
 %
@@ -177,13 +179,14 @@ for i = 201 upto 230:
        m := decel(f);
        phi := -90m;
 
-       z1 = (-0.25u,0.65u);
-       z12 = (0.25u,0.65u);
-       z2 = (-0.25u,0);
-       z3 = ((0.25+0.15m)*u,0);
+       z1 = (-0.225u,0.55u);
+       z12 = (0,0.85u);
+       z2 = (0.225u,0.55u);
+       z3 = (-0.25u,0);
+       z4 = ((0.25+0.05m)*u,0);
        
-       draw z1  .. tension 1 .. z12 .. tension 2 .. z2;
-       draw z2 -- z3 rotatedaround (z2,phi);
+       draw z1  .. z12 .. z2 .. tension 2 .. z3;
+       draw z3 -- z4 rotatedaround (z3,phi);
     endfig;
 endfor
 
@@ -195,17 +198,18 @@ for i = 231 upto 259:
        draw_grid(u);
        pickup pc;
        f := (i-230)/30;
-       m := f;
+       m := decel(f);
        t := 1/m;
        
-       z1 = (-0.25u,0.65u);
-       z12 = (0.25u,0.65u);
-       z2 = ((-0.25+0.1m)*u,0);
-       z23 = ((-0.25+0.5m)*u,(-0.325-0.325m)*u);
-       z3 = (-0.25u,-0.65u);
+       z1 = ((-0.225-0.025m)*u,(0.55+0.1m)*u);
+       z12 = (0,0.85u);
+       z2 = ((0.225+0.025m)*u,(0.55-0.05m)*u);
+       z3 = ((-0.25+0.1m)*u,0);
+       z34 = ((-0.25+0.55m)*u,(-0.325-0.375m)*u);
+       z4 = ((-0.25-0.05m)*u,(-0.55-0.15m)*u);
        
-       draw z1 .. tension 1 .. z12 .. tension (2-m) .. if i > 255: {dir 180} fi z2;
-       draw z2 if i > 255: {dir 0} fi .. tension 1 .. z23 .. tension 1 .. z3;
+       draw z1 .. z12 .. z2 .. tension (2-m) .. z3;
+       draw z3 .. z34 .. z4;
     endfig;
 endfor
 
@@ -217,13 +221,14 @@ beginfig(300);
    pickup pc;
    
    z1 = (-0.25u,0.65u);
-   z12 = (0.25u,0.65u);
-   z2 = (-0.15u,0);
-   z23 = (0.25u,-0.65u);
-   z3 = (-0.25u,-0.65u);
+   z12 = (0,0.85u);
+   z2 = (0.25u,0.5u);
+   z3 = (-0.15u,0);
+   z34 = (0.3u,-0.7u);
+   z4 = (-0.3u,-0.7u);
 
-   draw z1 .. tension 1 .. z12 .. tension 1 .. {dir 180}z2;
-   draw z2{dir 0} .. tension 1 .. z23 .. tension 1 .. z3;
+   draw z1 .. z12 .. z2 .. z3;
+   draw z3 .. z34 .. z4;
 endfig;
 
 %

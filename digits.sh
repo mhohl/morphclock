@@ -6,6 +6,8 @@ from=${1-0}
 to=${2-999}
 mpost digit.mpost
 
+pdflatex testdigit.tex
+
 for (( i = from; i <= to; i++ )); do
    picfile="000$i"
    picfile="pic${picfile:(-3)}.png"
