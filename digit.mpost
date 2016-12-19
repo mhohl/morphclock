@@ -27,10 +27,10 @@ pc := pencircle scaled 0.1u;
 %
 % * Übergang 3/4 besser
 % * Oberlinie 5 auf y=0.85
-% * Rundung bei der 6 und der 9 eventuell elliptisch, Scheitelpunkte auf y= 0 und y = 0.85
+% * Rundung bei der 6 elliptisch, Scheitelpunkte auf y= 0 und y = 0.85
 % * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
-% * Koordinatenbrüche nach 3 und nach 8
-%
+% * Koordinatenbrüche nach 3 
+% * Übergang 1 ->2 Teil 2, Rundung oben eventuell mit tension modellieren
 
 def draw_grid(expr u) =
     draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
@@ -354,7 +354,7 @@ beginfig(500);
    z3 = (-0.25u,-0.85u);
 
    draw z1 -- z12 -- z2;
-   draw z1 .. tension 1 .. z13 .. tension 1 .. z3;
+   draw z1 .. z13 .. z3;
 endfig;
 
 %
@@ -373,7 +373,7 @@ for i = 501 upto 530:
        z3 = ((-0.25-0.15f)*u,(-0.85+0.85f+0.35f)*u);
 
        draw z1 -- z12 -- z2;
-       draw z1 .. tension 1 .. z13 .. tension 1 .. z3 if i=530: .. cycle fi;
+       draw z1 .. z13 .. z3 if i=530: .. cycle fi;
     endfig;
 endfor
 
@@ -393,7 +393,7 @@ for i = 531 upto 559:
        z13 = (0.4u,0.4u);
       
        draw z1 .. tension t .. z12 .. tension t .. z2;
-       draw z1 .. tension 1 .. z13 .. tension 1 .. cycle ;
+       draw z1 .. z13 .. cycle ;
     endfig;
 endfor
 
@@ -451,7 +451,7 @@ for i = 631 upto 659:
        z13 = ((0.1-0.4f)*u,(0.9-0.05f)*u);
        z3 = ((-0.1-0.2f)*u,(0.5+0.25f)*u);
        
-       draw z2 .. tension 1 .. z21 .. tension 1 .. z1{up} .. tension t .. z13 .. tension t .. z3; 
+       draw z2 .. z21 .. z1{up} .. tension t .. z13 .. tension t .. z3; 
     endfig;
 endfor
 
@@ -468,7 +468,7 @@ beginfig(700);
    z13 = (-0.3u,0.85u);
    z3 = (-0.3u,0.75u);
       
-   draw z2 ..tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3;
+   draw z2 .. z21 .. z1{up} -- z13 -- z3;
       
 endfig;
 
@@ -526,7 +526,7 @@ for i = 731 upto 759:
        z45 = (0,0.85m*u);
        z5 = ((0.25+0.15m)*u,(-0.5m+0.85m)*u);
        
-       draw z2 ..tension 1 .. z21 .. tension 1 .. z1{up} .. tension t .. z3;
+       draw z2 .. z21 .. z1{up} .. tension t .. z3;
        draw z4{down} .. tension tt .. z45 .. tension tt .. {down}z5;
        
     endfig;
@@ -544,16 +544,17 @@ beginfig(800);
    z2 = (-0.4u,0.35u); % war z21
    z3 = (0.4u,0.35u);
    z4 = (-0.3u,1.25u);
+   z23 = (0,0);
    
-   draw z1 .. z12 .. z2 .. z3 .. z34 .. z4 .. cycle;
+   draw z1 .. z12 .. z2 .. z23 .. z3 .. z34 .. z4 .. cycle;
       
 endfig;
-
-% BRUCH!
 
 %
 % Acht -> Neun (1/2)
 %
+
+C := (0,0.425u);
 for i = 801 upto 830:
     beginfig(i);
        draw_grid(u);
@@ -561,13 +562,17 @@ for i = 801 upto 830:
        f := (i-800)/30;
        m := f;
        phi := -90m*m;
-       z12 = z34 = (0,0.9u) rotatedabout (C,phi);
-       z1 = ((0.4-0.4m)*u,(1.4-0.5m)*u) rotatedabout (C,phi);
-       z2 = (-0.4u,0.4u) rotatedabout (C,phi);
-       z3 = (0.4u,0.4u) rotatedabout (C,phi);
-       z4 = ((-0.4+0.4m)*u,(1.4-0.5m)*u) rotatedabout (C,phi);
        
-       draw z1 .. z12 .. z2 .. z3 .. z34 .. z4 .. cycle;
+       z12 = z34 = (0,(0.85-0.05m)*u) rotatedabout (C,phi);
+       z1 = ((0.3-0.3m)*u,(1.25-0.45m)*u) rotatedabout (C,phi);
+       z2 = ((-0.4-0.025m)*u,(0.35+0.125m)*u) rotatedabout (C,phi);
+       z23 = (0,(0+0.05m)*u) rotatedabout (C,phi);
+       z3 = ((0.4+0.025m)*u,(0.35+0.125m)*u) rotatedabout (C,phi);
+       z4 = ((-0.3+0.3m)*u,(1.25-0.45m)*u) rotatedabout (C,phi);
+       
+       % Wir ändern die Punktreihenfolge, um bei i=830 eine geschlossene Schleife
+       % zu bekommen:
+       draw z2 .. z23 .. z3 .. z34 .. if i < 830: z4 .. z1 .. z12 .. fi cycle;
       
     endfig;
 endfor
@@ -582,17 +587,18 @@ for i = 831 upto 859:
        f := (i-830)/30;
        m := accel(f);
               
-       z32 = (0.4u,(0.5-0.1m)*u); % war z12 und z34
-       z1 = ((0.4-0.65m*m)*u,(0.5-1.25m)*u);
-       z2 = (-0.1u,(0.9-0.1m)*u);
-       z3 = (-0.1u,(0.1-0.1m)*u);
-       %z4 = (0.4u,0.5u);
+       z23 = (-0.375u,0.425u);         
+       z32 = (0.375u,0.425u); % war z12 und z34
+       z1 = ((0.425-0.675m*m)*u,(0.425-1.175m)*u);
+       z2 = (0,0.85u);
+       z3 = (0,0);
        
-       draw z2 .. z3 .. z32  .. cycle;
+       draw z2 .. z23 .. z3 .. z32  .. cycle;
        draw z32{down} .. z1;
       
     endfig;
 endfor
+
 
 %
 % Neun
@@ -601,12 +607,13 @@ beginfig(900);
    draw_grid(u);
    pickup pc;
             
-   z32 = (0.4u,0.4u);
+   z23 = (-0.375u,0.425u);         
+   z32 = (0.375u,0.425u);
    z1 = (-0.25u,-0.75u);
-   z2 = (-0.1u,0.8u);
-   z3 = (-0.1u,0);
+   z2 = (0,0.85u);
+   z3 = (0,0);
       
-   draw z2 .. z3 .. z32  .. cycle;
+   draw z2 .. z23 .. z3 .. z32  .. cycle;
    draw z32{down} .. z1;
       
 endfig;
@@ -622,13 +629,14 @@ for i = 901 upto 930:
        m := decel(f);
        q := -4*f*f+4f+1; % Scheitel bei (0.5,2), f(0)=f(1)=1
        
-       z32 = (0.4u,0.4u);
-       z1 = ((-0.25-0.15q)*u,(-0.75+1.25m)*u);
-       z2 = ((-0.1+0.1m)*u,0.8u);
-       z3 = ((-0.1+0.1m)*u,0);
+       z23 = (-0.375u,0.425u);
+       z32 = (0.375u,0.425u);
+       z1 = ((-0.25-0.125q)*u,(-0.75+1.175m)*u);
+       z2 = (0,0.85u);
+       z3 = (0,0);
        
-       draw z2 .. z3 .. z32  .. cycle;
-       draw z32{down} .. z1;
+       draw z2 .. z23 .. z3 .. z32  .. cycle;
+       draw z32{down} .. if i > 925 : z3 .. fi z1;
       
     endfig;
 endfor
@@ -643,9 +651,9 @@ for i = 931 upto 959:
        f := (i-930)/30;
        m := accel(f);
        
-       z32 = ((0.4-0.15m)*u,(0.4+0.1m)*u);
-       z23 = ((-0.4+0.15m)*u,0.5u);
-       z2 = (0,(0.8+0.2m)*u);
+       z32 = ((0.375-0.125m)*u,0.425u);
+       z23 = ((-0.375+0.125m)*u,0.425u);
+       z2 = (0,0.85u);
        z3 = (0,0);
        
        draw z2 .. z23 .. z3 .. z32  .. cycle;
