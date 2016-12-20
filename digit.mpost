@@ -393,9 +393,11 @@ for i = 531 upto 559:
        z13 = (0.4u,0.4u);
       
        draw z1 .. tension t .. z12 .. tension t .. z2;
-       draw z1 .. z13 .. cycle ;
+       draw z1 .. z13 .. cycle;
     endfig;
 endfor
+
+% BRUCH
 
 %
 % Sechs
@@ -404,40 +406,57 @@ beginfig(600);
    draw_grid(u);
    pickup pc;
    
-   z1 = (-0.4u,0.4u);
-   z12 = (-0.1u,1.25u);
-   z2 = (0.25u,1.5u);
-   z13 = (0.4u,0.4u);
+   % der Abstand vom Zentrum zur Schwungspitze in y-Richtung
+   % ist bei der Sechs mit 1.5-0.425=1.075 geringer
+   % als bei der Neun: 0.425-(-0.75)=1.175
    
-   draw z1 .. tension 1 .. z12 .. tension 1 .. z2;
-   draw z1 .. tension 1 .. z13 .. tension 1 .. cycle ;
+   z1 = (0.25u,1.5u); % war z2
+   z23 = (-0.375u,0.425u); % war z1
+   z32 = (0.375u,0.425u); % war z13
+   z2 = (0,0.85u);
+   z3 = (0,0);
+   
+   draw z2 .. z23 .. z3 .. z32  .. cycle;
+   draw z23{up} .. z1;
 endfig;
 
 %
 % Sechs -> Sieben (1/2)
 %
+C := (0,0.425u);
+
 for i = 601 upto 630:
     beginfig(i);
        draw_grid(u);
        pickup pc;
        f := (i-600)/30;
        m := f;
-       q := (8/3)*m*m-(8/3)*m+1 ;
-         % Parabelabschnitt y = 1 .. 1/3 .. 1 für x = 0 .. 0.5 .. 1;
+       q := 3*m*m-3*m+1;
+         % Parabelabschnitt y = 1 .. 1/4 .. 1 für x = 0 .. 0.5 .. 1;
        phi := 180m;
-       z1 = (-0.4u,0.4u) rotatedaround (C,phi);
-       z21 = z12 = (-0.1u,(0.5q+0.75)*u) rotatedaround (C,phi);
-       z2 = (0.25u,(1q + 0.5)*u) rotatedaround (C,phi);
-       z13 = (0.4u,0.4u) rotatedaround (C,phi/2);
-       z3 = ((-0.4+0.3m)*u,(0.4+0.1m)*u);
        
-       draw z2 ... z21 ... z1{dir (phi-90)} .. z13  .. z3; 
+       z13 = (-0.375u,0.425u) rotatedaround (C,phi); % war z23
+       z1 = (0.25u,(1q + 0.5)*u) rotatedaround (C,phi);
+       z32 = (0.375u,0.425u) rotatedaround (C,phi/2);
+       z2 = (0,0.85u) rotatedaround (C,phi/4);
+       z3 = (0,(0+0.0m)*u) rotatedaround (C,3phi/4);
+       z23 = ((-0.375+0.125m)*u,(0.425+0.075m)*u);
+       % Nach der Rotation gilt:
+       % z1'=(-0.25u,-0.65u);
+       % z13'=(0.375u,0.425u);
+       % z32'=(0,0.8u);
+       % z2'=(-0.3,0.725); weil 0.425/sqrt(2)=0.30!
+       % z3'=(0.3,0.725);
+       
+       draw z1 .. z13{dir (phi-90)} .. z3 ... z32  ... z2 ... z23; 
     endfig;
 endfor
 
 %
 % Sechs -> Sieben (2/2)
 %
+
+
 for i = 631 upto 659:
     beginfig(i);
        draw_grid(u);
@@ -445,13 +464,15 @@ for i = 631 upto 659:
        f := (i-630)/30;
        t := 30 * f * f; if t < 1: t :=1 fi;
               
-       z1 = ((0.4-0.1f)*u,(0.6+0.25f)*u);
-       z21 = (0.1u,(-0.25+0.4f)*u);
-       z2 = ((-0.25+0.25f)*u,(-0.5-0.25f)*u);
-       z13 = ((0.1-0.4f)*u,(0.9-0.05f)*u);
-       z3 = ((-0.1-0.2f)*u,(0.5+0.25f)*u);
+       z1 = (0.3u,(0.725+0.125f)*u); % war z3
+       z21 = ((0.375-0.275f)*u,(0.425-0.275f)*u); % war z13
+       z2 = ((-0.25+0.25f)*u,(-0.65-0.1f)*u); % war z1
+       z13 = (-0.3u,(0.725+0.125f)*u); % war z2
+       z3 = ((-0.25-0.05f)*u,(0.5+0.25f)*u); % war z23
+       z32= (0,(0.8+0.05f)*u); % liegt dann genau zwischen neu z1 und z13 und fällt dann weg
        
-       draw z2 .. z21 .. z1{up} .. tension t .. z13 .. tension t .. z3; 
+       % Der Tangentenwinkel an z1↓ beträgt näherungsweise 135° und soll auf 90°=up verkürzt werden
+       draw z2 .. z21 .. z1{dir (135-45f)} .. tension t .. z32{dir 180} .. tension t .. z13 .. tension t .. z3;
     endfig;
 endfor
 
