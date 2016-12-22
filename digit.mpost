@@ -18,16 +18,18 @@ numeric u;   % [u]nit
 u := 5cm;
 numeric d,q;
 pair C;      % [C]enter of rotation
-C := (0,0.5u);
+C := (0,0.425u);
 pen pc;      % [p]en[c]ircle
 pc := pencircle scaled 0.1u;
+path tmppath;
+numeric tmp;
+pair inter;
 
 %
 % TODO:
 %
 % * Übergang 3/4 besser
 % * Oberlinie 5 auf y=0.85
-% * Rundung bei der 6 elliptisch, Scheitelpunkte auf y= 0 und y = 0.85
 % * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
 % * Koordinatenbrüche nach 3 
 % * Übergang 1 ->2 Teil 2, Rundung oben eventuell mit tension modellieren
@@ -231,7 +233,7 @@ beginfig(300);
    draw z3 .. z34 .. z4;
 endfig;
 
-% BRUCH!
+% BRUCH >>>
 
 %
 % Drei -> Vier (1/2)
@@ -340,21 +342,23 @@ for i = 431 upto 459:
     endfig;
 endfor    
 
+% <<< BRUCH
+ 
 %
 % Fünf
 %
 beginfig(500);
    draw_grid(u);
    pickup pc;
-   
-   z1 = (-0.25u,0);
-   z12 = (-0.25u,0.75u);
-   z2 = (0.25u,0.75u);
-   z13 = (0.25u,-0.15u);
-   z3 = (-0.25u,-0.85u);
 
+   z1 = (0.25u,0.85u); % war z2
+   z12 = (-0.25u,0.85u); % war z12
+   z2 = (-0.25u,0); % war z1
+   z23 = (0,0.1u); % war z13
+   z3 = (0.3u,-0.425u);
+   z4 = (-0.3u,-0.75u);
    draw z1 -- z12 -- z2;
-   draw z1 .. z13 .. z3;
+   draw z2 .. z23 .. z3 .. {left}z4;
 endfig;
 
 %
@@ -365,15 +369,18 @@ for i = 501 upto 530:
        draw_grid(u);
        pickup pc;
        f := (i-500)/30;
-              
-       z1 = ((-0.25-0.15f)*u,0.35f*u);
-       z12 = ((-0.25-0.15f)*u,(0.75+0.75f)*u);
-       z2 = (0.25u,(0.75+0.75f)*u);
-       z13 = ((0.25+0.15f)*u,(-0.15+0.6f)*u);
-       z3 = ((-0.25-0.15f)*u,(-0.85+0.85f+0.35f)*u);
+       m := f;
+       
+       z1 = (0.25u,(0.85+0.65m)*u);    
+       z12 = (-0.25u,(0.85+0.65m)*u);
+       z2 = ((-0.25-0.125m)*u,(0+0.425m)*u);
+       z23 = (0,(0.1+0.75m)*u);
+       z3 = ((0.3+0.075m)*u,(-0.425+0.85m)*u);
+       z4 = ((-0.3+0.3m)*u,(-0.75+0.75m)*u); 
+       z41 = ((-0.3-0.075m)*u,(-0.75+0.75m+0.425m)*u); % wandert von z4 zu z2
 
        draw z1 -- z12 -- z2;
-       draw z1 .. z13 .. z3 if i=530: .. cycle fi;
+       draw z2 .. z23 .. z3 .. {left}z4 .. if i < 530: z41 else: cycle fi;
     endfig;
 endfor
 
@@ -385,19 +392,27 @@ for i = 531 upto 559:
        draw_grid(u);
        pickup pc;
        f := (i-530)/30;
-       t := 1/f; 
-              
-       z1 = z3 = (-0.4u,0.4u);
-       z12 = ((-0.4+0.3f)*u,(1.5-0.25f)*u);
-       z2 = (0.25u,1.5u);
-       z13 = (0.4u,0.4u);
-      
-       draw z1 .. tension t .. z12 .. tension t .. z2;
-       draw z1 .. z13 .. cycle;
+       t := 1/f;
+       m := f;
+       
+       z1 = (0.25u,1.5u);
+       z12 = (-0.25u,1.5u);
+       z23 = (-0.375u,0.425u); % war z2
+       z32 = (0.375u,0.425u); % war z3
+       z2 = (0,0.85u); % war z23
+       z3 = (0,0); % war z4
+       
+       % wir ermitteln den Punkt, der auf 2/3 des gedachten Bogens liegt;
+       % z123 (Zwischenpunkt zwischen z1 und z23) wandert von z12 (der
+       % Koordinate der Ecke der Fünf) zum Zielpunkt.
+       tmppath := z23{up} .. z1;
+       inter = point 2/3 of tmppath;
+       z123 = m[z12,inter];
+       
+       draw z23{up} .. tension t .. z123 .. tension t .. z1;
+       draw z2 .. z23 .. z3 .. z32  .. cycle;
     endfig;
 endfor
-
-% BRUCH
 
 %
 % Sechs
@@ -410,9 +425,9 @@ beginfig(600);
    % ist bei der Sechs mit 1.5-0.425=1.075 geringer
    % als bei der Neun: 0.425-(-0.75)=1.175
    
-   z1 = (0.25u,1.5u); % war z2
-   z23 = (-0.375u,0.425u); % war z1
-   z32 = (0.375u,0.425u); % war z13
+   z1 = (0.25u,1.5u);
+   z23 = (-0.375u,0.425u);
+   z32 = (0.375u,0.425u);
    z2 = (0,0.85u);
    z3 = (0,0);
    
@@ -423,8 +438,6 @@ endfig;
 %
 % Sechs -> Sieben (1/2)
 %
-C := (0,0.425u);
-
 for i = 601 upto 630:
     beginfig(i);
        draw_grid(u);
@@ -455,8 +468,6 @@ endfor
 %
 % Sechs -> Sieben (2/2)
 %
-
-
 for i = 631 upto 659:
     beginfig(i);
        draw_grid(u);
@@ -497,11 +508,7 @@ endfig;
 % Sieben -> Acht (1/2)
 %
 for i = 701 upto 730:
-    beginfig(i);
-       numeric tmp;
-       pair inter;
-       path seven;
-    
+    beginfig(i);  
        draw_grid(u);
        pickup pc;
        f := (i-700)/30;
@@ -512,15 +519,15 @@ for i = 701 upto 730:
        z13 = (-0.3u,0.85u);
        z3 = (-0.3u,(0.75+0.1f)*u); % wandert zu z31 und ersetzt diesen
          
-       seven := z2 .. tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3;
+       tmppath := z2 .. tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3; % Die "Sieben"
        
-       inter := ((-infinity,0)--(infinity,0)) intersectionpoint seven;
+       inter := ((-infinity,0)--(infinity,0)) intersectionpoint tmppath;
        tmp := xpart( inter );
        
        z4 = (tmp+(-0.25u-tmp)*f,0);
        z5 = (tmp+(0.25u-tmp)*f,0);
        
-       draw seven;
+       draw tmppath;
        draw z4 -- z5; 
       
     endfig;
@@ -574,8 +581,6 @@ endfig;
 %
 % Acht -> Neun (1/2)
 %
-
-C := (0,0.425u);
 for i = 801 upto 830:
     beginfig(i);
        draw_grid(u);
