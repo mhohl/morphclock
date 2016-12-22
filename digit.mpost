@@ -276,7 +276,6 @@ for i = 331 upto 359:
        draw z1 .. tension 100 .. z12 .. tension t .. {dir 180}z2 -- cycle;
        draw z2{dir 0}  ..  z23 .. tension t .. z3;
        draw z4 -- z5;
-       
     endfig;
 endfor    
 % <<< BRUCH
@@ -295,10 +294,9 @@ beginfig(400);
    z3 = (0.25u,-0.75u);
    z5 = (0.4u,0);
 
-   draw z5 -- z1 -- z13 -- z3;       
+   draw z5 -- z1 -- z13 -- z3;
 endfig;
 
-% BRUCH >>>
 %
 % Vier -> Fünf (1/2)
 %
@@ -308,16 +306,15 @@ for i = 401 upto 430:
        pickup pc;
        f := (i-400)/30;
        
-       z1 = (-0.15u,0);
-       z21 = z12 = (0.25u,0.65u);
-       z2 = (0.25u,0.75f*u);
-       z13 = z4 = (0.25u,0u);
-       z3 = (0.25u,-0.85u);
+       z1 = (-0.25u,0);
+       z12 = (0.25u,0.85u);
+       z2 = (0.25u,(0.85-0.85f)*u);
+       %z13 = z4 = (0.25u,0u);
+       z3 = (0.25u,-0.75u);
        z5 = ((0.4-0.15f)*u,0);
 
-       draw z2 -- z21 -- z1 -- z13 -- z3;
-       draw z4 -- z5;
-       
+       draw z12 -- z1 -- z5;
+       draw z2 -- z3;
     endfig;
 endfor
 
@@ -329,21 +326,21 @@ for i = 431 upto 459:
        draw_grid(u);
        pickup pc;
        f := (i-430)/30;
-       t := 30-30*sqrt(f); if t < 1: t := 1 fi;
+       t := 5-5*f; if t < 1: t := 1 fi;
+       m := accel(f);
        
-       z1 = (-0.15u,0);
-       z12 = ((0.25-0.4f)*u,0.65u);
-       z2 = (0.25u,0.75u);
-       z13 = (0.25u,-0.15f*u);
-       z3 = ((0.25-0.4f)*u,-0.85u);
+       z1 = (-0.25u,0);
+       z12 = ((0.25-0.5m)*u,0.85u);
+       z2 = (0.25u,0.85u);
+       z13 = ((0.25-0.25m)*u,0.1m*u);
+       z3 = ((0.25+0.05m)*u,-0.425m*u); % beginnt als z13, wandert stärker nach unten
+       z4 = ((0.25-0.55m)*u,-0.75u); % war z3
 
        draw z1 -- z12 -- z2;
-       draw z1 .. tension t .. z13 .. tension t .. z3;
+       draw z1 .. tension t .. z13 .. tension 1 .. z3 .. tension t .. if i>454: {left} fi z4;
     endfig;
 endfor    
 
-% <<< BRUCH
- 
 %
 % Fünf
 %
@@ -501,7 +498,6 @@ beginfig(700);
    z3 = (-0.3u,0.75u);
       
    draw z2 .. z21 .. z1{up} -- z13 -- z3;
-      
 endfig;
 
 %
@@ -528,8 +524,7 @@ for i = 701 upto 730:
        z5 = (tmp+(0.25u-tmp)*f,0);
        
        draw tmppath;
-       draw z4 -- z5; 
-      
+       draw z4 -- z5;
     endfig;
 endfor
 
@@ -556,7 +551,6 @@ for i = 731 upto 759:
        
        draw z2 .. z21 .. z1{up} .. tension t .. z3;
        draw z4{down} .. tension tt .. z45 .. tension tt .. {down}z5;
-       
     endfig;
 endfor
 
@@ -575,7 +569,6 @@ beginfig(800);
    z23 = (0,0);
    
    draw z1 .. z12 .. z2 .. z23 .. z3 .. z34 .. z4 .. cycle;
-      
 endfig;
 
 %
@@ -599,7 +592,6 @@ for i = 801 upto 830:
        % Wir ändern die Punktreihenfolge, um bei i=830 eine geschlossene Schleife
        % zu bekommen:
        draw z2 .. z23 .. z3 .. z34 .. if i < 830: z4 .. z1 .. z12 .. fi cycle;
-      
     endfig;
 endfor
 
@@ -621,7 +613,6 @@ for i = 831 upto 859:
        
        draw z2 .. z23 .. z3 .. z32  .. cycle;
        draw z32{down} .. z1;
-      
     endfig;
 endfor
 
@@ -641,7 +632,6 @@ beginfig(900);
       
    draw z2 .. z23 .. z3 .. z32  .. cycle;
    draw z32{down} .. z1;
-      
 endfig;
 
 %
@@ -663,7 +653,6 @@ for i = 901 upto 930:
        
        draw z2 .. z23 .. z3 .. z32  .. cycle;
        draw z32{down} .. if i > 925 : z3 .. fi z1;
-      
     endfig;
 endfor
 
@@ -683,7 +672,6 @@ for i = 931 upto 959:
        z3 = (0,0);
        
        draw z2 .. z23 .. z3 .. z32  .. cycle;
-      
     endfig;
 endfor
 
