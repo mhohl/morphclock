@@ -29,9 +29,7 @@ pair inter;
 % TODO:
 %
 % * Übergang 3/4 besser
-% * Oberlinie 5 auf y=0.85
 % * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
-% * Koordinatenbrüche nach 3 
 % * Übergang 1 ->2 Teil 2, Rundung oben eventuell mit tension modellieren
 
 def draw_grid(expr u) =
@@ -207,8 +205,8 @@ for i = 231 upto 259:
        z12 = (0,0.85u);
        z2 = ((0.225+0.025m)*u,(0.55-0.05m)*u);
        z3 = ((-0.25+0.1m)*u,0);
-       z34 = ((-0.25+0.55m)*u,(-0.325-0.375m)*u);
-       z4 = ((-0.25-0.05m)*u,(-0.55-0.15m)*u);
+       z34 = ((-0.25+0.55m)*u,(-0.325-0.325m)*u);
+       z4 = ((-0.25-0.05m)*u,(-0.55-0.1m)*u);
        
        draw z1 .. z12 .. z2 .. tension (2-m) .. z3;
        draw z3 .. z34 .. z4;
@@ -226,8 +224,8 @@ beginfig(300);
    z12 = (0,0.85u);
    z2 = (0.25u,0.5u);
    z3 = (-0.15u,0);
-   z34 = (0.3u,-0.7u);
-   z4 = (-0.3u,-0.7u);
+   z34 = (0.3u,-0.65u);
+   z4 = (-0.3u,-0.65u);
 
    draw z1 .. z12 .. z2 .. z3;
    draw z3 .. z34 .. z4;
