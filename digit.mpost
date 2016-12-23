@@ -42,16 +42,11 @@ R_ARC = 9;
 U_ARC = 10; % upper arc or upper part of arc
 D_ARC = 11;
 
-pair zero[];
-pair one[];
-pair two[];
-pair three[];
-pair four[];
-pair five[];
-pair six[];
-pair seven[];
-pair eight[];
-pair nine[];
+pair zero[], zero_one[], one[], one_two[];
+pair two[], two_three[], three[], three_four[];
+pair four[], four_five[], five[], five_six[];
+pair six[], six_seven[], seven[], seven_eight[];
+pair eight[], eight_nine[], nine[], nine_zero[];
 
 %
 % TODO:
@@ -450,8 +445,8 @@ endfig;
 %
 
 six[BEGIN]  = (0.25u,1.5u);
-six[LEFT]   = (-0.375u,0.425u);
-six[RIGHT]  = six[LEFT] xscaled -1;
+six[LEFT]   = zero[LEFT] xscaled 3/2;
+six[RIGHT]  = zero[RIGHT] xscaled 3/2;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
    
