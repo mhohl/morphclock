@@ -28,9 +28,9 @@ pair inter;
 %
 % TODO:
 %
-% * Übergang 3/4 besser
 % * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
-% * Übergang 1 ->2 Teil 2, Rundung oben eventuell mit tension modellieren
+%   (eventuell nicht immer bei n30/n31?)
+% * globale Variablenfelder zero[], one[] , etc. mit Übergängen z.n = m[one[1],two[2]]?
 
 def draw_grid(expr u) =
     draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
@@ -137,11 +137,11 @@ for i = 131 upto 159:
        pickup pc;
        
        f := (i-130)/30;
-       m := accel(f);
-       t := 1/m;
-       
+       m := f; %accel(f);
+       t := 1/sqrt(sqrt(m)); % zur Vermeidung einer Spitze im Scheitel der 2
+
        z1 = ((-0.25+0.025m)*u,0.55u);
-       z12 = (0,(0.55+0.3f)*u); % Scheitelpunkt
+       z12 = (0,(0.55+0.3m)*u); % Scheitelpunkt
        z2 = ((0.25-0.025m)*u,0.55u); % war z12
        z3 = (-0.25u,0); % war z2
        z4 = ((0.5m-0.25)*u,0);
@@ -231,8 +231,6 @@ beginfig(300);
    draw z3 .. z34 .. z4;
 endfig;
 
-% BRUCH >>>
-
 %
 % Drei -> Vier (1/2)
 %
@@ -242,16 +240,24 @@ for i = 301 upto 330:
        pickup pc;
        
        f := (i-300)/30;
-       t := 10*f*f; if t < 1: t := 1 fi;
+       t := 15*f*f; if t < 1: t := 1 fi;
 
-       z1 = ((0.1f-0.25)*u,(0.65-0.65f)*u);
-       z12 = (0.25u,0.65u);
-       z2 = (-0.15u,0);
-       z23 = (0.25u,(-0.65+0.65f)*u);
-       z3 = (-0.25u,-0.65u);
+       z1 = ((0.1f-0.35)*u,(0.65-0.65f)*u);
+       z12 = ((0+0.25f)*u,0.85u);
+       z2 = (0.25u,(0.5-0.5f)*u);
+       z3 = (-0.15u,0);
+       z34 = (0.3u,-0.625u);
+       z4 = (-0.3u,-0.625u);
 
-       draw z1 .. tension t .. z12 .. {dir 180}z2 if i=330: .. cycle fi;
-       draw z2{dir 0} .. z23 .. z3;
+       % Der "Austrittswinkel" des unteren Bogens an der "spitze"
+       % wird ermittelt und wandert langsam gegen 0.
+       tmppath := z3 .. z34 .. z4;
+       inter := direction 0 of tmppath;
+
+       tmp := angle(inter);
+
+       draw z1 .. tension t .. z12 .. tension t .. z2 .. tension t .. z3;
+       draw z3{dir ((1-f)*tmp)} .. z34 .. z4;
     endfig;
 endfor
 
@@ -264,21 +270,21 @@ for i = 331 upto 359:
        pickup pc;
        
        f := (i-330)/30;
-       t := 100*f*f; if t < 1: t := 1 fi;
+       t := 15*f*f*f; if t < 1: t := 1 fi;
        
-       z1 = (-0.15u,0);
-       z12 = (0.25u,0.65u);
-       z2 = ((0.4f-0.15)*u,0);
-       z23 = z4 = (0.25u,0);
-       z3 = ((-0.25+0.5f)*u,-0.65u);
+       z1 = (-0.25u,0);
+       z12 = (0.25u,0.85u);
+       z2 = (0.25u,0u);
+       z3 = ((-0.15-0.1f)*u,0);
+       z34 = ((0.3-0.05f)*u,(-0.625+0.625f)*u);
+       z4 = ((-0.3+0.55f)*u,(-0.625-0.125f)*u);
        z5 = ((0.25+0.15f*f)*u,0);
 
-       draw z1 .. tension 100 .. z12 .. tension t .. {dir 180}z2 -- cycle;
-       draw z2{dir 0}  ..  z23 .. tension t .. z3;
-       draw z4 -- z5;
+       draw z1 -- z12  -- z2 -- z3;
+       draw z3{right}  .. tension t .. z34 .. tension t .. z4;
+       draw z2 -- z5;
     endfig;
-endfor    
-% <<< BRUCH
+endfor
 
 %
 % Vier
@@ -403,7 +409,7 @@ for i = 531 upto 559:
        % z123 (Zwischenpunkt zwischen z1 und z23) wandert von z12 (der
        % Koordinate der Ecke der Fünf) zum Zielpunkt.
        tmppath := z23{up} .. z1;
-       inter = point 2/3 of tmppath;
+       inter := point 2/3 of tmppath;
        z123 = m[z12,inter];
        
        draw z23{up} .. tension t .. z123 .. tension t .. z1;
