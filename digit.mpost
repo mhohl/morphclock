@@ -10,20 +10,20 @@
 
 outputtemplate := "%j-%c.mps";
 
-numeric f;   % [f]rame rate
+numeric f;   % [f]rame index
 numeric m;   % [m]orph factor
 numeric t;   % [t]ension
 numeric phi; % rotation angle [phi]
 numeric u;   % [u]nit
 u := 5cm;
-numeric d,q;
+numeric q;   % [q]adratic,"[q]ubic", or [q]artic factor
 pair C;      % [C]enter of rotation
 C := (0,0.425u);
 pen pc;      % [p]en[c]ircle
 pc := pencircle scaled 0.1u;
 path tmppath;
 numeric tmp;
-pair inter;
+pair aux[];
 
 % symbolic variables
 numeric LEFT, RIGHT, TOP, BOTTOM;
@@ -42,18 +42,15 @@ R_ARC = 9;
 U_ARC = 10; % upper arc or upper part of arc
 D_ARC = 11;
 
-pair zero[], zero_one[], one[], one_two[];
-pair two[], two_three[], three[], three_four[];
-pair four[], four_five[], five[], five_six[];
-pair six[], six_seven[], seven[], seven_eight[];
-pair eight[], eight_nine[], nine[], nine_zero[];
+pair zero[], one[],   two[], three[], four[];
+pair five[], six[], seven[], eight[], nine[];
 
 %
 % TODO:
 %
 % * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
 %   (eventuell nicht immer bei n30/n31?)
-% * globale Variablenfelder zero[], one[] , etc. mit Übergängen z.n = m[one[1],two[2]]?
+
 
 def draw_grid(expr u) =
     draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
@@ -80,77 +77,68 @@ beginfig(000);
    draw_grid(u);
    pickup pc;
 
-   z21 = (0.25u,0.425u);
-   z12 = (-0.25u,0.425u);
-   z1 = (0,0.85u);
-   z2 = (0,0);
-
-   %draw z1 .. z12 .. z2 .. z21  .. cycle;
-   draw zero[TOP] .. zero[RIGHT] .. zero[BOTTOM] .. zero[LEFT] .. cycle;
+   draw zero[TOP]
+        .. zero[RIGHT]
+        .. zero[BOTTOM]
+        .. zero[LEFT]
+        .. cycle;
 endfig;
 
 %
-% Null -> Eins (1/2)
+% Null -> Eins
 %
 
 one[BEGIN]  = (-0.25u,0.55u);
 one[TOP]    = zero[TOP];
 one[BOTTOM] = zero[BOTTOM];
 
-for i = 001 upto 030:
+for i = 001 upto 029:
+    % 29 statt 30, um einen Glitch bei i=30 zu vermeiden
     beginfig(i);
        draw_grid(u);
        pickup pc;
-
        f := i/30;
        m := f;
-       z21 = ((0.25-0.245m)*u,0.425u); %.245 statt .25 um einen Glitch (i=30) zu vermeiden
-       z12 = ((-0.25+0.245m)*u,0.425u);
-       z1 = (0,0.85u);
-       z2 = (0,0);
-
-       draw z1 ... z12 ... z2 ... z21 ... cycle;
+       
+       draw zero[TOP]
+            ... (m/2)[zero[RIGHT],zero[LEFT]]
+            ... zero[BOTTOM]
+            ... (m/2)[zero[LEFT],zero[RIGHT]]
+            ... cycle;
     endfig;
 endfor
 
-%
-% Null -> Eins (2/2)
-%
-for i = 031 upto 059:
+for i = 030 upto 059:
     beginfig(i);
        draw_grid(u);
        pickup pc;
        f := (i-30)/30;
        m := decel(f);
 
-       z1 = (-0.25m*u,(0.85-0.3m)*u); % war z12
-       z12 = (0,0.85u); % war z1
-       z2 = (0,0);
-
-       draw z1 -- z12 -- z2;    
+       draw m[one[TOP],one[BEGIN]]
+            -- one[TOP]
+            -- one[BOTTOM];
     endfig;
 endfor
 
 %
 % Eins
 %
+
 beginfig(100);
    draw_grid(u);
    pickup pc;
 
-   z1 = (-0.25u,0.55u);
-   z12 = (0,0.85u); % war z12
-   z2 = (0,0); % war z3
-
-   %draw z1 -- z12 -- z2;
-   draw one[BEGIN] -- one[TOP] -- one[BOTTOM];
+   draw one[BEGIN]
+        -- one[TOP]
+        -- one[BOTTOM];
 endfig;
 
 %
-% Eins -> Zwei (1/2)
+% Eins -> Zwei
 %
 
-two[BEGIN] = (-0.225u,0.55u);
+two[BEGIN] = one[BEGIN];
 two[TOP]   = one[TOP];
 two[R_ARC] = (0.225u,0.55u);
 two[JOINT] = (-0.25u,0);
@@ -163,17 +151,12 @@ for i = 101 upto 130:
        f := (i-100)/30;
        m := decel(f);
 
-       z1 = (-0.25u,0.55u);
-       z12 = (0.25m*u,(0.85-0.3m)*u);
-       z2 = (-0.25m*u,0);
-   
-       draw z1 -- z12 -- z2;
+       draw one[BEGIN]
+            -- m[one[TOP],two[R_ARC]]
+            -- m[one[BOTTOM],two[JOINT]];
     endfig;
 endfor
 
-%
-% Eins -> Zwei (2/2)
-%
 for i = 131 upto 159:
     beginfig(i);
        draw_grid(u);
@@ -182,40 +165,36 @@ for i = 131 upto 159:
        f := (i-130)/30;
        m := f; %accel(f);
        t := 1/sqrt(sqrt(m)); % zur Vermeidung einer Spitze im Scheitel der 2
-
-       z1 = ((-0.25+0.025m)*u,0.55u);
-       z12 = (0,(0.55+0.3m)*u); % Scheitelpunkt
-       z2 = ((0.25-0.025m)*u,0.55u); % war z12
-       z3 = (-0.25u,0); % war z2
-       z4 = ((0.5m-0.25)*u,0);
        
-       draw z1  .. tension t .. z12 .. tension t .. z2 .. tension 2t .. z3;
-       draw z3 -- z4;
+       aux0 := (1/2)[two[BEGIN],two[R_ARC]];
+       aux1 := m[aux0,two[TOP]];
+       
+       draw two[BEGIN]
+            .. tension  t .. aux1
+            .. tension  t .. two[R_ARC]
+            .. tension 2t .. two[JOINT];
+       draw two[JOINT]
+            -- m[two[JOINT],two[END]];
     endfig;
 endfor
 
 %
 % Zwei
 %
+
 beginfig(200);
    draw_grid(u);
    pickup pc;
    
-   z1 = (-0.225u,0.55u);
-   z12 = (0,0.85u);
-   z2 = (0.225u,0.55u);
-   z3 = (-0.25u,0);
-   z4 = (0.25u,0);
-
-   %draw z1  .. z12 .. z2 .. tension 2 .. z3;
-   %draw z3 -- z4;
-   
-   draw two[BEGIN]  .. two[TOP] .. two[R_ARC] .. tension 2 .. two[JOINT];
+   draw two[BEGIN]
+        .. two[TOP]
+        .. two[R_ARC]
+        .. tension 2 .. two[JOINT];
    draw two[JOINT] -- two[END];
 endfig;
 
 %
-% Zwei -> Drei (1/2)
+% Zwei -> Drei
 %
 
 three[BEGIN] = (-0.25u,0.65u);
@@ -233,20 +212,15 @@ for i = 201 upto 230:
        m := decel(f);
        phi := -90m;
 
-       z1 = (-0.225u,0.55u);
-       z12 = (0,0.85u);
-       z2 = (0.225u,0.55u);
-       z3 = (-0.25u,0);
-       z4 = ((0.25+0.05m)*u,0);
-       
-       draw z1  .. z12 .. z2 .. tension 2 .. z3;
-       draw z3 -- z4 rotatedaround (z3,phi);
+       draw two[BEGIN]
+            .. two[TOP]
+            .. two[R_ARC]
+            .. tension 2 .. two[JOINT];
+       draw two[JOINT]
+            -- two[END] rotatedaround (two[JOINT],phi);
     endfig;
 endfor
 
-%
-% Zwei -> Drei (2/2)
-%
 for i = 231 upto 259:
     beginfig(i);
        draw_grid(u);
@@ -254,46 +228,43 @@ for i = 231 upto 259:
        f := (i-230)/30;
        m := decel(f);
        t := 1/m;
-       
-       z1 = ((-0.225-0.025m)*u,(0.55+0.1m)*u);
-       z12 = (0,0.85u);
-       z2 = ((0.225+0.025m)*u,(0.55-0.05m)*u);
-       z3 = ((-0.25+0.1m)*u,0);
-       z34 = ((-0.25+0.55m)*u,(-0.325-0.3m)*u);
-       z4 = ((-0.25-0.05m)*u,(-0.55-0.075m)*u);
-       
-       draw z1 .. z12 .. z2 .. tension (2-m) .. z3;
-       draw z3 .. z34 .. z4;
+
+       aux1 := two[END] rotatedabout (two[JOINT],-90);
+
+       draw m[two[BEGIN],three[BEGIN]]
+            .. three[TOP]
+            .. m[two[R_ARC],three[U_ARC]]
+            .. tension (2-m) .. m[two[JOINT],three[JOINT]];
+       draw m[two[JOINT],three[JOINT]]
+            .. m[two[JOINT],three[D_ARC]]
+            .. m[aux1,three[END]];
     endfig;
 endfor
 
 %
 % Drei
 %
+
 beginfig(300);
    draw_grid(u);
    pickup pc;
-   
-   z1 = (-0.25u,0.65u);
-   z12 = (0,0.85u);
-   z2 = (0.25u,0.5u);
-   z3 = (-0.15u,0);
-   z34 = (0.3u,-0.625u);
-   z4 = (-0.3u,-0.625u);
 
-   %draw z1 .. z12 .. z2 .. z3;
-   %draw z3 .. z34 .. z4;
-   
-   draw three[BEGIN] .. three[TOP] .. three[U_ARC] .. three[JOINT];
-   draw three[JOINT] .. three[D_ARC] .. three[END];
+   draw three[BEGIN]
+        .. three[TOP]
+        .. three[U_ARC]
+        .. three[JOINT];
+   draw three[JOINT]
+        .. three[D_ARC]
+        .. three[END];
 endfig;
 
 %
-% Drei -> Vier (1/2)
+% Drei -> Vier
 %
 
 four[LEFT]   = (-0.25u,0);
 four[TOP]    = (0.25u,0.85u);
+four[MID]    = four[LEFT] xscaled -1;
 four[BOTTOM] = (0.25u,-0.75u);
 four[RIGHT]  = (0.4u,0);
 
@@ -303,6 +274,7 @@ for i = 301 upto 330:
        pickup pc;
        
        f := (i-300)/30;
+       m := f;
        t := 15*f*f; if t < 1: t := 1 fi;
 
        z1 = ((0.1f-0.35)*u,(0.65-0.65f)*u);
@@ -312,40 +284,40 @@ for i = 301 upto 330:
        z34 = (0.3u,-0.625u);
        z4 = (-0.3u,-0.625u);
 
-       % Der "Austrittswinkel" des unteren Bogens an der "spitze"
+       % Der "Austrittswinkel" des unteren Bogens an der "Spitze"
        % wird ermittelt und wandert langsam gegen 0.
-       tmppath := z3 .. z34 .. z4;
-       inter := direction 0 of tmppath;
+       tmppath := three[JOINT] .. three[D_ARC] .. three[END];
+       aux0 := direction 0 of tmppath;
 
-       tmp := angle(inter);
+       phi := (1-m)*angle(aux0);
 
-       draw z1 .. tension t .. z12 .. tension t .. z2 .. tension t .. z3;
-       draw z3{dir ((1-f)*tmp)} .. z34 .. z4;
+       draw m[three[BEGIN],four[LEFT]] 
+            .. tension t .. m[three[TOP],four[TOP]]
+            .. tension t .. m[three[U_ARC],four[MID]]
+            .. tension t .. three[JOINT];
+       draw three[JOINT]{dir phi}
+            .. three[D_ARC]
+            .. three[END];
     endfig;
 endfor
 
-%
-% Drei -> Vier (2/2)
-%
 for i = 331 upto 359:
     beginfig(i);
        draw_grid(u);
        pickup pc;
        
        f := (i-330)/30;
+       m := f;
        t := 15*f*f*f; if t < 1: t := 1 fi;
-       
-       z1 = (-0.25u,0);
-       z12 = (0.25u,0.85u);
-       z2 = (0.25u,0u);
-       z3 = ((-0.15-0.1f)*u,0);
-       z34 = ((0.3-0.05f)*u,(-0.625+0.625f)*u);
-       z4 = ((-0.3+0.55f)*u,(-0.625-0.125f)*u);
-       z5 = ((0.25+0.15f*f)*u,0);
 
-       draw z1 -- z12  -- z2 -- z3;
-       draw z3{right}  .. tension t .. z34 .. tension t .. z4;
-       draw z2 -- z5;
+       draw four[LEFT]
+            -- four[TOP]
+            -- four[MID]
+            -- m[three[JOINT],four[LEFT]]{right}
+            .. tension t .. m[three[D_ARC],four[MID]]
+            .. tension t .. m[three[END],four[BOTTOM]];
+       draw four[MID]
+            -- m[four[MID],four[RIGHT]];
     endfig;
 endfor
 
@@ -356,24 +328,19 @@ beginfig(400);
    draw_grid(u);
    pickup pc;
    
-   z1 = (-0.25u,0);
-   z13 = z12 = (0.25u,0.85u);
-   %z2 = (0.25u,0);
-   %z4 = z23 = (0.25u,0);
-   z3 = (0.25u,-0.75u);
-   z5 = (0.4u,0);
-
-   %draw z5 -- z1 -- z13 -- z3;
-   draw four[RIGHT] -- four[LEFT] -- four[TOP] -- four[BOTTOM];
+   draw four[RIGHT]
+        -- four[LEFT]
+        -- four[TOP]
+        -- four[BOTTOM];
 endfig;
 
 %
-% Vier -> Fünf (1/2)
+% Vier -> Fünf
 %
 
-five[BEGIN] = (0.25u,0.85u);
+five[BEGIN] = four[TOP];
 five[LEFT]  = five[BEGIN] xscaled -1;
-five[JOINT] = (-0.25u,0);
+five[JOINT] = four[LEFT];
 five[U_ARC] = (0,0.1u);
 five[R_ARC] = (0.3u,-0.425u);
 five[END]   = (-0.3u,-0.75u);
@@ -383,22 +350,16 @@ for i = 401 upto 430:
        draw_grid(u);
        pickup pc;
        f := (i-400)/30;
-       
-       z1 = (-0.25u,0);
-       z12 = (0.25u,0.85u);
-       z2 = (0.25u,(0.85-0.85f)*u);
-       %z13 = z4 = (0.25u,0u);
-       z3 = (0.25u,-0.75u);
-       z5 = ((0.4-0.15f)*u,0);
+       m := f;
 
-       draw z12 -- z1 -- z5;
-       draw z2 -- z3;
+       draw four[TOP]
+            -- four[LEFT]
+            -- m[four[RIGHT],four[MID]];
+       draw m[four[TOP],four[MID]]
+            -- four[BOTTOM];
     endfig;
 endfor
 
-%
-% Vier -> Fünf (2/2)
-%
 for i = 431 upto 459:
     beginfig(i);
        draw_grid(u);
@@ -406,16 +367,14 @@ for i = 431 upto 459:
        f := (i-430)/30;
        t := 5-5*f; if t < 1: t := 1 fi;
        m := accel(f);
-       
-       z1 = (-0.25u,0);
-       z12 = ((0.25-0.5m)*u,0.85u);
-       z2 = (0.25u,0.85u);
-       z13 = ((0.25-0.25m)*u,0.1m*u);
-       z3 = ((0.25+0.05m)*u,-0.425m*u); % beginnt als z13, wandert stärker nach unten
-       z4 = ((0.25-0.55m)*u,-0.75u); % war z3
 
-       draw z1 -- z12 -- z2;
-       draw z1 .. tension t .. z13 .. tension 1 .. z3 .. tension t .. if i>454: {left} fi z4;
+       draw five[BEGIN]
+            -- m[four[TOP],five[LEFT]]
+            -- five[JOINT]
+            .. tension t .. m[four[MID],five[U_ARC]]
+            .. tension 1 .. m[four[MID],five[R_ARC]]
+            .. tension t .. if i>454: {left} fi m[four[BOTTOM],five[END]];
+       %TODO: if-Anweisung durch Winkelberechnung glätten
     endfig;
 endfor    
 
@@ -426,22 +385,16 @@ beginfig(500);
    draw_grid(u);
    pickup pc;
 
-   z1 = (0.25u,0.85u); % war z2
-   z12 = (-0.25u,0.85u); % war z12
-   z2 = (-0.25u,0); % war z1
-   z23 = (0,0.1u); % war z13
-   z3 = (0.3u,-0.425u);
-   z4 = (-0.3u,-0.75u);
-   
-   %draw z1 -- z12 -- z2;
-   %draw z2 .. z23 .. z3 .. {left}z4;
-   
-   draw five[BEGIN] -- five[LEFT] -- five[JOINT];
-   draw five[JOINT] .. five[U_ARC] .. five[R_ARC] .. {left}five[END];
+   draw five[BEGIN]
+        -- five[LEFT]
+        -- five[JOINT]
+        .. five[U_ARC]
+        .. five[R_ARC]
+        .. {left}five[END];
 endfig;
 
 %
-% Fünf -> Sechs (1/2)
+% Fünf -> Sechs
 %
 
 six[BEGIN]  = (0.25u,1.5u);
@@ -456,23 +409,24 @@ for i = 501 upto 530:
        pickup pc;
        f := (i-500)/30;
        m := f;
-       
-       z1 = (0.25u,(0.85+0.65m)*u);    
-       z12 = (-0.25u,(0.85+0.65m)*u);
-       z2 = ((-0.25-0.125m)*u,(0+0.425m)*u);
-       z23 = (0,(0.1+0.75m)*u);
-       z3 = ((0.3+0.075m)*u,(-0.425+0.85m)*u);
-       z4 = ((-0.3+0.3m)*u,(-0.75+0.75m)*u); 
-       z41 = ((-0.3-0.075m)*u,(-0.75+0.75m+0.425m)*u); % wandert von z4 zu z2
 
-       draw z1 -- z12 -- z2;
-       draw z2 .. z23 .. z3 .. {left}z4 .. if i < 530: z41 else: cycle fi;
+       aux1 := (xpart(five[LEFT]),ypart(m[five[BEGIN],six[BEGIN]]));
+       
+       draw m[five[BEGIN],six[BEGIN]]
+            -- aux1
+            -- m[five[JOINT],six[LEFT]];
+       draw m[five[JOINT],six[LEFT]]
+            .. m[five[U_ARC],six[TOP]]
+            .. m[five[R_ARC],six[RIGHT]]
+            .. {left}m[five[END],six[BOTTOM]]
+            .. if i < 530:
+                  m[five[END],six[LEFT]]
+               else:
+                  cycle
+               fi;
     endfig;
 endfor
 
-%
-% Fünf -> Sechs (2/2)
-%
 for i = 531 upto 559:
     beginfig(i);
        draw_grid(u);
@@ -480,23 +434,25 @@ for i = 531 upto 559:
        f := (i-530)/30;
        t := 1/f;
        m := f;
-       
-       z1 = (0.25u,1.5u);
-       z12 = (-0.25u,1.5u);
-       z23 = (-0.375u,0.425u); % war z2
-       z32 = (0.375u,0.425u); % war z3
-       z2 = (0,0.85u); % war z23
-       z3 = (0,0); % war z4
-       
+            
        % wir ermitteln den Punkt, der auf 2/3 des gedachten Bogens liegt;
-       % z123 (Zwischenpunkt zwischen z1 und z23) wandert von z12 (der
-       % Koordinate der Ecke der Fünf) zum Zielpunkt.
-       tmppath := z23{up} .. z1;
-       inter := point 2/3 of tmppath;
-       z123 = m[z12,inter];
+       % aux1 wandert von der linken Ecke der verschobenen "5" zum Zielpunkt.
+       % Weil er dann auf dem Bogen liegt, kann er bei der "6" einfach
+       % weggelassen weden.
        
-       draw z23{up} .. tension t .. z123 .. tension t .. z1;
-       draw z2 .. z23 .. z3 .. z32  .. cycle;
+       tmppath := six[LEFT]{up} .. six[BEGIN];
+       aux23 := point 2/3 of tmppath;
+       aux0 := (xpart(six[LEFT]),ypart(six[BEGIN]));
+       aux1 := m[aux0,aux23];
+       
+       draw six[LEFT]{up}
+            .. tension t .. aux1
+            .. tension t .. six[BEGIN];
+       draw six[TOP]
+            .. six[RIGHT]
+            .. six[BOTTOM]
+            .. six[LEFT]
+            .. cycle;
     endfig;
 endfor
 
@@ -511,16 +467,13 @@ beginfig(600);
    % ist bei der Sechs mit 1.5-0.425=1.075 geringer
    % als bei der Neun: 0.425-(-0.75)=1.175
    
-   z1 = (0.25u,1.5u);
-   z23 = (-0.375u,0.425u);
-   z32 = (0.375u,0.425u);
-   z2 = (0,0.85u);
-   z3 = (0,0);
-   
-   %draw z2 .. z23 .. z3 .. z32  .. cycle;
-   %draw z23{up} .. z1;
-   draw six[TOP] .. six[RIGHT] .. six[BOTTOM] .. six[LEFT] .. cycle;
-   draw six[LEFT]{up} .. six[BEGIN];
+   draw six[TOP]
+        .. six[RIGHT]
+        .. six[BOTTOM]
+        .. six[LEFT]
+        .. cycle;
+   draw six[LEFT]{up}
+        .. six[BEGIN];
 endfig;
 
 %
@@ -596,7 +549,11 @@ beginfig(700);
    z3 = (-0.3u,0.75u);
       
    %draw z2 .. z21 .. z1{up} -- z13 -- z3;
-   draw seven[BEGIN] -- seven[LEFT] -- seven[JOINT]{down} .. seven[MID] .. seven[END];
+   draw seven[BEGIN]
+        -- seven[LEFT]
+        -- seven[JOINT]{down}
+        .. seven[MID]
+        .. seven[END];
 endfig;
 
 %
@@ -624,8 +581,8 @@ for i = 701 upto 730:
          
        tmppath := z2 .. tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3; % Die "Sieben"
        
-       inter := ((-infinity,0)--(infinity,0)) intersectionpoint tmppath;
-       tmp := xpart( inter );
+       aux0 := ((-infinity,0)--(infinity,0)) intersectionpoint tmppath;
+       tmp := xpart(aux0);
        
        z4 = (tmp+(-0.25u-tmp)*f,0);
        z5 = (tmp+(0.25u-tmp)*f,0);
@@ -676,7 +633,14 @@ beginfig(800);
    z23 = (0,0);
    
    %draw z1 .. z12 .. z2 .. z23 .. z3 .. z34 .. z4 .. cycle;
-   draw eight[R_ARC] .. eight[MID] .. eight[LEFT] .. eight[BOTTOM] .. eight[RIGHT] .. eight[MID] .. eight[L_ARC] .. cycle;
+   draw eight[R_ARC]
+        .. eight[MID]
+        .. eight[LEFT]
+        .. eight[BOTTOM]
+        .. eight[RIGHT]
+        .. eight[MID]
+        .. eight[L_ARC]
+        .. cycle;
 endfig;
 
 %
@@ -746,8 +710,13 @@ beginfig(900);
       
    %draw z2 .. z23 .. z3 .. z32  .. cycle;
    %draw z32{down} .. z1;
-   draw nine[TOP] .. nine[RIGHT] .. nine[BOTTOM] .. nine[LEFT]  .. cycle;
-   draw nine[RIGHT]{down} .. nine[END];
+   draw nine[TOP]
+        .. nine[RIGHT]
+        .. nine[BOTTOM]
+        .. nine[LEFT]
+        .. cycle;
+   draw nine[RIGHT]{down}
+        .. nine[END];
 endfig;
 
 %
