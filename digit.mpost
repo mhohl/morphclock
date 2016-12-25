@@ -22,7 +22,7 @@ C := (0,0.425u);
 pen pc;      % [p]en[c]ircle
 pc := pencircle scaled 0.1u;
 path tmppath;
-numeric tmp;
+numeric tmp[];
 pair aux[];
 
 % symbolic variables
@@ -60,9 +60,11 @@ def draw_grid(expr u) =
     draw (0.25u,-u)--(0.25u,1.7u);
 enddef;
 
-def accel(expr x) = sqrt x enddef;
+vardef accel(expr xx) = sqrt xx enddef;
 
-def decel(expr x) = x*x enddef;
+vardef decel(expr xx) = xx*xx enddef;
+
+vardef morph(expr xx) = 1/2 - 1/2*cosd(180*xx) enddef;
 
 %
 % Null
@@ -277,13 +279,6 @@ for i = 301 upto 330:
        m := f;
        t := 15*f*f; if t < 1: t := 1 fi;
 
-       z1 = ((0.1f-0.35)*u,(0.65-0.65f)*u);
-       z12 = ((0+0.25f)*u,0.85u);
-       z2 = (0.25u,(0.5-0.5f)*u);
-       z3 = (-0.15u,0);
-       z34 = (0.3u,-0.625u);
-       z4 = (-0.3u,-0.625u);
-
        % Der "Austrittswinkel" des unteren Bogens an der "Spitze"
        % wird ermittelt und wandert langsam gegen 0.
        tmppath := three[JOINT] .. three[D_ARC] .. three[END];
@@ -410,6 +405,9 @@ for i = 501 upto 530:
        f := (i-500)/30;
        m := f;
 
+       % die linke Ecke five[LEFT] wandert genauso schnell nach oben wie
+       % five[BEGIN], aber die x-Koordinate bleibt unverändert:
+       
        aux1 := (xpart(five[LEFT]),ypart(m[five[BEGIN],six[BEGIN]]));
        
        draw m[five[BEGIN],six[BEGIN]]
@@ -582,10 +580,10 @@ for i = 701 upto 730:
        tmppath := z2 .. tension 1 .. z21 .. tension 1 .. z1{up} -- z13 -- z3; % Die "Sieben"
        
        aux0 := ((-infinity,0)--(infinity,0)) intersectionpoint tmppath;
-       tmp := xpart(aux0);
+       tmp0 := xpart(aux0);
        
-       z4 = (tmp+(-0.25u-tmp)*f,0);
-       z5 = (tmp+(0.25u-tmp)*f,0);
+       z4 = (tmp0+(-0.25u-tmp0)*f,0);
+       z5 = (tmp0+(0.25u-tmp0)*f,0);
        
        draw tmppath;
        draw z4 -- z5;
@@ -673,9 +671,6 @@ for i = 801 upto 830:
     endfig;
 endfor
 
-%
-% Acht -> Neun (2/2)
-%
 for i = 831 upto 859:
     beginfig(i);
        draw_grid(u);
@@ -683,14 +678,14 @@ for i = 831 upto 859:
        f := (i-830)/30;
        m := accel(f);
               
-       z23 = (-0.375u,0.425u);         
-       z32 = (0.375u,0.425u); % war z12 und z34
-       z1 = ((0.425-0.675m*m)*u,(0.425-1.175m)*u);
-       z2 = (0,0.85u);
-       z3 = (0,0);
+       % Der Endpunkt des Bogens wandert von nine[RIGHT] ausgehend am
+       % tatsächlichen Bogen entlang:
+              
+       tmppath := nine[RIGHT]{down} .. nine[END];
+       aux1 := point m of tmppath;
        
-       draw z2 .. z23 .. z3 .. z32  .. cycle;
-       draw z32{down} .. z1;
+       draw nine[TOP] .. nine[RIGHT] .. nine[BOTTOM] .. nine[LEFT]  .. cycle;
+       draw nine[RIGHT]{down} .. aux1;
     endfig;
 endfor
 
@@ -701,15 +696,7 @@ endfor
 beginfig(900);
    draw_grid(u);
    pickup pc;
-            
-   z23 = (-0.375u,0.425u);         
-   z32 = (0.375u,0.425u);
-   z1 = (-0.25u,-0.75u);
-   z2 = (0,0.85u);
-   z3 = (0,0);
-      
-   %draw z2 .. z23 .. z3 .. z32  .. cycle;
-   %draw z32{down} .. z1;
+
    draw nine[TOP]
         .. nine[RIGHT]
         .. nine[BOTTOM]
@@ -720,7 +707,7 @@ beginfig(900);
 endfig;
 
 %
-% Neun -> Null (1/2)
+% Neun -> Null
 %
 for i = 901 upto 930:
     beginfig(i);
@@ -728,22 +715,35 @@ for i = 901 upto 930:
        pickup pc;
        f := (i-900)/30;
        m := decel(f);
-       q := -4*f*f+4f+1; % Scheitel bei (0.5,2), f(0)=f(1)=1
+
+       % Der Bogen der Neun soll beim Aufwickeln ein bisschen nach links gestreckt werden:
+
+       q := -2*m*m+2m+1; % durchläuft 1 .. 3/2 .. 1 für x = 0 .. 0.5 .. 1;
+       aux2 := m[nine[END],nine[LEFT]] xscaled q;
+
+       % wir legen einen Hilfspunkt dort an, wo der untere Bogen die y-Achse schneidet.
+       % steigt der y-Wert des Hilfspunktes über die Unterkante der geschlossenen
+       % Schleife, wird als y-Koordinate die Unterkante der Schleife gewählt, um zu
+       % verhindert, dass der Bogen beim "Aufwickeln" ins Innere der geschlossenen Schleife
+       % ragt.
        
-       z23 = (-0.375u,0.425u);
-       z32 = (0.375u,0.425u);
-       z1 = ((-0.25-0.125q)*u,(-0.75+1.175m)*u);
-       z2 = (0,0.85u);
-       z3 = (0,0);
-       
-       draw z2 .. z23 .. z3 .. z32  .. cycle;
-       draw z32{down} .. if i > 925 : z3 .. fi z1;
+       tmppath := nine[RIGHT]{down} .. aux2;
+       aux0 := ((0,-infinity)--(0,infinity)) intersectionpoint tmppath;
+       tmp0 := ypart(aux0);
+       tmp1 := ypart(nine[BOTTOM]);
+       aux1 := (0,min(tmp0,tmp1));
+
+       draw nine[TOP]
+            .. nine[RIGHT]
+            .. nine[BOTTOM]
+            .. nine[LEFT]
+            .. cycle;
+       draw nine[RIGHT]{down}
+            .. aux1
+            .. aux2;
     endfig;
 endfor
 
-%
-% Neun -> Null (2/2)
-%
 for i = 931 upto 959:
     beginfig(i);
        draw_grid(u);
@@ -751,12 +751,11 @@ for i = 931 upto 959:
        f := (i-930)/30;
        m := accel(f);
        
-       z32 = ((0.375-0.125m)*u,0.425u);
-       z23 = ((-0.375+0.125m)*u,0.425u);
-       z2 = (0,0.85u);
-       z3 = (0,0);
-       
-       draw z2 .. z23 .. z3 .. z32  .. cycle;
+       draw zero[TOP]
+            .. m[nine[RIGHT],zero[RIGHT]]
+            .. zero[BOTTOM]
+            .. m[nine[LEFT],zero[LEFT]]
+            .. cycle;
     endfig;
 endfor
 
