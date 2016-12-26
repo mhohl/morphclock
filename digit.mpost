@@ -29,18 +29,18 @@ pair aux[];
 numeric LEFT, RIGHT, TOP, BOTTOM;
 numeric BEGIN, END, JOINT, MID;
 numeric L_ARC, R_ARC, U_ARC, D_ARC;
-LEFT = 100;
-RIGHT = 101;
-TOP = 102;
-BOTTOM = 103;
-BEGIN = 104;
-END = 105;
-JOINT = 106;
-MID = 107;
-L_ARC = 108;
-R_ARC = 109;
-U_ARC = 110; % upper arc or upper part of arc
-D_ARC = 111;
+LEFT   = 1000;
+RIGHT  = 1001;
+TOP    = 1002;
+BOTTOM = 1003;
+BEGIN  = 1004;
+END    = 1005;
+JOINT  = 1006;
+MID    = 1007;
+L_ARC  = 1008;
+R_ARC  = 1009;
+U_ARC  = 1010; % upper arc or upper part of arc
+D_ARC  = 1011;
 
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
@@ -269,7 +269,7 @@ for i = 301 upto 330:
        
        f := (i-300)/30;
        m := f;
-       t := 15*f*f; if t < 1: t := 1 fi;
+       t := max(15f*f,1);
 
        % Der "Austrittswinkel" des unteren Bogens an der "Spitze"
        % wird ermittelt und wandert langsam gegen 0.
@@ -295,7 +295,7 @@ for i = 331 upto 359:
        
        f := (i-330)/30;
        m := f;
-       t := 15*f*f*f; if t < 1: t := 1 fi;
+       t := max(15*f*f*f,1);
 
        draw four[LEFT]
             -- four[TOP]
@@ -351,8 +351,8 @@ for i = 431 upto 459:
        draw_grid(u);
        pickup pc;
        f := (i-430)/30;
-       t := 5-5*f; if t < 1: t := 1 fi;
        m := accel(f);
+       t := max(5(1-m),1);
 
        draw five[BEGIN]
             -- m[four[TOP],five[LEFT]]
@@ -464,7 +464,7 @@ beginfig(600);
 endfig;
 
 %
-% Sechs -> Sieben (1/2)
+% Sechs -> Sieben
 %
 
 seven[BEGIN] = (-0.3u,0.75u);
@@ -473,52 +473,51 @@ seven[JOINT] = seven[LEFT] xscaled -1;
 seven[MID]   = (0.1u,0.15u);
 seven[END]   = (0,-0.75u);
 
+seven[TOP]   =(1/2)[seven[LEFT],seven[JOINT]]; % Hilfspunkt
+
 for i = 601 upto 630:
     beginfig(i);
        draw_grid(u);
        pickup pc;
        f := (i-600)/30;
        m := f;
-       q := 3*m*m-3*m+1;
-         % Parabelabschnitt y = 1 .. 1/4 .. 1 für x = 0 .. 0.5 .. 1;
+       q := 2*m*m-2*m+1; % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
        phi := 180m;
+
+       aux[MID]   := z13 = six[LEFT] rotatedaround (C,phi);
+       aux[END]   := (six[BEGIN] yscaled q) rotatedaround (C,phi);
+       aux[TOP]   := z32 = six[RIGHT] rotatedaround (C,phi/2);
+       aux[LEFT]  := z2 = six[TOP] rotatedaround (C,phi/4);
+       aux[JOINT] := z3 = six[BOTTOM] rotatedaround (C,3phi/4);
+       aux[BEGIN] := z23 = six[LEFT] shifted (0.125m*u,0.075m*u);
        
-       z13 = (-0.375u,0.425u) rotatedaround (C,phi); % war z23
-       z1 = (0.25u,(1q + 0.5)*u) rotatedaround (C,phi);
-       z32 = (0.375u,0.425u) rotatedaround (C,phi/2);
-       z2 = (0,0.85u) rotatedaround (C,phi/4);
-       z3 = (0,(0+0.0m)*u) rotatedaround (C,3phi/4);
-       z23 = ((-0.375+0.125m)*u,(0.425+0.075m)*u);
-       % Nach der Rotation gilt:
-       % z1'=(-0.25u,-0.65u);
-       % z13'=(0.375u,0.425u);
-       % z32'=(0,0.8u);
-       % z2'=(-0.3,0.725); weil 0.425/sqrt(2)=0.30!
-       % z3'=(0.3,0.725);
-       
-       draw z1 .. z13{dir (phi-90)} .. z3 ... z32  ... z2 ... z23; 
+       draw aux[BEGIN]
+            ... aux[LEFT]
+            ... aux[TOP]
+            ... aux[JOINT]
+            .. aux[MID]{dir (phi+90)}
+            .. aux[END]
     endfig;
 endfor
 
-%
-% Sechs -> Sieben (2/2)
-%
 for i = 631 upto 659:
     beginfig(i);
        draw_grid(u);
        pickup pc;
        f := (i-630)/30;
-       t := 30 * f * f; if t < 1: t :=1 fi;
-              
-       z1 = (0.3u,(0.725+0.125f)*u); % war z3
-       z21 = ((0.375-0.275f)*u,(0.425-0.275f)*u); % war z13
-       z2 = ((-0.25+0.25f)*u,(-0.65-0.1f)*u); % war z1
-       z13 = (-0.3u,(0.725+0.125f)*u); % war z2
-       z3 = ((-0.25-0.05f)*u,(0.5+0.25f)*u); % war z23
-       z32= (0,(0.8+0.05f)*u); % liegt dann genau zwischen neu z1 und z13 und fällt dann weg
+       m := f;
+       t := max(30m*m,1);
        
-       % Der Tangentenwinkel an z1↓ beträgt näherungsweise 135° und soll auf 90°=up verkürzt werden
-       draw z2 .. z21 .. z1{dir (135-45f)} .. tension t .. z32{dir 180} .. tension t .. z13 .. tension t .. z3;
+       % Der Tangentenwinkel an JOINT beträgt näherungsweise -45° und soll zu -90°=down wandern
+       % TODO: korrekt berechnen!
+       phi := -45-45m;
+       
+       draw m[aux[BEGIN],seven[BEGIN]]
+            .. tension t .. m[aux[LEFT],seven[LEFT]]
+            .. tension t .. m[aux[TOP],seven[TOP]]{right}
+            .. tension t .. m[aux[JOINT],seven[JOINT]]{dir phi}
+            .. m[aux[MID],seven[MID]]
+            .. m[aux[END],seven[END]] 
     endfig;
 endfor
 
@@ -575,7 +574,7 @@ for i = 731 upto 759:
        f := (i-730)/30;
        m := decel( f);
        t := 1/f; 
-       tt := t/2; if tt < 1: tt := 1 fi;
+       tt := max(t/2,1);
      
        draw m[seven[END],eight[RIGHT]]
             .. m[seven[MID],eight[LEFT]]
