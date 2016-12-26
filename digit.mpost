@@ -16,7 +16,7 @@ numeric t;   % [t]ension
 numeric phi; % rotation angle [phi]
 numeric u;   % [u]nit
 u := 5cm;
-numeric q;   % [q]adratic,"[q]ubic", or [q]artic factor
+numeric q;   % [q]adratic factor
 pair C;      % [C]enter of rotation
 C := (0,0.425u);
 pen pc;      % [p]en[c]ircle
@@ -25,7 +25,7 @@ path tmppath;
 numeric tmp[];
 pair aux[];
 
-% symbolic variables
+% symbolische Variablen
 numeric LEFT, RIGHT, TOP, BOTTOM;
 numeric BEGIN, END, JOINT, MID;
 numeric L_ARC, R_ARC, U_ARC, D_ARC;
@@ -48,7 +48,8 @@ pair five[], six[], seven[], eight[], nine[];
 %
 % TODO:
 %
-% * Geschwindigkeit der Übergänge: langsam von der Ziffer weg, schnell zur nächsten hin
+% * Geschwindigkeit der Übergänge: langsam von der Ziffer weg,
+%   schnell zur nächsten hin
 %   (eventuell nicht immer bei n30/n31?)
 
 
@@ -99,7 +100,7 @@ for i = 001 upto 029:
        pickup pc;
        f := i/30;
        m := f;
-       
+
        draw zero[TOP]
             ... (m/2)[zero[RIGHT],zero[LEFT]]
             ... zero[BOTTOM]
@@ -159,14 +160,14 @@ for i = 131 upto 159:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       
+
        f := (i-130)/30;
        m := f; %accel(f);
        t := 1/sqrt(sqrt(m)); % zur Vermeidung einer Spitze im Scheitel der 2
-       
+
        aux[MID] := (1/2)[two[BEGIN],two[R_ARC]];
        aux[TOP] := m[aux[MID],two[TOP]];
-       
+
        draw two[BEGIN]
             .. tension  t .. aux[TOP]
             .. tension  t .. two[R_ARC]
@@ -182,7 +183,7 @@ endfor
 beginfig(200);
    draw_grid(u);
    pickup pc;
-   
+
    draw two[BEGIN]
         .. two[TOP]
         .. two[R_ARC]
@@ -203,7 +204,8 @@ three[END]   = three[D_ARC] xscaled -1;
 for i = 201 upto 230:
     beginfig(i);
        draw_grid(u);
-       pickup pc;         
+       pickup pc;
+
        f := (i-200)/30;
        m := decel(f);
        phi := -90m;
@@ -266,7 +268,7 @@ for i = 301 upto 330:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       
+
        f := (i-300)/30;
        m := f;
        t := max(15f*f,1);
@@ -275,10 +277,9 @@ for i = 301 upto 330:
        % wird ermittelt und wandert langsam gegen 0.
        tmppath := three[JOINT] .. three[D_ARC] .. three[END];
        aux0 := direction 0 of tmppath;
-
        phi := (1-m)*angle(aux0);
 
-       draw m[three[BEGIN],four[LEFT]] 
+       draw m[three[BEGIN],four[LEFT]]
             .. tension t .. m[three[TOP],four[TOP]]
             .. tension t .. m[three[U_ARC],four[MID]]
             .. tension t .. three[JOINT];
@@ -292,7 +293,7 @@ for i = 331 upto 359:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       
+
        f := (i-330)/30;
        m := f;
        t := max(15*f*f*f,1);
@@ -314,7 +315,7 @@ endfor
 beginfig(400);
    draw_grid(u);
    pickup pc;
-   
+
    draw four[RIGHT]
         -- four[LEFT]
         -- four[TOP]
@@ -330,7 +331,7 @@ five[JOINT] = four[LEFT];
 five[U_ARC] = (0,0.1u);
 five[R_ARC] = (0.3u,-0.425u);
 five[END]   = (-0.3u,-0.75u);
-   
+
 for i = 401 upto 430:
     beginfig(i);
        draw_grid(u);
@@ -362,7 +363,7 @@ for i = 431 upto 459:
             .. tension t .. if i>454: {left} fi m[four[BOTTOM],five[END]];
        %TODO: if-Anweisung durch Winkelberechnung glätten
     endfig;
-endfor    
+endfor
 
 %
 % Fünf
@@ -387,7 +388,7 @@ six[LEFT]   = zero[LEFT] xscaled 3/2;
 six[RIGHT]  = zero[RIGHT] xscaled 3/2;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
-   
+
 for i = 501 upto 530:
     beginfig(i);
        draw_grid(u);
@@ -397,9 +398,9 @@ for i = 501 upto 530:
 
        % die linke Ecke five[LEFT] wandert genauso schnell nach oben wie
        % five[BEGIN], aber die x-Koordinate bleibt unverändert:
-       
+
        aux[LEFT] := (xpart(five[LEFT]),ypart(m[five[BEGIN],six[BEGIN]]));
-       
+
        draw m[five[BEGIN],six[BEGIN]]
             -- aux[LEFT]
             -- m[five[JOINT],six[LEFT]];
@@ -419,20 +420,22 @@ for i = 531 upto 559:
     beginfig(i);
        draw_grid(u);
        pickup pc;
+
        f := (i-530)/30;
        t := 1/f;
        m := f;
-            
-       % wir ermitteln den Punkt, der auf 2/3 des gedachten Bogens liegt;
-       % aux1 wandert von der linken Ecke der verschobenen "5" zum Zielpunkt.
+
+       % wir ermitteln den Punkt, der auf 2/3 des abschließenden Bogens liegt;
+       % aux[MID] wandert von der linken Ecke der nach oben geschobenen "5"
+       % zum Zielpunkt.
        % Weil er dann auf dem Bogen liegt, kann er bei der "6" einfach
        % weggelassen weden.
-       
+
        tmppath := six[LEFT]{up} .. six[BEGIN];
        aux[END] := point 2/3 of tmppath;
        aux[BEGIN] := (xpart(six[LEFT]),ypart(six[BEGIN]));
        aux[MID] := m[aux[BEGIN],aux[END]];
-       
+
        draw six[LEFT]{up}
             .. tension t .. aux[MID]
             .. tension t .. six[BEGIN];
@@ -450,11 +453,7 @@ endfor
 beginfig(600);
    draw_grid(u);
    pickup pc;
-   
-   % der Abstand vom Zentrum zur Schwungspitze in y-Richtung
-   % ist bei der Sechs mit 1.5-0.425=1.075 geringer
-   % als bei der Neun: 0.425-(-0.75)=1.175
-   
+
    draw six[TOP]
         .. six[RIGHT]
         .. six[BOTTOM]
@@ -466,14 +465,13 @@ endfig;
 %
 % Sechs -> Sieben
 %
-
 seven[BEGIN] = (-0.3u,0.75u);
 seven[LEFT]  = (-0.3u,0.85u);
 seven[JOINT] = seven[LEFT] xscaled -1;
 seven[MID]   = (0.1u,0.15u);
 seven[END]   = (0,-0.75u);
-
-seven[TOP]   =(1/2)[seven[LEFT],seven[JOINT]]; % Hilfspunkt
+% Hilfspunkt:
+seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
 for i = 601 upto 630:
     beginfig(i);
@@ -481,16 +479,17 @@ for i = 601 upto 630:
        pickup pc;
        f := (i-600)/30;
        m := f;
-       q := 2*m*m-2*m+1; % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
+       q := 2m*m-2*m+1;
+         % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
        phi := 180m;
 
-       aux[MID]   := z13 = six[LEFT] rotatedaround (C,phi);
+       aux[MID]   := six[LEFT]   rotatedaround (C,phi);
        aux[END]   := (six[BEGIN] yscaled q) rotatedaround (C,phi);
-       aux[TOP]   := z32 = six[RIGHT] rotatedaround (C,phi/2);
-       aux[LEFT]  := z2 = six[TOP] rotatedaround (C,phi/4);
-       aux[JOINT] := z3 = six[BOTTOM] rotatedaround (C,3phi/4);
-       aux[BEGIN] := z23 = six[LEFT] shifted (0.125m*u,0.075m*u);
-       
+       aux[TOP]   := six[RIGHT]  rotatedaround (C,phi/2);
+       aux[LEFT]  := six[TOP]    rotatedaround (C,phi/4);
+       aux[JOINT] := six[BOTTOM] rotatedaround (C,3phi/4);
+       aux[BEGIN] := six[LEFT] shifted (0.125m*u,0.075m*u);
+
        draw aux[BEGIN]
             ... aux[LEFT]
             ... aux[TOP]
@@ -507,17 +506,18 @@ for i = 631 upto 659:
        f := (i-630)/30;
        m := f;
        t := max(30m*m,1);
-       
-       % Der Tangentenwinkel an JOINT beträgt näherungsweise -45° und soll zu -90°=down wandern
+
+       % Der Tangentenwinkel an JOINT beträgt
+       % näherungsweise -45° und soll zu -90°=down wandern
        % TODO: korrekt berechnen!
        phi := -45-45m;
-       
+
        draw m[aux[BEGIN],seven[BEGIN]]
             .. tension t .. m[aux[LEFT],seven[LEFT]]
             .. tension t .. m[aux[TOP],seven[TOP]]{right}
             .. tension t .. m[aux[JOINT],seven[JOINT]]{dir phi}
             .. m[aux[MID],seven[MID]]
-            .. m[aux[END],seven[END]] 
+            .. m[aux[END],seven[END]]
     endfig;
 endfor
 
@@ -527,7 +527,7 @@ endfor
 beginfig(700);
    draw_grid(u);
    pickup pc;
-   
+
    draw seven[BEGIN]
         -- seven[LEFT]
         -- seven[JOINT]{down}
@@ -546,22 +546,22 @@ eight[RIGHT]  = eight[LEFT] xscaled -1;
 eight[BOTTOM] = zero[BOTTOM];
 
 for i = 701 upto 730:
-    beginfig(i);  
+    beginfig(i);
        draw_grid(u);
        pickup pc;
        f := (i-700)/30;
        m := f;
-       
+
        tmppath := m[seven[BEGIN],seven[LEFT]]
                   -- seven[LEFT]
                   -- seven[JOINT]{down}
                   .. seven[MID]
                   .. seven[END];
-       
+
        aux[MID]   := ((-infinity,0)--(infinity,0)) intersectionpoint tmppath;
        aux[LEFT]  := aux[MID] - (0.15u,0);
        aux[RIGHT] := aux[MID] + (0.15u,0);
-       
+
        draw tmppath;
        draw m[aux[MID],aux[LEFT]] -- m[aux[MID],aux[RIGHT]];
     endfig;
@@ -573,9 +573,9 @@ for i = 731 upto 759:
        pickup pc;
        f := (i-730)/30;
        m := decel( f);
-       t := 1/f; 
+       t := 1/f;
        tt := max(t/2,1);
-     
+
        draw m[seven[END],eight[RIGHT]]
             .. m[seven[MID],eight[LEFT]]
             .. m[seven[JOINT],eight[R_ARC]]{up}
@@ -592,7 +592,7 @@ endfor
 beginfig(800);
    draw_grid(u);
    pickup pc;
-   
+
    draw eight[R_ARC]
         .. eight[MID]
         .. eight[LEFT]
@@ -619,18 +619,20 @@ for i = 801 upto 830:
        f := (i-800)/30;
        m := f;
        phi := -90m*m;
-       
-       % Die Acht kippt um 90° nach rechts, aus eight[MID] wird nine[RIGHT] etc.
-       % Um zu skalieren, drehen wir daher nine[RIGHT|LEFT|TOP|BOTTOM] um 90° nach links:
-       
+
+       % Die Acht kippt um 90° nach rechts,
+       % aus eight[MID] wird nine[RIGHT] etc.
+       % Um zu skalieren, drehen wir daher
+       % nine[RIGHT|LEFT|TOP|BOTTOM] um 90° nach links:
+
        aux[MID]    := nine[RIGHT]  rotatedabout (C,90);
        aux[BOTTOM] := nine[LEFT]   rotatedabout (C,90);
        aux[LEFT]   := nine[TOP]    rotatedabout (C,90);
        aux[RIGHT]  := nine[BOTTOM] rotatedabout (C,90);
-      
-       % Wir ändern die Punktreihenfolge, um bei i=830 eine geschlossene Schleife
-       % zu bekommen:
-    
+
+       % Wir ändern die Punktreihenfolge, um bei i=830
+       % eine geschlossene Schleife zu bekommen:
+
        tmppath := m[eight[LEFT],aux[LEFT]]
                   .. m[eight[BOTTOM],aux[BOTTOM]]
                   .. m[eight[RIGHT],aux[RIGHT]]
@@ -652,13 +654,13 @@ for i = 831 upto 859:
        pickup pc;
        f := (i-830)/30;
        m := accel(f);
-              
+
        % Der Endpunkt des Bogens wandert von nine[RIGHT] ausgehend am
        % tatsächlichen Bogen entlang:
-              
+
        tmppath := nine[RIGHT]{down} .. nine[END];
        aux[END] := point m of tmppath;
-       
+
        draw nine[TOP]
             .. nine[RIGHT]
             .. nine[BOTTOM]
@@ -667,7 +669,6 @@ for i = 831 upto 859:
        draw nine[RIGHT]{down} .. aux[END];
     endfig;
 endfor
-
 
 %
 % Neun
@@ -694,17 +695,19 @@ for i = 901 upto 930:
        f := (i-900)/30;
        m := decel(f);
 
-       % Der Bogen der Neun soll beim Aufwickeln ein bisschen nach links gestreckt werden:
+       % Der Bogen der Neun soll beim Aufwickeln ein bisschen
+       % nach links gestreckt werden:
 
-       q := -2*m*m+2m+1; % durchläuft 1 .. 3/2 .. 1 für x = 0 .. 0.5 .. 1;
+       q := -2m*m+2m+1; % durchläuft 1 .. 3/2 .. 1 für x = 0 .. 0.5 .. 1;
        aux[END] := m[nine[END],nine[LEFT]] xscaled q;
 
-       % wir legen einen Hilfspunkt dort an, wo der untere Bogen die y-Achse schneidet.
-       % steigt der y-Wert des Hilfspunktes über die Unterkante der geschlossenen
-       % Schleife, wird als y-Koordinate die Unterkante der Schleife gewählt, um zu
-       % verhindert, dass der Bogen beim "Aufwickeln" ins Innere der geschlossenen Schleife
+       % wir legen einen Hilfspunkt dort an, wo der untere Bogen die
+       % y-Achse schneidet. Steigt der y-Wert des Hilfspunktes über
+       % die Unterkante der geschlossenen Schleife, wird als y-Koordinate
+       % die Unterkante der Schleife gewählt, um zu verhindern, dass
+       % der Bogen beim "Aufwickeln" ins Innere der geschlossenen Schleife
        % ragt.
-       
+
        tmppath := nine[RIGHT]{down} .. aux[END];
        aux0 := ((0,-infinity)--(0,infinity)) intersectionpoint tmppath;
        tmp0 := ypart(aux0);
@@ -728,7 +731,7 @@ for i = 931 upto 959:
        pickup pc;
        f := (i-930)/30;
        m := accel(f);
-       
+
        draw zero[TOP]
             .. m[nine[RIGHT],zero[RIGHT]]
             .. zero[BOTTOM]
