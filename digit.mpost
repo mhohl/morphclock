@@ -1,14 +1,34 @@
 %
 % digits
 %
-% die Bilder werden in der Form digit.xnn erzeugt,
-% wobei x von 0 bis 9 läuft und nn von 00 bis 59.
+% die Bilder werden in der Form digit.ftnn erzeugt:
+% f = "from": Startziffer
+% t = "to":   Endziffer
+% nn : laufende Nummer
 %
-% von 01 bis 30 Veränderung der alten Form, von 31 bis 59
-% Veränderung zur neuen, bei 00 dann neue Form
+% Für die Anzeige der Uhrzeit sind folgende Übergänge notwendig:
 %
+% 0 -> 1: 01nn
+% 1 -> 2: 12nn
+% 2 -> 3: 23nn
+% ...
+% 9 -> 0: 90nn
+%
+% sowie zusätzlich:
+%
+% 1 -> 0: 10nn (Zehnerstelle Stunden: 12am -> 01pm)¹
+% 2 -> 0: 20nn (Zehnerstelle Stunden: 23:59 -> 00:00)
+% 2 -> 1  21nn (Einerstelle Stunden: 12am -> 01pm)²
+% 3 -> 0: 30nn (Einerstelle Stunden:  23:59 -> 00:00)
+% 5 -> 0: 50nn (Zehnerstelle Minuten: 10:59 -> 11:00)
+%
+% ¹/²: Übergänge 0 -> 1 und 1 -> 2 werden rückwärts angelegt, aber
+% ggf. ggü. der Ursprungsrichtung mit anderer Morphgeschwindigkeit
+% transformiert? 
 
 outputtemplate := "%j-%c.mps";
+
+warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
 numeric f;   % [f]rame index
 numeric m;   % [m]orph factor
@@ -37,10 +57,10 @@ BEGIN  = 1004;
 END    = 1005;
 JOINT  = 1006;
 MID    = 1007;
-L_ARC  = 1008;
-R_ARC  = 1009;
-U_ARC  = 1010; % upper arc or upper part of arc
-D_ARC  = 1011;
+L_ARC  = 1008; % [l]eft (part of) [arc]
+R_ARC  = 1009; % [r]ight (part of) [arc]
+U_ARC  = 1010; % [u]pright (part of) [arc]
+D_ARC  = 1011; % [d]ownright (part of) [arc]
 
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
@@ -51,6 +71,10 @@ pair five[], six[], seven[], eight[], nine[];
 % * Geschwindigkeit der Übergänge: langsam von der Ziffer weg,
 %   schnell zur nächsten hin
 %   (eventuell nicht immer bei n30/n31?)
+%
+% * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
+%
+% * Übergänge 1 -> 0, 2 -> 0, 2 -> 1, 3 -> 0, 5 -> 0
 
 
 def draw_grid(expr u) =
@@ -75,7 +99,7 @@ zero[BOTTOM] = (0,0);
 zero[LEFT]   = (-0.25u,0.425u);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
-beginfig(000);
+beginfig(0100);
    draw_grid(u);
    pickup pc;
 
@@ -93,12 +117,12 @@ one[BEGIN]  = (-0.25u,0.55u);
 one[TOP]    = zero[TOP];
 one[BOTTOM] = zero[BOTTOM];
 
-for i = 001 upto 029:
+for i = 0101 upto 0129:
     % 29 statt 30, um einen Glitch bei i=30 zu vermeiden
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := i/30;
+       f := (i-0100)/30;
        m := f;
 
        draw zero[TOP]
@@ -109,11 +133,11 @@ for i = 001 upto 029:
     endfig;
 endfor
 
-for i = 030 upto 059:
+for i = 0130 upto 0159:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-30)/30;
+       f := (i-0130)/30;
        m := decel(f);
 
        draw m[one[TOP],one[BEGIN]]
@@ -125,7 +149,7 @@ endfor
 %
 % Eins
 %
-beginfig(100);
+beginfig(1200);
    draw_grid(u);
    pickup pc;
 
@@ -143,11 +167,11 @@ two[R_ARC] = (0.225u,0.55u);
 two[JOINT] = (-0.25u,0);
 two[END]   = (0.25u,0);
 
-for i = 101 upto 130:
+for i = 1201 upto 1230:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-100)/30;
+       f := (i-1200)/30;
        m := decel(f);
 
        draw one[BEGIN]
@@ -156,12 +180,12 @@ for i = 101 upto 130:
     endfig;
 endfor
 
-for i = 131 upto 159:
+for i = 1231 upto 1259:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-130)/30;
+       f := (i-1230)/30;
        m := f; %accel(f);
        t := 1/sqrt(sqrt(m)); % zur Vermeidung einer Spitze im Scheitel der 2
 
@@ -180,7 +204,7 @@ endfor
 %
 % Zwei
 %
-beginfig(200);
+beginfig(2300);
    draw_grid(u);
    pickup pc;
 
@@ -201,12 +225,12 @@ three[JOINT] = (-0.15u,0);
 three[D_ARC] = (0.3u,-0.625u);
 three[END]   = three[D_ARC] xscaled -1;
 
-for i = 201 upto 230:
+for i = 2301 upto 2330:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-200)/30;
+       f := (i-2300)/30;
        m := decel(f);
        phi := -90m;
 
@@ -219,11 +243,11 @@ for i = 201 upto 230:
     endfig;
 endfor
 
-for i = 231 upto 259:
+for i = 2331 upto 2359:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-230)/30;
+       f := (i-2330)/30;
        m := decel(f);
        t := 1/m;
 
@@ -242,7 +266,7 @@ endfor
 %
 % Drei
 %
-beginfig(300);
+beginfig(3400);
    draw_grid(u);
    pickup pc;
 
@@ -264,12 +288,12 @@ four[MID]    = four[LEFT] xscaled -1;
 four[BOTTOM] = (0.25u,-0.75u);
 four[RIGHT]  = (0.4u,0);
 
-for i = 301 upto 330:
+for i = 3401 upto 3430:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-300)/30;
+       f := (i-3400)/30;
        m := f;
        t := max(15f*f,1);
 
@@ -289,12 +313,12 @@ for i = 301 upto 330:
     endfig;
 endfor
 
-for i = 331 upto 359:
+for i = 3431 upto 3459:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-330)/30;
+       f := (i-3430)/30;
        m := f;
        t := max(15*f*f*f,1);
 
@@ -312,7 +336,7 @@ endfor
 %
 % Vier
 %
-beginfig(400);
+beginfig(4500);
    draw_grid(u);
    pickup pc;
 
@@ -332,11 +356,11 @@ five[U_ARC] = (0,0.1u);
 five[R_ARC] = (0.3u,-0.425u);
 five[END]   = (-0.3u,-0.75u);
 
-for i = 401 upto 430:
+for i = 4501 upto 4530:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-400)/30;
+       f := (i-4500)/30;
        m := f;
 
        draw four[TOP]
@@ -347,11 +371,11 @@ for i = 401 upto 430:
     endfig;
 endfor
 
-for i = 431 upto 459:
+for i = 4531 upto 4559:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-430)/30;
+       f := (i-4530)/30;
        m := accel(f);
        t := max(5(1-m),1);
 
@@ -360,7 +384,7 @@ for i = 431 upto 459:
             -- five[JOINT]
             .. tension t .. m[four[MID],five[U_ARC]]
             .. tension 1 .. m[four[MID],five[R_ARC]]
-            .. tension t .. if i>454: {left} fi m[four[BOTTOM],five[END]];
+            .. tension t .. if i>4554: {left} fi m[four[BOTTOM],five[END]];
        %TODO: if-Anweisung durch Winkelberechnung glätten
     endfig;
 endfor
@@ -368,7 +392,7 @@ endfor
 %
 % Fünf
 %
-beginfig(500);
+beginfig(5600);
    draw_grid(u);
    pickup pc;
 
@@ -389,11 +413,11 @@ six[RIGHT]  = zero[RIGHT] xscaled 3/2;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
 
-for i = 501 upto 530:
+for i = 5601 upto 5630:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-500)/30;
+       f := (i-5600)/30;
        m := f;
 
        % die linke Ecke five[LEFT] wandert genauso schnell nach oben wie
@@ -408,7 +432,7 @@ for i = 501 upto 530:
             .. m[five[U_ARC],six[TOP]]
             .. m[five[R_ARC],six[RIGHT]]
             .. {left}m[five[END],six[BOTTOM]]
-            .. if i < 530:
+            .. if i < 5630:
                   m[five[END],six[LEFT]]
                else:
                   cycle
@@ -416,12 +440,12 @@ for i = 501 upto 530:
     endfig;
 endfor
 
-for i = 531 upto 559:
+for i = 5631 upto 5659:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-530)/30;
+       f := (i-5630)/30;
        t := 1/f;
        m := f;
 
@@ -450,7 +474,7 @@ endfor
 %
 % Sechs
 %
-beginfig(600);
+beginfig(6700);
    draw_grid(u);
    pickup pc;
 
@@ -473,11 +497,11 @@ seven[END]   = (0,-0.75u);
 % Hilfspunkt:
 seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
-for i = 601 upto 630:
+for i = 6701 upto 6730:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-600)/30;
+       f := (i-6700)/30;
        m := f;
        q := 2m*m-2*m+1;
          % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
@@ -499,18 +523,18 @@ for i = 601 upto 630:
     endfig;
 endfor
 
-for i = 631 upto 659:
+for i = 6731 upto 6759:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-630)/30;
+       f := (i-6730)/30;
        m := f;
        t := max(30m*m,1);
 
        % Der Tangentenwinkel an JOINT beträgt
        % näherungsweise -45° und soll zu -90°=down wandern
        % TODO: korrekt berechnen!
-       phi := -45-45m;
+       phi := -45(m+1);
 
        draw m[aux[BEGIN],seven[BEGIN]]
             .. tension t .. m[aux[LEFT],seven[LEFT]]
@@ -524,7 +548,7 @@ endfor
 %
 % Sieben
 %
-beginfig(700);
+beginfig(7800);
    draw_grid(u);
    pickup pc;
 
@@ -545,11 +569,11 @@ eight[LEFT]   = (-0.4u,0.35u);
 eight[RIGHT]  = eight[LEFT] xscaled -1;
 eight[BOTTOM] = zero[BOTTOM];
 
-for i = 701 upto 730:
+for i = 7801 upto 7830:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-700)/30;
+       f := (i-7800)/30;
        m := f;
 
        tmppath := m[seven[BEGIN],seven[LEFT]]
@@ -567,11 +591,11 @@ for i = 701 upto 730:
     endfig;
 endfor
 
-for i = 731 upto 759:
+for i = 7831 upto 7859:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-730)/30;
+       f := (i-7830)/30;
        m := decel( f);
        t := 1/f;
        tt := max(t/2,1);
@@ -589,7 +613,7 @@ endfor
 %
 % Acht
 %
-beginfig(800);
+beginfig(8900);
    draw_grid(u);
    pickup pc;
 
@@ -612,11 +636,11 @@ nine[RIGHT]  = six[RIGHT];
 nine[BOTTOM] = six[BOTTOM];
 nine[END]    = (-0.25u,-0.75u);
 
-for i = 801 upto 830:
+for i = 8901 upto 8930:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-800)/30;
+       f := (i-8900)/30;
        m := f;
        phi := -90m*m;
 
@@ -637,7 +661,7 @@ for i = 801 upto 830:
                   .. m[eight[BOTTOM],aux[BOTTOM]]
                   .. m[eight[RIGHT],aux[RIGHT]]
                   .. m[eight[MID],aux[MID]]
-                  if i < 830:
+                  if i < 8930:
                      .. m[eight[L_ARC],aux[MID]]
                      .. m[eight[R_ARC],aux[MID]]
                      .. m[eight[MID],aux[MID]]
@@ -648,11 +672,11 @@ for i = 801 upto 830:
     endfig;
 endfor
 
-for i = 831 upto 859:
+for i = 8931 upto 8959:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-830)/30;
+       f := (i-8930)/30;
        m := accel(f);
 
        % Der Endpunkt des Bogens wandert von nine[RIGHT] ausgehend am
@@ -673,7 +697,7 @@ endfor
 %
 % Neun
 %
-beginfig(900);
+beginfig(9000);
    draw_grid(u);
    pickup pc;
 
@@ -688,11 +712,11 @@ endfig;
 %
 % Neun -> Null
 %
-for i = 901 upto 930:
+for i = 9001 upto 9030:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-900)/30;
+       f := (i-9000)/30;
        m := decel(f);
 
        % Der Bogen der Neun soll beim Aufwickeln ein bisschen
@@ -725,11 +749,11 @@ for i = 901 upto 930:
     endfig;
 endfor
 
-for i = 931 upto 959:
+for i = 9031 upto 9059:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-930)/30;
+       f := (i-9030)/30;
        m := accel(f);
 
        draw zero[TOP]
