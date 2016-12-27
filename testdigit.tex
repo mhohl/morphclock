@@ -3,7 +3,7 @@
 \usepackage[margin=1cm]{geometry}
 \usepackage{graphicx}
 \usepackage{pgffor}
-\begin{document}
+\begin{document}\pagestyle{empty}
 \section{Ziffern 0 bis 9}
 \newlength\digitwidth
 \digitwidth=2.5cm
@@ -97,6 +97,46 @@
    \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
 }
 \hspace*{-1ex}
+\newpage
 
+\section{Übergang 1 … 0 }
+
+\foreach \n in {1000,...,1099}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+
+\newpage
+
+\section{Übergang 2 … 1 }
+
+\foreach \n in {2100,...,2199}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 2 … 0 }
+
+\foreach \n in {2000,...,2099}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 3 … 0 }
+
+\foreach \n in {3000,...,3099}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang 5 … 0 }
+
+\foreach \n in {5000,...,5099}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
 \end{document}
 

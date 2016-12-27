@@ -45,6 +45,8 @@ path tmppath;
 numeric tmp[];
 pair aux[];
 
+picture tmppic; % [t]e[mp]orary [pic]ture
+
 % symbolische Variablen
 numeric LEFT, RIGHT, TOP, BOTTOM;
 numeric BEGIN, END, JOINT, MID;
@@ -402,6 +404,11 @@ beginfig(5600);
         .. five[U_ARC]
         .. five[R_ARC]
         .. {left}five[END];
+   tmppic := currentpicture;
+endfig;
+
+beginfig(5000);
+   draw tmppic;
 endfig;
 
 %
@@ -764,4 +771,77 @@ for i = 9031 upto 9059:
     endfig;
 endfor
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Spezielle Übergänge:
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Fünf
+%
+beginfig(5600);
+   draw_grid(u);
+   pickup pc;
+
+   draw five[BEGIN]
+        -- five[LEFT]
+        -- five[JOINT]
+        .. five[U_ARC]
+        .. five[R_ARC]
+        .. {left}five[END];
+endfig;
+
+%
+% Fünf -> Null
+%
+
+for i = 5001 upto 5030:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-5000)/30;
+       m := f;
+       
+       tmppath := m[five[JOINT],zero[LEFT]]
+                  .. m[five[U_ARC],zero[TOP]]
+                  .. m[five[R_ARC],zero[RIGHT]]
+                  .. {left}m[five[END],zero[BOTTOM]]
+                  .. m[five[END],zero[LEFT]]{up};
+       
+       aux0 := direction 0 of tmppath;
+       phi := min(angle(aux0),90);
+
+       draw m[five[BEGIN],five[LEFT]]
+            -- five[LEFT]
+            -- m[five[JOINT],zero[LEFT]];
+       draw m[five[JOINT],zero[LEFT]]{dir phi}
+            .. m[five[U_ARC],zero[TOP]]
+            .. m[five[R_ARC],zero[RIGHT]]
+            .. {left}m[five[END],zero[BOTTOM]]
+            .. if i < 5630:
+                  m[five[END],zero[LEFT]]{up}
+               else:
+                  cycle
+               fi;
+    endfig;
+endfor
+
+for i = 5031 upto 5059:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-5030)/30;
+       t := 1/f;
+       m := f;
+
+       draw zero[LEFT] -- m[five[LEFT],zero[LEFT]];
+       draw zero[TOP]
+            .. zero[RIGHT]
+            .. zero[BOTTOM]
+            .. zero[LEFT]
+            .. cycle;
+    endfig;
+endfor
 end;
