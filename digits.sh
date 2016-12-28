@@ -6,7 +6,7 @@ from=${1-0}
 to=${2-9999}
 mpost digit.mpost
 
-lualatex testdigit.tex #> /dev/null
+lualatex testdigit.tex > /dev/null
 
 for (( i = from; i <= to; i++ )); do
    picfile="0000$i"

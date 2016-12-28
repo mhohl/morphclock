@@ -30,18 +30,18 @@ outputtemplate := "%j-%c.mps";
 
 warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
-numeric f;   % [f]rame index
-numeric m;   % [m]orph factor
-numeric t;   % [t]ension
-numeric phi; % rotation angle [phi]
-numeric u;   % [u]nit
+numeric f;     % [f]rame index
+numeric m;     % [m]orph factor
+numeric t;     % [t]ension
+numeric phi[]; % rotation angle [phi1]
+numeric u;     % [u]nit
 u := 5cm;
-numeric q;   % [q]adratic factor
-pair C;      % [C]enter of rotation
+numeric q;     % [q]adratic factor
+pair C;        % [C]enter of rotation
 C := (0,0.425u);
-pen pc;      % [p]en[c]ircle
+pen pc;        % [p]en[c]ircle
 pc := pencircle scaled 0.1u;
-path tmppath;
+path tmppath;  % [t]e[mp]orary [path];
 numeric tmp[];
 pair aux[];
 
@@ -215,6 +215,11 @@ beginfig(2300);
         .. two[R_ARC]
         .. tension 2 .. two[JOINT];
    draw two[JOINT] -- two[END];
+   tmppic := currentpicture;
+endfig;
+
+beginfig(2000);
+   draw tmppic;
 endfig;
 
 %
@@ -234,14 +239,14 @@ for i = 2301 upto 2330:
 
        f := (i-2300)/30;
        m := decel(f);
-       phi := -90m;
+       phi1 := -90m;
 
        draw two[BEGIN]
             .. two[TOP]
             .. two[R_ARC]
             .. tension 2 .. two[JOINT];
        draw two[JOINT]
-            -- two[END] rotatedaround (two[JOINT],phi);
+            -- two[END] rotatedaround (two[JOINT],phi1);
     endfig;
 endfor
 
@@ -303,13 +308,13 @@ for i = 3401 upto 3430:
        % wird ermittelt und wandert langsam gegen 0.
        tmppath := three[JOINT] .. three[D_ARC] .. three[END];
        aux0 := direction 0 of tmppath;
-       phi := (1-m)*angle(aux0);
+       phi1 := (1-m)*angle(aux0);
 
        draw m[three[BEGIN],four[LEFT]]
             .. tension t .. m[three[TOP],four[TOP]]
             .. tension t .. m[three[U_ARC],four[MID]]
             .. tension t .. three[JOINT];
-       draw three[JOINT]{dir phi}
+       draw three[JOINT]{dir phi1}
             .. three[D_ARC]
             .. three[END];
     endfig;
@@ -512,20 +517,20 @@ for i = 6701 upto 6730:
        m := f;
        q := 2m*m-2*m+1;
          % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
-       phi := 180m;
+       phi1 := 180m;
 
-       aux[MID]   := six[LEFT]   rotatedaround (C,phi);
-       aux[END]   := (six[BEGIN] yscaled q) rotatedaround (C,phi);
-       aux[TOP]   := six[RIGHT]  rotatedaround (C,phi/2);
-       aux[LEFT]  := six[TOP]    rotatedaround (C,phi/4);
-       aux[JOINT] := six[BOTTOM] rotatedaround (C,3phi/4);
+       aux[MID]   := six[LEFT]   rotatedaround (C,phi1);
+       aux[END]   := (six[BEGIN] yscaled q) rotatedaround (C,phi1);
+       aux[TOP]   := six[RIGHT]  rotatedaround (C,phi1/2);
+       aux[LEFT]  := six[TOP]    rotatedaround (C,phi1/4);
+       aux[JOINT] := six[BOTTOM] rotatedaround (C,3phi1/4);
        aux[BEGIN] := six[LEFT] shifted (0.125m*u,0.075m*u);
 
        draw aux[BEGIN]
             ... aux[LEFT]
             ... aux[TOP]
             ... aux[JOINT]
-            .. aux[MID]{dir (phi+90)}
+            .. aux[MID]{dir (phi1+90)}
             .. aux[END]
     endfig;
 endfor
@@ -541,12 +546,12 @@ for i = 6731 upto 6759:
        % Der Tangentenwinkel an JOINT beträgt
        % näherungsweise -45° und soll zu -90°=down wandern
        % TODO: korrekt berechnen!
-       phi := -45(m+1);
+       phi1 := -45(m+1);
 
        draw m[aux[BEGIN],seven[BEGIN]]
             .. tension t .. m[aux[LEFT],seven[LEFT]]
             .. tension t .. m[aux[TOP],seven[TOP]]{right}
-            .. tension t .. m[aux[JOINT],seven[JOINT]]{dir phi}
+            .. tension t .. m[aux[JOINT],seven[JOINT]]{dir phi1}
             .. m[aux[MID],seven[MID]]
             .. m[aux[END],seven[END]]
     endfig;
@@ -649,7 +654,7 @@ for i = 8901 upto 8930:
        pickup pc;
        f := (i-8900)/30;
        m := f;
-       phi := -90m*m;
+       phi1 := -90m*m;
 
        % Die Acht kippt um 90° nach rechts,
        % aus eight[MID] wird nine[RIGHT] etc.
@@ -675,7 +680,7 @@ for i = 8901 upto 8930:
                   fi
                   .. cycle;
 
-       draw tmppath rotatedabout (C,phi);
+       draw tmppath rotatedabout (C,phi1);
     endfig;
 endfor
 
@@ -778,24 +783,63 @@ endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %
-% Fünf
+% Zwei -> Null
 %
-beginfig(5600);
-   draw_grid(u);
-   pickup pc;
+for i = 2001 upto 2030:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-2000)/30;
+       m := f;
+       t := 2-m;
+       
+       tmppath := two[BEGIN] .. two[TOP] .. two[R_ARC];
+       aux0 := direction 0 of tmppath;
+       phi1 := m[angle(aux0),90];
+       
+       draw m[two[BEGIN],zero[LEFT]]{dir phi1}
+        .. m[two[TOP],zero[TOP]]
+        .. m[two[R_ARC],zero[RIGHT]]
+        .. tension t .. m[two[JOINT],zero[BOTTOM]];
+       draw two[JOINT] -- two[END];
+    endfig;
+endfor
 
-   draw five[BEGIN]
-        -- five[LEFT]
-        -- five[JOINT]
-        .. five[U_ARC]
-        .. five[R_ARC]
-        .. {left}five[END];
-endfig;
+% Ursprünglicher Winkel bei zero[BOTTOM] ist nicht
+% von einem Parameter abhängig:
+tmppath := zero[LEFT]{up}
+                  .. zero[TOP]
+                  .. zero[RIGHT]
+                  .. zero[BOTTOM];
+aux3 := direction 3 of tmppath;
+
+for i = 2031 upto 2059:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-2030)/30;
+       m := f;
+       t := 2-m;
+       
+       phi1 := m[angle(aux3),-180]; 
+       
+       tmppath := zero[BOTTOM]{left} .. m[two[JOINT],zero[LEFT]];
+       aux1 := direction 1 of tmppath;
+       phi2 := max(angle(aux1),90);
+       
+       draw zero[LEFT]{up}
+            .. zero[TOP]
+            .. zero[RIGHT]
+            .. zero[BOTTOM]{dir phi1};
+       draw m[two[END],zero[BOTTOM]]
+            -- zero[BOTTOM]{left}
+            .. m[two[JOINT],zero[LEFT]]{dir phi2};
+    endfig;
+endfor
 
 %
 % Fünf -> Null
 %
-
 for i = 5001 upto 5030:
     beginfig(i);
        draw_grid(u);
@@ -810,12 +854,12 @@ for i = 5001 upto 5030:
                   .. m[five[END],zero[LEFT]]{up};
        
        aux0 := direction 0 of tmppath;
-       phi := min(angle(aux0),90);
+       phi1 := min(angle(aux0),90);
 
        draw m[five[BEGIN],five[LEFT]]
             -- five[LEFT]
             -- m[five[JOINT],zero[LEFT]];
-       draw m[five[JOINT],zero[LEFT]]{dir phi}
+       draw m[five[JOINT],zero[LEFT]]{dir phi1}
             .. m[five[U_ARC],zero[TOP]]
             .. m[five[R_ARC],zero[RIGHT]]
             .. {left}m[five[END],zero[BOTTOM]]
