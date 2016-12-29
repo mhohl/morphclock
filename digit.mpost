@@ -76,7 +76,7 @@ pair five[], six[], seven[], eight[], nine[];
 %
 % * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
 %
-% * Übergänge 1 -> 0, 2 -> 0, 2 -> 1, 3 -> 0, 5 -> 0
+% * Übergänge 1 -> 0, 2 -> 1
 
 
 def draw_grid(expr u) =
@@ -284,6 +284,11 @@ beginfig(3400);
    draw three[JOINT]
         .. three[D_ARC]
         .. three[END];
+   tmppic := currentpicture;
+endfig;
+
+beginfig(3000);
+   draw tmppic;
 endfig;
 
 %
@@ -819,7 +824,6 @@ for i = 2031 upto 2059:
        pickup pc;
        f := (i-2030)/30;
        m := f;
-       t := 2-m;
        
        phi1 := m[angle(aux3),-180]; 
        
@@ -834,6 +838,64 @@ for i = 2031 upto 2059:
        draw m[two[END],zero[BOTTOM]]
             -- zero[BOTTOM]{left}
             .. m[two[JOINT],zero[LEFT]]{dir phi2};
+    endfig;
+endfor
+
+%
+% Drei -> Null
+%
+for i = 3001 upto 3030:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-3000)/30;
+       m := f;
+       
+       % Übergang oberer Bogen Drei zur Dreiviertel-Null
+       tmppath := three[BEGIN]
+                  .. three[TOP]
+                  .. three[U_ARC]
+                  .. three[JOINT];
+       aux0 := direction 0 of tmppath;
+       phi1 := m[angle(aux0),90];
+       aux3 := direction 3 of tmppath;
+       phi2 := m[angle(aux3),-180];
+       
+       % Der untere Bogen soll zu einem senkrecht nach unten geklappten
+       % Viertelsegment der Null werden:
+
+       tmppath := zero[BOTTOM]{left} .. zero[LEFT]{up};
+       phi0 := 270-angle(zero[LEFT]-zero[BOTTOM]);
+       
+       aux[JOINT] := m[three[JOINT],zero[BOTTOM]];
+       aux[D_ARC] := (point 0.5 of tmppath) rotatedabout (zero[BOTTOM],phi0); 
+       aux[END]   := zero[LEFT] rotatedabout(zero[BOTTOM],phi0);
+
+       draw m[three[BEGIN],zero[LEFT]]{dir phi1}
+            .. m[three[TOP],zero[TOP]]
+            .. m[three[U_ARC],zero[RIGHT]]
+            .. aux[JOINT]{dir phi2};
+       draw aux[JOINT]
+            .. m[three[D_ARC],aux[D_ARC]]
+            .. m[three[END],aux[END]];
+    endfig;
+endfor
+
+for i = 3031 upto 3059:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-3030)/30;
+       m := f;
+       
+       phi1 := (1-m)*phi0;
+       
+       draw zero[LEFT]{up}
+            .. zero[TOP]
+            .. zero[RIGHT]
+            .. zero[BOTTOM]{left};
+       % Der Viertelbogen klappt nach oben:
+       draw tmppath rotatedaround (zero[BOTTOM],phi1);
     endfig;
 endfor
 
