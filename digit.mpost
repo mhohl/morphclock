@@ -41,9 +41,9 @@ pair C;        % [C]enter of rotation
 C := (0,0.425u);
 pen pc;        % [p]en[c]ircle
 pc := pencircle scaled 0.1u;
-path tmppath;  % [t]e[mp]orary [path];
-numeric tmp[];
-pair aux[];
+path tmppath;  % [t]e[mp]orary [path]
+numeric tmp[]; % [t]e[mp]orary variable
+pair aux[];    % [aux]iliary points;
 
 picture tmppic; % [t]e[mp]orary [pic]ture
 
@@ -76,8 +76,6 @@ pair five[], six[], seven[], eight[], nine[];
 %
 % * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
 %
-% * Übergänge 1 -> 0, 2 -> 1
-
 
 def draw_grid(expr u) =
     draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
@@ -158,6 +156,11 @@ beginfig(1200);
    draw one[BEGIN]
         -- one[TOP]
         -- one[BOTTOM];
+   tmppic := currentpicture;
+endfig;
+% 1 -> 0
+beginfig(1000);
+   draw tmppic;
 endfig;
 
 %
@@ -290,7 +293,7 @@ beginfig(3400);
         .. three[END];
    tmppic := currentpicture;
 endfig;
-
+% 3 -> 0
 beginfig(3000);
    draw tmppic;
 endfig;
@@ -420,7 +423,7 @@ beginfig(5600);
         .. {left}five[END];
    tmppic := currentpicture;
 endfig;
-
+% 5-> 0
 beginfig(5000);
    draw tmppic;
 endfig;
@@ -790,6 +793,40 @@ endfor
 % Spezielle Übergänge:
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Eins -> Null
+%
+for i = 1001 upto 1030:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-1000)/30;
+       m := f;
+       t := 1/m;
+       
+       tmppath := C -- one [TOP] -- one[BEGIN];
+       
+       draw subpath (0,2*(1-m)) of tmppath;
+       draw C -- m[one[BOTTOM],C];
+    endfig;
+endfor
+
+for i = 1031 upto 1059:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-1030)/30;
+       m := f;
+       t := 1/m;
+       
+       draw m[C,zero[TOP]]
+            .. m[C,zero[RIGHT]]
+            .. m[C,zero[BOTTOM]]
+            .. m[C,zero[LEFT]]
+            .. cycle;
+    endfig;
+endfor
 
 %
 % Zwei -> Null
