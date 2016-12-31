@@ -77,13 +77,21 @@ pair five[], six[], seven[], eight[], nine[];
 % * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
 %
 
+numeric draft;
+
+draft := 0;
 def draw_grid(expr u) =
-    draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
-    draw (-0.6u,0) -- (0.6u,0);
-    draw (-0.6u,0.85u) -- (0.6u,0.85u);
-    draw (-0.25u,-u)--(-0.25u,1.7u);
-    draw (0.25u,-u)--(0.25u,1.7u);
+    if draft > 0:
+      draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
+      draw (-0.6u,0) -- (0.6u,0);
+      draw (-0.6u,0.85u) -- (0.6u,0.85u);
+      draw (-0.25u,-u)--(-0.25u,1.7u);
+      draw (0.25u,-u)--(0.25u,1.7u);
+    fi
 enddef;
+
+path boundingpath;
+boundingpath := (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
 
 vardef accel(expr xx) = sqrt xx enddef;
 
@@ -108,6 +116,7 @@ beginfig(0100);
         .. zero[BOTTOM]
         .. zero[LEFT]
         .. cycle;
+   setbounds currentpicture to boundingpath;
 endfig;
 
 %
@@ -130,6 +139,7 @@ for i = 0101 upto 0129:
             ... zero[BOTTOM]
             ... (m/2)[zero[LEFT],zero[RIGHT]]
             ... cycle;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -143,6 +153,7 @@ for i = 0130 upto 0159:
        draw m[one[TOP],one[BEGIN]]
             -- one[TOP]
             -- one[BOTTOM];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -156,6 +167,7 @@ beginfig(1200);
    draw one[BEGIN]
         -- one[TOP]
         -- one[BOTTOM];
+   setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
 % 1 -> 0
@@ -182,6 +194,7 @@ for i = 1201 upto 1230:
        draw one[BEGIN]
             -- m[one[TOP],two[R_ARC]]
             -- m[one[BOTTOM],two[JOINT]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -203,6 +216,7 @@ for i = 1231 upto 1259:
             .. tension 2t .. two[JOINT];
        draw two[JOINT]
             -- m[two[JOINT],two[END]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -218,6 +232,7 @@ beginfig(2300);
         .. two[R_ARC]
         .. tension 2 .. two[JOINT];
    draw two[JOINT] -- two[END];
+   setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
 % 2 -> 0
@@ -254,6 +269,7 @@ for i = 2301 upto 2330:
             .. tension 2 .. two[JOINT];
        draw two[JOINT]
             -- two[END] rotatedaround (two[JOINT],phi1);
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -274,6 +290,7 @@ for i = 2331 upto 2359:
        draw m[two[JOINT],three[JOINT]]
             .. m[two[JOINT],three[D_ARC]]
             .. m[aux[END],three[END]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -291,6 +308,7 @@ beginfig(3400);
    draw three[JOINT]
         .. three[D_ARC]
         .. three[END];
+   setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
 % 3 -> 0
@@ -329,6 +347,7 @@ for i = 3401 upto 3430:
        draw three[JOINT]{dir phi1}
             .. three[D_ARC]
             .. three[END];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -349,6 +368,7 @@ for i = 3431 upto 3459:
             .. tension t .. m[three[END],four[BOTTOM]];
        draw four[MID]
             -- m[four[MID],four[RIGHT]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -363,6 +383,7 @@ beginfig(4500);
         -- four[LEFT]
         -- four[TOP]
         -- four[BOTTOM];
+   setbounds currentpicture to boundingpath;
 endfig;
 
 %
@@ -387,6 +408,7 @@ for i = 4501 upto 4530:
             -- m[four[RIGHT],four[MID]];
        draw m[four[TOP],four[MID]]
             -- four[BOTTOM];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -405,6 +427,7 @@ for i = 4531 upto 4559:
             .. tension 1 .. m[four[MID],five[R_ARC]]
             .. tension t .. if i>4554: {left} fi m[four[BOTTOM],five[END]];
        %TODO: if-Anweisung durch Winkelberechnung glätten
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -421,6 +444,7 @@ beginfig(5600);
         .. five[U_ARC]
         .. five[R_ARC]
         .. {left}five[END];
+   setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
 % 5-> 0
@@ -461,6 +485,7 @@ for i = 5601 upto 5630:
                else:
                   cycle
                fi;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -492,6 +517,7 @@ for i = 5631 upto 5659:
             .. six[BOTTOM]
             .. six[LEFT]
             .. cycle;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -508,6 +534,7 @@ beginfig(6700);
         .. six[LEFT]
         .. cycle;
    draw six[LEFT]{up} .. six[BEGIN];
+   setbounds currentpicture to boundingpath;
 endfig;
 
 %
@@ -543,7 +570,8 @@ for i = 6701 upto 6730:
             ... aux[TOP]
             ... aux[JOINT]
             .. aux[MID]{dir (phi1+90)}
-            .. aux[END]
+            .. aux[END];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -565,7 +593,8 @@ for i = 6731 upto 6759:
             .. tension t .. m[aux[TOP],seven[TOP]]{right}
             .. tension t .. m[aux[JOINT],seven[JOINT]]{dir phi1}
             .. m[aux[MID],seven[MID]]
-            .. m[aux[END],seven[END]]
+            .. m[aux[END],seven[END]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -581,6 +610,7 @@ beginfig(7800);
         -- seven[JOINT]{down}
         .. seven[MID]
         .. seven[END];
+   setbounds currentpicture to boundingpath;
 endfig;
 
 %
@@ -612,6 +642,7 @@ for i = 7801 upto 7830:
 
        draw tmppath;
        draw m[aux[MID],aux[LEFT]] -- m[aux[MID],aux[RIGHT]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -631,6 +662,7 @@ for i = 7831 upto 7859:
        draw m[aux[LEFT],eight[L_ARC]]{down}
             .. tension tt .. m[aux[MID],eight[MID]]
             .. tension tt .. {down}m[aux[RIGHT],eight[RIGHT]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -649,6 +681,7 @@ beginfig(8900);
         .. eight[MID]
         .. eight[L_ARC]
         .. cycle;
+   setbounds currentpicture to boundingpath;
 endfig;
 
 %
@@ -693,6 +726,7 @@ for i = 8901 upto 8930:
                   .. cycle;
 
        draw tmppath rotatedabout (C,phi1);
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -715,6 +749,7 @@ for i = 8931 upto 8959:
             .. nine[LEFT]
             .. cycle;
        draw nine[RIGHT]{down} .. aux[END];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -731,6 +766,7 @@ beginfig(9000);
         .. nine[LEFT]
         .. cycle;
    draw nine[RIGHT]{down} .. nine[END];
+   setbounds currentpicture to boundingpath;
 endfig;
 
 %
@@ -770,6 +806,7 @@ for i = 9001 upto 9030:
        draw nine[RIGHT]{down}
             .. aux[MID]
             .. aux[END];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -785,6 +822,7 @@ for i = 9031 upto 9059:
             .. zero[BOTTOM]
             .. m[nine[LEFT],zero[LEFT]]
             .. cycle;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -809,6 +847,7 @@ for i = 1001 upto 1030:
        
        draw subpath (0,2*(1-m)) of tmppath;
        draw C -- m[one[BOTTOM],C];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -825,6 +864,7 @@ for i = 1031 upto 1059:
             .. m[C,zero[BOTTOM]]
             .. m[C,zero[LEFT]]
             .. cycle;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -848,6 +888,7 @@ for i = 2001 upto 2030:
         .. m[two[R_ARC],zero[RIGHT]]
         .. tension t .. m[two[JOINT],zero[BOTTOM]];
        draw two[JOINT] -- two[END];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -879,6 +920,7 @@ for i = 2031 upto 2059:
        draw m[two[END],zero[BOTTOM]]
             -- zero[BOTTOM]{left}
             .. m[two[JOINT],zero[LEFT]]{dir phi2};
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -898,6 +940,7 @@ for i = 2101 upto 2130:
         .. tension t .. two[R_ARC]
         .. tension (t + 1) .. two[JOINT]
         -- two[END];
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -917,6 +960,7 @@ for i = 2131 upto 2159:
             -- m[two[R_ARC],aux[R_ARC]]
             -- m[two[JOINT],aux[JOINT]]
             -- m[two[END],one[BOTTOM]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -957,6 +1001,7 @@ for i = 3001 upto 3030:
        draw aux[JOINT]
             .. m[three[D_ARC],aux[D_ARC]]
             .. m[three[END],aux[END]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -975,6 +1020,7 @@ for i = 3031 upto 3059:
             .. zero[BOTTOM]{left};
        % Der Viertelbogen klappt nach oben:
        draw tmppath rotatedaround (zero[BOTTOM],phi1);
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -1009,6 +1055,7 @@ for i = 5001 upto 5030:
                else:
                   cycle
                fi;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -1027,6 +1074,7 @@ for i = 5031 upto 5059:
             .. zero[BOTTOM]
             .. zero[LEFT]
             .. cycle;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 end;
