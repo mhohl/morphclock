@@ -213,8 +213,8 @@ for i = 1231 upto 1259:
        draw two[BEGIN]
             .. tension  t .. aux[TOP]
             .. tension  t .. two[R_ARC]
-            .. tension 2t .. two[JOINT];
-       draw two[JOINT]
+            .. tension 2t .. two[JOINT]
+          & two[JOINT]
             -- m[two[JOINT],two[END]];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -230,8 +230,8 @@ beginfig(2300);
    draw two[BEGIN]
         .. two[TOP]
         .. two[R_ARC]
-        .. tension 2 .. two[JOINT];
-   draw two[JOINT] -- two[END];
+        .. tension 2 .. two[JOINT]
+      & two[JOINT] -- two[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -266,8 +266,8 @@ for i = 2301 upto 2330:
        draw two[BEGIN]
             .. two[TOP]
             .. two[R_ARC]
-            .. tension 2 .. two[JOINT];
-       draw two[JOINT]
+            .. tension 2 .. two[JOINT]
+          & two[JOINT]
             -- two[END] rotatedaround (two[JOINT],phi1);
        setbounds currentpicture to boundingpath;
     endfig;
@@ -286,8 +286,8 @@ for i = 2331 upto 2359:
        draw m[two[BEGIN],three[BEGIN]]
             .. three[TOP]
             .. m[two[R_ARC],three[U_ARC]]
-            .. tension (2-m) .. m[two[JOINT],three[JOINT]];
-       draw m[two[JOINT],three[JOINT]]
+            .. tension (2-m) .. m[two[JOINT],three[JOINT]]
+          & m[two[JOINT],three[JOINT]]
             .. m[two[JOINT],three[D_ARC]]
             .. m[aux[END],three[END]];
        setbounds currentpicture to boundingpath;
@@ -304,8 +304,8 @@ beginfig(3400);
    draw three[BEGIN]
         .. three[TOP]
         .. three[U_ARC]
-        .. three[JOINT];
-   draw three[JOINT]
+        .. three[JOINT]
+      & three[JOINT]
         .. three[D_ARC]
         .. three[END];
    setbounds currentpicture to boundingpath;
@@ -343,8 +343,8 @@ for i = 3401 upto 3430:
        draw m[three[BEGIN],four[LEFT]]
             .. tension t .. m[three[TOP],four[TOP]]
             .. tension t .. m[three[U_ARC],four[MID]]
-            .. tension t .. three[JOINT];
-       draw three[JOINT]{dir phi1}
+            .. tension t .. three[JOINT]
+          & three[JOINT]{dir phi1}
             .. three[D_ARC]
             .. three[END];
        setbounds currentpicture to boundingpath;
@@ -419,14 +419,23 @@ for i = 4531 upto 4559:
        f := (i-4530)/30;
        m := accel(f);
        t := max(5(1-m),1);
+       
+       % Der Pfad soll bei five[END] maximal waagrecht werden
+       % und nicht nach rechts unten zeigen. Weil hier angle(...)
+       % einen Vorzeichenwechsel hat, muss eine if-Anweisung her.
+       tmppath := five[JOINT]
+                  .. tension t .. m[four[MID],five[U_ARC]]
+                  .. tension 1 .. m[four[MID],five[R_ARC]]
+                  .. tension t .. m[four[BOTTOM],five[END]];
+       aux4 := direction 4 of tmppath;
+       phi1 := angle(aux4); if phi1 > 0 : phi1 := -180; fi
 
        draw five[BEGIN]
             -- m[four[TOP],five[LEFT]]
             -- five[JOINT]
             .. tension t .. m[four[MID],five[U_ARC]]
             .. tension 1 .. m[four[MID],five[R_ARC]]
-            .. tension t .. if i>4554: {left} fi m[four[BOTTOM],five[END]];
-       %TODO: if-Anweisung durch Winkelberechnung glätten
+            .. tension t .. {dir phi1}m[four[BOTTOM],five[END]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -506,7 +515,7 @@ for i = 5631 upto 5659:
 
        tmppath := six[LEFT]{up} .. six[BEGIN];
        aux[END] := point 2/3 of tmppath;
-       aux[BEGIN] := (xpart(six[LEFT]),ypart(six[BEGIN]));
+       aux[BEGIN] := (xpart(five[LEFT]),ypart(six[BEGIN]));
        aux[MID] := m[aux[BEGIN],aux[END]];
 
        draw six[LEFT]{up}
@@ -884,9 +893,9 @@ for i = 2001 upto 2030:
        phi1 := m[angle(aux0),90];
        
        draw m[two[BEGIN],zero[LEFT]]{dir phi1}
-        .. m[two[TOP],zero[TOP]]
-        .. m[two[R_ARC],zero[RIGHT]]
-        .. tension t .. m[two[JOINT],zero[BOTTOM]];
+            .. m[two[TOP],zero[TOP]]
+            .. m[two[R_ARC],zero[RIGHT]]
+            .. tension t .. m[two[JOINT],zero[BOTTOM]];
        draw two[JOINT] -- two[END];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -936,10 +945,10 @@ for i = 2101 upto 2130:
        t := 5m+1;
        
        draw two[BEGIN]
-        .. tension t .. two[TOP]
-        .. tension t .. two[R_ARC]
-        .. tension (t + 1) .. two[JOINT]
-        -- two[END];
+            .. tension t .. two[TOP]
+            .. tension t .. two[R_ARC]
+            .. tension (t + 1) .. two[JOINT]
+            -- two[END];
         setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -997,8 +1006,8 @@ for i = 3001 upto 3030:
        draw m[three[BEGIN],zero[LEFT]]{dir phi1}
             .. m[three[TOP],zero[TOP]]
             .. m[three[U_ARC],zero[RIGHT]]
-            .. aux[JOINT]{dir phi2};
-       draw aux[JOINT]
+            .. aux[JOINT]{dir phi2}
+          & aux[JOINT]
             .. m[three[D_ARC],aux[D_ARC]]
             .. m[three[END],aux[END]];
        setbounds currentpicture to boundingpath;
@@ -1017,9 +1026,8 @@ for i = 3031 upto 3059:
        draw zero[LEFT]{up}
             .. zero[TOP]
             .. zero[RIGHT]
-            .. zero[BOTTOM]{left};
-       % Der Viertelbogen klappt nach oben:
-       draw tmppath rotatedaround (zero[BOTTOM],phi1);
+            .. zero[BOTTOM]{left}
+          & tmppath rotatedaround (zero[BOTTOM],phi1); % Der Viertelbogen klappt nach oben:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1045,8 +1053,8 @@ for i = 5001 upto 5030:
 
        draw m[five[BEGIN],five[LEFT]]
             -- five[LEFT]
-            -- m[five[JOINT],zero[LEFT]];
-       draw m[five[JOINT],zero[LEFT]]{dir phi1}
+            -- m[five[JOINT],zero[LEFT]]
+          & m[five[JOINT],zero[LEFT]]{dir phi1}
             .. m[five[U_ARC],zero[TOP]]
             .. m[five[R_ARC],zero[RIGHT]]
             .. {left}m[five[END],zero[BOTTOM]]
@@ -1068,7 +1076,8 @@ for i = 5031 upto 5059:
        t := 1/f;
        m := f;
 
-       draw zero[LEFT] -- m[five[LEFT],zero[LEFT]];
+       draw zero[LEFT] 
+            -- m[five[LEFT],zero[LEFT]];
        draw zero[TOP]
             .. zero[RIGHT]
             .. zero[BOTTOM]
