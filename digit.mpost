@@ -126,24 +126,28 @@ one[BEGIN]  = (-0.25u,0.55u);
 one[TOP]    = zero[TOP];
 one[BOTTOM] = zero[BOTTOM];
 
-for i = 0101 upto 0129:
-    % 29 statt 30, um einen Glitch bei i=30 zu vermeiden
+for i = 0101 upto 0130:
     beginfig(i);
        draw_grid(u);
        pickup pc;
        f := (i-0100)/30;
        m := f;
 
-       draw zero[TOP]
-            ... (m/2)[zero[RIGHT],zero[LEFT]]
-            ... zero[BOTTOM]
-            ... (m/2)[zero[LEFT],zero[RIGHT]]
-            ... cycle;
+       if m < 1:
+          draw zero[TOP]
+               ... (m/2)[zero[RIGHT],zero[LEFT]]
+               ... zero[BOTTOM]
+             ... (m/2)[zero[LEFT],zero[RIGHT]]
+             ... cycle;
+       else:
+          % für m = 1 entstünden seltsame Schlaufen
+          draw one[TOP] -- one[BOTTOM];
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
-for i = 0130 upto 0159:
+for i = 0131 upto 0159:
     beginfig(i);
        draw_grid(u);
        pickup pc;
@@ -942,14 +946,25 @@ for i = 2101 upto 2130:
        pickup pc;
        f := (i-2100)/30;
        m := f;
-       t := 5m+1;
+       t := 10*m*m+1;
        
-       draw two[BEGIN]
-            .. tension t .. two[TOP]
-            .. tension t .. two[R_ARC]
-            .. tension (t + 1) .. two[JOINT]
-            -- two[END];
-        setbounds currentpicture to boundingpath;
+       %aux[TOP] entspricht dem Startpunkt der Eins, heruntergeklappt
+       % an den Mittelstrich:
+       aux[TOP]    := one[TOP] shifted (0,-length(one[BEGIN]-one[TOP]));
+       % two[R_ARC] und two[JOINT|END] wandern waagrecht zum Mittelstrich:
+       aux[MID]    := (xpart(one[TOP]),ypart(two[R_ARC]));
+       aux[BOTTOM] := (xpart(one[TOP]),ypart(two[END]));
+       
+       if m < 1:
+          draw m[two[BEGIN],aux[TOP]]
+               .. tension t .. two[TOP]
+               .. tension t .. m[two[R_ARC],aux[MID]]
+               .. tension (t+1) .. m[two[JOINT],aux[BOTTOM]]
+               -- m[two[END],aux[BOTTOM]];
+       else:
+          draw one[TOP] -- one[BOTTOM];
+       fi
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -960,15 +975,15 @@ for i = 2131 upto 2159:
        f := (i-2130)/30;
        m := f;
        
-       % Hilfspunkte auf senkrechten Linie der "1"
-       aux[R_ARC] := (1/3)[one[TOP],one[BOTTOM]];
-       aux[JOINT] := (2/3)[one[TOP],one[BOTTOM]];
+       phi0 := -90-angle(one[BEGIN]-one[TOP]);
+       show phi0;
        
-       draw m[two[BEGIN],one[BEGIN]]
-            -- m[two[TOP],one[TOP]]
-            -- m[two[R_ARC],aux[R_ARC]]
-            -- m[two[JOINT],aux[JOINT]]
-            -- m[two[END],one[BOTTOM]];
+       phi1 := (1-m)*phi0;
+       show phi1;
+       
+       draw one[BEGIN] rotatedabout (one[TOP],phi1)
+            -- one[TOP]
+            -- one[BOTTOM];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1001,7 +1016,7 @@ for i = 3001 upto 3030:
        
        aux[JOINT] := m[three[JOINT],zero[BOTTOM]];
        aux[D_ARC] := (point 0.5 of tmppath) rotatedabout (zero[BOTTOM],phi0); 
-       aux[END]   := zero[LEFT] rotatedabout(zero[BOTTOM],phi0);
+       aux[END]   := zero[LEFT] rotatedabout (zero[BOTTOM],phi0);
 
        draw m[three[BEGIN],zero[LEFT]]{dir phi1}
             .. m[three[TOP],zero[TOP]]
