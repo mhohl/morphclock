@@ -3,15 +3,22 @@ TARGET = digit
 
 SHELL = /bin/bash
 .SUFFIXES:
-.SUFFIXES: .png .mpost .[0-9]
+.SUFFIXES: .png .mpost .mps .pdf
 
 # executables
 MPEXEC = mpost
 
-${TARGET}.0: ${TARGET}.mpost
+${TARGET}-*.mps: ${TARGET}.mpost
 	mpost $<
 
+testdigit.pdf: testdigit.tex ${TARGET}-*.mps
+	lualatex $<
 
-.PHONY : png
-png : ${TARGET}.0
-	for (( i = 0; i < 999; i++ )); do picfile="000$$i"; picfile="pic$${picfile:(-3)}.png"; test -e digit.$$i && convert digit.$$i -background white -alpha remove $$picfile ; done
+.PHONY: test png
+test: testdigit.pdf
+
+
+
+
+
+

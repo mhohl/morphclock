@@ -8,11 +8,23 @@ mpost digit.mpost
 
 lualatex testdigit.tex > /dev/null
 
+indexarray=( "a" "p" "m" ":" )
+
 for (( i = from; i <= to; i++ )); do
-   picfile="0000$i"
-   picfile="${picfile:(-4)}"
-   picfile="md-${picfile:0:2}-${picfile:2:2}.png"
-   test -e digit-$i.mps && convert digit-$i.mps $picfile && echo $picfile
+    if test -e digit-$i.mps ; then
+       if (( i < 10000 )); then
+          picfile="0000$i"
+          picfile="${picfile:(-4)}"
+          picfile="md-${picfile:0:2}-${picfile:2:2}.png"         
+       else
+          index_f="${i:1:1}"
+          index_t="${i:2:1}"
+          index_nn="${i:(-2)}"
+          picfile="md-${indexarray[index_f]}${indexarray[index_t]}-${index_nn}.png"
+       fi
+       convert digit-$i.mps $picfile
+       echo $picfile
+    fi
 done
 
 echo -n "Animationen abspielen? "
