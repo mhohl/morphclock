@@ -1,9 +1,14 @@
 \documentclass[a4paper,landscape]{article}
 \usepackage{fontspec}
 \usepackage[margin=1cm]{geometry}
+\usepackage{ngerman}
 \usepackage{graphicx}
 \usepackage{pgffor}
+\usepackage[toc]{multitoc}
+\setlength{\columnseprule}{0.4pt}
+\renewcommand{\multicolumntoc}{3}
 \begin{document}\pagestyle{empty}
+\tableofcontents
 \section{Ziffern 0 bis 9}
 \newlength\digitwidth
 \digitwidth=2.5cm
@@ -135,6 +140,15 @@
 \section{Übergang 5 … 0 }
 
 \foreach \n in {5000,...,5099}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+
+\newpage
+
+\section{Übergang a … p }
+
+\foreach \n in {10100,...,10199}{%
    \IfFileExists{digit-\n.mps}{\includegraphics[width=1.75cm]{digit-\n.mps} }{}%
 }
 \hspace*{-1ex}

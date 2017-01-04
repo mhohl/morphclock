@@ -1,7 +1,7 @@
 %
 % digits
 %
-% die Bilder werden in der Form digit.ftnn erzeugt:
+% die Bilder werden in der Form digit.[1]ftnn erzeugt:
 % f = "from": Startziffer
 % t = "to":   Endziffer
 % nn : laufende Nummer
@@ -16,15 +16,19 @@
 %
 % sowie zusätzlich:
 %
-% 1 -> 0: 10nn (Zehnerstelle Stunden: 12am -> 01pm)¹
+% 1 -> 0: 10nn (Zehnerstelle Stunden: 12am -> 01pm)
 % 2 -> 0: 20nn (Zehnerstelle Stunden: 23:59 -> 00:00)
-% 2 -> 1  21nn (Einerstelle Stunden: 12am -> 01pm)²
+% 2 -> 1  21nn (Einerstelle Stunden: 12am -> 01pm)
 % 3 -> 0: 30nn (Einerstelle Stunden:  23:59 -> 00:00)
 % 5 -> 0: 50nn (Zehnerstelle Minuten: 10:59 -> 11:00)
 %
-% ¹/²: Übergänge 0 -> 1 und 1 -> 2 werden rückwärts angelegt, aber
-% ggf. ggü. der Ursprungsrichtung mit anderer Morphgeschwindigkeit
-% transformiert? 
+% Die "1" als Zehntausenderstelle kodiert die Nicht-Ziffern:
+%
+% a <-> p
+% m
+% :
+% für die Übergänge am <-> pm und den Doppelpunkt
+%
 
 outputtemplate := "%j-%c.mps";
 
@@ -64,15 +68,14 @@ R_ARC  = 1009; % [r]ight (part of) [arc]
 U_ARC  = 1010; % [u]pright (part of) [arc]
 D_ARC  = 1011; % [d]ownright (part of) [arc]
 
+% Arrays für die Koordinaten der Ziffern …
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
+% … und die anderen Zeichen
+pair the_a[], the_m[], the_p[], colon[];
 
 %
 % TODO:
-%
-% * Geschwindigkeit der Übergänge: langsam von der Ziffer weg,
-%   schnell zur nächsten hin
-%   (eventuell nicht immer bei n30/n31?)
 %
 % * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
 %
@@ -93,11 +96,8 @@ enddef;
 path boundingpath;
 boundingpath := (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
 
-vardef accel(expr xx) = sqrt xx enddef;
-
-vardef decel(expr xx) = xx*xx enddef;
-
-vardef morph(expr xx) = 1/2 - 1/2*cosd(180*xx) enddef;
+vardef advanced(expr xx) = sind(90xx) enddef;
+vardef retarded(expr xx) = 1 - cosd(90xx) enddef;
 
 %
 % Null
@@ -131,7 +131,7 @@ for i = 0101 upto 0130:
        draw_grid(u);
        pickup pc;
        f := (i-0100)/30;
-       m := f;
+       m := retarded(f);
 
        if m < 1:
           draw zero[TOP]
@@ -152,7 +152,7 @@ for i = 0131 upto 0159:
        draw_grid(u);
        pickup pc;
        f := (i-0130)/30;
-       m := decel(f);
+       m := advanced(f);
 
        draw m[one[TOP],one[BEGIN]]
             -- one[TOP]
@@ -193,7 +193,7 @@ for i = 1201 upto 1230:
        draw_grid(u);
        pickup pc;
        f := (i-1200)/30;
-       m := decel(f);
+       m := retarded(f);
 
        draw one[BEGIN]
             -- m[one[TOP],two[R_ARC]]
@@ -208,7 +208,7 @@ for i = 1231 upto 1259:
        pickup pc;
 
        f := (i-1230)/30;
-       m := f; %accel(f);
+       m := advanced(f);
        t := 1/sqrt(sqrt(m)); % zur Vermeidung einer Spitze im Scheitel der 2
 
        aux[MID] := (1/2)[two[BEGIN],two[R_ARC]];
@@ -264,7 +264,7 @@ for i = 2301 upto 2330:
        pickup pc;
 
        f := (i-2300)/30;
-       m := decel(f);
+       m := retarded(f);
        phi1 := -90m;
 
        draw two[BEGIN]
@@ -282,7 +282,7 @@ for i = 2331 upto 2359:
        draw_grid(u);
        pickup pc;
        f := (i-2330)/30;
-       m := decel(f);
+       m := advanced(f);
        t := 1/m;
 
        aux[END] := two[END] rotatedabout (two[JOINT],-90);
@@ -335,7 +335,7 @@ for i = 3401 upto 3430:
        pickup pc;
 
        f := (i-3400)/30;
-       m := f;
+       m := retarded(f);
        t := max(15f*f,1);
 
        % Der "Austrittswinkel" des unteren Bogens an der "Spitze"
@@ -361,7 +361,7 @@ for i = 3431 upto 3459:
        pickup pc;
 
        f := (i-3430)/30;
-       m := f;
+       m := advanced(f);
        t := max(15*f*f*f,1);
 
        draw four[LEFT]
@@ -405,7 +405,7 @@ for i = 4501 upto 4530:
        draw_grid(u);
        pickup pc;
        f := (i-4500)/30;
-       m := f;
+       m := retarded(f);
 
        draw four[TOP]
             -- four[LEFT]
@@ -421,7 +421,7 @@ for i = 4531 upto 4559:
        draw_grid(u);
        pickup pc;
        f := (i-4530)/30;
-       m := accel(f);
+       m := advanced(f);
        t := max(5(1-m),1);
        
        % Der Pfad soll bei five[END] maximal waagrecht werden
@@ -479,7 +479,7 @@ for i = 5601 upto 5630:
        draw_grid(u);
        pickup pc;
        f := (i-5600)/30;
-       m := f;
+       m := retarded(f);
 
        % die linke Ecke five[LEFT] wandert genauso schnell nach oben wie
        % five[BEGIN], aber die x-Koordinate bleibt unverändert:
@@ -508,8 +508,8 @@ for i = 5631 upto 5659:
        pickup pc;
 
        f := (i-5630)/30;
-       t := 1/f;
-       m := f;
+       m := advanced(f);
+       t := 1/m;
 
        % wir ermitteln den Punkt, der auf 2/3 des abschließenden Bogens liegt;
        % aux[MID] wandert von der linken Ecke der nach oben geschobenen "5"
@@ -566,7 +566,7 @@ for i = 6701 upto 6730:
        draw_grid(u);
        pickup pc;
        f := (i-6700)/30;
-       m := f;
+       m := retarded(f);
        q := 2m*m-2*m+1;
          % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
        phi1 := 180m;
@@ -593,7 +593,7 @@ for i = 6731 upto 6759:
        draw_grid(u);
        pickup pc;
        f := (i-6730)/30;
-       m := f;
+       m := advanced(f);
        t := max(30m*m,1);
 
        % Der Tangentenwinkel an JOINT beträgt
@@ -641,7 +641,7 @@ for i = 7801 upto 7830:
        draw_grid(u);
        pickup pc;
        f := (i-7800)/30;
-       m := f;
+       m := retarded(f);
 
        tmppath := m[seven[BEGIN],seven[LEFT]]
                   -- seven[LEFT]
@@ -664,7 +664,7 @@ for i = 7831 upto 7859:
        draw_grid(u);
        pickup pc;
        f := (i-7830)/30;
-       m := decel( f);
+       m := advanced(f);
        t := 1/f;
        tt := max(t/2,1);
 
@@ -711,7 +711,7 @@ for i = 8901 upto 8930:
        draw_grid(u);
        pickup pc;
        f := (i-8900)/30;
-       m := f;
+       m := retarded(f);
        phi1 := -90m*m;
 
        % Die Acht kippt um 90° nach rechts,
@@ -748,7 +748,7 @@ for i = 8931 upto 8959:
        draw_grid(u);
        pickup pc;
        f := (i-8930)/30;
-       m := accel(f);
+       m := advanced(f);
 
        % Der Endpunkt des Bogens wandert von nine[RIGHT] ausgehend am
        % tatsächlichen Bogen entlang:
@@ -790,7 +790,7 @@ for i = 9001 upto 9030:
        draw_grid(u);
        pickup pc;
        f := (i-9000)/30;
-       m := decel(f);
+       m := retarded(f);
 
        % Der Bogen der Neun soll beim Aufwickeln ein bisschen
        % nach links gestreckt werden:
@@ -828,7 +828,7 @@ for i = 9031 upto 9059:
        draw_grid(u);
        pickup pc;
        f := (i-9030)/30;
-       m := accel(f);
+       m := advanced(f);
 
        draw zero[TOP]
             .. m[nine[RIGHT],zero[RIGHT]]
@@ -853,7 +853,7 @@ for i = 1001 upto 1030:
        draw_grid(u);
        pickup pc;
        f := (i-1000)/30;
-       m := f;
+       m := retarded(f);
        t := 1/m;
        
        tmppath := C -- one [TOP] -- one[BEGIN];
@@ -869,7 +869,7 @@ for i = 1031 upto 1059:
        draw_grid(u);
        pickup pc;
        f := (i-1030)/30;
-       m := f;
+       m := advanced(f);
        t := 1/m;
        
        draw m[C,zero[TOP]]
@@ -889,7 +889,7 @@ for i = 2001 upto 2030:
        draw_grid(u);
        pickup pc;
        f := (i-2000)/30;
-       m := f;
+       m := retarded(f);
        t := 2-m;
        
        tmppath := two[BEGIN] .. two[TOP] .. two[R_ARC];
@@ -918,7 +918,7 @@ for i = 2031 upto 2059:
        draw_grid(u);
        pickup pc;
        f := (i-2030)/30;
-       m := f;
+       m := advanced(f);
        
        phi1 := m[angle(aux3),-180]; 
        
@@ -945,7 +945,7 @@ for i = 2101 upto 2130:
        draw_grid(u);
        pickup pc;
        f := (i-2100)/30;
-       m := f;
+       m := retarded(f);
        t := 10*m*m+1;
        
        %aux[TOP] entspricht dem Startpunkt der Eins, heruntergeklappt
@@ -973,13 +973,10 @@ for i = 2131 upto 2159:
        draw_grid(u);
        pickup pc;
        f := (i-2130)/30;
-       m := f;
+       m := advanced(f);
        
        phi0 := -90-angle(one[BEGIN]-one[TOP]);
-       show phi0;
-       
        phi1 := (1-m)*phi0;
-       show phi1;
        
        draw one[BEGIN] rotatedabout (one[TOP],phi1)
             -- one[TOP]
@@ -996,7 +993,7 @@ for i = 3001 upto 3030:
        draw_grid(u);
        pickup pc;
        f := (i-3000)/30;
-       m := f;
+       m := retarded(f);
        
        % Übergang oberer Bogen Drei zur Dreiviertel-Null
        tmppath := three[BEGIN]
@@ -1034,7 +1031,7 @@ for i = 3031 upto 3059:
        draw_grid(u);
        pickup pc;
        f := (i-3030)/30;
-       m := f;
+       m := advanced(f);
        
        phi1 := (1-m)*phi0;
        
@@ -1055,7 +1052,7 @@ for i = 5001 upto 5030:
        draw_grid(u);
        pickup pc;
        f := (i-5000)/30;
-       m := f;
+       m := retarded(f);
        
        tmppath := m[five[JOINT],zero[LEFT]]
                   .. m[five[U_ARC],zero[TOP]]
@@ -1088,8 +1085,8 @@ for i = 5031 upto 5059:
        pickup pc;
 
        f := (i-5030)/30;
-       t := 1/f;
-       m := f;
+       m := advanced(f);
+       t := 1/m;
 
        draw zero[LEFT] 
             -- m[five[LEFT],zero[LEFT]];
