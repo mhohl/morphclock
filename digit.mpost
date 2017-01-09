@@ -72,7 +72,7 @@ D_ARC  = 1011; % [d]ownright (part of) [arc]
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
 % … und die anderen Zeichen
-pair the_a[], the_m[], the_p[], colon[];
+pair A[], P[], M[], colon[];
 
 %
 % TODO:
@@ -80,9 +80,8 @@ pair the_a[], the_m[], the_p[], colon[];
 % * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
 %
 
-numeric draft;
+numeric draft; draft := 1;
 
-draft := 0;
 def draw_grid(expr u) =
     if draft > 0:
       draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
@@ -1109,6 +1108,14 @@ endfor
 % a
 %
 
+A[BEGIN]  = (-0.25u,0.6u);
+A[TOP]    = zero[TOP];
+A[R_ARC]  = A[BEGIN] xscaled -1;
+A[JOINT]  = (0.25u,0.15u);
+A[END]    = (0.325u,0);
+A[L_ARC]  = A[JOINT] xscaled -1;
+A[BOTTOM] = zero[BOTTOM];
+
 beginfig(10100);
    draw_grid(u);
    pickup pc;
@@ -1120,10 +1127,99 @@ beginfig(10100);
    z6 = (0.25u,0);
    z45 = (0,0);
    
-   tmppath := z1 .. z2 .. z3 .. z5 .. z6;
+   tmppath := A[BEGIN]{up} .. A[TOP] .. A[R_ARC] --- A[JOINT] .. A[END];
    aux0 := direction 2 of tmppath;
-   phi1 := angle(aux0);
+   phi[R_ARC] := angle(aux0);
    draw tmppath;
-   draw z3{dir phi1} .. z4 .. z45 .. z5;
+   draw A[R_ARC]{dir phi[R_ARC]} .. A[L_ARC] .. A[BOTTOM] .. A[JOINT];
+   setbounds currentpicture to boundingpath;
 endfig;
+
+P[BEGIN] = (-0.325u,0.85u);
+P[END]   = (-0.325u,-0.75u);
+P[U_ARC] = (-0.325u,0.6u); % [u]pper end of [arc]
+P[D_ARC] = (-0.325u,0.15u);
+P[TOP]   = zero[TOP];
+P[BOTTOM] = zero[BOTTOM];
+P[RIGHT] = (0.325u,0.425u);
+
+%
+% a -> p
+%
+for i = 10101 upto 10130:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-10100)/30;
+       m := retarded(f);
+       
+       % Der Startpunkt vom "a" wandert nach links
+       aux[BEGIN] := (xpart(m[A[BEGIN],P[END]]),ypart(A[BEGIN]));
+       % Der "Bauch" wird eingezogen, damit die Linie vorbeilaufen kann,
+       % ohne ihn zu berühren
+       aux[L_ARC] := A[L_ARC] xscaled (1-0.25m);
+       
+       tmppath := m[aux[BEGIN],P[END]] 
+                  ..  aux[BEGIN]{up}
+                  ..  A[TOP]
+                  ..  A[R_ARC]
+                  --- A[JOINT]
+                  ..  A[END];
+       draw  subpath (0,5-m) of tmppath;
+       draw A[R_ARC]{dir phi[R_ARC]}
+            .. aux[L_ARC]
+            .. A[BOTTOM]
+            .. A[JOINT];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = 10131 upto 10159:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-10130)/30;
+       m := retarded(f);
+       
+       aux[BEGIN] := (xpart(P[END]),ypart(A[BEGIN]));
+       aux[L_ARC] := A[L_ARC] xscaled 3/4;
+       
+       tmppath := P[D_ARC]
+                  --  m[aux[BEGIN],P[U_ARC]]
+                  ..  A[TOP]
+                  ..  m[A[R_ARC],P[RIGHT]]
+                  --- m[A[JOINT],P[RIGHT]];
+
+       aux[R_ARC] := point 3-3m of tmppath;
+       
+       draw P[END] -- m[aux[BEGIN],P[BEGIN]];
+       
+       draw tmppath;
+       
+       tmppath := P[D_ARC] .. P[BOTTOM] .. P[RIGHT] .. P[TOP] .. P[U_ARC];
+       aux2 := direction 0 of tmppath;
+       phi2 := angle(aux2); show phi2; show m[phi[R_ARC],phi2];
+       
+       draw aux[R_ARC]{dir m[phi[R_ARC],phi2]} .. if i < 10150: m[aux[L_ARC],A[BOTTOM]]  .. fi A[BOTTOM] .. m[A[JOINT],P[RIGHT]]{up};
+       %draw aux[R_ARC] -- m[aux[L_ARC],A[BOTTOM]] -- A[BOTTOM] -- m[A[JOINT],P[RIGHT]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% p
+%
+
+beginfig(11000);
+   draw_grid(u);
+   pickup pc;
+   
+   draw P[BEGIN] -- P[END];
+   draw P[U_ARC] .. P[TOP] .. P[RIGHT] .. P[BOTTOM] .. P[D_ARC];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+
 end;
