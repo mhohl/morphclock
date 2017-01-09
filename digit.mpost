@@ -1181,7 +1181,7 @@ for i = 10131 upto 10159:
        pickup pc;
 
        f := (i-10130)/30;
-       m := retarded(f);
+       m := advanced(f);
        
        aux[BEGIN] := (xpart(P[END]),ypart(A[BEGIN]));
        aux[L_ARC] := A[L_ARC] xscaled 3/4;
@@ -1198,12 +1198,24 @@ for i = 10131 upto 10159:
        
        draw tmppath;
        
-       tmppath := P[D_ARC] .. P[BOTTOM] .. P[RIGHT] .. P[TOP] .. P[U_ARC];
-       aux2 := direction 0 of tmppath;
-       phi2 := angle(aux2); show phi2; show m[phi[R_ARC],phi2];
+       % Wir brauchen den Winkel am unteren Ansatz des p-Bogens:
+       tmppath := P[D_ARC]
+                  .. P[BOTTOM]
+                  .. P[RIGHT]
+                  .. P[TOP]
+                  .. P[U_ARC];
+       aux0 := direction 0 of tmppath;
+       phi[D_ARC] := angle(aux0);
        
-       draw aux[R_ARC]{dir m[phi[R_ARC],phi2]} .. if i < 10150: m[aux[L_ARC],A[BOTTOM]]  .. fi A[BOTTOM] .. m[A[JOINT],P[RIGHT]]{up};
-       %draw aux[R_ARC] -- m[aux[L_ARC],A[BOTTOM]] -- A[BOTTOM] -- m[A[JOINT],P[RIGHT]];
+       % Während der Ansatzpunkt wandert, verändert sich der
+       % Winkel:
+       draw aux[R_ARC]{dir m[phi[R_ARC],phi[D_ARC]]}
+            if i < 10152:
+            .. m[aux[L_ARC],A[BOTTOM]]
+            fi
+            % TODO: if-Anweisung glätten
+            .. A[BOTTOM]
+            .. m[A[JOINT],P[RIGHT]]{up};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
