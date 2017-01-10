@@ -1205,15 +1205,16 @@ for i = 10131 upto 10159:
        aux0 := direction 0 of tmppath0;
        phi[D_ARC] := angle(aux0);
        
+       % Ein Hilfspfad beschreibt den Weg von aux[L_ARC] -> A[BOTTOM]
+       tmppath2    := aux[L_ARC] .. A[BOTTOM]{right};
+       aux[BOTTOM] := point m of tmppath2;
+       
        draw P[END] -- m[aux[BEGIN],P[BEGIN]];
        draw tmppath1;
        % Während der Ansatzpunkt wandert, verändert sich der
        % Winkel:
        draw aux[R_ARC]{dir m[phi[R_ARC],phi[D_ARC]]}
-            if i < 10152:
-            .. m[aux[L_ARC],A[BOTTOM]]
-            fi
-            % TODO: if-Anweisung glätten
+            .. aux[BOTTOM]
             .. A[BOTTOM]
             .. m[A[JOINT],P[RIGHT]]{up};
        setbounds currentpicture to boundingpath;
