@@ -284,7 +284,7 @@ for i = 2331 upto 2359:
        m := advanced(f);
        t := 1/m;
 
-       aux[END] := two[END] rotatedabout (two[JOINT],-90);
+       aux[END] := two[END] rotatedaround (two[JOINT],-90);
 
        draw m[two[BEGIN],three[BEGIN]]
             .. three[TOP]
@@ -718,10 +718,10 @@ for i = 8901 upto 8930:
        % Um zu skalieren, drehen wir daher
        % nine[RIGHT|LEFT|TOP|BOTTOM] um 90° nach links:
 
-       aux[MID]    := nine[RIGHT]  rotatedabout (C,90);
-       aux[BOTTOM] := nine[LEFT]   rotatedabout (C,90);
-       aux[LEFT]   := nine[TOP]    rotatedabout (C,90);
-       aux[RIGHT]  := nine[BOTTOM] rotatedabout (C,90);
+       aux[MID]    := nine[RIGHT]  rotatedaround (C,90);
+       aux[BOTTOM] := nine[LEFT]   rotatedaround (C,90);
+       aux[LEFT]   := nine[TOP]    rotatedaround (C,90);
+       aux[RIGHT]  := nine[BOTTOM] rotatedaround (C,90);
 
        % Wir ändern die Punktreihenfolge, um bei i=830
        % eine geschlossene Schleife zu bekommen:
@@ -737,7 +737,7 @@ for i = 8901 upto 8930:
                    fi
                    .. cycle;
 
-       draw tmppath1 rotatedabout (C,phi1);
+       draw tmppath1 rotatedaround (C,phi1);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -977,7 +977,7 @@ for i = 2131 upto 2159:
        phi0 := -90-angle(one[BEGIN]-one[TOP]);
        phi1 := (1-m)*phi0;
        
-       draw one[BEGIN] rotatedabout (one[TOP],phi1)
+       draw one[BEGIN] rotatedaround (one[TOP],phi1)
             -- one[TOP]
             -- one[BOTTOM];
        setbounds currentpicture to boundingpath;
@@ -1011,8 +1011,8 @@ for i = 3001 upto 3030:
        phi0     := 270-angle(zero[LEFT]-zero[BOTTOM]);
        
        aux[JOINT] := m[three[JOINT],zero[BOTTOM]];
-       aux[D_ARC] := (point 0.5 of tmppath1) rotatedabout (zero[BOTTOM],phi0);
-       aux[END]   := zero[LEFT] rotatedabout (zero[BOTTOM],phi0);
+       aux[D_ARC] := (point 0.5 of tmppath1) rotatedaround (zero[BOTTOM],phi0);
+       aux[END]   := zero[LEFT] rotatedaround (zero[BOTTOM],phi0);
 
        draw m[three[BEGIN],zero[LEFT]]{dir phi1}
             .. m[three[TOP],zero[TOP]]
@@ -1101,7 +1101,7 @@ endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Weitere Übergänge: a -> p
+% Weitere Übergänge: a -> p, p -> a,
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1120,19 +1120,21 @@ A[BOTTOM] = zero[BOTTOM];
 beginfig(10100);
    draw_grid(u);
    pickup pc;
-   z1 = (-0.25u,0.75u);
-   z2 = (0,0.85u);
-   z3 = (0.25u,0.75u);
-   z4 = (-0.25u,0.25u);
-   z5 = (0.25u,0.25u);
-   z6 = (0.25u,0);
-   z45 = (0,0);
    
-   tmppath1 := A[BEGIN]{up} .. A[TOP] .. A[R_ARC] --- A[JOINT] .. A[END];
+   tmppath1 := A[BEGIN]{up}
+               ..  A[TOP]
+               ..  A[R_ARC]
+               --- A[JOINT]
+               .. A[END];
    aux0 := direction 2 of tmppath1;
    phi[R_ARC] := angle(aux0);
+   % phi[R_ARC] wird für a -> p UND p -> a benötigt!
+
    draw tmppath1;
-   draw A[R_ARC]{dir phi[R_ARC]} .. A[L_ARC] .. A[BOTTOM] .. A[JOINT];
+   draw A[R_ARC]{dir phi[R_ARC]}
+        .. A[L_ARC]
+        .. A[BOTTOM]
+        .. A[JOINT];
    setbounds currentpicture to boundingpath;
 endfig;
 
@@ -1204,6 +1206,7 @@ for i = 10131 upto 10159:
                    .. P[U_ARC];
        aux0 := direction 0 of tmppath0;
        phi[D_ARC] := angle(aux0);
+       % phi[D_ARC] wird auch für die Transformation p -> a benötigt!
        
        % Ein Hilfspfad beschreibt den Weg von aux[L_ARC] -> A[BOTTOM]
        tmppath2    := aux[L_ARC] .. A[BOTTOM]{right};
@@ -1230,9 +1233,84 @@ beginfig(11000);
    pickup pc;
    
    draw P[BEGIN] -- P[END];
-   draw P[U_ARC] .. P[TOP] .. P[RIGHT] .. P[BOTTOM] .. P[D_ARC];
+   draw P[U_ARC]
+        .. P[TOP]
+        .. P[RIGHT]
+        .. P[BOTTOM]
+        .. P[D_ARC];
    setbounds currentpicture to boundingpath;
 endfig;
+
+%
+% a -> p
+%
+for i = 11001 upto 11030:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-11000)/30;
+       m := retarded(f);
+       phi0 := 180m;
+       
+       % nach einer Vierteldrehung hat der p-Strich bereits die
+       % gewünschte Länge:
+       tmp1 := 2m; if tmp1 > 1: tmp1 := 1; fi
+       
+       aux[END] := (xpart(P[END]),0);
+       
+       tmppath1 := P[BEGIN] 
+                   -- tmp1[P[END],aux[END]];
+       tmppath2 := P[U_ARC]
+                   .. P[TOP]
+                   .. P[RIGHT]
+                   .. P[BOTTOM]
+                   .. P[D_ARC];
+
+       draw tmppath1 rotatedaround (C,phi0);
+       draw tmppath2 rotatedaround (C,phi0);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[MID] := P[D_ARC] rotatedaround (C,180);
+aux[BEGIN] := aux[END] rotatedaround (C,180);
+aux[R_ARC] := P[U_ARC] rotatedaround (C,180);
+aux[JOINT] := P[BEGIN] rotatedaround (C,180);
+
+aux[L_ARC] := P[RIGHT] rotatedabout (C,180);
+aux[BOTTOM] := P[TOP] rotatedabout (C,180);
+aux[TOP] := P[BOTTOM] rotatedabout (C,180);
+
+for i = 11031 upto 11059:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       
+       f := (i-11030)/30;
+       m := advanced(f);
+       t := 10m+1;
+       
+       % phi[D_ARC] ist der Winkel am unteren Bogenansatz des P
+       % und muss daher um 180° gedreht werden;
+       % phi[R_ARC] ist der Winkel am Ansatzpunkt vom "a" (s.o.)
+       phi0 := m[phi[D_ARC]-180,phi[R_ARC]];
+       
+       draw m[aux[JOINT],A[END]]
+            .. m[aux[JOINT],A[JOINT]]{up} % up/tension/up entspricht ---
+            .. tension t .. m[aux[R_ARC],A[R_ARC]]{up}
+            .. m[aux[MID],A[TOP]]
+            .. m[aux[BEGIN],A[BEGIN]];
+       
+       draw m[aux[MID],A[R_ARC]]{dir phi0} % TODO: ANsatzpunkt auf der Schnittlinie 1./2. Pfad!
+            .. m[aux[TOP],A[L_ARC]]        % muss zur Mitte R_ARC/L_ARC wandern und dort verschwinden
+            .. m[aux[L_ARC],A[L_ARC]]
+            .. m[aux[BOTTOM],A[BOTTOM]]
+            .. m[aux[JOINT],A[JOINT]];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 
 end;
