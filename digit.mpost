@@ -72,7 +72,7 @@ D_ARC  = 1011; % [d]ownright (part of) [arc]
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
 % … und die anderen Zeichen
-pair A[], P[], M[], colon[];
+pair _a_[], _p_[], _m_[], colon[];
 
 %
 % TODO:
@@ -1113,47 +1113,47 @@ endfor
 % a
 %
 
-A[BEGIN]  = (-0.25u,0.6u);
-A[TOP]    = zero[TOP];
-A[R_ARC]  = A[BEGIN] xscaled -1;
-A[JOINT]  = (0.25u,0.15u);
-A[END]    = (0.325u,0);
-A[L_ARC]  = A[JOINT] xscaled -1;
-A[BOTTOM] = zero[BOTTOM];
+_a_[BEGIN]  = (-0.25u,0.6u);
+_a_[TOP]    = zero[TOP];
+_a_[R_ARC]  = _a_[BEGIN] xscaled -1;
+_a_[JOINT]  = (0.25u,0.15u);
+_a_[END]    = (0.325u,0);
+_a_[L_ARC]  = _a_[JOINT] xscaled -1;
+_a_[BOTTOM] = zero[BOTTOM];
 
 beginfig(10100);
    draw_grid(u);
    pickup pc;
 
-   tmppath1 := A[BEGIN]
-               ..  A[TOP]
-               ..  A[R_ARC]
-               --- A[JOINT]
-               .. A[END];
+   tmppath1 := _a_[BEGIN]
+               ..  _a_[TOP]
+               ..  _a_[R_ARC]
+               --- _a_[JOINT]
+               .. _a_[END];
    aux0 := direction 2 of tmppath1;
    phi[R_ARC] := angle(aux0);
    % phi[R_ARC] wird für a -> p UND p -> a benötigt!
 
-   tmppath2 := A[R_ARC]{dir phi[R_ARC]}
-               .. A[L_ARC]
-               .. A[BOTTOM]
-               .. A[JOINT];
+   tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+               .. _a_[L_ARC]
+               .. _a_[BOTTOM]
+               .. _a_[JOINT];
    % Der Schnitpunkt von a-"Bauch" und y-Achse wird
    % beim Übergang p -> a benötigt:
-   A[MID] := tmppath2 intersectionpoint ((0,0.01u)--(0,infinity));
+   _a_[MID] := tmppath2 intersectionpoint ((0,0.01u)--(0,infinity));
 
    draw tmppath1;
    draw tmppath2;
    setbounds currentpicture to boundingpath;
 endfig;
 
-P[BEGIN] = (-0.325u,0.85u);
-P[END]   = (-0.325u,-0.75u);
-P[U_ARC] = (-0.325u,0.6u); % [u]pper end of [arc]
-P[D_ARC] = (-0.325u,0.15u);
-P[TOP]   = zero[TOP];
-P[BOTTOM] = zero[BOTTOM];
-P[RIGHT] = (0.325u,0.425u);
+_p_[BEGIN]  = (-0.325u,0.85u);
+_p_[END]    = (-0.325u,-0.75u);
+_p_[U_ARC]  = (-0.325u,0.6u); % [u]pper end of [arc]
+_p_[D_ARC]  = (-0.325u,0.15u);
+_p_[TOP]    = zero[TOP];
+_p_[BOTTOM] = zero[BOTTOM];
+_p_[RIGHT]  = (0.325u,0.425u);
 
 %
 % a -> p
@@ -1167,24 +1167,24 @@ for i = 10101 upto 10130:
        m := retarded(f);
 
        % Der Startpunkt vom "a" wandert nach links
-       aux[BEGIN] := (xpart(m[A[BEGIN],P[END]]),ypart(A[BEGIN]));
+       aux[BEGIN] := (xpart(m[_a_[BEGIN],_p_[END]]),ypart(_a_[BEGIN]));
        % Der "Bauch" wird im ersten Drittel der Frames eingezogen,
        % damit die Linie vorbeilaufen kann, ohne ihn zu berühren.
 
        tmp := 3m; if tmp >1 : tmp := 1; fi
-       aux[L_ARC] := A[L_ARC] xscaled (1-(2/5)*tmp);
+       aux[L_ARC] := _a_[L_ARC] xscaled (1-(2/5)*tmp);
 
-       tmppath1 := m[aux[BEGIN],P[END]]
+       tmppath1 := m[aux[BEGIN],_p_[END]]
                    ..  aux[BEGIN]{up}
-                   ..  A[TOP]
-                   ..  A[R_ARC]
-                   --- A[JOINT]
-                   ..  A[END];
+                   ..  _a_[TOP]
+                   ..  _a_[R_ARC]
+                   --- _a_[JOINT]
+                   ..  _a_[END];
        draw  subpath (0,5-m) of tmppath1;
-       draw A[R_ARC]{dir phi[R_ARC]}
+       draw _a_[R_ARC]{dir phi[R_ARC]}
             .. aux[L_ARC]
-            .. A[BOTTOM]
-            .. A[JOINT];
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1197,39 +1197,39 @@ for i = 10131 upto 10159:
        f := (i-10130)/30;
        m := advanced(f);
 
-       aux[BEGIN] := (xpart(P[END]),ypart(A[BEGIN]));
-       aux[L_ARC] := A[L_ARC] xscaled 3/5;
+       aux[BEGIN] := (xpart(_p_[END]),ypart(_a_[BEGIN]));
+       aux[L_ARC] := _a_[L_ARC] xscaled 3/5;
 
        % Der Ansatzpunkt wandert am p-Bogen entlang bis zum
        % unteren Ansatz am senkrechten Stamm:
-       tmppath1   := P[D_ARC]
-                     --  m[aux[BEGIN],P[U_ARC]]
-                     ..  A[TOP]
-                     ..  m[A[R_ARC],P[RIGHT]]
-                     --- m[A[JOINT],P[RIGHT]];
+       tmppath1   := _p_[D_ARC]
+                     --  m[aux[BEGIN],_p_[U_ARC]]
+                     ..  _a_[TOP]
+                     ..  m[_a_[R_ARC],_p_[RIGHT]]
+                     --- m[_a_[JOINT],_p_[RIGHT]];
        aux[R_ARC] := point 3-3m of tmppath1;
 
        % Wir brauchen den Winkel am unteren Ansatz des p-Bogens:
-       tmppath0 := P[D_ARC]
-                   .. P[BOTTOM]
-                   .. P[RIGHT]
-                   .. P[TOP]
-                   .. P[U_ARC];
+       tmppath0 := _p_[D_ARC]
+                   .. _p_[BOTTOM]
+                   .. _p_[RIGHT]
+                   .. _p_[TOP]
+                   .. _p_[U_ARC];
        aux0 := direction 0 of tmppath0;
        phi[D_ARC] := angle(aux0);
        % phi[D_ARC] wird auch für die Transformation p -> a benötigt!
 
-       % Ein Hilfspfad beschreibt den Weg von aux[L_ARC] -> A[BOTTOM]
-       tmppath2    := aux[L_ARC] .. A[BOTTOM]{right};
+       % Ein Hilfspfad beschreibt den Weg von aux[L_ARC] -> _a_[BOTTOM]
+       tmppath2    := aux[L_ARC] .. _a_[BOTTOM]{right};
        aux[BOTTOM] := point m of tmppath2;
 
-       draw P[END] -- m[aux[BEGIN],P[BEGIN]];
+       draw _p_[END] -- m[aux[BEGIN],_p_[BEGIN]];
        draw tmppath1;
        % Während der Ansatzpunkt wandert, verändert sich der Winkel:
        draw aux[R_ARC]{dir m[phi[R_ARC],phi[D_ARC]]}
             .. aux[BOTTOM]
-            .. A[BOTTOM]
-            .. m[A[JOINT],P[RIGHT]]{up};
+            .. _a_[BOTTOM]
+            .. m[_a_[JOINT],_p_[RIGHT]]{up};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1242,12 +1242,12 @@ beginfig(11000);
    draw_grid(u);
    pickup pc;
 
-   draw P[BEGIN] -- P[END];
-   draw P[U_ARC]
-        .. P[TOP]
-        .. P[RIGHT]
-        .. P[BOTTOM]
-        .. P[D_ARC];
+   draw _p_[BEGIN] -- _p_[END];
+   draw _p_[U_ARC]
+        .. _p_[TOP]
+        .. _p_[RIGHT]
+        .. _p_[BOTTOM]
+        .. _p_[D_ARC];
    setbounds currentpicture to boundingpath;
 endfig;
 
@@ -1267,15 +1267,15 @@ for i = 11001 upto 11030:
        % gewünschte Länge:
        tmp1 := 2m; if tmp1 > 1: tmp1 := 1; fi
 
-       aux[END] := (xpart(P[END]),0);
+       aux[END] := (xpart(_p_[END]),0);
 
-       tmppath1 := P[BEGIN]
-                   -- tmp1[P[END],aux[END]];
-       tmppath2 := P[U_ARC]
-                   .. P[TOP]
-                   .. P[RIGHT]
-                   .. P[BOTTOM]
-                   .. P[D_ARC];
+       tmppath1 := _p_[BEGIN]
+                   -- tmp1[_p_[END],aux[END]];
+       tmppath2 := _p_[U_ARC]
+                   .. _p_[TOP]
+                   .. _p_[RIGHT]
+                   .. _p_[BOTTOM]
+                   .. _p_[D_ARC];
 
        draw tmppath1 rotatedaround (C,phi0);
        draw tmppath2 rotatedaround (C,phi0);
@@ -1283,13 +1283,13 @@ for i = 11001 upto 11030:
     endfig;
 endfor
 
-aux[MID]    := P[D_ARC]  rotatedaround (C,180);
-aux[BEGIN]  := aux[END]  rotatedaround (C,180);
-aux[R_ARC]  := P[U_ARC]  rotatedaround (C,180);
-aux[JOINT]  := P[BEGIN]  rotatedaround (C,180);
-aux[L_ARC]  := P[RIGHT]  rotatedaround (C,180);
-aux[BOTTOM] := P[TOP]    rotatedaround (C,180);
-aux[TOP]    := P[BOTTOM] rotatedaround (C,180);
+aux[MID]    := _p_[D_ARC]  rotatedaround (C,180);
+aux[BEGIN]  := aux[END]    rotatedaround (C,180);
+aux[R_ARC]  := _p_[U_ARC]  rotatedaround (C,180);
+aux[JOINT]  := _p_[BEGIN]  rotatedaround (C,180);
+aux[L_ARC]  := _p_[RIGHT]  rotatedaround (C,180);
+aux[BOTTOM] := _p_[TOP]    rotatedaround (C,180);
+aux[TOP]    := _p_[BOTTOM] rotatedaround (C,180);
 
 for i = 11031 upto 11059:
     beginfig(i);
@@ -1306,18 +1306,18 @@ for i = 11031 upto 11059:
        phi0 := m[phi[D_ARC]-180,phi[R_ARC]];
 
        % der gedrehte und verkürzte p-"Stamm" wird zum oberen Bogen:
-       tmppath1 := m[aux[JOINT],A[END]]
-                   .. m[aux[JOINT],A[JOINT]]{up} % up/tension/up entspricht ---
-                   .. tension t .. m[aux[R_ARC],A[R_ARC]]{up}
-                   .. m[aux[MID],A[TOP]]
-                   .. m[aux[BEGIN],A[BEGIN]];
+       tmppath1 := m[aux[JOINT],_a_[END]]
+                   .. m[aux[JOINT],_a_[JOINT]]{up} % up/tension/up entspricht ---
+                   .. tension t .. m[aux[R_ARC],_a_[R_ARC]]{up}
+                   .. m[aux[MID],_a_[TOP]]
+                   .. m[aux[BEGIN],_a_[BEGIN]];
 
        % der gedrehte p-Bogen wird zum a-"Bauch":
-       tmppath2 := m[aux[MID],A[R_ARC]]{dir phi0}
-                   .. m[aux[TOP],A[MID]]
-                   .. m[aux[L_ARC],A[L_ARC]]
-                   .. m[aux[BOTTOM],A[BOTTOM]]
-                   .. m[aux[R_ARC],A[JOINT]];
+       tmppath2 := m[aux[MID],_a_[R_ARC]]{dir phi0}
+                   .. m[aux[TOP],_a_[MID]]
+                   .. m[aux[L_ARC],_a_[L_ARC]]
+                   .. m[aux[BOTTOM],_a_[BOTTOM]]
+                   .. m[aux[R_ARC],_a_[JOINT]];
 
        % die beiden Pfade überschneiden sich am Anfang sichtbar, daher
        % kürzen wir den "Bauch"-Pfad:
