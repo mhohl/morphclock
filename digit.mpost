@@ -1329,4 +1329,37 @@ for i = 11031 upto 11059:
     endfig;
 endfor
 
+%
+% m
+%
+
+tmp0 := 0.375;
+tmp1 := 0.85;
+_m_[BEGIN] = (-tmp0*u,tmp1*u);
+_m_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
+_m_[BOTTOM] = (-tmp0*u,0);
+_m_[L_ARC] = (-.5tmp0*u,tmp1*u);
+_m_[JOINT] = (0,0.65u);
+_m_[MID]   = (0,0);
+_m_[R_ARC] = _m_[L_ARC] xscaled -1;
+_m_[RIGHT] = _m_[LEFT] xscaled -1;
+_m_[END]   = _m_[BOTTOM] xscaled -1;
+
+beginfig(12200);
+draw_grid(u);
+   pickup pc;
+
+   draw _m_[BEGIN] -- _m_[LEFT];
+   draw _m_[BOTTOM]
+        -- _m_[LEFT]{up}
+        .. _m_[L_ARC]
+        .. _m_[JOINT]{down}
+     &  _m_[JOINT]{up}
+        .. _m_[R_ARC]
+        .. _m_[RIGHT]{down}
+        -- _m_[END];
+   draw _m_[MID] -- _m_[JOINT];
+   setbounds currentpicture to boundingpath;
+endfig;
+
 end;
