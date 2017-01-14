@@ -102,6 +102,11 @@ boundingpath := (-0.6u,-u)
 vardef advanced(expr xx) = sind(90xx) enddef;
 vardef retarded(expr xx) = 1 - cosd(90xx) enddef;
 
+% Die Exponentialfunktion ist standardmäßig nicht definiert: 
+vardef exp(expr xx) = (mexp(256)**xx) enddef;
+
+% Wir definieren ein "yshifted" für den Buchstaben "m":
+primarydef z yshifted yy = z shifted (0,yy) enddef;
 %
 % Null
 %
@@ -1361,5 +1366,49 @@ draw_grid(u);
    draw _m_[MID] -- _m_[JOINT];
    setbounds currentpicture to boundingpath;
 endfig;
+
+
+def wiggle(expr x, f) =
+    begingroup
+    save scale, shift, amplitude, res;
+    scale := 2;
+    shift := 1.25;
+    amplitude := 0.15;
+    res := scale*(x-shift*(2*f-1));
+    res := amplitude*sqrt(2*exp(1))*res*exp(-res*res);
+    res
+    endgroup
+enddef;
+
+
+
+for i = 12201 upto 12259:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-12200)/60;
+       m := f;
+       
+       aux[BEGIN] := _m_[BEGIN] yshifted (wiggle(xpart(_m_[BEGIN])/u,f)*u);
+       aux[LEFT]  := _m_[LEFT]  yshifted (wiggle(xpart(_m_[LEFT] )/u,f)*u);
+       aux[JOINT] := _m_[JOINT] yshifted (wiggle(xpart(_m_[JOINT])/u,f)*u);
+       aux[RIGHT] := _m_[RIGHT] yshifted (wiggle(xpart(_m_[RIGHT])/u,f)*u);
+       aux[L_ARC] := _m_[L_ARC] yshifted (wiggle(xpart(_m_[L_ARC])/u,f)*u);
+       aux[R_ARC] := _m_[R_ARC] yshifted (wiggle(xpart(_m_[R_ARC])/u,f)*u);
+       
+       draw aux[BEGIN] -- aux[LEFT];
+       draw _m_[BOTTOM]
+            -- aux[LEFT]{up}
+            .. aux[L_ARC]
+            .. aux[JOINT]{down}
+         &  aux[JOINT]{up}
+            .. aux[R_ARC]
+            .. aux[RIGHT]{down}
+            -- _m_[END];
+       draw _m_[MID] -- aux[JOINT];
+    setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 end;
