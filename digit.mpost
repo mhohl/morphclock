@@ -1367,14 +1367,47 @@ draw_grid(u);
    setbounds currentpicture to boundingpath;
 endfig;
 
+%
+% Zur Animation des m benutzen wir folgende Funktion:
+%
+%  1.5 +-+---------+----------+-----------+----------+-----------+--------+-+
+%      +           +          +           +          +           +          +
+%      |                                sqrt(2*exp(1))*x*exp(-x**2) ******* |
+%    1 +-+                                      ****                      +-+
+%      |                                       *    ***                     |
+%      |                                     **       **                    |
+%  0.5 +-+                                   *          **                +-+
+%      |                                   **             **                |
+%      |                                   *                ***             |
+%    0 +-+                                *                    **************
+%      **************                    *                                  |
+%      |             ***                *                                   |
+%      |                **             **                                   |
+% -0.5 +-+                **          *                                   +-+
+%      |                    **       **                                     |
+%      |                     ***    *                                       |
+%   -1 +-+                      ****                                      +-+
+%      |                                                                    |
+%      +           +          +           +          +           +          +
+% -1.5 +-+---------+----------+-----------+----------+-----------+--------+-+
+%     -3          -2         -1           0          1           2          3
+%
+% Wir substituieren:
+% x => scale*(x-shift*(2*t-1)), somit  [0 .. t .. 1] => [-1 .. 2t-1 .. 1]
+% "shift" gibt die Lage des Nullpunktes der Funktion an,
+% "scale" komprimiert den Funktionsverlauf für scale > 1
+% "amplitude" ist selbsterklärend
+%
+% Die Verzerrung läuft somit für t=[0..1] von links nach rechts durch das
+% Bild
 
-def wiggle(expr x, f) =
+def wiggle(expr x, t) =
     begingroup
     save scale, shift, amplitude, res;
     scale := 2;
     shift := 1.25;
     amplitude := 0.15;
-    res := scale*(x-shift*(2*f-1));
+    res := scale*(x-shift*(2*t-1));
     res := amplitude*sqrt(2*exp(1))*res*exp(-res*res);
     res
     endgroup
