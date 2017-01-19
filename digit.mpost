@@ -100,7 +100,7 @@ boundingpath := (-0.6u,-u)
                 -- cycle;
 
 vardef advanced(expr xx) = sind(90xx) enddef;
-vardef retarded(expr xx) = 1 - cosd(90xx) enddef;
+vardef retarded(expr xx) = 1-cosd(90xx) enddef;
 
 % Die Exponentialfunktion ist standardmäßig nicht definiert: 
 vardef exp(expr xx) = (mexp(256)**xx) enddef;
@@ -862,7 +862,6 @@ for i = 1001 upto 1030:
        pickup pc;
        f := (i-1000)/30;
        m := retarded(f);
-       t := 1/m;
 
        tmppath1 := C -- one [TOP] -- one[BEGIN];
 
@@ -878,13 +877,18 @@ for i = 1031 upto 1059:
        pickup pc;
        f := (i-1030)/30;
        m := advanced(f);
-       t := 1/m;
+       
+       % Der horizontale Abstand zwischen dem linken und rechten Rand:
+       tmp0 := xpart(m[C,zero[RIGHT]])-xpart(m[C,zero[LEFT]]);
 
        draw m[C,zero[TOP]]
             .. m[C,zero[RIGHT]]
             .. m[C,zero[BOTTOM]]
             .. m[C,zero[LEFT]]
             .. cycle;
+       % Bei engen Schlaufen gibt es Artefakte, daher setzen wir
+       % einen Punkt in die Mitte, der diese überdeckt:
+       if tmp0 < 0.1u : draw C; fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1110,7 +1114,7 @@ endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Weitere Übergänge: a -> p, p -> a,
+% Weitere Übergänge: a -> p, p -> a, m -> m, : -> :
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1176,8 +1180,8 @@ for i = 10101 upto 10130:
        % Der "Bauch" wird im ersten Drittel der Frames eingezogen,
        % damit die Linie vorbeilaufen kann, ohne ihn zu berühren.
 
-       tmp := 3m; if tmp >1 : tmp := 1; fi
-       aux[L_ARC] := _a_[L_ARC] xscaled (1-(2/5)*tmp);
+       tmp0 := min(3m,1);
+       aux[L_ARC] := _a_[L_ARC] xscaled (1-(2/5)*tmp0);
 
        tmppath1 := m[aux[BEGIN],_p_[END]]
                    ..  aux[BEGIN]{up}
@@ -1270,7 +1274,7 @@ for i = 11001 upto 11030:
 
        % nach einer Vierteldrehung hat der p-Strich bereits die
        % gewünschte Länge:
-       tmp1 := 2m; if tmp1 > 1: tmp1 := 1; fi
+       tmp1 := min (2m,1);
 
        aux[END] := (xpart(_p_[END]),0);
 
