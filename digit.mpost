@@ -1413,8 +1413,9 @@ def wiggle(expr x, t) =
     endgroup
 enddef;
 
-
-
+%
+% m -> m
+%
 for i = 12201 upto 12259:
     beginfig(i);
        draw_grid(u);
@@ -1441,6 +1442,56 @@ for i = 12201 upto 12259:
             -- _m_[END];
        draw _m_[MID] -- aux[JOINT];
     setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% :
+%
+
+colon[TOP]    := (0,0.7u);
+colon[BOTTOM] := (0,0.15u);
+
+aux[TOP] := (0,0.475u);
+aux[BOTTOM] := (0,0.375u);
+
+beginfig(13300);
+   draw_grid(u);
+   pickup pc;
+   
+   draw colon[TOP];
+   draw colon[BOTTOM];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% : -> :
+%
+for i = 13301 upto 13330:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-13300)/30;
+       m := retarded(f);
+       
+       draw m[colon[TOP],aux[TOP]];
+       draw m[colon[BOTTOM],aux[BOTTOM]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = 13331 upto 13359:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-13330)/30;
+       m := advanced(f);
+       
+       draw m[aux[TOP],colon[TOP]];
+       draw m[aux[BOTTOM],colon[BOTTOM]];
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 

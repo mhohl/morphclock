@@ -26,6 +26,7 @@
 \includegraphics[width=\digitwidth]{digit-10100.mps} % a
 \includegraphics[width=\digitwidth]{digit-11000.mps} % p
 \includegraphics[width=\digitwidth]{digit-12200.mps} % m
+\includegraphics[width=\digitwidth]{digit-13300.mps} % :
 
 \newpage
 \digitwidth=1.75cm
@@ -157,7 +158,6 @@
    \IfFileExists{digit-\n.mps}{\includegraphics[width=\digitwidth]{digit-\n.mps} }{}%
 }
 \hspace*{-1ex}
-
 \newpage
 
 \section{Übergang p … a }
@@ -172,6 +172,14 @@
 \section{Übergang m … m }
 
 \foreach \n in {12200,...,12299}{%
+   \IfFileExists{digit-\n.mps}{\includegraphics[width=\digitwidth]{digit-\n.mps} }{}%
+}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang : … : }
+
+\foreach \n in {13300,...,13399}{%
    \IfFileExists{digit-\n.mps}{\includegraphics[width=\digitwidth]{digit-\n.mps} }{}%
 }
 \hspace*{-1ex}
