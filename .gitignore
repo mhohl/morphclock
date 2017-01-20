@@ -4,3 +4,6 @@
 *.toc
 *.mps
 *.pdf
+
+png/
+svg/

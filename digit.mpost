@@ -31,6 +31,7 @@
 %
 
 outputtemplate := "%j-%c.mps";
+outputformat := "eps";
 
 warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
