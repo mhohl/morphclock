@@ -12,6 +12,110 @@
 	letter-spacing: 2px;
 	display:inline;
 }
+
+.ClockWindow
+{
+    border: 1px solid #fff;
+    position: relative;
+    width: 100%;
+    padding: 0px;
+    white-space: nowrap;
+}
+
+.digit6
+{
+    border: 1px solid #f00;
+    position: relative;
+    z-index: 1;
+    width: 10%;
+}
+
+.digit5
+{
+    border: 1px solid #0f0;
+    position: relative;
+    z-index: 2;
+    top: 0px;
+    left: -2%;
+    width: 10%;
+}
+.colon2
+{
+    border: 1px solid #0ff;
+    position: relative;
+    z-index: 3;
+    top: 0px;
+    left: -6%;
+    width: 10%;
+}
+
+.digit4
+{
+    border: 1px solid #00f;
+    position: relative;
+    z-index: 4;
+    top: 0px;
+    left: -10%;
+    width: 10%;
+}
+
+.digit3
+{
+    border: 1px solid #ff0;
+    position: relative;
+    z-index: 5;
+    top: 0px;
+    left: -12%;
+    width: 10%;
+}
+.colon1
+{
+    border: 1px solid #0ff;
+    position: relative;
+    z-index: 6;
+    top: 0px;
+    left: -16%;
+    width: 10%;
+}
+
+.digit2
+{
+    border: 1px solid #f0f;
+    position: relative;
+    z-index: 7;
+    top: 0px;
+    left: -20%;
+    width: 10%;
+}
+.digit1
+{
+    border: 1px solid #0ff;
+    position: relative;
+    z-index: 8;
+    top: 0px;
+    left: -22%;
+    width: 10%;
+}
+
+
+.alphap
+{
+    border: 1px solid #fff;
+    position: relative;
+    z-index: 9;
+    top: 0px;
+    left: -24%;
+    width: 10%;
+}
+.alph-m
+{
+    border: 1px solid #000;
+    position: relative;
+    z-index: 10;
+    top: 0px;
+    left: -26%;
+    width: 10%;
+}
 </style>
 </head>
 <body>
@@ -46,5 +150,20 @@ function renderTime() {
 }
 renderTime();
 </script>
+
+<p>&nbsp;</p>
+
+<div class="ClockWindow">
+<img class="digit6" src="svg/md-01-00.svg" />
+<img class="digit5" src="svg/md-01-00.svg" />
+<img class="colon2" src="svg/md-::-00.svg" />
+<img class="digit4" src="svg/md-01-00.svg" />
+<img class="digit3" src="svg/md-01-00.svg" />
+<img class="colon1" src="svg/md-::-00.svg" />
+<img class="digit2" src="svg/md-01-00.svg" />
+<img class="digit1" src="svg/md-01-00.svg" />
+<img class="alphap" src="svg/md-ap-00.svg" />
+<img class="alph-m" src="svg/md-mm-00.svg" />
+</div>
 </body>
 </html>
