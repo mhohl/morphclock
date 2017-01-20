@@ -36,8 +36,12 @@ outputformat := "eps";
 warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
 numeric f;      % [f]rame index
+numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
+fpht := 30;
+numeric start;  % [start] of transition;
 numeric m;      % [m]orph factor
 numeric t;      % [t]ension
+numeric tt;     % ano[t]her [t]ension ;-)
 numeric phi[];  % rotation angle [phi1]
 numeric u;      % [u]nit
 u := 5cm;
@@ -49,7 +53,6 @@ pc := pencircle scaled 0.1u;
 path tmppath[]; % [t]e[mp]orary [path]
 numeric tmp[];  % [t]e[mp]orary variable
 pair aux[];     % [aux]iliary points;
-
 picture tmppic; % [t]e[mp]orary [pic]ture
 
 % symbolische Variablen
@@ -75,12 +78,7 @@ pair five[], six[], seven[], eight[], nine[];
 % … und die anderen Zeichen
 pair _a_[], _p_[], _m_[], colon[];
 
-%
-% TODO:
-%
-% * for-Schleifen parametrisieren: for i = startIndex[45] upto midIndex[45]
-%
-
+% draft kennzeichnet den Entwurfsmodus:
 numeric draft; draft := 1;
 
 def draw_grid(expr u) =
@@ -108,6 +106,25 @@ vardef exp(expr xx) = (mexp(256)**xx) enddef;
 
 % Wir definieren ein "yshifted" für den Buchstaben "m":
 primarydef z yshifted yy = z shifted (0,yy) enddef;
+
+% eine Funktion zur Berechnung des Startwertes gemäß [1]ftnn:
+vardef transition(expr from, to) =
+    save i;
+    if numeric(from):  i := from * 1000;
+    elseif from = "a": i := 10000;
+    elseif from = "p": i := 11000;
+    elseif from = "m": i := 12000;
+    else:              i := 13000;
+    fi
+    if numeric(to):  i := i + to * 100;
+    elseif to = "a": i := i + 0;
+    elseif to = "p": i := i + 100;
+    elseif to ="m":  i := i + 200;
+    else:            i := i + 300;
+    fi
+    i
+enddef;
+
 %
 % Null
 %
@@ -116,7 +133,8 @@ zero[BOTTOM] = (0,0);
 zero[LEFT]   = (-0.25u,0.425u);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
-beginfig(0100);
+start := transition(0,1);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -135,11 +153,11 @@ one[BEGIN]  = (-0.25u,0.55u);
 one[TOP]    = zero[TOP];
 one[BOTTOM] = zero[BOTTOM];
 
-for i = 0101 upto 0130:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-0100)/30;
+       f := (i-start)/fpht;
        m := retarded(f);
 
        if m < 1:
@@ -156,11 +174,11 @@ for i = 0101 upto 0130:
     endfig;
 endfor
 
-for i = 0131 upto 0159:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-0130)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        draw m[one[TOP],one[BEGIN]]
@@ -173,7 +191,8 @@ endfor
 %
 % Eins
 %
-beginfig(1200);
+start := transition(1,2);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -184,7 +203,7 @@ beginfig(1200);
    tmppic := currentpicture;
 endfig;
 % 1 -> 0
-beginfig(1000);
+beginfig(transition(1,0));
    draw tmppic;
 endfig;
 
@@ -197,11 +216,12 @@ two[R_ARC] = (0.225u,0.55u);
 two[JOINT] = (-0.25u,0);
 two[END]   = (0.25u,0);
 
-for i = 1201 upto 1230:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-1200)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        draw one[BEGIN]
@@ -211,12 +231,12 @@ for i = 1201 upto 1230:
     endfig;
 endfor
 
-for i = 1231 upto 1259:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-1230)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := 1/sqrt(sqrt(m)); % zur Vermeidung einer Spitze im Scheitel der 2
 
@@ -236,7 +256,8 @@ endfor
 %
 % Zwei
 %
-beginfig(2300);
+start := transition(2,3);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -249,11 +270,11 @@ beginfig(2300);
    tmppic := currentpicture;
 endfig;
 % 2 -> 0
-beginfig(2000);
+beginfig(transition(2,0));
    draw tmppic;
 endfig;
 % 2 -> 1
-beginfig(2100);
+beginfig(transition(2,1));
    draw tmppic;
 endfig;
 
@@ -267,12 +288,12 @@ three[JOINT] = (-0.15u,0);
 three[D_ARC] = (0.3u,-0.625u);
 three[END]   = three[D_ARC] xscaled -1;
 
-for i = 2301 upto 2330:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-2300)/30;
+       f := (i-start)/fpht;
        m := retarded(f);
        phi1 := -90m;
 
@@ -286,11 +307,12 @@ for i = 2301 upto 2330:
     endfig;
 endfor
 
-for i = 2331 upto 2359:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-2330)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := 1/m;
 
@@ -310,7 +332,8 @@ endfor
 %
 % Drei
 %
-beginfig(3400);
+start := transition(3,4);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -325,7 +348,7 @@ beginfig(3400);
    tmppic := currentpicture;
 endfig;
 % 3 -> 0
-beginfig(3000);
+beginfig(transition(3,0));
    draw tmppic;
 endfig;
 
@@ -338,12 +361,12 @@ four[MID]    = four[LEFT] xscaled -1;
 four[BOTTOM] = (0.25u,-0.75u);
 four[RIGHT]  = (0.4u,0);
 
-for i = 3401 upto 3430:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-3400)/30;
+       f := (i-start)/fpht;
        m := retarded(f);
        t := max(15f*f,1);
 
@@ -364,12 +387,12 @@ for i = 3401 upto 3430:
     endfig;
 endfor
 
-for i = 3431 upto 3459:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-3430)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := max(15*f*f*f,1);
 
@@ -388,7 +411,8 @@ endfor
 %
 % Vier
 %
-beginfig(4500);
+start := transition(4,5);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -409,11 +433,12 @@ five[U_ARC] = (0,0.1u);
 five[R_ARC] = (0.3u,-0.425u);
 five[END]   = (-0.3u,-0.75u);
 
-for i = 4501 upto 4530:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-4500)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        draw four[TOP]
@@ -425,11 +450,12 @@ for i = 4501 upto 4530:
     endfig;
 endfor
 
-for i = 4531 upto 4559:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-4530)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := max(5(1-m),1);
 
@@ -456,7 +482,8 @@ endfor
 %
 % Fünf
 %
-beginfig(5600);
+start := transition(5,6);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -470,7 +497,7 @@ beginfig(5600);
    tmppic := currentpicture;
 endfig;
 % 5-> 0
-beginfig(5000);
+beginfig(transition(5,0));
    draw tmppic;
 endfig;
 
@@ -483,11 +510,12 @@ six[RIGHT]  = zero[RIGHT] xscaled 3/2;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
 
-for i = 5601 upto 5630:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-5600)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        % die linke Ecke five[LEFT] wandert genauso schnell nach oben wie
@@ -511,7 +539,7 @@ for i = 5601 upto 5630:
     endfig;
 endfor
 
-for i = 5631 upto 5659:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
@@ -546,7 +574,8 @@ endfor
 %
 % Sechs
 %
-beginfig(6700);
+start := transition(6,7);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -570,11 +599,12 @@ seven[END]   = (0,-0.75u);
 % Hilfspunkt:
 seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
-for i = 6701 upto 6730:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-6700)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
        q := 2m*m-2*m+1;
          % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
@@ -597,11 +627,12 @@ for i = 6701 upto 6730:
     endfig;
 endfor
 
-for i = 6731 upto 6759:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-6730)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := max(30m*m,1);
 
@@ -623,7 +654,8 @@ endfor
 %
 % Sieben
 %
-beginfig(7800);
+start := transition(7,8);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -645,11 +677,12 @@ eight[LEFT]   = (-0.4u,0.35u);
 eight[RIGHT]  = eight[LEFT] xscaled -1;
 eight[BOTTOM] = zero[BOTTOM];
 
-for i = 7801 upto 7830:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-7800)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        tmppath1 := m[seven[BEGIN],seven[LEFT]]
@@ -668,11 +701,12 @@ for i = 7801 upto 7830:
     endfig;
 endfor
 
-for i = 7831 upto 7859:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-7830)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := 1/f;
        tt := max(t/2,1);
@@ -691,7 +725,8 @@ endfor
 %
 % Acht
 %
-beginfig(8900);
+start := transition(8,9);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -715,11 +750,12 @@ nine[RIGHT]  = six[RIGHT];
 nine[BOTTOM] = six[BOTTOM];
 nine[END]    = (-0.25u,-0.75u);
 
-for i = 8901 upto 8930:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-8900)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
        phi1 := -90m*m;
 
@@ -752,11 +788,12 @@ for i = 8901 upto 8930:
     endfig;
 endfor
 
-for i = 8931 upto 8959:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-8930)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        % Der Endpunkt des Bogens wandert von nine[RIGHT] ausgehend am
@@ -778,7 +815,8 @@ endfor
 %
 % Neun
 %
-beginfig(9000);
+start := transition(9,0);
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -794,11 +832,12 @@ endfig;
 %
 % Neun -> Null
 %
-for i = 9001 upto 9030:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-9000)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        % Der Bogen der Neun soll beim Aufwickeln ein bisschen
@@ -832,11 +871,12 @@ for i = 9001 upto 9030:
     endfig;
 endfor
 
-for i = 9031 upto 9059:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-9030)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        draw zero[TOP]
@@ -857,11 +897,13 @@ endfor
 %
 % Eins -> Null
 %
-for i = 1001 upto 1030:
+start := transition(1,0);
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-1000)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        tmppath1 := C -- one [TOP] -- one[BEGIN];
@@ -872,11 +914,11 @@ for i = 1001 upto 1030:
     endfig;
 endfor
 
-for i = 1031 upto 1059:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-1030)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        
        % Der horizontale Abstand zwischen dem linken und rechten Rand:
@@ -897,11 +939,13 @@ endfor
 %
 % Zwei -> Null
 %
-for i = 2001 upto 2030:
+start := transition(2,0);
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-2000)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
        t := 2-m;
 
@@ -926,11 +970,12 @@ tmppath0 := zero[LEFT]{up}
                   .. zero[BOTTOM];
 aux3 := direction 3 of tmppath0;
 
-for i = 2031 upto 2059:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-2030)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        phi1 := m[angle(aux3),-180];
@@ -953,11 +998,13 @@ endfor
 %
 % Zwei -> Eins
 %
-for i = 2101 upto 2130:
+start := transition(2,1);
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-2100)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
        t := 10*m*m+1;
 
@@ -981,11 +1028,12 @@ for i = 2101 upto 2130:
     endfig;
 endfor
 
-for i = 2131 upto 2159:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-2130)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        phi0 := -90-angle(one[BEGIN]-one[TOP]);
@@ -1001,11 +1049,13 @@ endfor
 %
 % Drei -> Null
 %
-for i = 3001 upto 3030:
+start := transition(3,0);
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-3000)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        % Übergang oberer Bogen Drei zur Dreiviertel-Null
@@ -1039,11 +1089,12 @@ for i = 3001 upto 3030:
     endfig;
 endfor
 
-for i = 3031 upto 3059:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-3030)/30;
+
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        phi1 := (1-m)*phi0;
@@ -1061,11 +1112,13 @@ endfor
 %
 % Fünf -> Null
 %
-for i = 5001 upto 5030:
+start := transition(5,0);
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
-       f := (i-5000)/30;
+
+       f := (i-start)/fpht;
        m := retarded(f);
 
        tmppath0 := m[five[JOINT],zero[LEFT]]
@@ -1093,12 +1146,12 @@ for i = 5001 upto 5030:
     endfig;
 endfor
 
-for i = 5031 upto 5059:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-5030)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := 1/m;
 
@@ -1131,7 +1184,8 @@ _a_[END]    = (0.325u,0);
 _a_[L_ARC]  = _a_[JOINT] xscaled -1;
 _a_[BOTTOM] = zero[BOTTOM];
 
-beginfig(10100);
+start := transition("a","p");
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -1168,12 +1222,12 @@ _p_[RIGHT]  = (0.325u,0.425u);
 %
 % a -> p
 %
-for i = 10101 upto 10130:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-10100)/30;
+       f := (i-start)/fpht;
        m := retarded(f);
 
        % Der Startpunkt vom "a" wandert nach links
@@ -1199,12 +1253,12 @@ for i = 10101 upto 10130:
     endfig;
 endfor
 
-for i = 10131 upto 10159:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-10130)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
 
        aux[BEGIN] := (xpart(_p_[END]),ypart(_a_[BEGIN]));
@@ -1247,8 +1301,8 @@ endfor
 %
 % p
 %
-
-beginfig(11000);
+start := transition("p","a");
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -1262,14 +1316,14 @@ beginfig(11000);
 endfig;
 
 %
-% a -> p
+% p -> a
 %
-for i = 11001 upto 11030:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-11000)/30;
+       f := (i-start)/fpht;
        m := retarded(f);
        phi0 := 180m;
 
@@ -1301,12 +1355,12 @@ aux[L_ARC]  := _p_[RIGHT]  rotatedaround (C,180);
 aux[BOTTOM] := _p_[TOP]    rotatedaround (C,180);
 aux[TOP]    := _p_[BOTTOM] rotatedaround (C,180);
 
-for i = 11031 upto 11059:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-11030)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := 10m+1;
 
@@ -1355,7 +1409,8 @@ _m_[R_ARC] = _m_[L_ARC] xscaled -1;
 _m_[RIGHT] = _m_[LEFT] xscaled -1;
 _m_[END]   = _m_[BOTTOM] xscaled -1;
 
-beginfig(12200);
+start := transition("m","m");
+beginfig(start);
 draw_grid(u);
    pickup pc;
 
@@ -1421,12 +1476,12 @@ enddef;
 %
 % m -> m
 %
-for i = 12201 upto 12259:
+for i = start+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-12200)/60;
+       f := (i-start)/(2fpht);
        m := f;
        
        aux[BEGIN] := _m_[BEGIN] yshifted (wiggle(xpart(_m_[BEGIN])/u,f)*u);
@@ -1460,7 +1515,8 @@ colon[BOTTOM] := (0,0.15u);
 aux[TOP] := (0,0.475u);
 aux[BOTTOM] := (0,0.375u);
 
-beginfig(13300);
+start := transition(":",":");
+beginfig(start);
    draw_grid(u);
    pickup pc;
    
@@ -1472,12 +1528,12 @@ endfig;
 %
 % : -> :
 %
-for i = 13301 upto 13330:
+for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-13300)/30;
+       f := (i-start)/fpht;
        m := retarded(f);
        
        draw m[colon[TOP],aux[TOP]];
@@ -1486,12 +1542,12 @@ for i = 13301 upto 13330:
     endfig;
 endfor
 
-for i = 13331 upto 13359:
+for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       f := (i-13330)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        
        draw m[aux[TOP],colon[TOP]];

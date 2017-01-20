@@ -3,7 +3,7 @@
 # digits.sh
 #
 from=${1-0}
-to=${2-9999}
+to=${2-13399}
 
 SVGDIR=./svg/
 PNGDIR=./png/
