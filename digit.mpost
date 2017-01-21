@@ -37,7 +37,7 @@ warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
 numeric f;      % [f]rame index
 numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
-fpht := 30;
+fpht := 50;
 numeric start;  % [start] of transition;
 numeric m;      % [m]orph factor
 numeric t;      % [t]ension
@@ -544,7 +544,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw_grid(u);
        pickup pc;
 
-       f := (i-5630)/30;
+       f := (i-start-fpht)/fpht;
        m := advanced(f);
        t := 1/m;
 
