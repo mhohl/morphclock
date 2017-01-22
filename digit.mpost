@@ -530,7 +530,7 @@ for i = start+1 upto start+fpht:
             .. m[five[U_ARC],six[TOP]]
             .. m[five[R_ARC],six[RIGHT]]
             .. {left}m[five[END],six[BOTTOM]]
-            .. if i < 5630:
+            .. if i < start+fpht:
                   m[five[END],six[LEFT]]
                else:
                   cycle
@@ -776,7 +776,7 @@ for i = start+1 upto start+fpht:
                    .. m[eight[BOTTOM],aux[BOTTOM]]
                    .. m[eight[RIGHT],aux[RIGHT]]
                    .. m[eight[MID],aux[MID]]
-                   if i < 8930:
+                   if i < start+fpht:
                       .. m[eight[L_ARC],aux[MID]]
                       .. m[eight[R_ARC],aux[MID]]
                       .. m[eight[MID],aux[MID]]
@@ -1137,7 +1137,7 @@ for i = start+1 upto start+fpht:
             .. m[five[U_ARC],zero[TOP]]
             .. m[five[R_ARC],zero[RIGHT]]
             .. {left}m[five[END],zero[BOTTOM]]
-            .. if i < 5630:
+            .. if i < start+fpht:
                   m[five[END],zero[LEFT]]{up}
                else:
                   cycle
