@@ -1,0 +1,330 @@
+/* morphclock.css (c) 2017 Marc Hohl */
+
+.ClockWindow
+{
+    /* border: 1px solid #fff; */
+    position: relative;
+    width: 100%;
+    padding: 0px;
+    white-space: nowrap;
+}
+
+/* Format HH:MM:SS 24h */
+
+/* If the overlapping between digits is <x> and overlapping
+ * between digit and colon (or vice versa) is 2<x>, then we
+ * have 8 x digit-width - 11 x <x> = 100
+ * digit-width = 18% and overlap = 4% fulfil this equation.
+ */
+
+.digit-hhmmss24-Hx
+{
+    /* border: 1px solid #f00; */
+    position: absolute;
+    top: 0px;
+    left:0px;
+    z-index: 1;
+    width: 18%;
+}
+
+.digit-hhmmss24-xH
+{
+    /* border: 1px solid #0f0; */
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 14%;
+    width: 18%;
+}
+.colon-hhmmss24-Cx
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    left: 24%;
+    width: 18%;
+}
+
+.digit-hhmmss24-Mx
+{
+    /* border: 1px solid #00f; */
+    position: absolute;
+    z-index: 4;
+    top: 0px;
+    left: 34%;
+    width: 18%;
+}
+
+.digit-hhmmss24-xM
+{
+    /* border: 1px solid #ff0; */
+    position: absolute;
+    z-index: 5;
+    top: 0px;
+    left: 48%;
+    width: 18%;
+}
+
+.colon-hhmmss24-xC
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 6;
+    top: 0px;
+    left: 58%;
+    width: 18%;
+}
+
+.digit-hhmmss24-Sx
+{
+    /* border: 1px solid #f0f; */
+    position: absolute;
+    z-index: 7;
+    top: 0px;
+    left: 68%;
+    width: 18%;
+}
+
+.digit-hhmmss24-xS
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 8;
+    top: 0px;
+    left: 82%;
+    width: 18%;
+}
+
+/* Format HH:MM 24h */
+
+/* digit-width = 26%, overlap = 5% */
+
+.digit-hhmm24-Hx
+{
+    /* border: 1px solid #f00; */
+    position: absolute;
+    top: 0px;
+    left:0px;
+    z-index: 1;
+    width: 26%
+}
+
+.digit-hhmm24-xH
+{
+    /* border: 1px solid #0f0; */
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 21%;
+    width: 26%
+}
+
+.colon-hhmm24-CC
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    left: 37%;
+    width: 26%
+}
+
+.digit-hhmm24-Mx
+{
+    /* border: 1px solid #00f; */
+    position: absolute;
+    z-index: 4;
+    top: 0px;
+    left: 53%;
+    width: 26%
+}
+
+.digit-hhmm24-xM
+{
+    /* border: 1px solid #ff0; */
+    position: absolute;
+    z-index: 5;
+    top: 0px;
+    left: 74%;
+    width: 26%
+}
+
+/* Format HH:MM:SS 12hr */
+
+/* digit-width = 12%, overlap = 2%
+ * The space bettwen HH:MM[:SS] and am/pm
+ * is treated like a colon, i.e. double overlap
+ */
+
+.digit-hhmmss12-Hx
+{
+    /* border: 1px solid #f00; */
+    position: absolute;
+    top: 0px;
+    left:0px;
+    z-index: 1;
+    width: 12%;
+}
+
+.digit-hhmmss12-xH
+{
+    /* border: 1px solid #0f0; */
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 10%;
+    width: 12%;
+}
+
+.colon-hhmmss12-Cx
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    left: 18%;
+    width: 12%;
+}
+
+.digit-hhmmss12-Mx
+{
+    /* border: 1px solid #00f; */
+    position: absolute;
+    z-index: 4;
+    top: 0px;
+    left: 25%;
+    width: 12%;
+}
+
+.digit-hhmmss12-xM
+{
+    /* border: 1px solid #ff0; */
+    position: absolute;
+    z-index: 5;
+    top: 0px;
+    left: 36%;
+    width: 12%;
+}
+.colon-hhmmss12-xC
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 6;
+    top: 0px;
+    left: 44%;
+    width: 12%;
+}
+
+.digit-hhmmss12-Sx
+{
+    /* border: 1px solid #f0f; */
+    position: absolute;
+    z-index: 7;
+    top: 0px;
+    left: 52%;
+    width: 12%;
+}
+.digit-hhmmss12-xS
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 8;
+    top: 0px;
+    left: 62%;
+    width: 12%;
+}
+
+.alpha-hhmmss12-Dx
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 8;
+    top: 0px;
+    left: 78%;
+    width: 12%;
+}
+
+.alpha-hhmmss12-xD
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 8;
+    top: 0px;
+    left: 88%;
+    width: 12%;
+}
+/* Format HH:MM 12hr */
+
+/* digit-width = 18%, overlap = 4% */
+
+.digit-hhmm12-Hx
+{
+    /* border: 1px solid #f00; */
+    position: absolute;
+    top: 0px;
+    left:0px;
+    z-index: 1;
+    width: 18%;
+}
+
+.digit-hhmm12-xH
+{
+    /* border: 1px solid #0f0; */
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 14%;
+    width: 18%;
+}
+.colon-hhmm12-CC
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    left: 24%;
+    width: 18%;
+}
+
+.digit-hhmm12-Mx
+{
+    /* border: 1px solid #00f; */
+    position: absolute;
+    z-index: 4;
+    top: 0px;
+    left: 34%;
+    width: 18%;
+}
+
+.digit-hhmm12-xM
+{
+    /* border: 1px solid #ff0; */
+    position: absolute;
+    z-index: 5;
+    top: 0px;
+    left: 48%;
+    width: 18%;
+}
+
+.alpha-hhmm12-Dx
+{
+    /* border: 1px solid #f0f; */
+    position: absolute;
+    z-index: 7;
+    top: 0px;
+    left: 68%;
+    width: 18%;
+}
+.alpha-hhmm12-xD
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 8;
+    top: 0px;
+    left: 82%;
+    width: 18%;
+}
+
+
+
