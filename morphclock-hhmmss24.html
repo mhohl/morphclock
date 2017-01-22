@@ -1,0 +1,218 @@
+<html>
+<head>
+<style>
+
+/* If the overlapping between digits is D and overlapping
+ * between digit and colon (or vice versa) is 2D, then we
+ * have 8xdigit-width - 11xD = 100
+ * digit-width = 18% and D = 4% fulfil this equation.
+ */
+
+.ClockWindow
+{
+    /* border: 1px solid #fff; */
+    position: relative;
+    width: 100%;
+    padding: 0px;
+    white-space: nowrap;
+}
+
+.digit-hhmmss24-Hx
+{
+    /* border: 1px solid #f00; */
+    position: absolute;
+    top: 0px;
+    left:0px;
+    z-index: 1;
+    width: 18%;
+}
+
+.digit-hhmmss24-xH
+{
+    /* border: 1px solid #0f0; */
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 14%;
+    width: 18%;
+}
+.colon-hhmmss24-Cx
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 3;
+    top: 0px;
+    left: 24%;
+    width: 18%;
+}
+
+.digit-hhmmss24-Mx
+{
+    /* border: 1px solid #00f; */
+    position: absolute;
+    z-index: 4;
+    top: 0px;
+    left: 34%;
+    width: 18%;
+}
+
+.digit-hhmmss24-xM
+{
+    /* border: 1px solid #ff0; */
+    position: absolute;
+    z-index: 5;
+    top: 0px;
+    left: 48%;
+    width: 18%;
+}
+.colon-hhmmss24-xC
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 6;
+    top: 0px;
+    left: 58%;
+    width: 18%;
+}
+
+.digit-hhmmss24-Sx
+{
+    /* border: 1px solid #f0f; */
+    position: absolute;
+    z-index: 7;
+    top: 0px;
+    left: 68%;
+    width: 18%;
+}
+.digit-hhmmss24-xS
+{
+    /* border: 1px solid #0ff; */
+    position: absolute;
+    z-index: 8;
+    top: 0px;
+    left: 82%;
+    width: 18%;
+}
+
+</style>
+</head>
+<body>
+
+<script>
+
+function renderTime() {
+    var currentTime = new Date();
+
+    var xh = currentTime.getHours();
+    var xm = currentTime.getMinutes();
+    var xs = currentTime.getSeconds();
+    var xt = currentTime.getMilliseconds();
+    
+    setTimeout('renderTime()',100);
+
+    var H_ = Math.floor(xh/10);
+    var _H = xh % 10;
+    var M_ = Math.floor(xm/10);
+    var _M = xm % 10;
+    var S_ = Math.floor(xs/10);
+    var _S = xs % 10;
+    
+    var morphH_ = "00";
+    var morph_H = "00";
+    var morphM_ = "00";
+    var morph_M = "00";
+    var morphS_ = "00";
+    var morph_S = Math.round(xt/10);
+    if ( morph_S <10 ) { morph_S = "0" + morph_S; }
+    
+    // hours part 1
+    if (H_ == 2) { H_ = H_ + "0"; }
+    else if (H_ == 0) { H_ = H_ + "1"; }
+    else { H_ = H_ * 10 + (H_ + 1); }
+    
+    // hours part 2
+    if ((H_ == 2 && _H == 3) || 
+        (_H == 9)) { _H = _H + "0";
+                     if (M_ == 5 && _M == 9 && S_ == 5 && _S >= 5) {
+                        morphH_ = Math.round(((_S-5)*1000+xt)/50);
+                        if (morphH_ < 10) { morphH_ = "0" + morphH_; }
+                     }
+                   }
+    else if (_H == 0) { _H = _H + "1"; }
+    else { _H = _H * 10 + (_H + 1); }
+    
+    // minutes part 1
+    if (M_ == 5) { M_ = M_ + "0";
+                   if (_M == 9 && S_ == 5 && _S >= 5) {
+                      morph_H = Math.round(((_S-5)*1000+xt)/50);
+                      if (morph_H < 10) { morph_H = "0" + morph_H; }
+                   }
+                 }
+    else if (M_ == 0) { M_ = M_ + "1"; }
+    else { M_ = M_ * 10 + (M_ + 1); }
+    
+    // minutes part 2
+    if (_M == 9) { _M = _M + "0";
+                   if (S_ == 5 && _S >= 5) {
+                      morphM_ = Math.round(((_S-5)*1000+xt)/50);
+                      if (morphM_ < 10) { morphM_ = "0" + morphM_; }
+                   }
+                 }
+    else if (_M == 0) { _M = _M + "1"; }
+    else { _M = _M * 10 + (_M + 1); } 
+    
+    // seconds part 1
+    if (S_ == 5) { S_ = S_ + "0";
+                   if (_S >= 5) { 
+                      morph_M = Math.round(((_S-5)*1000+xt)/50);
+                      if (morph_M < 10) { morph_M = "0" + morph_M; }
+                   }
+                 }
+    else if (S_ == 0) { S_ = S_ + "1"; }
+    else { S_ = S_ * 10 + (S_ + 1); }
+    
+    // seconds part 2
+    if (_S == 9) { _S = _S + "0";
+                   morphS_ = morph_S; }
+    else if (_S == 0) { _S = _S + "1"; }
+    else  { _S = _S * 10 + (_S + 1); }
+    
+     
+    //document.getElementById("demo").innerHTML = _H;
+    // get images by ID
+    var H_img = document.getElementById("digit-hhmmss24-Hx");
+    var _Himg = document.getElementById("digit-hhmmss24-xH");
+    var M_img = document.getElementById("digit-hhmmss24-Mx");
+    var _Mimg = document.getElementById("digit-hhmmss24-xM");
+    var S_img = document.getElementById("digit-hhmmss24-Sx");
+    var _Simg = document.getElementById("digit-hhmmss24-xS");
+    
+    H_img.src="svg/md-" + H_ + "-" + morphH_ + ".svg";
+    _Himg.src="svg/md-" + _H + "-" + morph_H + ".svg";
+    
+    M_img.src="svg/md-" + M_ + "-" + morphM_ + ".svg";
+    _Mimg.src="svg/md-" + _M + "-" + morph_M + ".svg";
+    
+    S_img.src="svg/md-" + S_ + "-" + morphS_ + ".svg";
+    _Simg.src="svg/md-" + _S + "-" + morph_S + ".svg";
+}
+renderTime();
+</script>
+
+<!--<p id="demo">&nbsp;</p>
+
+
+<p>&nbsp;</p>-->
+
+<div class="ClockWindow">
+<img class="digit-hhmmss24-Hx" id="digit-hhmmss24-Hx" src="svg/md-01-00.svg" />
+<img class="digit-hhmmss24-xH" id="digit-hhmmss24-xH" src="svg/md-01-00.svg" />
+<img class="colon-hhmmss24-Cx" id="colon-hhmmss24-Cx" src="svg/md-::-00.svg" />
+<img class="digit-hhmmss24-Mx" id="digit-hhmmss24-Mx" src="svg/md-01-00.svg" />
+<img class="digit-hhmmss24-xM" id="digit-hhmmss24-xM" src="svg/md-01-00.svg" />
+<img class="colon-hhmmss24-xC" id="colon-hhmmss24-xC" src="svg/md-::-00.svg" />
+<img class="digit-hhmmss24-Sx" id="digit-hhmmss24-Sx" src="svg/md-01-00.svg" />
+<img class="digit-hhmmss24-xS" id="digit-hhmmss24-xS" src="svg/md-01-00.svg" />
+</div>
+</body>
+</html>
