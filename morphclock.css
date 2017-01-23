@@ -15,6 +15,17 @@
  * between digit and colon (or vice versa) is 2<x>, then we
  * have 8 x digit-width - 11 x <x> = 100
  * digit-width = 18% and overlap = 4% fulfil this equation.
+ *
+ * 0         18
+ * |----H----|       32
+ *         |----H----|     42
+ *         14    |----:----|     52
+ *               24    |----M----|       66
+ *                     34      |----M----|     76
+ *                             48    |----:----|       86
+ *                                   58      |----S----|
+ *                                           68      |----S----|
+ *                                                   82       100
  */
 
 .digit-hhmmss24-Hx
@@ -22,7 +33,7 @@
     /* border: 1px solid #f00; */
     position: absolute;
     top: 0px;
-    left:0px;
+    left: 0px;
     z-index: 1;
     width: 18%;
 }
