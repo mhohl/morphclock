@@ -6,6 +6,26 @@
 
 <script>
 
+var imgDataHHMM12 = { 
+    'digit-hhmm12-Hx':'svg/md-00-00.svg',
+    'digit-hhmm12-xH':'svg/md-00-00.svg',
+    'colon-hhmm12-CC':'svg/md-::-00.svg',
+    'digit-hhmm12-Mx':'svg/md-00-00.svg',
+    'digit-hhmm12-xM':'svg/md-00-00.svg',
+    'alpha-hhmm12-Dx':'svg/md-ap-00.svg',
+    'alpha-hhmm12-xD':'svg/md-mm-00.svg'
+};
+  
+window.onload = function() {
+    for (var id in imgDataHHMM12) {
+        var img = document.createElement('img');
+        img.setAttribute('src', imgDataHHMM12[id]);
+        img.setAttribute('id', id);
+        document.getElementById('morphclock').appendChild(img);
+    }
+    renderTime();
+}
+
 function renderTime() {
     var currentTime = new Date();
 
@@ -112,19 +132,11 @@ function renderTime() {
     D_img.src="svg/md-" + D_ + "-" + morphD_ + ".svg";
     _Dimg.src="svg/md-" + _D + "-" + morph_D + ".svg";
 }
-renderTime();
+//renderTime();
 </script>
 
 <!--<p id="demo">&nbsp;</p><!-- -->
 
-<div class="ClockWindow">
-<img class="digit-hhmm12-Hx" id="digit-hhmm12-Hx" src="svg/md-01-00.svg" />
-<img class="digit-hhmm12-xH" id="digit-hhmm12-xH" src="svg/md-01-00.svg" />
-<img class="colon-hhmm12-CC" id="colon-hhmm12-CC" src="svg/md-::-00.svg" />
-<img class="digit-hhmm12-Mx" id="digit-hhmm12-Mx" src="svg/md-01-00.svg" />
-<img class="digit-hhmm12-xM" id="digit-hhmm12-xM" src="svg/md-01-00.svg" />
-<img class="alpha-hhmm12-Dx" id="alpha-hhmm12-Dx" src="svg/md-ap-00.svg" />
-<img class="alpha-hhmm12-xD" id="alpha-hhmm12-xD" src="svg/md-mm-00.svg" />
-</div>
+<div id="morphclock"></div>
 </body>
 </html>

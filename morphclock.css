@@ -1,6 +1,6 @@
 /* morphclock.css (c) 2017 Marc Hohl */
 
-.ClockWindow
+#morphclock
 {
     /* border: 1px solid #fff; */
     position: relative;
@@ -28,7 +28,7 @@
  *                                                   82       100
  */
 
-.digit-hhmmss24-Hx
+#digit-hhmmss24-Hx
 {
     /* border: 1px solid #f00; */
     position: absolute;
@@ -38,7 +38,7 @@
     width: 18%;
 }
 
-.digit-hhmmss24-xH
+#digit-hhmmss24-xH
 {
     /* border: 1px solid #0f0; */
     position: absolute;
@@ -47,7 +47,7 @@
     left: 14%;
     width: 18%;
 }
-.colon-hhmmss24-Cx
+#colon-hhmmss24-Cx
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -57,7 +57,7 @@
     width: 18%;
 }
 
-.digit-hhmmss24-Mx
+#digit-hhmmss24-Mx
 {
     /* border: 1px solid #00f; */
     position: absolute;
@@ -67,7 +67,7 @@
     width: 18%;
 }
 
-.digit-hhmmss24-xM
+#digit-hhmmss24-xM
 {
     /* border: 1px solid #ff0; */
     position: absolute;
@@ -77,7 +77,7 @@
     width: 18%;
 }
 
-.colon-hhmmss24-xC
+#colon-hhmmss24-xC
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -87,7 +87,7 @@
     width: 18%;
 }
 
-.digit-hhmmss24-Sx
+#digit-hhmmss24-Sx
 {
     /* border: 1px solid #f0f; */
     position: absolute;
@@ -97,7 +97,7 @@
     width: 18%;
 }
 
-.digit-hhmmss24-xS
+#digit-hhmmss24-xS
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -111,7 +111,7 @@
 
 /* digit-width = 26%, overlap = 5% */
 
-.digit-hhmm24-Hx
+#digit-hhmm24-Hx
 {
     /* border: 1px solid #f00; */
     position: absolute;
@@ -121,7 +121,7 @@
     width: 26%
 }
 
-.digit-hhmm24-xH
+#digit-hhmm24-xH
 {
     /* border: 1px solid #0f0; */
     position: absolute;
@@ -131,7 +131,7 @@
     width: 26%
 }
 
-.colon-hhmm24-CC
+#colon-hhmm24-CC
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -141,7 +141,7 @@
     width: 26%
 }
 
-.digit-hhmm24-Mx
+#digit-hhmm24-Mx
 {
     /* border: 1px solid #00f; */
     position: absolute;
@@ -151,7 +151,7 @@
     width: 26%
 }
 
-.digit-hhmm24-xM
+#digit-hhmm24-xM
 {
     /* border: 1px solid #ff0; */
     position: absolute;
@@ -168,7 +168,7 @@
  * is treated like a colon, i.e. double overlap
  */
 
-.digit-hhmmss12-Hx
+#digit-hhmmss12-Hx
 {
     /* border: 1px solid #f00; */
     position: absolute;
@@ -178,7 +178,7 @@
     width: 12%;
 }
 
-.digit-hhmmss12-xH
+#digit-hhmmss12-xH
 {
     /* border: 1px solid #0f0; */
     position: absolute;
@@ -188,7 +188,7 @@
     width: 12%;
 }
 
-.colon-hhmmss12-Cx
+#colon-hhmmss12-Cx
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -198,7 +198,7 @@
     width: 12%;
 }
 
-.digit-hhmmss12-Mx
+#digit-hhmmss12-Mx
 {
     /* border: 1px solid #00f; */
     position: absolute;
@@ -208,7 +208,7 @@
     width: 12%;
 }
 
-.digit-hhmmss12-xM
+#digit-hhmmss12-xM
 {
     /* border: 1px solid #ff0; */
     position: absolute;
@@ -217,7 +217,8 @@
     left: 36%;
     width: 12%;
 }
-.colon-hhmmss12-xC
+
+#colon-hhmmss12-xC
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -227,7 +228,7 @@
     width: 12%;
 }
 
-.digit-hhmmss12-Sx
+#digit-hhmmss12-Sx
 {
     /* border: 1px solid #f0f; */
     position: absolute;
@@ -236,7 +237,8 @@
     left: 52%;
     width: 12%;
 }
-.digit-hhmmss12-xS
+
+#digit-hhmmss12-xS
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -246,7 +248,7 @@
     width: 12%;
 }
 
-.alpha-hhmmss12-Dx
+#alpha-hhmmss12-Dx
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -256,7 +258,7 @@
     width: 12%;
 }
 
-.alpha-hhmmss12-xD
+#alpha-hhmmss12-xD
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -265,11 +267,12 @@
     left: 88%;
     width: 12%;
 }
+
 /* Format HH:MM 12hr */
 
 /* digit-width = 18%, overlap = 4% */
 
-.digit-hhmm12-Hx
+#digit-hhmm12-Hx
 {
     /* border: 1px solid #f00; */
     position: absolute;
@@ -279,7 +282,7 @@
     width: 18%;
 }
 
-.digit-hhmm12-xH
+#digit-hhmm12-xH
 {
     /* border: 1px solid #0f0; */
     position: absolute;
@@ -288,7 +291,8 @@
     left: 14%;
     width: 18%;
 }
-.colon-hhmm12-CC
+
+#colon-hhmm12-CC
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -298,7 +302,7 @@
     width: 18%;
 }
 
-.digit-hhmm12-Mx
+#digit-hhmm12-Mx
 {
     /* border: 1px solid #00f; */
     position: absolute;
@@ -308,7 +312,7 @@
     width: 18%;
 }
 
-.digit-hhmm12-xM
+#digit-hhmm12-xM
 {
     /* border: 1px solid #ff0; */
     position: absolute;
@@ -318,7 +322,7 @@
     width: 18%;
 }
 
-.alpha-hhmm12-Dx
+#alpha-hhmm12-Dx
 {
     /* border: 1px solid #f0f; */
     position: absolute;
@@ -327,7 +331,8 @@
     left: 68%;
     width: 18%;
 }
-.alpha-hhmm12-xD
+
+#alpha-hhmm12-xD
 {
     /* border: 1px solid #0ff; */
     position: absolute;
@@ -336,6 +341,4 @@
     left: 82%;
     width: 18%;
 }
-
-
 
