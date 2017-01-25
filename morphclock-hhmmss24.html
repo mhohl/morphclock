@@ -4,7 +4,14 @@
 </head>
 <body>
 
+<script type='text/javascript' language='javascript' src='morphclock.js'></script>
 <script>
+
+window.onload = function() {
+    setImageSlots();
+
+    renderTime();
+}
 
 function renderTime() {
     var currentTime = new Date();
@@ -119,20 +126,12 @@ function renderTime() {
     S_img.src="svg/md-" + S_ + "-" + morphS_ + ".svg";
     _Simg.src="svg/md-" + _S + "-" + morph_S + ".svg";
 }
-renderTime();
+
 </script>
 
 <!--<p id="demo">&nbsp;</p><!-- -->
 
-<div class="ClockWindow">
-<img class="digit-hhmmss24-Hx" id="digit-hhmmss24-Hx" src="svg/md-01-00.svg" />
-<img class="digit-hhmmss24-xH" id="digit-hhmmss24-xH" src="svg/md-01-00.svg" />
-<img class="colon-hhmmss24-Cx" id="colon-hhmmss24-Cx" src="svg/md-::-00.svg" />
-<img class="digit-hhmmss24-Mx" id="digit-hhmmss24-Mx" src="svg/md-01-00.svg" />
-<img class="digit-hhmmss24-xM" id="digit-hhmmss24-xM" src="svg/md-01-00.svg" />
-<img class="colon-hhmmss24-xC" id="colon-hhmmss24-xC" src="svg/md-::-00.svg" />
-<img class="digit-hhmmss24-Sx" id="digit-hhmmss24-Sx" src="svg/md-01-00.svg" />
-<img class="digit-hhmmss24-xS" id="digit-hhmmss24-xS" src="svg/md-01-00.svg" />
-</div>
+<div id="morphclock" data-format="hhmmss24"></div>
+
 </body>
 </html>

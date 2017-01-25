@@ -4,25 +4,12 @@
 </head>
 <body>
 
+<script type='text/javascript' language='javascript' src='morphclock.js'></script>
 <script>
 
-var imgDataHHMM12 = { 
-    'digit-hhmm12-Hx':'svg/md-00-00.svg',
-    'digit-hhmm12-xH':'svg/md-00-00.svg',
-    'colon-hhmm12-CC':'svg/md-::-00.svg',
-    'digit-hhmm12-Mx':'svg/md-00-00.svg',
-    'digit-hhmm12-xM':'svg/md-00-00.svg',
-    'alpha-hhmm12-Dx':'svg/md-ap-00.svg',
-    'alpha-hhmm12-xD':'svg/md-mm-00.svg'
-};
-  
 window.onload = function() {
-    for (var id in imgDataHHMM12) {
-        var img = document.createElement('img');
-        img.setAttribute('src', imgDataHHMM12[id]);
-        img.setAttribute('id', id);
-        document.getElementById('morphclock').appendChild(img);
-    }
+    setImageSlots();
+
     renderTime();
 }
 
@@ -132,11 +119,9 @@ function renderTime() {
     D_img.src="svg/md-" + D_ + "-" + morphD_ + ".svg";
     _Dimg.src="svg/md-" + _D + "-" + morph_D + ".svg";
 }
-//renderTime();
+
 </script>
 
-<!--<p id="demo">&nbsp;</p><!-- -->
-
-<div id="morphclock"></div>
+<div id="morphclock" data-format="hhmm12"></div>
 </body>
 </html>
