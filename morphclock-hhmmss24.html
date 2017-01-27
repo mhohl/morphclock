@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" href="morphclock.css">
 </head>
 <body>
@@ -8,8 +9,9 @@
 <script>
 
 window.onload = function() {
-    setImageSlots();
-
+    time_format = getTimeFormat();
+    img_slot = setImageSlots(time_format);
+    console.log(img_slot);
     renderTime();
 }
 
@@ -22,7 +24,12 @@ function renderTime() {
     var xt = currentTime.getMilliseconds();
     
     setTimeout('renderTime()',100);
-
+    
+    var maxh = time_format.slice(-2);
+    if (maxh = 24 ) { maxh = 23; }
+    
+    maxH_ = Math.floor(maxh/10);
+    
     var H_ = Math.floor(xh/10);
     var _H = xh % 10;
     var M_ = Math.floor(xm/10);
@@ -44,8 +51,13 @@ function renderTime() {
     var morphC_ = (morph_C+50) % 100;
     if ( morphC_ <10 ) { morphC_ = "0" + morphC_; }
     
-    // hours part 2 (_H depends on H_ and has to be calculated first)
-    if ((H_ == 2 && _H == 3) || 
+    // hours part 1
+    if (H_ == maxH_) { H_ = H_ + "0"; }
+    else if (H_ == 0) { H_ = H_ + "1"; }
+    else { H_ = H_ * 10 + (H_ + 1); }
+    
+    // hours part 2
+    if ((xh == maxh) || 
         (_H == 9)) { _H = _H + "0";
                      if (M_ == 5 && _M == 9 && S_ == 5 && _S >= 5) {
                         morphH_ = Math.round(((_S-5)*1000+xt)/50);
@@ -54,11 +66,6 @@ function renderTime() {
                    }
     else if (_H == 0) { _H = _H + "1"; }
     else { _H = _H * 10 + (_H + 1); }
-    
-    // hours part 1
-    if (H_ == 2) { H_ = H_ + "0"; }
-    else if (H_ == 0) { H_ = H_ + "1"; }
-    else { H_ = H_ * 10 + (H_ + 1); }
     
     // minutes part 1
     if (M_ == 5) { M_ = M_ + "0";
@@ -97,34 +104,20 @@ function renderTime() {
     else  { _S = _S * 10 + (_S + 1); }
     
      
-    //document.getElementById("demo").innerHTML = _H;
-    // get images by ID
-    var H_img = document.getElementById("digit-hhmmss24-Hx");
-    var _Himg = document.getElementById("digit-hhmmss24-xH");
-    
-    var C_img = document.getElementById("colon-hhmmss24-Cx");
-    
-    var M_img = document.getElementById("digit-hhmmss24-Mx");
-    var _Mimg = document.getElementById("digit-hhmmss24-xM");
-    
-    var _Cimg = document.getElementById("colon-hhmmss24-xC");
-    
-    var S_img = document.getElementById("digit-hhmmss24-Sx");
-    var _Simg = document.getElementById("digit-hhmmss24-xS");
     
     // apply changes to images
-    H_img.src="svg/md-" + H_ + "-" + morphH_ + ".svg";
-    _Himg.src="svg/md-" + _H + "-" + morph_H + ".svg";
+    img_slot['digit-hhmmss24-Hx'].src="svg/md-" + H_ + "-" + morphH_ + ".svg";
+    img_slot['digit-hhmmss24-xH'].src="svg/md-" + _H + "-" + morph_H + ".svg";
     
-    C_img.src="svg/md-" + C_ + "-" + morphC_ + ".svg";
+    img_slot['colon-hhmmss24-Cx'].src="svg/md-" + C_ + "-" + morphC_ + ".svg";
     
-    M_img.src="svg/md-" + M_ + "-" + morphM_ + ".svg";
-    _Mimg.src="svg/md-" + _M + "-" + morph_M + ".svg";
+    img_slot['digit-hhmmss24-Mx'].src="svg/md-" + M_ + "-" + morphM_ + ".svg";
+    img_slot['digit-hhmmss24-xM'].src="svg/md-" + _M + "-" + morph_M + ".svg";
     
-    _Cimg.src="svg/md-" + _C + "-" + morph_C + ".svg";
+    img_slot['colon-hhmmss24-xC'].src="svg/md-" + _C + "-" + morph_C + ".svg";
     
-    S_img.src="svg/md-" + S_ + "-" + morphS_ + ".svg";
-    _Simg.src="svg/md-" + _S + "-" + morph_S + ".svg";
+    img_slot['digit-hhmmss24-Sx'].src="svg/md-" + S_ + "-" + morphS_ + ".svg";
+    img_slot['digit-hhmmss24-xS'].src="svg/md-" + _S + "-" + morph_S + ".svg";
 }
 
 </script>

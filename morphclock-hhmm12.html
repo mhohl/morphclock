@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" href="morphclock.css">
 </head>
 <body>
@@ -8,12 +9,15 @@
 <script>
 
 window.onload = function() {
-    setImageSlots();
-
+    time_format = getTimeFormat();
+    img_slot = setImageSlots(time_format);
+    console.log(img_slot);
     renderTime();
 }
 
+
 function renderTime() {
+    //console.log(img_slots);
     var currentTime = new Date();
 
     var xh = currentTime.getHours();
@@ -24,9 +28,14 @@ function renderTime() {
     var D_ = "ap"; // "d" = day: a.m.
     var _D = "mm"; 
     
-    var CC = "::";
+    var C_ = "::";
     
     setTimeout('renderTime()',100);
+    
+    var maxh = time_format.slice(-2);
+    if (maxh = 24 ) { maxh = 23; }
+    
+    maxH_ = Math.floor(maxh/10);
     
     if (xh == 0) { xh = 12; }
     else if (xh > 12) { xh = xh - 12; D_ = "pa"; }
@@ -45,13 +54,18 @@ function renderTime() {
     var morphD_ = "00";
     var morph_D = "00";
     
-    // hours part 2 (_H depends on H_ and has to be calculated first)
-    if ((H_ == 1 && _H == 2) || 
+    // hours part 1
+    if (H_ == maxH_) { H_ = H_ + "0"; }
+    else if (H_ == 0) { H_ = H_ + "1"; }
+    else { H_ = H_ * 10 + (H_ + 1); }
+    
+    // hours part 2
+    if ((xh == maxh) || 
         (_H == 9)) { _H = _H + "0";
                      if (M_ == 5 && _M == 9 && S_ == 5 && _S >= 5) {
                         morphH_ = Math.round(((_S-5)*1000+xt)/50);
                         if (morphH_ < 10) { morphH_ = "0" + morphH_; }
-                        if (H_ == 1) { // _H == 2 is implicitly true
+                        if (xh == maxh) {
                            morphD_ = morphH_;
                            morph_D = morphH_;
                         } 
@@ -59,11 +73,6 @@ function renderTime() {
                    }
     else if (_H == 0) { _H = _H + "1"; }
     else { _H = _H * 10 + (_H + 1); }
-    
-    // hours part 1
-    if (H_ == 1) { H_ = H_ + "0"; }
-    else if (H_ == 0) { H_ = H_ + "1"; }
-    else { H_ = H_ * 10 + (H_ + 1); }
     
     // minutes part 1
     if (M_ == 5) { M_ = M_ + "0";
@@ -90,34 +99,20 @@ function renderTime() {
        morph_M = Math.round(((_S-5)*1000+xt)/50);
        if (morph_M < 10) { morph_M = "0" + morph_M; }
     }
-    var morphCC = Math.round(xt/10);
-    if (morphCC < 10) { morphCC = "0" + morphCC; }
-    
-     
-    //document.getElementById("demo").innerHTML = H_ + " " + _H + "(" + xh%10 + ")";
-    // get images by ID
-    var H_img = document.getElementById("digit-hhmm12-Hx");
-    var _Himg = document.getElementById("digit-hhmm12-xH");
-    
-    var CCimg = document.getElementById("colon-hhmm12-CC");
-    
-    var M_img = document.getElementById("digit-hhmm12-Mx");
-    var _Mimg = document.getElementById("digit-hhmm12-xM");
-   
-    var D_img = document.getElementById("alpha-hhmm12-Dx");
-    var _Dimg = document.getElementById("alpha-hhmm12-xD");
+    var morphC_ = Math.round(xt/10);
+    if (morphC_ < 10) { morphC_ = "0" + morphC_; }
     
     // apply changes to images
-    H_img.src="svg/md-" + H_ + "-" + morphH_ + ".svg";
-    _Himg.src="svg/md-" + _H + "-" + morph_H + ".svg";
+    img_slot['digit-hhmm12-Hx'].src="svg/md-" + H_ + "-" + morphH_ + ".svg";
+    img_slot['digit-hhmm12-xH'].src="svg/md-" + _H + "-" + morph_H + ".svg";
     
-    CCimg.src="svg/md-" + CC + "-" + morphCC + ".svg";
+    img_slot['colon-hhmm12-Cx'].src="svg/md-" + C_ + "-" + morphC_ + ".svg";
     
-    M_img.src="svg/md-" + M_ + "-" + morphM_ + ".svg";
-    _Mimg.src="svg/md-" + _M + "-" + morph_M + ".svg";
+    img_slot['digit-hhmm12-Mx'].src="svg/md-" + M_ + "-" + morphM_ + ".svg";
+    img_slot['digit-hhmm12-xM'].src="svg/md-" + _M + "-" + morph_M + ".svg";
     
-    D_img.src="svg/md-" + D_ + "-" + morphD_ + ".svg";
-    _Dimg.src="svg/md-" + _D + "-" + morph_D + ".svg";
+    img_slot['alpha-hhmm12-Dx'].src="svg/md-" + D_ + "-" + morphD_ + ".svg";
+    img_slot['alpha-hhmm12-xD'].src="svg/md-" + _D + "-" + morph_D + ".svg";
 }
 
 </script>
