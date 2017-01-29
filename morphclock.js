@@ -2,20 +2,19 @@
 var img_slot = {}; // holds the references to the images
 var time_fomat;    // the chosen time format
 
-/* the digit variables: x_ is the digit on the left position,
- * _x the one on the right.
- *
- * we have [H]ours, [M]inutes, [S]econds, [C]olons and
- * [D]ay time variables:
- */
-
 /* the time variables */
 var currentTime;
-var xh;
-var xm;
-var xs;
-var xt;
+var h;
+var m;
+var s;
+var t;
 
+var maxh;
+var maxHx;
+
+/* booleans */
+var show_seconds;
+var show_daytime;
 
 /* the supported time formats and the image sources */
 var imgData = { 
@@ -51,15 +50,31 @@ var imgData = {
                   'digit-hhmmss24-xS':'svg/md-00-00.svg' }
 };
 
-var main  = { 'H_':'00', '_H':'00', 'M_':'00', '_M':'00', 
-              'S_':'00', '_S':'00', 'C_':'::', '_C':'::',
-              'D_':'ap', '_D':'mm' }
+var main  = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00', 
+              'Sx':'00', 'xS':'00', 'Cx':'::', 'xC':'::',
+              'Dx':'ap', 'xD':'mm' };
               
-var morph = { 'H_':'00', '_H':'00', 'M_':'00', '_M':'00', 
-              'S_':'00', '_S':'00', 'C_':'00', '_C':'00',
-              'D_':'00', '_D':'00' }
+var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00', 
+              'Sx':'00', 'xS':'00', 'Cx':'00', 'xC':'00',
+              'Dx':'00', 'xD':'00' };
               
 var img_source = {};
+
+function quickMorph() {
+   return Math.round(t/10);
+}
+
+function slowMorph() {
+   return Math.round(((main['xS']-5)*1000+t)/50);
+}
+
+function doubleDigit(x) {
+   return x < 10 ? x = "0" + x : x ;
+}
+
+function addNextDigit(x) {
+   return doubleDigit(x * 10 + x + 1);
+}
 
 function getMorphclockElement(){
     return document.getElementById('morphclock');
@@ -93,116 +108,138 @@ function setImageSlots(format) {
 function renderTime() {
     currentTime = new Date();
 
-    xh = currentTime.getHours();
-    xm = currentTime.getMinutes();
-    xs = currentTime.getSeconds();
-    xt = currentTime.getMilliseconds();
+    h = currentTime.getHours();
+    m = currentTime.getMinutes();
+    s = currentTime.getSeconds();
+    t = currentTime.getMilliseconds();
 
     setTimeout('renderTime()',100);
-    
-    var maxh = time_format.slice(-2);
-    if (maxh == 24 ) { maxh = 23; }
-    
-    var show_seconds = time_format.includes('ss');
-    var show_daytime = (maxh == 12);
-    
-    var maxH_ = Math.floor(maxh/10);
-    
+
+    maxh = time_format.slice(-2);
+    maxh = ( maxh == 24 ? 23 : maxh );
+    maxHx = Math.floor(maxh/10);
+
+    show_seconds = time_format.includes('ss');
+    show_daytime = (maxh == 12);
+
     if (show_daytime) {
-       if (xh == 0) { xh = 12; }
-       else if (xh > 12) { xh = xh - 12; main['D_'] = "pa"; }
+       if (h == 0) {
+          h = 12;
+       }
+       else if (h > 12) {
+          h = h - 12;
+          main['Dx'] = "pa";
+       }
     }
-    
-    main['H_'] = Math.floor(xh/10);
-    main['_H'] = xh % 10;
-    main['M_'] = Math.floor(xm/10);
-    main['_M'] = xm % 10;
-    main['S_'] = Math.floor(xs/10);
-    main['_S'] = xs % 10;
-    
+
+    main['Hx'] = Math.floor(h/10);
+    main['xH'] = h % 10;
+    main['Mx'] = Math.floor(m/10);
+    main['xM'] = m % 10;
+    main['Sx'] = Math.floor(s/10);
+    main['xS'] = s % 10;
+
     resetMorph();
-    
+
     // hours part 1
-    if (main['H_'] == maxH_) { main['H_'] = main['H_'] + "0"; }
-    else if (main['H_'] == 0) { main['H_'] = main['H_'] + "1"; }
-    else { main['H_'] = main['H_'] * 10 + (main['H_'] + 1); }
-    
-    // hours part 2
-    if ((xh == maxh) || 
-        (main['_H'] == 9)) {main['_H'] = main['_H'] + "0";
-                     if (main['M_'] == 5 && main['_M'] == 9 && main['S_'] == 5 && main['_S'] >= 5) {
-                        morph['H_'] = Math.round(((main['_S']-5)*1000+xt)/50);
-                        if (morph['H_'] < 10) { morph['H_'] = "0" + morph['H_']; }
-                        if (xh == maxh) {
-                           morph['D_'] = morph['H_'];
-                           morph['_D'] = morph['H_'];
-                        } 
-                     }
-                   }
-    else if (main['_H'] == 0) { main['_H'] = main['_H'] + "1"; }
-    else { main['_H'] = main['_H'] * 10 + (main['_H'] + 1); }
-    
-    // minutes part 1
-    if (main['M_'] == 5) { main['M_'] = main['M_'] + "0";
-                   if (main['_M'] == 9 && main['S_'] == 5 && main['_S'] >= 5) {
-                      morph['_H'] = Math.round(((main['_S']-5)*1000+xt)/50);
-                      if (morph['_H'] < 10) { morph['_H'] = "0" + morph['_H']; }
-                   }
-                 }
-    else if (main['M_'] == 0) { main['M_'] = main['M_'] + "1"; }
-    else { main['M_'] = main['M_'] * 10 + (main['M_'] + 1); }
-    
-    // minutes part 2
-    if (main['_M'] == 9) { main['_M'] = main['_M'] + "0";
-                   if (main['S_'] == 5 && main['_S'] >= 5) {
-                      morph['M_'] = Math.round(((main['_S']-5)*1000+xt)/50);
-                      if (morph['M_'] < 10) { morph['M_'] = "0" + morph['M_']; }
-                   }
-                 }
-    else if (main['_M'] == 0) { main['_M'] = main['_M'] + "1"; }
-    else { main['_M'] = main['_M'] * 10 + (main['_M'] + 1); } 
-    
-    // seconds part 1
-    if (main['S_'] == 5) { main['S_'] = main['S_'] + "0";
-                   if (main['_S'] >= 5) { 
-                      morph['_M'] = Math.round(((main['_S']-5)*1000+xt)/50);
-                      if (morph['_M'] < 10) { morph['_M'] = "0" + morph['_M']; }
-                   }
-                 }
-    else if (main['S_'] == 0) { main['S_'] = main['S_'] + "1"; }
-    else { main['S_'] = main['S_'] * 10 + (main['S_'] + 1); }
-    
-    if (show_seconds) {
-       // seconds part 2
-       if (main['_S'] == 9) { main['_S'] = main['_S'] + "0";
-                      morph['S_'] = morph['_S']; }
-       else if (main['_S'] == 0) { main['_S'] = main['_S'] + "1"; }
-       else  { main['_S'] = main['_S'] * 10 + (main['_S'] + 1); }
-       // colon stuff: 
-       morph['_S'] = Math.round(xt/10);
-       if ( morph['_S'] <10 ) { morph['_S'] = "0" + morph['_S']; }
-       morph['_C'] = morph['_S'];
-       morph['C_'] = (morph['_C']+50) % 100;
-       if ( morph['C_'] <10 ) { morph['C_'] = "0" + morph['C_']; }
+    if (main['Hx'] == maxHx) {
+       main['Hx'] = main['Hx'] + "0";
     }
     else {
-        morph['C_'] = Math.round(xt/10);
-        if (morph['C_'] < 10) { morph['C_'] = "0" + morph['C_']; }
+       main['Hx'] = addNextDigit(main['Hx']);
     }
-    // build actual image source
-    img_source['digit-' + time_format + '-Hx'] = "svg/md-" + main['H_'] + "-" + morph['H_'] + ".svg";
-    img_source['digit-' + time_format + '-xH'] = "svg/md-" + main['_H'] + "-" + morph['_H'] + ".svg";
-    img_source['digit-' + time_format + '-Mx'] = "svg/md-" + main['M_'] + "-" + morph['M_'] + ".svg";
-    img_source['digit-' + time_format + '-xM'] = "svg/md-" + main['_M'] + "-" + morph['_M'] + ".svg";
-    img_source['colon-' + time_format + '-Cx'] = "svg/md-" + main['C_'] + "-" + morph['C_'] + ".svg";
+
+    // hours part 2
+    if (h == maxh || main['xH'] == 9) {
+       main['xH'] = main['xH'] + "0";
+       if (main['Mx'] == 5
+        && main['xM'] == 9
+        && main['Sx'] == 5
+        && main['xS'] >= 5) {
+          morph['Hx'] = doubleDigit(slowMorph());
+          if (h == maxh) {
+             morph['Dx'] = morph['Hx'];
+             morph['xD'] = morph['Hx'];
+          }
+       }
+    }
+    else {
+       main['xH'] = addNextDigit(main['xH']);
+    }
+
+    // minutes part 1
+    if (main['Mx'] == 5) {
+       main['Mx'] = main['Mx'] + "0";
+       if (main['xM'] == 9
+        && main['Sx'] == 5
+        && main['xS'] >= 5) {
+          morph['xH'] = doubleDigit(slowMorph());
+       }
+    }
+    else {
+       main['Mx'] = addNextDigit(main['Mx']);
+    }
+    
+    // minutes part 2
+    if (main['xM'] == 9) {
+       main['xM'] = main['xM'] + "0";
+       if (main['Sx'] == 5
+        && main['xS'] >= 5) {
+          morph['Mx'] = doubleDigit(slowMorph());
+       }
+    }
+    else {
+       main['xM'] = addNextDigit(main['xM']);
+    }
+
+    // seconds part 1
+    if (main['Sx'] == 5) {
+       main['Sx'] = main['Sx'] + "0";
+       if (main['xS'] >= 5) {
+          morph['xM'] = doubleDigit(slowMorph());
+       }
+    }
+    else {
+       main['Sx'] = addNextDigit(main['Sx']);
+    }
     if (show_seconds) {
-       img_source['digit-' + time_format + '-Sx'] = "svg/md-" + main['S_'] + "-" + morph['S_'] + ".svg";
-       img_source['digit-' + time_format + '-xS'] = "svg/md-" + main['_S'] + "-" + morph['_S'] + ".svg";
-       img_source['colon-' + time_format + '-xC'] = "svg/md-" + main['_C'] + "-" + morph['_C'] + ".svg";
+       morph['xS'] = doubleDigit(quickMorph());
+       // seconds part 2
+       if (main['xS'] == 9) {
+          main['xS'] = main['xS'] + "0";
+          morph['Sx'] = morph['xS'];
+       }
+       else {
+          main['xS'] = addNextDigit(main['xS']);
+       }
+       /* colon stuff: the right colon is in sync with
+        * the seconds, the left one has a 50% phase shift */
+       morph['xC'] = morph['xS'];
+       morph['Cx'] = doubleDigit((morph['xC'] + 50) % 100);
+    }
+    else {
+       /* no seconds shown, the first (and only) colon
+        * is in sync with the seconds */
+       morph['Cx'] = doubleDigit(quickMorph());
+    }
+
+    // build actual image source
+    img_source['digit-' + time_format + '-Hx'] = main['Hx'] + "-" + morph['Hx'];
+    img_source['digit-' + time_format + '-xH'] = main['xH'] + "-" + morph['xH'];
+    img_source['digit-' + time_format + '-Mx'] = main['Mx'] + "-" + morph['Mx'];
+    img_source['digit-' + time_format + '-xM'] = main['xM'] + "-" + morph['xM'];
+    img_source['colon-' + time_format + '-Cx'] = main['Cx'] + "-" + morph['Cx'];
+    if (show_seconds) {
+       img_source['digit-' + time_format + '-Sx'] = main['Sx'] + "-" + morph['Sx'];
+       img_source['digit-' + time_format + '-xS'] = main['xS'] + "-" + morph['xS'];
+       img_source['colon-' + time_format + '-xC'] = main['xC'] + "-" + morph['xC'];
     }
     if (show_daytime) {
-       img_source['alpha-' + time_format + '-Dx'] = "svg/md-" + main['D_'] + "-" + morph['D_'] + ".svg";
-       img_source['alpha-' + time_format + '-xD'] = "svg/md-" + main['_D'] + "-" + morph['_D'] + ".svg";
+       img_source['alpha-' + time_format + '-Dx'] = main['Dx'] + "-" + morph['Dx'];
+       img_source['alpha-' + time_format + '-xD'] = main['xD'] + "-" + morph['xD'];
+    }
+    for (var src in img_source) {
+      img_source[src] = "svg/md-" + img_source[src] + ".svg";
     }
     // apply changes to images
     for (var slot in imgData[time_format]) {
