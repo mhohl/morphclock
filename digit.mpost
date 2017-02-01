@@ -285,7 +285,7 @@ three[BEGIN] = (-0.25u,0.65u);
 three[TOP]   = two[TOP];
 three[U_ARC] = (0.25u,0.5u);
 three[JOINT] = (-0.15u,0);
-three[D_ARC] = (0.3u,-0.625u);
+three[D_ARC] = (0.3u,-0.6u);
 three[END]   = three[D_ARC] xscaled -1;
 
 for i = start+1 upto start+fpht:
@@ -358,7 +358,7 @@ endfig;
 four[LEFT]   = (-0.25u,0);
 four[TOP]    = (0.25u,0.85u);
 four[MID]    = four[LEFT] xscaled -1;
-four[BOTTOM] = (0.25u,-0.75u);
+four[BOTTOM] = (0.25u,-0.65u);
 four[RIGHT]  = (0.4u,0);
 
 for i = start+1 upto start+fpht:
@@ -431,7 +431,7 @@ five[LEFT]  = five[BEGIN] xscaled -1;
 five[JOINT] = four[LEFT];
 five[U_ARC] = (0,0.1u);
 five[R_ARC] = (0.3u,-0.425u);
-five[END]   = (-0.3u,-0.75u);
+five[END]   = (-0.3u,-0.7u);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -504,7 +504,7 @@ endfig;
 %
 % Fünf -> Sechs
 %
-six[BEGIN]  = (0.25u,1.5u);
+six[BEGIN]  = (0.25u,1.35u);
 six[LEFT]   = zero[LEFT] xscaled 3/2;
 six[RIGHT]  = zero[RIGHT] xscaled 3/2;
 six[TOP]    = zero[TOP];
@@ -595,7 +595,7 @@ seven[BEGIN] = (-0.3u,0.75u);
 seven[LEFT]  = (-0.3u,0.85u);
 seven[JOINT] = seven[LEFT] xscaled -1;
 seven[MID]   = (0.1u,0.15u);
-seven[END]   = (0,-0.75u);
+seven[END]   = (0,-0.65u);
 % Hilfspunkt:
 seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
@@ -671,7 +671,7 @@ endfig;
 % Sieben -> Acht
 %
 eight[MID]    = (0,0.85u);
-eight[L_ARC]  = (-0.3u,1.25u);
+eight[L_ARC]  = (-0.25u,1.1u);
 eight[R_ARC]  = eight[L_ARC] xscaled -1;
 eight[LEFT]   = (-0.4u,0.35u);
 eight[RIGHT]  = eight[LEFT] xscaled -1;
@@ -691,10 +691,14 @@ for i = start+1 upto start+fpht:
                    .. seven[MID]
                    .. seven[END];
 
-       aux[MID]   := ((-infinity,0)--(infinity,0)) intersectionpoint tmppath1;
+       % der Mittelstrich wächst aus der Mitte der Höhe der Sieben:
+       tmp0 := 1/2[ypart(seven[LEFT]),ypart(seven[END])];
+       aux[MID]   := ((-infinity,tmp0)--(infinity,tmp0)) intersectionpoint tmppath1;
        aux[LEFT]  := aux[MID] - (0.15u,0);
        aux[RIGHT] := aux[MID] + (0.15u,0);
-
+       
+       show(aux[MID]/u);
+       
        draw tmppath1;
        draw m[aux[MID],aux[LEFT]] -- m[aux[MID],aux[RIGHT]];
        setbounds currentpicture to boundingpath;
@@ -710,9 +714,12 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
        t := 1/f;
        tt := max(t/2,1);
+       
+       show(m[aux[MID],eight[MID]]/u);
 
        draw m[seven[END],eight[RIGHT]]
             .. m[seven[MID],eight[LEFT]]
+            .. m[seven[MID],eight[MID]]
             .. m[seven[JOINT],eight[R_ARC]]{up}
             .. tension t .. m[seven[LEFT],eight[L_ARC]];
        draw m[aux[LEFT],eight[L_ARC]]{down}
@@ -748,7 +755,7 @@ nine[TOP]    = six[TOP];
 nine[LEFT]   = six[LEFT];
 nine[RIGHT]  = six[RIGHT];
 nine[BOTTOM] = six[BOTTOM];
-nine[END]    = (-0.25u,-0.75u);
+nine[END]    = (-0.25u,-0.65u);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -1212,7 +1219,7 @@ beginfig(start);
 endfig;
 
 _p_[BEGIN]  = (-0.325u,0.85u);
-_p_[END]    = (-0.325u,-0.75u);
+_p_[END]    = (-0.325u,-0.65u);
 _p_[U_ARC]  = (-0.325u,0.6u); % [u]pper end of [arc]
 _p_[D_ARC]  = (-0.325u,0.15u);
 _p_[TOP]    = zero[TOP];
