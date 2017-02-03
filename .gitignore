@@ -4,6 +4,7 @@
 *.toc
 *.mps
 *.pdf
+morphpath.js
 
 png/
 svg/
