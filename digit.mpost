@@ -83,19 +83,19 @@ numeric draft; draft := 1;
 
 def draw_grid(expr u) =
     if draft > 0:
-      draw (-0.6u,-u) -- (-0.6u,1.7u) -- (0.6u,1.7u) -- (0.6u,-u) -- cycle;
+      draw (-0.6u,-0.75u) -- (-0.6u,1.5u) -- (0.6u,1.5u) -- (0.6u,-0.75u) -- cycle;
       draw (-0.6u,0) -- (0.6u,0);
       draw (-0.6u,0.85u) -- (0.6u,0.85u);
-      draw (-0.25u,-u)--(-0.25u,1.7u);
-      draw (0.25u,-u)--(0.25u,1.7u);
+      draw (-0.25u,-0.75u)--(-0.25u,1.5u);
+      draw (0.25u,-0.75u)--(0.25u,1.5u);
     fi
 enddef;
 
 path boundingpath;
-boundingpath := (-0.6u,-u)
-                -- (-0.6u,1.7u)
-                -- (0.6u,1.7u)
-                -- (0.6u,-u)
+boundingpath := (-0.6u,-0.75u)
+                -- (-0.6u,1.5u)
+                -- (0.6u,1.5u)
+                -- (0.6u,-0.75u)
                 -- cycle;
 
 vardef advanced(expr xx) = sind(90xx) enddef;
@@ -696,9 +696,7 @@ for i = start+1 upto start+fpht:
        aux[MID]   := ((-infinity,tmp0)--(infinity,tmp0)) intersectionpoint tmppath1;
        aux[LEFT]  := aux[MID] - (0.15u,0);
        aux[RIGHT] := aux[MID] + (0.15u,0);
-       
-       show(aux[MID]/u);
-       
+
        draw tmppath1;
        draw m[aux[MID],aux[LEFT]] -- m[aux[MID],aux[RIGHT]];
        setbounds currentpicture to boundingpath;
@@ -714,8 +712,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
        t := 1/f;
        tt := max(t/2,1);
-       
-       show(m[aux[MID],eight[MID]]/u);
 
        draw m[seven[END],eight[RIGHT]]
             .. m[seven[MID],eight[LEFT]]
