@@ -75,7 +75,9 @@ function slowMorph() {
 }
 
 function doubleDigit(x) {
-   return x < 10 ? x = "0" + x : x ;
+   var res;
+   res = x < 10 ? x = "0" + x : x ;
+   return res > 99 ? "00" : res ; 
 }
 
 function addNextDigit(x) {
@@ -161,13 +163,19 @@ function renderTime() {
 
     // hours part 2
     if (h == maxh || main['xH'] == 9) {
-       main['xH'] = main['xH'] + "0";
-       if (main['Mx'] == 5
-        && main['xM'] == 9
-        && main['Sx'] == 5
-        && main['xS'] >= 5) {
+       if (h == maxh && show_daytime ) {
+          // transition "12" -> "01"
+          main['xH'] = main['xH'] + "1";
+       }
+       else {
+          main['xH'] = main['xH'] + "0";
+       }
+       if (main['Mx'] == 5 &&
+           main['xM'] == 9 &&
+           main['Sx'] == 5 &&
+           main['xS'] >= 5) {
           morph['Hx'] = doubleDigit(slowMorph());
-          if (h == maxh) {
+          if (h == maxh) { 
              morph['Dx'] = morph['Hx'];
              morph['xD'] = morph['Hx'];
           }
@@ -180,9 +188,9 @@ function renderTime() {
     // minutes part 1
     if (main['Mx'] == 5) {
        main['Mx'] = main['Mx'] + "0";
-       if (main['xM'] == 9
-        && main['Sx'] == 5
-        && main['xS'] >= 5) {
+       if (main['xM'] == 9 &&
+           main['Sx'] == 5 &&
+           main['xS'] >= 5) {
           morph['xH'] = doubleDigit(slowMorph());
        }
     }
@@ -193,8 +201,8 @@ function renderTime() {
     // minutes part 2
     if (main['xM'] == 9) {
        main['xM'] = main['xM'] + "0";
-       if (main['Sx'] == 5
-        && main['xS'] >= 5) {
+       if (main['Sx'] == 5 &&
+           main['xS'] >= 5) {
           morph['Mx'] = doubleDigit(slowMorph());
        }
     }
@@ -256,13 +264,14 @@ function renderTime() {
         var svg = svg_slot[src];
         // remove old path entries
         while (svg.firstChild) {
-           svg.removeChild(svg.firstChild); }
-        // append new path information
-        var path_data = morphpath[svg_source[src]];
-        for (var i=0, len=path_data.length; i < len; i++) {
+              svg.removeChild(svg.firstChild);
+        }
+        // set new path information
+        var path_array = morphpath[svg_source[src]];
+        for (var i=0, len=path_array.length; i < len; i++) {
             var path = document.createElementNS (xmlns, "path");
-            path.setAttribute ('d', path_data[i]);
             path.setAttribute ('class', "svg-path");
+            path.setAttribute ('d', path_array[i]);
             svg.appendChild (path);
         }
     }
@@ -271,7 +280,6 @@ function renderTime() {
 window.onload = function() {
     time_format = getTimeFormat();
     svg_slot = setSVGSlots(time_format);
-    console.log(svg_slot);
     renderTime();
 }
 
