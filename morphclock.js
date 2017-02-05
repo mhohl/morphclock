@@ -1,6 +1,12 @@
 // global variable declarations
-var img_slot = {}; // holds the references to the images
+var svg_slot = {}; // holds the references to the images
 var time_fomat;    // the chosen time format
+
+var refresh = 50; // refresh time in msec
+
+var xmlns = "http://www.w3.org/2000/svg";
+var svg_width = morphpath['width'];
+var svg_height = morphpath['height'];
 
 /* the time variables */
 var currentTime;
@@ -17,37 +23,37 @@ var show_seconds;
 var show_daytime;
 
 /* the supported time formats and the image sources */
-var imgData = { 
-    'hhmm12':   { 'digit-hhmm12-Hx':'svg/md-00-00.svg',
-                  'digit-hhmm12-xH':'svg/md-00-00.svg',
-                  'colon-hhmm12-Cx':'svg/md-::-00.svg',
-                  'digit-hhmm12-Mx':'svg/md-00-00.svg',
-                  'digit-hhmm12-xM':'svg/md-00-00.svg',
-                  'alpha-hhmm12-Dx':'svg/md-ap-00.svg',
-                  'alpha-hhmm12-xD':'svg/md-mm-00.svg' },
-    'hhmm24':   { 'digit-hhmm24-Hx':'svg/md-00-00.svg',
-                  'digit-hhmm24-xH':'svg/md-00-00.svg',
-                  'colon-hhmm24-Cx':'svg/md-::-00.svg',
-                  'digit-hhmm24-Mx':'svg/md-00-00.svg',
-                  'digit-hhmm24-xM':'svg/md-00-00.svg' },
-    'hhmmss12': { 'digit-hhmmss12-Hx':'svg/md-00-00.svg',
-                  'digit-hhmmss12-xH':'svg/md-00-00.svg',
-                  'colon-hhmmss12-Cx':'svg/md-::-00.svg',
-                  'digit-hhmmss12-Mx':'svg/md-00-00.svg',
-                  'digit-hhmmss12-xM':'svg/md-00-00.svg',
-                  'colon-hhmmss12-xC':'svg/md-::-00.svg',
-                  'digit-hhmmss12-Sx':'svg/md-00-00.svg',
-                  'digit-hhmmss12-xS':'svg/md-00-00.svg',
-                  'alpha-hhmmss12-Dx':'svg/md-ap-00.svg',
-                  'alpha-hhmmss12-xD':'svg/md-mm-00.svg' },
-    'hhmmss24': { 'digit-hhmmss24-Hx':'svg/md-00-00.svg',
-                  'digit-hhmmss24-xH':'svg/md-00-00.svg',
-                  'colon-hhmmss24-Cx':'svg/md-::-00.svg',
-                  'digit-hhmmss24-Mx':'svg/md-00-00.svg',
-                  'digit-hhmmss24-xM':'svg/md-00-00.svg',
-                  'colon-hhmmss24-xC':'svg/md-::-00.svg',
-                  'digit-hhmmss24-Sx':'svg/md-00-00.svg',
-                  'digit-hhmmss24-xS':'svg/md-00-00.svg' }
+var svgData = { 
+    'hhmm12':   [ 'digit-hhmm12-Hx',
+                  'digit-hhmm12-xH',
+                  'colon-hhmm12-Cx',
+                  'digit-hhmm12-Mx',
+                  'digit-hhmm12-xM',
+                  'alpha-hhmm12-Dx',
+                  'alpha-hhmm12-xD' ],
+    'hhmm24':   [ 'digit-hhmm24-Hx',
+                  'digit-hhmm24-xH',
+                  'colon-hhmm24-Cx',
+                  'digit-hhmm24-Mx',
+                  'digit-hhmm24-xM' ],
+    'hhmmss12': [ 'digit-hhmmss12-Hx',
+                  'digit-hhmmss12-xH',
+                  'colon-hhmmss12-Cx',
+                  'digit-hhmmss12-Mx',
+                  'digit-hhmmss12-xM',
+                  'colon-hhmmss12-xC',
+                  'digit-hhmmss12-Sx',
+                  'digit-hhmmss12-xS',
+                  'alpha-hhmmss12-Dx',
+                  'alpha-hhmmss12-xD' ],
+    'hhmmss24': [ 'digit-hhmmss24-Hx',
+                  'digit-hhmmss24-xH',
+                  'colon-hhmmss24-Cx',
+                  'digit-hhmmss24-Mx',
+                  'digit-hhmmss24-xM',
+                  'colon-hhmmss24-xC',
+                  'digit-hhmmss24-Sx',
+                  'digit-hhmmss24-xS' ]
 };
 
 var main  = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00', 
@@ -58,7 +64,7 @@ var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Sx':'00', 'xS':'00', 'Cx':'00', 'xC':'00',
               'Dx':'00', 'xD':'00' };
               
-var img_source = {};
+var svg_source = {};
 
 function quickMorph() {
    return Math.round(t/10);
@@ -92,17 +98,21 @@ function resetMorph(){
 }
     
 
-function setImageSlots(format) {
-    var image_slots = {};
+function setSVGSlots(format) {
+    var svg_slots = {};
     // initialize images
-    for (var id in imgData[format]) {
-        var img = document.createElement('img');
-        img.setAttribute('src', imgData[format][id]);
-        img.setAttribute('id', id);
-        getMorphclockElement().appendChild(img);
-        image_slots[id] = img;
+    var svg_data = svgData[format];
+    for (var i=0, len=svg_data.length; i < len; i++) {
+        var id = svg_data[i];
+        var svg = document.createElementNS (xmlns, "svg");
+        svg.setAttribute('width', svg_width);
+        svg.setAttribute('height', svg_height);
+        svg.setAttribute('viewBox', "0 0 " + svg_width + " " + svg_height);
+        svg.setAttribute('id', id);
+        getMorphclockElement().appendChild(svg);
+        svg_slots[id] = svg;
     }
-    return image_slots;
+    return svg_slots;
 }
 
 function renderTime() {
@@ -113,7 +123,7 @@ function renderTime() {
     s = currentTime.getSeconds();
     t = currentTime.getMilliseconds();
 
-    setTimeout('renderTime()',100);
+    setTimeout('renderTime()',refresh);
 
     maxh = time_format.slice(-2);
     maxh = ( maxh == 24 ? 23 : maxh );
@@ -224,32 +234,44 @@ function renderTime() {
     }
 
     // build actual image source
-    img_source['digit-' + time_format + '-Hx'] = main['Hx'] + "-" + morph['Hx'];
-    img_source['digit-' + time_format + '-xH'] = main['xH'] + "-" + morph['xH'];
-    img_source['digit-' + time_format + '-Mx'] = main['Mx'] + "-" + morph['Mx'];
-    img_source['digit-' + time_format + '-xM'] = main['xM'] + "-" + morph['xM'];
-    img_source['colon-' + time_format + '-Cx'] = main['Cx'] + "-" + morph['Cx'];
+    svg_source['digit-' + time_format + '-Hx'] = main['Hx'] + "-" + morph['Hx'];
+    svg_source['digit-' + time_format + '-xH'] = main['xH'] + "-" + morph['xH'];
+    svg_source['digit-' + time_format + '-Mx'] = main['Mx'] + "-" + morph['Mx'];
+    svg_source['digit-' + time_format + '-xM'] = main['xM'] + "-" + morph['xM'];
+    svg_source['colon-' + time_format + '-Cx'] = main['Cx'] + "-" + morph['Cx'];
     if (show_seconds) {
-       img_source['digit-' + time_format + '-Sx'] = main['Sx'] + "-" + morph['Sx'];
-       img_source['digit-' + time_format + '-xS'] = main['xS'] + "-" + morph['xS'];
-       img_source['colon-' + time_format + '-xC'] = main['xC'] + "-" + morph['xC'];
+       svg_source['digit-' + time_format + '-Sx'] = main['Sx'] + "-" + morph['Sx'];
+       svg_source['digit-' + time_format + '-xS'] = main['xS'] + "-" + morph['xS'];
+       svg_source['colon-' + time_format + '-xC'] = main['xC'] + "-" + morph['xC'];
     }
     if (show_daytime) {
-       img_source['alpha-' + time_format + '-Dx'] = main['Dx'] + "-" + morph['Dx'];
-       img_source['alpha-' + time_format + '-xD'] = main['xD'] + "-" + morph['xD'];
+       svg_source['alpha-' + time_format + '-Dx'] = main['Dx'] + "-" + morph['Dx'];
+       svg_source['alpha-' + time_format + '-xD'] = main['xD'] + "-" + morph['xD'];
     }
-    for (var src in img_source) {
-      img_source[src] = "svg/md-" + img_source[src] + ".svg";
+    for (var src in svg_source) {
+      svg_source[src] = "md-" + svg_source[src];
     }
     // apply changes to images
-    for (var slot in imgData[time_format]) {
-        img_slot[slot].src = img_source[slot];
+    for (var src in svg_source) {
+        var svg = svg_slot[src];
+        // remove old path entries
+        while (svg.firstChild) {
+           svg.removeChild(svg.firstChild); }
+        // append new path information
+        var path_data = morphpath[svg_source[src]];
+        for (var i=0, len=path_data.length; i < len; i++) {
+            var path = document.createElementNS (xmlns, "path");
+            path.setAttribute ('d', path_data[i]);
+            path.setAttribute ('class', "svg-path");
+            svg.appendChild (path);
+        }
     }
 }
 
 window.onload = function() {
     time_format = getTimeFormat();
-    img_slot = setImageSlots(time_format);
+    svg_slot = setSVGSlots(time_format);
+    console.log(svg_slot);
     renderTime();
 }
 

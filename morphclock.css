@@ -7,7 +7,20 @@
     width: 100%;
     padding: 0px;
     white-space: nowrap;
+    
+    stroke: black;
 }
+
+.svg-path
+{
+     stroke-width: 14.174088;
+    fill: none;
+    stroke: inherit;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    opacity: inherit;
+}
+
 
 /* Format HH:MM:SS 24h */
 
