@@ -2,8 +2,10 @@
 
 first=true
 
-echo "morphpath = {"
+version=$( grep Version digit.log | sed "s/.*\"Version:[ ]*\(.*\)\".*/\1/" )
 
+echo "morphpath = {"
+echo "   version: '$version',"
 for f in $@; do
    if [ "$first" ] ; then
       # some leading spaces
@@ -14,7 +16,7 @@ for f in $@; do
       echo -n "  "
       xpath -q -e '//svg/@height' "$f" | sed "s/=/: /; s/\"//g; s/$/,/"
       echo -n "  "
-      xpath -q -e '//@style'  "$f" | sed "s/=/: /; s/$/,/" | uniq
+      xpath -q -e '//@style'  "$f" | sed "s/.*\(stroke-width\)\([^;]*\);.*/ '\1'\2/; s/$/,/" | uniq
       unset first
    fi
    if [ "$tmp" ]; then

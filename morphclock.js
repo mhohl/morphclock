@@ -1,3 +1,10 @@
+/*
+ *
+ * morphclock.js
+ * version 1.0
+ *
+ */
+
 // global variable declarations
 var svg_slot = {}; // holds the references to the images
 var time_fomat;    // the chosen time format
@@ -7,6 +14,7 @@ var refresh = 50; // refresh time in msec
 var xmlns = "http://www.w3.org/2000/svg";
 var svg_width = morphpath['width'];
 var svg_height = morphpath['height'];
+var svg_strokewidth = morphpath['stroke-width'];
 
 /* the time variables */
 var currentTime;
@@ -271,6 +279,7 @@ function renderTime() {
         for (var i=0, len=path_array.length; i < len; i++) {
             var path = document.createElementNS (xmlns, "path");
             path.setAttribute ('class', "svg-path");
+            path.setAttribute ('stroke-width', svg_strokewidth);
             path.setAttribute ('d', path_array[i]);
             svg.appendChild (path);
         }

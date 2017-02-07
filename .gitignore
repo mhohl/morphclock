@@ -4,7 +4,7 @@
 *.toc
 *.mps
 *.pdf
-morphpath.js
+morphpaths.js
 
 png/
 svg/
