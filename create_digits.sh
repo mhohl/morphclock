@@ -27,7 +27,9 @@ function format_name {
        
 mpost digit.mpost
 
+echo -n "Generate test file ..."
 lualatex testdigit.tex > /dev/null
+echo " done."
 
 # generate svg files
 echo -n "Generate svg files ..."
@@ -45,7 +47,14 @@ done
 cd ..
 echo " done."
 
-# and collect the path  information into a javascript file
+# and collect the path information into a javascript file
 echo -n "Collect svg paths (this may take a while) ..."
 ./extract_paths_to_js.sh svg/*.svg > morphpaths.js
+echo " done."
+
+# minify it
+echo -n "Minify javascript files ..."
+cat morphpaths.js morphclock.js > ___temp.js
+curl -X POST -s --data-urlencode 'input@___temp.js' https://javascript-minifier.com/raw > morphclock.min.js
+rm ___temp.js
 echo " done."

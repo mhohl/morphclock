@@ -5,6 +5,6 @@
 *.mps
 *.pdf
 morphpaths.js
+morphclock.min.js
 
-png/
 svg/
