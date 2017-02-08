@@ -1,8 +1,4 @@
 #!/bin/bash
-#
-# digits.sh
-#
-
 SVGDIR=./svg/
 
 test -d $SVGDIR || mkdir $SVGDIR
@@ -24,37 +20,18 @@ function format_name {
    fi
    echo $target
 }
-       
-mpost digit.mpost
-
-echo -n "Generate test file ..."
-lualatex testdigit.tex > /dev/null
-echo " done."
 
 # generate svg files
-echo -n "Generate svg files ..."
 cat digit.mpost | sed "s/\(outputtemplate[ ]*:=[ ]*\)\(.*\).mps\(.*\)/\1\2.svg\3/;
                        s/\(outputformat[ ]*:=[ ]*\"\)eps\(.*\)/\1svg\2/;
                        s/\(draft[ ]*:=[ ]*\).*;/\1 0;/" > $SVGDIR/digit.mpost
 cd $SVGDIR
 mpost digit.mpost > /dev/null
 rm digit.mpost
-for (( i = 0; i <= 13400; i++ )); do
-    if test -e digit-$i.svg ; then
-       mv digit-$i.svg $(format_name $i).svg
-    fi
+for f in *.svg; do
+    i=$( echo ${f%.svg} | sed "s/digit-//" )
+    mv digit-$i.svg $(format_name $i).svg
 done
 cd ..
-echo " done."
 
-# and collect the path information into a javascript file
-echo -n "Collect svg paths (this may take a while) ..."
-./extract_paths_to_js.sh svg/*.svg > morphpaths.js
-echo " done."
 
-# minify it
-echo -n "Minify javascript files ..."
-cat morphpaths.js morphclock.js > ___temp.js
-curl -X POST -s --data-urlencode 'input@___temp.js' https://javascript-minifier.com/raw > morphclock.min.js
-rm ___temp.js
-echo " done."
