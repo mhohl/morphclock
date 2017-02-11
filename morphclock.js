@@ -106,12 +106,45 @@ function resetMorph(){
        morph[idx] = "00";
     }
 }
+
+function setCSS() {
+    var style = document.createElement("style");
+    var morphId = document.createTextNode("#morphclock { position: relative; width: 100%; padding: 0px; white-space: nowrap; stroke: black; }");
+    var svgClass = document.createTextNode(".svg-path { fill: none; stroke: inherit; stroke-linejoin: round; stroke-linecap: round; opacity: inherit; }");
+    style.appendChild(morphId);
+    style.appendChild(svgClass);
+    document.head.appendChild(style);
+}
+
+function calcCharWidth(data) {
+    var widthArray = [];
+    var width = 100/data.length;
+    for (var i=0; i < data.length; i++) {
+        widthArray[i] = width;
+    }
+    console.log(widthArray);
+    return widthArray;
+}
+
+function calcCharLeft(data) {
+    var leftArray = [];
+    var left = 0;
+    for (var i=0; i < data.length; i++) {
+        leftArray[i] = left;
+        left -= 6;
+    }
+    console.log(leftArray);
+    return leftArray;
+}
     
 
 function setSVGSlots(format) {
     var svg_slots = {};
     // initialize images
     var svg_data = svgData[format];
+    console.log(svg_data);
+    var char_width = calcCharWidth(svg_data);
+    var char_left = calcCharLeft(svg_data);
     for (var i=0, len=svg_data.length; i < len; i++) {
         var id = svg_data[i];
         var svg = document.createElementNS (xmlns, "svg");
@@ -119,6 +152,7 @@ function setSVGSlots(format) {
         svg.setAttribute('height', svg_height);
         svg.setAttribute('viewBox', "0 0 " + svg_width + " " + svg_height);
         svg.setAttribute('id', id);
+        svg.setAttribute('style', "position: relative; top: 0px; left: " + char_left[i] + "%; width: " + char_width[i] + "%");
         getMorphclockElement().appendChild(svg);
         svg_slots[id] = svg;
     }
@@ -288,6 +322,7 @@ function renderTime() {
 
 window.onload = function() {
     time_format = getTimeFormat();
+    setCSS();
     svg_slot = setSVGSlots(time_format);
     renderTime();
 }
