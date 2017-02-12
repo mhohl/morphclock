@@ -26,10 +26,11 @@ cat digit.mpost | sed "s/\(outputtemplate[ ]*:=[ ]*\)\(.*\).mps\(.*\)/\1\2.svg\3
                        s/\(outputformat[ ]*:=[ ]*\"\)eps\(.*\)/\1svg\2/;
                        s/\(draft[ ]*:=[ ]*\).*;/\1 0;/" > $SVGDIR/digit.mpost
 cd $SVGDIR
+rm -rf *.svg
 mpost digit.mpost > /dev/null
 rm digit.mpost
 for f in *.svg; do
-    i=$( echo ${f%.svg} | sed "s/digit-//" )
+    i=$( echo "${f%.svg}" | sed "s/digit-//" )
     mv digit-$i.svg $(format_name $i).svg
 done
 cd ..

@@ -141,7 +141,7 @@ function calcCharWidth(data) {
     /* width is calculated by
      * width := 100/(number_of_chars -
                      number_of_small_overlaps*small_overlap -
-                     numer_of_big_overlaps*big_overlap)
+                     number_of_big_overlaps*big_overlap)
      *
      * where big_overlap is used for ':' and the space bevore 'am/pm'
      */
@@ -149,21 +149,18 @@ function calcCharWidth(data) {
     n_of_chars = data.length;
     n_of_sover = 2;
     n_of_bover = 2;
-    if (data[0].includes("12")) {
+    if (show_daytime) {
        n_of_chars += 1; // add the space before 'am/pm'
        n_of_sover += 1; // one more small overlap between 'a|p' and 'm'
        n_of_bover += 2; // two more big overlaps for the additional space
     }
-    if (data[0].includes("ss")) {
+    if (show_seconds) {
        n_of_sover += 1; // one more small overlap for the seconds
        n_of_bover += 2; // two more big overlaps for the ':' before the seconds
     }
-    console.log(n_of_chars, n_of_sover, n_of_bover);
-    var width = 100/(n_of_chars -
-                     n_of_sover * small_overlap -
-                     n_of_bover * big_overlap);
-    console.log(width);
-    return width;
+    return 100/(n_of_chars -
+                n_of_sover * small_overlap -
+                n_of_bover * big_overlap);
 }
 
 function calcCharLeft(width,data) {
@@ -183,27 +180,23 @@ function calcCharLeft(width,data) {
         }
         leftArray[i] = left;
     }
-    console.log(leftArray);
     return leftArray;
 }
-
 
 function setSVGSlots(format) {
     var svg_slots = {};
     // initialize images
     var svg_data = svgData[format];
-    console.log(svg_data);
     var char_width = calcCharWidth(svg_data);
     var char_left = calcCharLeft(char_width,svg_data);
     for (var i=0, len=svg_data.length; i < len; i++) {
         var id = svg_data[i];
         var svg = document.createElementNS (xmlns, "svg");
         svg.setAttribute('width', char_width + "%");
-        svg.setAttribute('height', 'auto');
         svg.setAttribute('viewBox', "0 0 " + svg_width + " " + svg_height);
         svg.setAttribute('id', id);
-        svg.setAttribute('style', "position: absolute;" +
-                                  " top: 0px; " +
+        svg.setAttribute('style', "position: absolute; " +
+                                  "top: 0px; " +
                                   "left: " + char_left[i] + "%");
         getMorphclockElement().appendChild(svg);
         svg_slots[id] = svg;
