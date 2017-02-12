@@ -25,14 +25,19 @@ morphclock.min.js: morphpaths.js morphclock.js
 	curl -X POST -s --data-urlencode 'input@___temp.js' https://javascript-minifier.com/raw > $@
 	rm ___temp.js
 
-.PHONY: test paths min all
+*.html: morphpaths.js morphclock.js
+	sed -i "/last-modified/ s/\(content=\).*\(\"\)/\1\"$(shell date +"%Y-%m-%d@%T %Z" )\2/" $@
+
+.PHONY: test paths min html all
 test: testdigit.pdf
 
 paths: morphpaths.js
 
 min: morphclock.min.js
 
-all: test min
+html: *.html
+
+all: test min html
 
 
 
