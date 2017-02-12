@@ -30,8 +30,12 @@ var maxHx;
 var show_seconds;
 var show_daytime;
 
+/* fractions for digit overlap */
+var small_overlap = 0.2;
+var big_overlap = 2 * small_overlap;
+
 /* the supported time formats and the image sources */
-var svgData = { 
+var svgData = {
     'hhmm12':   [ 'digit-hhmm12-Hx',
                   'digit-hhmm12-xH',
                   'colon-hhmm12-Cx',
@@ -64,14 +68,14 @@ var svgData = {
                   'digit-hhmmss24-xS' ]
 };
 
-var main  = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00', 
+var main  = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Sx':'00', 'xS':'00', 'Cx':'::', 'xC':'::',
               'Dx':'ap', 'xD':'mm' };
-              
-var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00', 
+
+var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Sx':'00', 'xS':'00', 'Cx':'00', 'xC':'00',
               'Dx':'00', 'xD':'00' };
-              
+
 var svg_source = {};
 
 function quickMorph() {
@@ -85,7 +89,7 @@ function slowMorph() {
 function doubleDigit(x) {
    var res;
    res = x < 10 ? x = "0" + x : x ;
-   return res > 99 ? "00" : res ; 
+   return res > 99 ? "00" : res ;
 }
 
 function addNextDigit(x) {
@@ -97,8 +101,13 @@ function getMorphclockElement(){
 }
 
 function getTimeFormat() {
-    var format = getMorphclockElement().getAttribute('data-format');
-    return format;
+    time_format = getMorphclockElement().getAttribute('data-format');
+    maxh = time_format.slice(-2);
+    maxh = ( maxh == 24 ? 23 : maxh );
+    maxHx = Math.floor(maxh/10);
+
+    show_seconds = time_format.includes('ss');
+    show_daytime = (maxh == 12);
 }
 
 function resetMorph(){
@@ -109,34 +118,75 @@ function resetMorph(){
 
 function setCSS() {
     var style = document.createElement("style");
-    var morphId = document.createTextNode("#morphclock { position: relative; width: 100%; padding: 0px; white-space: nowrap; stroke: black; }");
-    var svgClass = document.createTextNode(".svg-path { fill: none; stroke: inherit; stroke-linejoin: round; stroke-linecap: round; opacity: inherit; }");
+    var morphId = document.createTextNode(
+        "#morphclock { " +
+        "position: absolute; " +
+        "width: 100%; " +
+        "padding: 0px; " +
+        "white-space: nowrap; " +
+        "stroke: black; }");
+    var svgClass = document.createTextNode(
+        ".svg-path { " +
+        "fill: none; " +
+        "stroke: inherit; " +
+        "stroke-linejoin: round; " +
+        "stroke-linecap: round; " +
+        "opacity: inherit; }");
     style.appendChild(morphId);
     style.appendChild(svgClass);
     document.head.appendChild(style);
 }
 
 function calcCharWidth(data) {
-    var widthArray = [];
-    var width = 100/data.length;
-    for (var i=0; i < data.length; i++) {
-        widthArray[i] = width;
+    /* width is calculated by
+     * width := 100/(number_of_chars -
+                     number_of_small_overlaps*small_overlap -
+                     numer_of_big_overlaps*big_overlap)
+     *
+     * where big_overlap is used for ':' and the space bevore 'am/pm'
+     */
+    var n_of_chars, n_of_sover, n_of_bover;
+    n_of_chars = data.length;
+    n_of_sover = 2;
+    n_of_bover = 2;
+    if (data[0].includes("12")) {
+       n_of_chars += 1; // add the space before 'am/pm'
+       n_of_sover += 1; // one more small overlap between 'a|p' and 'm'
+       n_of_bover += 2; // two more big overlaps for the additional space
     }
-    console.log(widthArray);
-    return widthArray;
+    if (data[0].includes("ss")) {
+       n_of_sover += 1; // one more small overlap for the seconds
+       n_of_bover += 2; // two more big overlaps for the ':' before the seconds
+    }
+    console.log(n_of_chars, n_of_sover, n_of_bover);
+    var width = 100/(n_of_chars -
+                     n_of_sover * small_overlap -
+                     n_of_bover * big_overlap);
+    console.log(width);
+    return width;
 }
 
-function calcCharLeft(data) {
+function calcCharLeft(width,data) {
     var leftArray = [];
     var left = 0;
-    for (var i=0; i < data.length; i++) {
+    leftArray[0] = left;
+    for (var i=1; i < data.length; i++) {
+        if (data[i].includes("C")  ||
+            data[i].includes("Mx") ||
+            data[i].includes("Sx")) {
+           left = left + width*(1 - big_overlap); }
+        else if (data[i].includes("Dx")) {
+           left = left + 2*width*(1 - big_overlap);
+        }
+        else {
+           left = left + width*(1 - small_overlap);
+        }
         leftArray[i] = left;
-        left -= 6;
     }
     console.log(leftArray);
     return leftArray;
 }
-    
+
 
 function setSVGSlots(format) {
     var svg_slots = {};
@@ -144,15 +194,17 @@ function setSVGSlots(format) {
     var svg_data = svgData[format];
     console.log(svg_data);
     var char_width = calcCharWidth(svg_data);
-    var char_left = calcCharLeft(svg_data);
+    var char_left = calcCharLeft(char_width,svg_data);
     for (var i=0, len=svg_data.length; i < len; i++) {
         var id = svg_data[i];
         var svg = document.createElementNS (xmlns, "svg");
-        svg.setAttribute('width', svg_width);
-        svg.setAttribute('height', svg_height);
+        svg.setAttribute('width', char_width + "%");
+        svg.setAttribute('height', 'auto');
         svg.setAttribute('viewBox', "0 0 " + svg_width + " " + svg_height);
         svg.setAttribute('id', id);
-        svg.setAttribute('style', "position: relative; top: 0px; left: " + char_left[i] + "%; width: " + char_width[i] + "%");
+        svg.setAttribute('style', "position: absolute;" +
+                                  " top: 0px; " +
+                                  "left: " + char_left[i] + "%");
         getMorphclockElement().appendChild(svg);
         svg_slots[id] = svg;
     }
@@ -168,13 +220,6 @@ function renderTime() {
     t = currentTime.getMilliseconds();
 
     setTimeout('renderTime()',refresh);
-
-    maxh = time_format.slice(-2);
-    maxh = ( maxh == 24 ? 23 : maxh );
-    maxHx = Math.floor(maxh/10);
-
-    show_seconds = time_format.includes('ss');
-    show_daytime = (maxh == 12);
 
     if (show_daytime) {
        if (h == 0) {
@@ -217,7 +262,7 @@ function renderTime() {
            main['Sx'] == 5 &&
            main['xS'] >= 5) {
           morph['Hx'] = doubleDigit(slowMorph());
-          if (h == maxh) { 
+          if (h == maxh) {
              morph['Dx'] = morph['Hx'];
              morph['xD'] = morph['Hx'];
           }
@@ -239,7 +284,7 @@ function renderTime() {
     else {
        main['Mx'] = addNextDigit(main['Mx']);
     }
-    
+
     // minutes part 2
     if (main['xM'] == 9) {
        main['xM'] = main['xM'] + "0";
@@ -321,9 +366,8 @@ function renderTime() {
 }
 
 window.onload = function() {
-    time_format = getTimeFormat();
+    getTimeFormat();
     setCSS();
     svg_slot = setSVGSlots(time_format);
     renderTime();
 }
-
