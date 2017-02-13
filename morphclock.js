@@ -76,8 +76,6 @@ var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Sx':'00', 'xS':'00', 'Cx':'00', 'xC':'00',
               'Dx':'00', 'xD':'00' };
 
-var svg_source = {};
-
 function quickMorph() {
    return Math.round(t/10);
 }
@@ -183,10 +181,10 @@ function calcCharLeft(width,data) {
     return leftArray;
 }
 
-function setSVGSlots(format) {
+function setSVGSlots() {
     var svg_slots = {};
-    // initialize images
-    var svg_data = svgData[format];
+    // initialize svg images
+    var svg_data = svgData[time_format];
     var char_width = calcCharWidth(svg_data);
     var char_left = calcCharLeft(char_width,svg_data);
     for (var i=0, len=svg_data.length; i < len; i++) {
@@ -321,33 +319,16 @@ function renderTime() {
        morph['Cx'] = doubleDigit(quickMorph());
     }
 
-    // build actual image source
-    svg_source['digit-' + time_format + '-Hx'] = main['Hx'] + "-" + morph['Hx'];
-    svg_source['digit-' + time_format + '-xH'] = main['xH'] + "-" + morph['xH'];
-    svg_source['digit-' + time_format + '-Mx'] = main['Mx'] + "-" + morph['Mx'];
-    svg_source['digit-' + time_format + '-xM'] = main['xM'] + "-" + morph['xM'];
-    svg_source['colon-' + time_format + '-Cx'] = main['Cx'] + "-" + morph['Cx'];
-    if (show_seconds) {
-       svg_source['digit-' + time_format + '-Sx'] = main['Sx'] + "-" + morph['Sx'];
-       svg_source['digit-' + time_format + '-xS'] = main['xS'] + "-" + morph['xS'];
-       svg_source['colon-' + time_format + '-xC'] = main['xC'] + "-" + morph['xC'];
-    }
-    if (show_daytime) {
-       svg_source['alpha-' + time_format + '-Dx'] = main['Dx'] + "-" + morph['Dx'];
-       svg_source['alpha-' + time_format + '-xD'] = main['xD'] + "-" + morph['xD'];
-    }
-    for (var src in svg_source) {
-      svg_source[src] = "md-" + svg_source[src];
-    }
-    // apply changes to images
-    for (var src in svg_source) {
+    // apply changes to svg images
+    for (var src in svg_slot) {
         var svg = svg_slot[src];
         // remove old path entries
         while (svg.firstChild) {
               svg.removeChild(svg.firstChild);
         }
         // set new path information
-        var path_array = morphpath[svg_source[src]];
+        var idx = src.slice(-2);
+        var path_array = morphpath["md-" + main[idx] + "-" + morph[idx]];
         for (var i=0, len=path_array.length; i < len; i++) {
             var path = document.createElementNS (xmlns, "path");
             path.setAttribute ('class', "svg-path");
@@ -361,6 +342,6 @@ function renderTime() {
 window.onload = function() {
     getTimeFormat();
     setCSS();
-    svg_slot = setSVGSlots(time_format);
+    svg_slot = setSVGSlots();
     renderTime();
 }
