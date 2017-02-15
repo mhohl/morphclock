@@ -18,17 +18,22 @@ var svg_strokewidth = morphpath['stroke-width'];
 
 /* the time variables */
 var currentTime;
-var h;
-var m;
-var s;
-var t;
+var h, m, s, t;
+var Hx, xH, Mx, xM, Sx, xS;
 
 var maxh;
 var maxHx;
 
+/* morph timing:
+ * the slow morph starts when the last
+ * second digit is >= slow_morph_start
+ */
+var slow_morph_start = 7;
+
 /* booleans */
 var show_seconds;
 var show_daytime;
+var slow_morph;
 
 /* fractions for digit overlap */
 var small_overlap = 0.2;
@@ -77,11 +82,11 @@ var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Dx':'00', 'xD':'00' };
 
 function quickMorph() {
-   return Math.round(t/10);
+   return doubleDigit(Math.round(t/10));
 }
 
-function slowMorph() {
-   return Math.round(((main['xS']-5)*1000+t)/50);
+function slowMorph(x) {
+   return doubleDigit(Math.round(((xS-x)*1000+t)/((10-x)*10)));
 }
 
 function doubleDigit(x) {
@@ -222,91 +227,35 @@ function renderTime() {
        }
     }
 
-    main['Hx'] = Math.floor(h/10);
-    main['xH'] = h % 10;
-    main['Mx'] = Math.floor(m/10);
-    main['xM'] = m % 10;
-    main['Sx'] = Math.floor(s/10);
-    main['xS'] = s % 10;
+    Hx = Math.floor(h/10);
+    xH = h % 10;
+    Mx = Math.floor(m/10);
+    xM = m % 10;
+    Sx = Math.floor(s/10);
+    xS = s % 10;
 
     resetMorph();
 
-    // hours part 1
-    if (main['Hx'] == maxHx) {
-       main['Hx'] = main['Hx'] + "0";
-    }
-    else {
-       main['Hx'] = addNextDigit(main['Hx']);
-    }
+    slow_morph = (xS >= slow_morph_start);
 
-    // hours part 2
-    if (h == maxh || main['xH'] == 9) {
-       if (h == maxh && show_daytime ) {
-          // transition "12" -> "01"
-          main['xH'] = main['xH'] + "1";
-       }
-       else {
-          main['xH'] = main['xH'] + "0";
-       }
-       if (main['Mx'] == 5 &&
-           main['xM'] == 9 &&
-           main['Sx'] == 5 &&
-           main['xS'] >= 5) {
-          morph['Hx'] = doubleDigit(slowMorph());
-          if (h == maxh) {
-             morph['Dx'] = morph['Hx'];
-             morph['xD'] = morph['Hx'];
-          }
+    // seconds
+    if (Sx == 5) {
+       main['Sx'] = Sx + "0";
+       if (slow_morph) {
+          morph['xM'] = slowMorph(slow_morph_start);
        }
     }
     else {
-       main['xH'] = addNextDigit(main['xH']);
-    }
-
-    // minutes part 1
-    if (main['Mx'] == 5) {
-       main['Mx'] = main['Mx'] + "0";
-       if (main['xM'] == 9 &&
-           main['Sx'] == 5 &&
-           main['xS'] >= 5) {
-          morph['xH'] = doubleDigit(slowMorph());
-       }
-    }
-    else {
-       main['Mx'] = addNextDigit(main['Mx']);
-    }
-
-    // minutes part 2
-    if (main['xM'] == 9) {
-       main['xM'] = main['xM'] + "0";
-       if (main['Sx'] == 5 &&
-           main['xS'] >= 5) {
-          morph['Mx'] = doubleDigit(slowMorph());
-       }
-    }
-    else {
-       main['xM'] = addNextDigit(main['xM']);
-    }
-
-    // seconds part 1
-    if (main['Sx'] == 5) {
-       main['Sx'] = main['Sx'] + "0";
-       if (main['xS'] >= 5) {
-          morph['xM'] = doubleDigit(slowMorph());
-       }
-    }
-    else {
-       main['Sx'] = addNextDigit(main['Sx']);
+       main['Sx'] = addNextDigit(Sx);
     }
     if (show_seconds) {
-       morph['xS'] = doubleDigit(quickMorph());
-       // seconds part 2
-       if (main['xS'] == 9) {
-          main['xS'] = main['xS'] + "0";
+       morph['xS'] = quickMorph();
+       if (xS == 9) {
+          main['xS'] = xS + "0";
           morph['Sx'] = morph['xS'];
        }
        else {
-          main['xS'] = addNextDigit(main['xS']);
+          main['xS'] = addNextDigit(xS);
        }
        /* colon stuff: the right colon is in sync with
         * the seconds, the left one has a 50% phase shift */
@@ -316,13 +265,68 @@ function renderTime() {
     else {
        /* no seconds shown, the first (and only) colon
         * is in sync with the seconds */
-       morph['Cx'] = doubleDigit(quickMorph());
+       morph['Cx'] = quickMorph();
+    }
+
+    //minutes
+    slow_morph = slow_morph && (Sx == 5);
+
+    if (xM == 9) {
+       main['xM'] = xM + "0";
+       if (slow_morph) {
+          morph['Mx'] = slowMorph(slow_morph_start);
+       }
+    }
+    else {
+       main['xM'] = addNextDigit(xM);
+    }
+
+    slow_morph = slow_morph && (xM == 9);
+
+    if (Mx == 5) {
+       main['Mx'] = Mx + "0";
+       if (slow_morph) {
+          morph['xH'] = slowMorph(slow_morph_start);
+       }
+    }
+    else {
+       main['Mx'] = addNextDigit(Mx);
+    }
+
+    slow_morph = slow_morph && (Mx == 5);
+
+    // hours
+    if (h == maxh || xH == 9) {
+       if (h == maxh && show_daytime ) {
+          // transition "12" -> "01"
+          main['xH'] = xH + "1";
+       }
+       else {
+          main['xH'] = xH + "0";
+       }
+       if (slow_morph) {
+          morph['Hx'] = slowMorph(slow_morph_start);
+          if (h == maxh) {
+             morph['Dx'] = morph['Hx'];
+             morph['xD'] = morph['Hx'];
+          }
+       }
+    }
+    else {
+       main['xH'] = addNextDigit(xH);
+    }
+
+    if (Hx == maxHx) {
+       main['Hx'] = Hx + "0";
+    }
+    else {
+       main['Hx'] = addNextDigit(Hx);
     }
 
     // apply changes to svg images
     for (var src in svg_slot) {
         var svg = svg_slot[src];
-        // remove old path entries
+        // remove old paths
         while (svg.firstChild) {
               svg.removeChild(svg.firstChild);
         }
