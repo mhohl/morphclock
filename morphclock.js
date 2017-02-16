@@ -1,7 +1,7 @@
 /*
  *
  * morphclock.js
- * version 1.0
+ * version 1.1
  *
  */
 
@@ -82,17 +82,15 @@ var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Dx':'00', 'xD':'00' };
 
 function quickMorph() {
-   return doubleDigit(Math.round(t/10));
+   return doubleDigit(Math.floor(t/10));
 }
 
 function slowMorph(x) {
-   return doubleDigit(Math.round(((xS-x)*1000+t)/((10-x)*10)));
+   return doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
 }
 
 function doubleDigit(x) {
-   var res;
-   res = x < 10 ? x = "0" + x : x ;
-   return res > 99 ? "00" : res ;
+   return x < 10 ? x = "0" + x : x ;
 }
 
 function addNextDigit(x) {
@@ -105,6 +103,7 @@ function getMorphclockElement(){
 
 function getTimeFormat() {
     time_format = getMorphclockElement().getAttribute('data-format');
+
     maxh = time_format.slice(-2);
     maxh = ( maxh == 24 ? 23 : maxh );
     maxHx = Math.floor(maxh/10);
