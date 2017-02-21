@@ -342,9 +342,13 @@ function renderTime() {
     }
 }
 
-window.onload = function() {
+function startMorphclock() {
     getTimeFormat();
     setCSS();
     svg_slot = setSVGSlots();
     renderTime();
+}
+
+window.onload = function() {
+    startMorphclock();
 }
