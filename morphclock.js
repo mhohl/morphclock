@@ -122,9 +122,8 @@ function setCSS() {
     var style = document.createElement("style");
     var morphId = document.createTextNode(
         "#morphclock { " +
-        "position: absolute; " +
         "width: 100%; " +
-        "padding: 0px; " +
+        "position: relative;" +
         "white-space: nowrap; " +
         "stroke: black; }");
     var svgClass = document.createTextNode(
@@ -137,6 +136,13 @@ function setCSS() {
     style.appendChild(morphId);
     style.appendChild(svgClass);
     document.head.appendChild(style);
+}
+
+function setDivHeight() {
+  var div = getMorphclockElement();
+  /* the morphclock div's height is set to the height of the first
+     child, i.e. the first svg element */
+  div.style.height = div.children[0].getBoundingClientRect().height;
 }
 
 function calcCharWidth(data) {
@@ -346,6 +352,8 @@ function startMorphclock() {
     getTimeFormat();
     setCSS();
     svg_slot = setSVGSlots();
+    setDivHeight();
+    window.addEventListener("resize", setDivHeight);
     renderTime();
 }
 
