@@ -1,15 +1,80 @@
 <html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="last-modified" content="2017-02-23@20:47:10 CET" />
-  <title>Morphclock</title>
-</head>
-<body>
-<h1>Morphclocks</h1>
-<ul>
-<li>Morphclock im <a href="morphclock-hhmm12.html">HHMM-12</a>-Format</li>
-<li>Morphclock im <a href="morphclock-hhmmss12.html">HHMMSS-12</a>-Format</li>
-<li>Morphclock im <a href="morphclock-hhmm24.html">HHMM-24</a>-Format</li>
-<li>Morphclock im <a href="morphclock-hhmmss24.html">HHMMSS-24</a>-Format</li>
-</body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="last-modified" content="2017-02-23@20:47:10 CET" />
+    <title>morphclock: demo</title>
+  </head>
+  <body>
+    <script type='text/javascript' language='javascript' src='morphclock.min.js'></script>
+    
+    <svg style="position:absolute; width:0; height:0">
+    <defs>
+        <linearGradient id="Gradient-1" x1="0" y1="0" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="red" />
+            <stop offset="100%" stop-color="black" />
+        </linearGradient>
+    </defs>
+</svg>
+    <h1>morphclock: demo</h1>
+    <p>
+       <strong>morphclock</strong> ist eine animierte Uhr für Webseiten.
+       Die Einbindung ist denkbar einfach: Der javascript-Code wird mit
+       <code>
+          &lt;script type='text/javascript' language='javascript' src='morphclock.min.js'&gt;&lt;/script&gt;
+       </code>
+       nach dem body-Tag eingefügt, die Uhr selber wird mit
+       <code>
+          &lt;div id="morphclock" data-format="<emph>format</emph>"&gt;&lt;/div&gt;
+       </code>
+       eingesetzt und aktiviert.
+       <emph>format</emph> kann folgende Werte annehmen:
+       <ul>
+          <li><emph>hhmm12</emph> für die Anzeige im 12-Stunden-Format ohne Sekunden,</li>
+          <li><emph>hhmm24</emph> für die Anzeige im 24-Stunden-Format ohne Sekunden,</li>
+          <li><emph>hhmmss12</emph> für die Anzeige im 12-Stunden-Format mit Sekunden,</li>
+          <li><emph>hhmmss24</emph> für die Anzeige im 24-Stunden-Format mit Sekunden.</li>
+        </ul>
+    Und so sieht es aus:
+    </p>
+    <div id="morphclock" data-format="hhmmss24"></div>
+    
+    <p>
+    <button onclick="setMorphclockFormat('hhmm12')">HH:MM 12 hr</button>
+    <button onclick="setMorphclockFormat('hhmmss12')">HH:MM:ss 12 hr</button>
+    <button onclick="setMorphclockFormat('hhmm24')">HH:MM 24 hr</button>
+    <button onclick="setMorphclockFormat('hhmmss24')">HH:MM:SS 24 hr</button>
+    <br>
+    <button onclick="morphclock().style.stroke='yellow'">Gelb/Yellow</button>
+    <button onclick="morphclock().style.stroke='black'">Schwarz/Black</button>
+    <button onclick="morphclock().style.stroke='green'">Grün/Green</button>
+    <button onclick="morphclock().style.stroke='red'">Rot/Red</button>
+    <button onclick="morphclock().style.stroke='blue'">Blau/Blue</button>
+    <button onclick="morphclock().style.stroke='url(#Gradient-1)'">Gradient</button>
+    <br>
+    <button onclick="morphclock().style.width = '50%';setDivHeight();">50%</button>
+    <button onclick="morphclock().style.width = '75%';setDivHeight();">75%</button>
+    <button onclick="morphclock().style.width = '100%';setDivHeight();">100%</button>
+    <button onclick="morphclock().style.width = '666';setDivHeight();">666px</button>
+    </p>
+    <p>
+       <strong>morphclock</strong> is an animated clock for web pages.
+       Embedding is quite easy: insert the javascript code after the body-tag like this:
+       <code>
+          &lt;script type='text/javascript' language='javascript' src='morphclock.min.js'&gt;&lt;/script&gt;
+       </code>
+       and activate the clock by inserting
+       <code>
+          &lt;div id="morphclock" data-format="<emph>format</emph>"&gt;&lt;/div&gt;
+       </code>
+       anywhere on the web page.
+       <emph>format</emph> can be one of the following:
+       <ul>
+          <li><emph>hhmm12</emph> for 12-hr display format without seconds,</li>
+          <li><emph>hhmm24</emph> for 24-hr display format without seconds,</li>
+          <li><emph>hhmmss12</emph> for 12-hr display format with seconds,</li>
+          <li><emph>hhmmss24</emph> for 24-hr display format with seconds.</li>
+        </ul>
+    </p>
+     
+  </body>
 </html>

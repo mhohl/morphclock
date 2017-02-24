@@ -97,12 +97,12 @@ function addNextDigit(x) {
    return doubleDigit(x * 10 + x + 1);
 }
 
-function getMorphclockElement(){
+function morphclock(){
     return document.getElementById('morphclock');
 }
 
 function getTimeFormat() {
-    time_format = getMorphclockElement().getAttribute('data-format');
+    time_format = morphclock().getAttribute('data-format');
 
     maxh = time_format.slice(-2);
     maxh = ( maxh == 24 ? 23 : maxh );
@@ -122,7 +122,6 @@ function setCSS() {
     var style = document.createElement("style");
     var morphId = document.createTextNode(
         "#morphclock { " +
-        "width: 100%; " +
         "position: relative;" +
         "white-space: nowrap; " +
         "stroke: black; }");
@@ -139,7 +138,7 @@ function setCSS() {
 }
 
 function setDivHeight() {
-  var div = getMorphclockElement();
+  var div = morphclock();
   /* the morphclock div's height is set to the height of the first
      child, i.e. the first svg element */
   div.style.height = div.children[0].getBoundingClientRect().height;
@@ -206,7 +205,7 @@ function setSVGSlots() {
         svg.setAttribute('style', "position: absolute; " +
                                   "top: 0px; " +
                                   "left: " + char_left[i] + "%");
-        getMorphclockElement().appendChild(svg);
+        morphclock().appendChild(svg);
         svg_slots[id] = svg;
     }
     return svg_slots;
@@ -355,6 +354,16 @@ function startMorphclock() {
     setDivHeight();
     window.addEventListener("resize", setDivHeight);
     renderTime();
+}
+
+/* functions for switching styles */
+function setMorphclockFormat(fmt) {
+    var div = morphclock();
+    while (div.firstChild) {
+          div.removeChild(div.firstChild);
+    }
+    morphclock().setAttribute("data-format", fmt);
+    startMorphclock();
 }
 
 window.onload = function() {
