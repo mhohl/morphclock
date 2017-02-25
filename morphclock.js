@@ -137,7 +137,7 @@ function setCSS() {
     document.head.appendChild(style);
 }
 
-function setDivHeight() {
+function morphclockCalcHeight() {
   var div = morphclock();
   /* the morphclock div's height is set to the height of the first
      child, i.e. the first svg element */
@@ -347,25 +347,30 @@ function renderTime() {
     }
 }
 
-function startMorphclock() {
+function morphclockStart() {
     getTimeFormat();
     setCSS();
     svg_slot = setSVGSlots();
-    setDivHeight();
-    window.addEventListener("resize", setDivHeight);
+    morphclockCalcHeight();
+    window.addEventListener("resize", morphclockCalcHeight);
     renderTime();
 }
 
 /* functions for switching styles */
-function setMorphclockFormat(fmt) {
+function morphclockSetTimeFormat(fmt) {
     var div = morphclock();
     while (div.firstChild) {
           div.removeChild(div.firstChild);
     }
     morphclock().setAttribute("data-format", fmt);
-    startMorphclock();
+    morphclockStart();
+}
+
+function morphclockSetWidth(width) {
+    morphclock().style.width = width;
+    morphclockCalcHeight();
 }
 
 window.onload = function() {
-    startMorphclock();
+    morphclockStart();
 }
