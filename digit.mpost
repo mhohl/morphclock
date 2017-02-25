@@ -584,12 +584,12 @@ beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw six[TOP]
+   draw six[LEFT]{up}
+        .. six[TOP]
         .. six[RIGHT]
         .. six[BOTTOM]
-        .. six[LEFT]
-        .. cycle;
-   draw six[LEFT]{up} .. six[BEGIN];
+        .. six[LEFT]{up}
+        .. six[BEGIN];
    setbounds currentpicture to boundingpath;
 endfig;
 
@@ -810,12 +810,12 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmppath0 := nine[RIGHT]{down} .. nine[END];
        aux[END] := point m of tmppath0;
 
-       draw nine[TOP]
-            .. nine[RIGHT]
+       draw nine[RIGHT]{down}
             .. nine[BOTTOM]
             .. nine[LEFT]
-            .. cycle;
-       draw nine[RIGHT]{down} .. aux[END];
+            .. nine[TOP]
+            .. nine[RIGHT]{down}
+            .. aux[END];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -828,12 +828,12 @@ beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw nine[TOP]
-        .. nine[RIGHT]
+   draw nine[RIGHT]{down}
         .. nine[BOTTOM]
         .. nine[LEFT]
-        .. cycle;
-   draw nine[RIGHT]{down} .. nine[END];
+        .. nine[TOP]
+        .. nine[RIGHT]{down}
+        .. nine[END];
    setbounds currentpicture to boundingpath;
 endfig;
 
