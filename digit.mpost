@@ -515,7 +515,9 @@ six[RIGHT]  = zero[RIGHT] xscaled 3/2;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
 
-for i = start+1 upto start+fpht:
+% wir gehen hier nur bis fpht-1, weil bei fpht die Schleife geschossen wäre
+% und sich die Zeichenrichtung umdreht:
+for i = start+1 upto start+fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
@@ -544,14 +546,14 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-for i = start+fpht+1 upto start+2fpht-1:
+for i = start+fpht upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 1/m;
+       t := 1/(m+0.001); % m kann Null werden
 
        % wir ermitteln den Punkt, der auf 2/3 des abschließenden Bogens liegt;
        % aux[MID] wandert von der linken Ecke der nach oben geschobenen "5"
@@ -565,13 +567,12 @@ for i = start+fpht+1 upto start+2fpht-1:
        aux[MID]   := m[aux[BEGIN],aux[END]];
 
        draw six[LEFT]{up}
-            .. tension t .. aux[MID]
-            .. tension t .. six[BEGIN];
-       draw six[TOP]
+            .. six[TOP]
             .. six[RIGHT]
             .. six[BOTTOM]
-            .. six[LEFT]
-            .. cycle;
+            .. six[LEFT]{up}
+            .. tension t .. aux[MID]
+            .. tension t .. six[BEGIN];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -867,12 +868,11 @@ for i = start+1 upto start+fpht:
        tmp1 := ypart(nine[BOTTOM]);
        aux[MID] := (0,min(tmp0,tmp1));
 
-       draw nine[TOP]
-            .. nine[RIGHT]
+       draw nine[RIGHT]{down}
             .. nine[BOTTOM]
             .. nine[LEFT]
-            .. cycle;
-       draw nine[RIGHT]{down}
+            .. nine[TOP]
+            .. nine[RIGHT]{down}
             .. aux[MID]
             .. aux[END];
        setbounds currentpicture to boundingpath;
