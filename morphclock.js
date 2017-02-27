@@ -1,7 +1,7 @@
 /*
  *
  * morphclock.js
- * version 1.1
+ * version 1.19
  *
  */
 
@@ -264,7 +264,7 @@ function renderTime() {
        /* colon stuff: the right colon is in sync with
         * the seconds, the left one has a 50% phase shift */
        morph['xC'] = morph['xS'];
-       morph['Cx'] = doubleDigit((morph['xC'] + 50) % 100);
+       morph['Cx'] = doubleDigit((quickMorph() + 50) % 100);
     }
     else {
        /* no seconds shown, the first (and only) colon

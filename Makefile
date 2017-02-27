@@ -28,7 +28,7 @@ morphclock.min.js: morphpaths.js morphclock.js
 *.html: morphpaths.js morphclock.js
 	sed -i "/last-modified/ s/\(content=\).*\(\"\)/\1\"$(shell date +"%Y-%m-%d@%T %Z" )\2/" $@
 
-.PHONY: test paths min html all
+.PHONY: test paths min html all install
 test: testdigit.pdf
 
 paths: morphpaths.js
@@ -38,6 +38,9 @@ min: morphclock.min.js
 html: *.html
 
 all: test min html
+
+install:
+	bash upload_morph.sh
 
 
 
