@@ -1,8 +1,18 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="last-modified" content="2017-02-27@07:29:14 CET" />
+    <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
     <title>morphclock: demo</title>
+    <style>
+      .code {
+         font-family: monospace;
+         padding: 1em;
+         background-color: #ffffcc;
+      }
+      var {
+         color: #dd0000;
+      }
+    </style>
   </head>
   <body>
     <script type='text/javascript' language='javascript' src='morphclock.min.js'></script>
@@ -20,23 +30,23 @@
        <strong>morphclock</strong> ist eine animierte Uhr für Webseiten.
     </p>
     <p>
-       Die Einbindung ist denkbar einfach: Der javascript-Code wird mit
+       Die Einbindung ist denkbar einfach: Der JavaScript-Code wird mit
        <div class="code">
           &lt;script type='text/javascript' language='javascript' src='morphclock.min.js'&gt;&lt;/script&gt;
        </div>
-       nach dem body-Tag eingefügt, die Uhr selber wird mit
+       nach dem &lt;body&gt;-Tag eingefügt, die Uhr selber wird mit
        <div class="code">
-          &lt;div id="morphclock" data-format="<em>format</em>"&gt;&lt;/div&gt;
+          &lt;div id="morphclock" data-format="<var>format</var>"&gt;&lt;/div&gt;
        </div>
        eingesetzt und aktiviert.
     </p>
     <p>
-       <em>format</em> kann folgende Werte annehmen:
+       <var>format</var> kann folgende Werte annehmen:
        <ul>
-          <li><em>hhmm12</em> für die Anzeige im 12-Stunden-Format ohne Sekunden,</li>
-          <li><em>hhmm24</em> für die Anzeige im 24-Stunden-Format ohne Sekunden,</li>
-          <li><em>hhmmss12</em> für die Anzeige im 12-Stunden-Format mit Sekunden,</li>
-          <li><em>hhmmss24</em> für die Anzeige im 24-Stunden-Format mit Sekunden.</li>
+          <li><var>hhmm12</var> für die Anzeige im 12-Stunden-Format ohne Sekunden,</li>
+          <li><var>hhmm24</var> für die Anzeige im 24-Stunden-Format ohne Sekunden,</li>
+          <li><var>hhmmss12</var> für die Anzeige im 12-Stunden-Format mit Sekunden,</li>
+          <li><var>hhmmss24</var> für die Anzeige im 24-Stunden-Format mit Sekunden.</li>
         </ul>
     </p>
     <p>
@@ -72,17 +82,17 @@
        </div>
        and activate the clock by inserting
        <div class="code">
-          &lt;div id="morphclock" data-format="<em>format</em>"&gt;&lt;/div&gt;
+          &lt;div id="morphclock" data-format="<var>format</var>"&gt;&lt;/div&gt;
        </div>
        anywhere on the web page.
     </p>
     <p>
-       <em>format</em> can be one of the following:
+       <var>format</var> can be one of the following:
        <ul>
-          <li><em>hhmm12</em> for 12-hr display format without seconds,</li>
-          <li><em>hhmm24</em> for 24-hr display format without seconds,</li>
-          <li><em>hhmmss12</em> for 12-hr display format with seconds,</li>
-          <li><em>hhmmss24</em> for 24-hr display format with seconds.</li>
+          <li><var>hhmm12</var> for 12-hr display format without seconds,</li>
+          <li><var>hhmm24</var> for 24-hr display format without seconds,</li>
+          <li><var>hhmmss12</var> for 12-hr display format with seconds,</li>
+          <li><var>hhmmss24</var> for 24-hr display format with seconds.</li>
         </ul>
     </p>
      
