@@ -1,0 +1,526 @@
+%
+% glyph
+%
+% die Bilder werden in der Form glyph.ffttnn erzeugt:
+% f = "from": Startziffer (Position im Alphabet)
+% t = "to":   Endziffer
+% nn : laufende Nummer
+%
+% Für die Anzeige des Monats (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)
+% sind folgende Übergänge notwendig (dahinter die Kodierung):
+%
+% a -> e 0105
+% a -> m 0113
+% a -> p ---- schon in digit enthalten
+% a -> s 0119
+% a -> u 0121
+% b -> r 0218
+% c -> n 0314
+% c -> o 0315
+% d -> j 0410
+% e -> a 0501
+% e -> c 0503
+% f -> m 0613
+% g -> p 0716
+% j -> a 1001
+% j -> f 1006
+% j -> j 1010
+% l -> g 1207
+% m -> a 1301
+% m -> j 1310
+% n -> b 1402
+% n -> d 1404
+% n -> l 1412
+% o -> e 1505
+% o -> n 1514
+% p -> a ---- schon in digit enthalten
+% p -> t 1620
+% r -> r 1818
+% r -> y 1825
+% s -> o 1915
+% t -> v 2022
+% u -> e 2105
+% u -> u 2121
+% v -> c 2203
+% y -> n 2514
+
+
+% Versionsnummer:
+string version;
+version := "Version: 0.01";
+show(version);
+
+show("call with '-numbersystem=double' to prevent overflow errors");
+
+outputtemplate := "%j-%c.mps";
+outputformat := "eps";
+
+warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
+
+numeric f;      % [f]rame index
+numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
+fpht := 50;
+numeric start;  % [start] of transition;
+numeric m;      % [m]orph factor
+numeric t;      % [t]ension
+numeric tt;     % ano[t]her [t]ension ;-)
+numeric phi[];  % rotation angle [phi1]
+numeric u;      % [u]nit
+u := 5cm;
+numeric q;      % [q]adratic factor
+pair C;         % [C]enter of rotation
+C := (0,0.425u);
+pen pc;         % [p]en[c]ircle
+pc := pencircle scaled 0.1u;
+path tmppath[]; % [t]e[mp]orary [path]
+numeric tmp[];  % [t]e[mp]orary variable
+pair aux[];     % [aux]iliary points;
+picture tmppic; % [t]e[mp]orary [pic]ture
+
+% symbolische Variablen
+numeric LEFT, RIGHT, TOP, BOTTOM;
+numeric BEGIN, END, JOINT, MID;
+numeric L_ARC, R_ARC, U_ARC, D_ARC;
+LEFT   = 1000;
+RIGHT  = 1001;
+TOP    = 1002;
+BOTTOM = 1003;
+BEGIN  = 1004;
+END    = 1005;
+JOINT  = 1006;
+MID    = 1007;
+L_ARC  = 1008; % [l]eft (part of) [arc]
+R_ARC  = 1009; % [r]ight (part of) [arc]
+U_ARC  = 1010; % [u]pright (part of) [arc]
+D_ARC  = 1011; % [d]ownright (part of) [arc]
+
+% Array für die Null
+pair zero[];
+
+% Arrays für die Buchstaben:
+pair _a_[], _b_[], _c_[], _d_[],
+     _e_[], _f_[], _g_[], _j_[],
+     _l_[], _m_[], _n_[], _o_[],
+     _p_[], _r_[], _s_[], _t_[],
+     _u_[], _v_[], _y_[];
+
+% draft kennzeichnet den Entwurfsmodus:
+numeric draft; draft := 1;
+
+def draw_grid(expr u) =
+    if draft > 0:
+      draw (-0.6u,-0.75u) -- (-0.6u,1.5u) -- (0.6u,1.5u) -- (0.6u,-0.75u) -- cycle;
+      draw (-0.6u,0) -- (0.6u,0);
+      draw (-0.6u,0.85u) -- (0.6u,0.85u);
+      draw (-0.25u,-0.75u)--(-0.25u,1.5u);
+      draw (0.25u,-0.75u)--(0.25u,1.5u);
+    fi
+enddef;
+
+path boundingpath;
+boundingpath := (-0.6u,-0.75u)
+                -- (-0.6u,1.5u)
+                -- (0.6u,1.5u)
+                -- (0.6u,-0.75u)
+                -- cycle;
+
+vardef advanced(expr xx) = sind(90xx) enddef;
+vardef retarded(expr xx) = 1-cosd(90xx) enddef;
+
+% Die Exponentialfunktion ist standardmäßig nicht definiert: 
+vardef exp(expr xx) = (mexp(256)**xx) enddef;
+
+% Wir definieren ein "yshifted" für den Buchstaben "m":
+primarydef z yshifted yy = z shifted (0,yy) enddef;
+
+% eine Funktion zur Berechnung des Startwertes gemäß ffttnn:
+vardef transition(expr from, to) =
+    save i;
+    i := (ASCII(from)-96)*10000+(ASCII(to)-96)*100;
+    i
+enddef;
+
+show transition("c","c");
+
+show transition("z","a");
+
+%
+% Null
+%
+zero[TOP]    = (0,0.85u);
+zero[BOTTOM] = (0,0);
+zero[LEFT]   = (-0.25u,0.425u);
+zero[RIGHT]  = zero[LEFT] xscaled -1;
+
+
+%
+% a
+%
+
+_a_[BEGIN]  = (-0.25u,0.6u);
+_a_[TOP]    = zero[TOP];
+_a_[R_ARC]  = _a_[BEGIN] xscaled -1;
+_a_[JOINT]  = (0.25u,0.15u);
+_a_[END]    = (0.325u,0);
+_a_[L_ARC]  = _a_[JOINT] xscaled -1;
+_a_[BOTTOM] = zero[BOTTOM];
+
+start := transition("a","e");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   tmppath1 := _a_[BEGIN]
+               ..  _a_[TOP]
+               ..  _a_[R_ARC]
+               --- _a_[JOINT]
+               .. _a_[END];
+   aux0 := direction 2 of tmppath1;
+   phi[R_ARC] := angle(aux0);
+   % phi[R_ARC] wird für a -> p UND p -> a benötigt!
+
+   tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+               .. _a_[L_ARC]
+               .. _a_[BOTTOM]
+               .. _a_[JOINT];
+   % Der Schnitpunkt von a-"Bauch" und y-Achse wird
+   % beim Übergang p -> a benötigt:
+   _a_[MID] := tmppath2 intersectionpoint ((0,0.01u)--(0,infinity));
+
+   draw tmppath1;
+   draw tmppath2;
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% a -> e
+%
+
+%
+% a -> m
+%
+
+%
+% a -> p (schon definiert)
+%
+
+%
+% a -> s
+%
+
+%
+% a -> u
+%
+
+%
+% p
+%
+_p_[BEGIN]  = (-0.325u,0.85u);
+_p_[END]    = (-0.325u,-0.65u);
+_p_[U_ARC]  = (-0.325u,0.6u); % [u]pper end of [arc]
+_p_[D_ARC]  = (-0.325u,0.15u);
+_p_[TOP]    = zero[TOP];
+_p_[BOTTOM] = zero[BOTTOM];
+_p_[RIGHT]  = (0.325u,0.425u);
+
+%
+% b
+%
+
+_b_[BEGIN]  = _p_[BEGIN] shifted (0,0.5u);
+_b_[END]    = _p_[END] shifted (0,0.65u);
+_b_[U_ARC]  = _p_[U_ARC];
+_b_[D_ARC]  = _p_[D_ARC];
+_b_[TOP]    = _p_[TOP];
+_b_[BOTTOM] = _p_[BOTTOM];
+_b_[RIGHT]  = _p_[RIGHT];
+
+start := transition("b","r");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _b_[BEGIN] -- _b_[END];
+   draw _b_[U_ARC]
+        .. _b_[TOP]
+        .. _b_[RIGHT]
+        .. _b_[BOTTOM]
+        .. _b_[D_ARC];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% b -> r
+%
+
+%
+% c
+%
+
+
+%
+% c -> n
+%
+
+%
+% c -> o
+%
+
+%
+% d
+%
+
+_d_[BEGIN]  = _b_[BEGIN] xscaled -1;
+_d_[END]    = _b_[END] xscaled -1;
+_d_[U_ARC]  = _b_[U_ARC] xscaled -1;
+_d_[D_ARC]  = _b_[D_ARC] xscaled -1;
+_d_[TOP]    = _b_[TOP] xscaled -1;
+_d_[BOTTOM] = _b_[BOTTOM] xscaled -1;
+_d_[LEFT]  = _b_[RIGHT] xscaled -1;
+
+%
+% d -> j
+%
+
+start := transition("d","j");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _d_[BEGIN] -- _d_[END];
+   draw _d_[U_ARC]
+        .. _d_[TOP]
+        .. _d_[LEFT]
+        .. _d_[BOTTOM]
+        .. _d_[D_ARC];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% e
+%
+
+%
+% e -> a
+%
+
+%
+% e -> c
+%
+
+%
+% f
+%
+
+%
+% f -> m
+%
+
+%
+% g
+%
+
+%
+% g -> p
+%
+
+%
+% j
+%
+
+%
+% j -> a
+%
+
+%
+% j -> f
+%
+
+%
+% j -> j
+%
+
+%
+% l
+%
+
+%
+% l - > g
+%
+
+%
+% m
+%
+
+
+tmp0 := 0.375;
+tmp1 := 0.85;
+_m_[BEGIN] = (-tmp0*u,tmp1*u);
+_m_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
+_m_[BOTTOM] = (-tmp0*u,0);
+_m_[L_ARC] = (-.5tmp0*u,tmp1*u);
+_m_[JOINT] = (0,0.65u);
+_m_[MID]   = (0,0);
+_m_[R_ARC] = _m_[L_ARC] xscaled -1;
+_m_[RIGHT] = _m_[LEFT] xscaled -1;
+_m_[END]   = _m_[BOTTOM] xscaled -1;
+
+start := transition("m","a");
+
+beginfig(start);
+draw_grid(u);
+   pickup pc;
+
+   draw _m_[BEGIN] -- _m_[LEFT];
+   draw _m_[BOTTOM]
+        -- _m_[LEFT]{up}
+        .. _m_[L_ARC]
+        .. _m_[JOINT]{down}
+     &  _m_[JOINT]{up}
+        .. _m_[R_ARC]
+        .. _m_[RIGHT]{down}
+        -- _m_[END];
+   draw _m_[MID] -- _m_[JOINT];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+
+%
+% m -> a
+%
+
+%
+% m -> j
+%
+
+%
+% n
+%
+
+%
+% n -> b
+%
+
+%
+% n -> d
+%
+
+%
+% n -> l
+%
+
+%
+% o
+%
+
+% kopiert von Sechs
+
+_o_[LEFT]   = zero[LEFT] xscaled 3/2;
+_o_[RIGHT]  = zero[RIGHT] xscaled 3/2;
+_o_[TOP]    = zero[TOP];
+_o_[BOTTOM] = zero[BOTTOM];
+
+%
+% o -> e
+%
+
+start := transition("o","e");
+
+beginfig(start);
+draw_grid(u);
+   pickup pc;
+
+   draw _o_[TOP]
+        .. _o_[RIGHT]
+        .. _o_[BOTTOM]
+        .. _o_[LEFT]
+        .. cycle;
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% o -> n
+%
+
+%
+% p
+%
+start := transition("p","a");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _p_[BEGIN] -- _p_[END];
+   draw _p_[U_ARC]
+        .. _p_[TOP]
+        .. _p_[RIGHT]
+        .. _p_[BOTTOM]
+        .. _p_[D_ARC];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% p -> a (schon definiert)
+%
+
+%
+% p -> t
+%
+
+%
+% r
+%
+
+%
+% r -> r 
+%
+
+%
+% r -> t
+%
+
+%
+% s
+%
+
+%
+% s -> o
+%
+
+%
+% t
+%
+
+%
+% t -> v
+%
+
+%
+% u
+%
+
+%
+% u -> e
+%
+
+%
+% u -> u
+%
+
+%
+% v
+%
+
+%
+% v -> c
+%
+
+%
+% y
+%
+
+%
+% y -> n
+%
+
+end;

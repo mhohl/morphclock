@@ -1,0 +1,94 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage{fontspec}
+\usepackage[margin=1cm]{geometry}
+\usepackage{ngerman}
+\usepackage{graphicx}
+\usepackage{pgffor}
+\usepackage[toc]{multitoc}
+\setlength{\columnseprule}{0.4pt}
+\renewcommand{\multicolumntoc}{3}
+\begin{document}\pagestyle{empty}
+%
+\newcommand{\showglyphs}[1]{%
+  \directlua{\unexpanded{
+     for index = #1,#1+99 do
+         tex.print("\\IfFileExists{glyph-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps} }{}")
+     end
+  }
+}}
+\tableofcontents
+\section{Buchstaben}
+\newlength\digitwidth
+\digitwidth=2.5cm
+\includegraphics[width=\digitwidth]{glyph-10500.mps}  %a
+\includegraphics[width=\digitwidth]{glyph-21800.mps}  %b
+\includegraphics[width=\digitwidth]{digit-2300.mps}   %c
+\includegraphics[width=\digitwidth]{glyph-41000.mps}  %d
+\includegraphics[width=\digitwidth]{digit-4500.mps}   %e
+\includegraphics[width=\digitwidth]{digit-5600.mps}   %f
+\includegraphics[width=\digitwidth]{digit-6700.mps}   %g
+\includegraphics[width=\digitwidth]{digit-7800.mps}   %j
+\includegraphics[width=\digitwidth]{digit-8900.mps}   %l
+\includegraphics[width=\digitwidth]{digit-9000.mps}   %m
+\includegraphics[width=\digitwidth]{digit-10100.mps}  %n
+\includegraphics[width=\digitwidth]{glyph-150500.mps} %o
+\includegraphics[width=\digitwidth]{glyph-160100.mps} %p
+\includegraphics[width=\digitwidth]{digit-13300.mps}  %r
+\includegraphics[width=\digitwidth]{digit-13300.mps}  %s
+\includegraphics[width=\digitwidth]{digit-13300.mps}  %t
+\includegraphics[width=\digitwidth]{digit-13300.mps}  %u
+\includegraphics[width=\digitwidth]{digit-13300.mps}  %v
+\includegraphics[width=\digitwidth]{digit-13300.mps}  %y
+
+\newpage
+\digitwidth=1.75cm
+\section{Übergang a … e }
+
+\showglyphs{10500}
+
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang a … m }
+
+\showglyphs{11300}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang a … s }
+
+\showglyphs{11900}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang a … u }
+
+\showglyphs{12100}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang b … r }
+
+\showglyphs{21800}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang c … n }
+
+\showglyphs{31400}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang c … o }
+
+\showglyphs{31500}
+\hspace*{-1ex}
+\newpage
+
+\section{Übergang d … j }
+
+\showglyphs{41000}
+\hspace*{-1ex}
+\newpage
+\end{document}
+
