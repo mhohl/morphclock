@@ -270,10 +270,41 @@ endfig;
 % c
 %
 
+% kopiert von Sechs
+_c_[LEFT]   = zero[LEFT] xscaled 3/2;
+_c_[RIGHT]  = zero[RIGHT] xscaled 3/2;
+_c_[TOP]    = zero[TOP];
+_c_[BOTTOM] = zero[BOTTOM];
+% Schnittpunkt zwischen o-Bogen und einer Halbgeraden
+_c_[BEGIN]    = (_c_[RIGHT]{up} .. _c_[TOP]{left})
+              intersectionpoint 
+              (((0,0) -- (infinity,0)) rotated 35 shifted C);
+_c_[END]    = (_c_[RIGHT]{down} .. _c_[BOTTOM]{left})
+              intersectionpoint 
+              (((0,0) -- (infinity,0)) rotated -35 shifted C);
+
 
 %
 % c -> n
 %
+
+start := transition("c","n");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _c_[BEGIN]
+        .. _c_[TOP]
+        .. _c_[LEFT]
+        .. _c_[BOTTOM]
+        .. _c_[END];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+% c -> o
+beginfig(transition("c","o"));
+   draw tmppic;
+endfig;
 
 %
 % c -> o
@@ -313,13 +344,117 @@ endfig;
 % e
 %
 
+_e_[LEFT]   = _c_[LEFT];
+_e_[RIGHT]  = _c_[RIGHT];
+_e_[TOP]    = _c_[TOP];
+_e_[BOTTOM] = _c_[BOTTOM];
+_e_[END]    = _c_[END];
+
 %
 % e -> a
 %
 
+start := transition("e","a");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _e_[LEFT]
+        -- _e_[RIGHT]{up}
+        .. _e_[TOP]
+        .. _e_[LEFT]
+        .. _e_[BOTTOM]
+        .. _e_[END];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+% e -> c
+beginfig(transition("e","c"));
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       aux[END] := (m[_e_[RIGHT],zero[RIGHT]]{down} .. _e_[BOTTOM]{left})
+                   intersectionpoint 
+                   (((0,0) -- (infinity,0)) rotated -35 shifted C);
+       
+       tmppath0 := m[_e_[LEFT],zero[LEFT]]
+                   -- m[_e_[RIGHT],zero[RIGHT]]{up}
+                   .. _e_[TOP]
+                   .. m[_e_[LEFT],zero[LEFT]]
+                   .. _e_[BOTTOM]
+                   .. aux[END];
+       
+       draw tmppath0 rotatedaround (C,180m);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 %
 % e -> c
 %
+
+start := transition("e","c");
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_e_[LEFT],_e_[RIGHT]]
+        -- _e_[RIGHT]{up}
+        .. _e_[TOP]
+        .. _e_[LEFT]
+        .. _e_[BOTTOM]
+        .. _e_[END];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := _e_[RIGHT]{up}
+                   .. _c_[BEGIN]
+                   .. _e_[TOP]
+                   .. _e_[LEFT]
+                   .. _e_[BOTTOM]
+                   .. _e_[END];
+                   
+       draw subpath (m,5) of tmppath0;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % f
@@ -554,9 +689,9 @@ draw_grid(u);
 
    draw _n_[BEGIN] -- _n_[LEFT];
    draw _n_[BOTTOM]
-        -- _n_[LEFT]{up}
+        -- _n_[LEFT]
         .. _n_[MID]
-        .. _n_[RIGHT]{down}
+        .. _n_[RIGHT]
         --_n_[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -570,9 +705,98 @@ beginfig(transition("n","l"));
    draw tmppic;
 endfig;
 
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_n_[BEGIN],_b_[BEGIN]] 
+            .. _n_[LEFT]
+            .. m[_n_[BOTTOM],_b_[END]];
+       draw _n_[LEFT]
+            .. _n_[MID]
+            .. _n_[RIGHT]
+            --_n_[END];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       t := 2-m;
+
+       draw _b_[BEGIN] 
+            .. m[_n_[LEFT],_b_[U_ARC]]
+            .. _b_[END];
+
+       draw m[_n_[LEFT],_b_[U_ARC]]
+           .. m[_n_[MID],_b_[TOP]]
+           .. m[_n_[RIGHT],_b_[RIGHT]]
+           .. tension t .. m[_n_[END],_b_[RIGHT]]{down}
+           .. m[_n_[END],_b_[BOTTOM]]
+           .. m[_n_[END],_b_[D_ARC]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % n -> d
 %
+
+start := transition("n","d");
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_n_[BEGIN],_n_[LEFT]] 
+            -- _n_[LEFT];
+        
+       draw _n_[BOTTOM]
+            -- _n_[LEFT]
+            .. _n_[MID]
+            .. _n_[RIGHT]
+            -- _n_[END];
+            
+       draw (xpart(_n_[RIGHT]),m[ypart(_n_[RIGHT]),ypart(_d_[BEGIN])])
+            -- _n_[RIGHT];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       t := 2-m;
+
+       
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% TODO: der Stiel schrumpft und wächst gleichzeitig rechts nach oben (gespiegeltes h),
+% dann klappt der Bogen um.
 
 %
 % n -> l
@@ -582,12 +806,10 @@ endfig;
 % o
 %
 
-% kopiert von Sechs
-
-_o_[LEFT]   = zero[LEFT] xscaled 3/2;
-_o_[RIGHT]  = zero[RIGHT] xscaled 3/2;
-_o_[TOP]    = zero[TOP];
-_o_[BOTTOM] = zero[BOTTOM];
+_o_[LEFT]   = _c_[LEFT];
+_o_[RIGHT]  = _c_[RIGHT];
+_o_[TOP]    = _c_[TOP];
+_o_[BOTTOM] = _c_[BOTTOM];
 
 %
 % o -> e
@@ -709,9 +931,9 @@ draw_grid(u);
 
    draw _u_[RIGHT] -- _u_[BOTTOM];
    draw _u_[BEGIN]
-        -- _u_[LEFT]{down}
+        -- _u_[LEFT]
         .. _u_[MID]
-        .. _u_[RIGHT]{up}
+        .. _u_[RIGHT]
         -- _u_[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -742,7 +964,7 @@ endfig;
 %
 
 _y_[BOTTOM] = _u_[BOTTOM];
-_y_[U_ARC] = (-0.25u,-0.65u);
+_y_[D_ARC] = (-0.25u,-0.65u);
 _y_[RIGHT]  = _u_[RIGHT];
 _y_[BEGIN] = _u_[BEGIN];
 _y_[MID] = _u_[MID];
@@ -761,11 +983,11 @@ draw_grid(u);
 
    draw _y_[RIGHT]
         -- _y_[BOTTOM]{down}
-        .. _y_[U_ARC];
+        .. _y_[D_ARC];
    draw _y_[BEGIN]
-        -- _y_[LEFT]{down}
+        -- _y_[LEFT]
         .. _y_[MID]
-        .. _y_[RIGHT]{up}
+        .. _y_[RIGHT]
         -- _y_[END];
    setbounds currentpicture to boundingpath;
 endfig;
@@ -778,9 +1000,12 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
        
-       draw _y_[RIGHT]
-            -- _y_[BOTTOM]{down}
-            .. m[_y_[U_ARC],_y_[BOTTOM]];
+       tmppath0 := _y_[D_ARC]
+                   .. _y_[BOTTOM]{up}
+                   -- _y_[RIGHT];
+                   
+       draw subpath (2m,2) of tmppath0;
+       
        draw _y_[BEGIN]
         -- _y_[LEFT]{down}
         .. _y_[MID]
@@ -799,7 +1024,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
        
-       tmppath0 := _y_[RIGHT] -- _y_[BOTTOM];
+       tmppath0 := _y_[RIGHT] -- (m*m)[_y_[RIGHT],_y_[BOTTOM]];
        tmppath1 := _y_[BEGIN]
                    -- _y_[LEFT]{down}
                    .. _y_[MID]
