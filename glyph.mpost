@@ -190,6 +190,19 @@ beginfig(start);
    draw tmppath1;
    draw tmppath2;
    setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+% a -> m
+beginfig(transition("a","m"));
+   draw tmppic;
+endfig;
+% a -> s
+beginfig(transition("a","s"));
+   draw tmppic;
+endfig;
+% a -> u
+beginfig(transition("a","u"));
+   draw tmppic;
 endfig;
 
 %
@@ -312,9 +325,32 @@ endfig;
 % f
 %
 
+_f_[BEGIN]  = (-0.15u,0);
+_f_[MID]    = (-0.15u,1.2u);
+_f_[TOP]    = (0, 1.35u);
+aux[MID]   := (0,ypart(_f_[MID]));
+_f_[END]    = _f_[TOP] rotatedabout (aux[MID],-45);
+
+_f_[LEFT]   = (-0.25u,0.85u);
+_f_[RIGHT]  = (-0.05u,0.85u);
+
 %
 % f -> m
 %
+
+start := transition("f","m");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _f_[LEFT] -- _f_[RIGHT];
+
+   draw _f_[BEGIN]
+        -- _f_[MID]
+        .. _f_[TOP]
+        .. _f_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
 
 %
 % g
@@ -328,13 +364,92 @@ endfig;
 % j
 %
 
+_j_[TOP]    = (0.15u, 0.85u);
+_j_[BEGIN]  = (0.15u,0.6u);
+_j_[MID]    = (0.15u,-0.5u);
+_j_[BOTTOM] = (0,-0.65u);
+aux[MID]   := (0,ypart(_j_[MID])); % Hilfspunkt, Rotationszentrum
+_j_[END]    = _j_[BOTTOM] rotatedaround (aux[MID],-45);
+
 %
 % j -> a
 %
 
+start := transition("j","a");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _j_[TOP];
+   draw _j_[BEGIN]
+        -- _j_[MID]
+        .. _j_[BOTTOM]
+        .. _j_[END];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+% j -> f
+beginfig(transition("j","f"));
+   draw tmppic;
+endfig;
+% j -> j
+beginfig(transition("j","j"));
+   draw tmppic;
+endfig;
+
 %
 % j -> f
 %
+
+% Der j-Bogen wandert weiter in den f-Bogen hinein
+% der Hilfspunkt aux[JOINT] verbindet j und f
+
+aux[JOINT] := (xpart(_f_[BEGIN]),ypart(_j_[MID]));
+
+tmppath0 := _j_[BEGIN]
+            -- _j_[MID]
+            .. _j_[BOTTOM]
+            .. _j_[END]
+            .. aux[JOINT]
+            -- _f_[BEGIN]
+            -- _f_[MID]
+            .. _f_[TOP]
+            .. _f_[END];
+
+start := transition("j","f");
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw _j_[TOP];
+                     
+       draw subpath (0,5m+4) of tmppath0;
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_j_[TOP],_f_[LEFT]]
+            -- m[_j_[TOP],_f_[RIGHT]];
+            
+       draw subpath (5m,8) of tmppath0;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 
 %
 % j -> j
@@ -344,14 +459,31 @@ endfig;
 % l
 %
 
+_l_[BEGIN]  = (-0.15u,1.35u);
+_l_[MID]    = (-0.15u,0.15u);
+aux[MID]   := (0,ypart(_l_[MID]));
+_l_[BOTTOM] = (0,0);
+_l_[END]    = _l_[BOTTOM] rotatedaround(aux[MID],45);
+
 %
 % l - > g
 %
 
+start := transition("l","g");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _l_[BEGIN]
+        -- _l_[MID]
+        .. _l_[BOTTOM]
+        .. _l_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
 %
 % m
 %
-
 
 tmp0 := 0.375;
 tmp1 := 0.85;
@@ -382,8 +514,12 @@ draw_grid(u);
         -- _m_[END];
    draw _m_[MID] -- _m_[JOINT];
    setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
 endfig;
-
+% m -> j
+beginfig(transition("m","j"));
+   draw tmppic;
+endfig;
 
 %
 % m -> a
@@ -397,9 +533,42 @@ endfig;
 % n
 %
 
+tmp0 := 0.25;
+tmp1 := 0.85;
+_n_[BEGIN] = (-tmp0*u,tmp1*u);
+_n_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
+_n_[BOTTOM] = (-tmp0*u,0);
+_n_[MID]   = (0,tmp1*u);
+_n_[RIGHT] = _n_[LEFT] xscaled -1;
+_n_[END]   = _n_[BOTTOM] xscaled -1;
+
 %
 % n -> b
 %
+
+start := transition("n","b");
+
+beginfig(start);
+draw_grid(u);
+   pickup pc;
+
+   draw _n_[BEGIN] -- _n_[LEFT];
+   draw _n_[BOTTOM]
+        -- _n_[LEFT]{up}
+        .. _n_[MID]
+        .. _n_[RIGHT]{down}
+        --_n_[END];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+% n -> d
+beginfig(transition("n","d"));
+   draw tmppic;
+endfig;
+% n -> l
+beginfig(transition("n","l"));
+   draw tmppic;
+endfig;
 
 %
 % n -> d
@@ -436,8 +605,12 @@ draw_grid(u);
         .. _o_[LEFT]
         .. cycle;
    setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
 endfig;
-
+% o -> n
+beginfig(transition("o","n"));
+   draw tmppic;
+endfig;
 %
 % o -> n
 %
@@ -445,7 +618,7 @@ endfig;
 %
 % p
 %
-start := transition("p","a");
+start := transition("p","t");
 beginfig(start);
    draw_grid(u);
    pickup pc;
@@ -491,13 +664,62 @@ endfig;
 % t
 %
 
+_t_[LEFT]   = _f_[LEFT];
+_t_[RIGHT]  = _f_[RIGHT]; 
+
+_t_[BEGIN]  = _l_[BEGIN];
+_t_[MID]    = _l_[MID];
+_t_[BOTTOM] = _l_[BOTTOM];
+_t_[END]    = _l_[END];
+
 %
 % t -> v
 %
 
+start := transition("t","v");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _t_[LEFT] -- _t_[RIGHT];
+   
+   draw _t_[BEGIN]
+        -- _t_[MID]
+        .. _t_[BOTTOM]
+        .. _t_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
 %
 % u
 %
+
+_u_[BOTTOM] = _n_[BEGIN]  rotatedaround(C,180);
+_u_[RIGHT]  = _n_[LEFT]   rotatedaround(C,180);
+_u_[BEGIN]  = _n_[END]    rotatedaround(C,180);
+_u_[MID]    = _n_[MID]    rotatedaround(C,180);
+_u_[LEFT]   = _n_[RIGHT]  rotatedaround(C,180);
+_u_[END]    = _n_[BOTTOM] rotatedaround(C,180);
+
+start := transition("u","e");
+
+beginfig(start);
+draw_grid(u);
+   pickup pc;
+
+   draw _u_[RIGHT] -- _u_[BOTTOM];
+   draw _u_[BEGIN]
+        -- _u_[LEFT]{down}
+        .. _u_[MID]
+        .. _u_[RIGHT]{up}
+        -- _u_[END];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+% u -> u
+beginfig(transition("u","u"));
+   draw tmppic;
+endfig;
 
 %
 % u -> e
@@ -519,8 +741,76 @@ endfig;
 % y
 %
 
+_y_[BOTTOM] = _u_[BOTTOM];
+_y_[U_ARC] = (-0.25u,-0.65u);
+_y_[RIGHT]  = _u_[RIGHT];
+_y_[BEGIN] = _u_[BEGIN];
+_y_[MID] = _u_[MID];
+_y_[LEFT] = _u_[LEFT];
+_y_[END] = _u_[END];
+
 %
 % y -> n
 %
+
+start := transition("y","n");
+
+beginfig(start);
+draw_grid(u);
+   pickup pc;
+
+   draw _y_[RIGHT]
+        -- _y_[BOTTOM]{down}
+        .. _y_[U_ARC];
+   draw _y_[BEGIN]
+        -- _y_[LEFT]{down}
+        .. _y_[MID]
+        .. _y_[RIGHT]{up}
+        -- _y_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw _y_[RIGHT]
+            -- _y_[BOTTOM]{down}
+            .. m[_y_[U_ARC],_y_[BOTTOM]];
+       draw _y_[BEGIN]
+        -- _y_[LEFT]{down}
+        .. _y_[MID]
+        .. _y_[RIGHT]{up}
+        -- _y_[END];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       tmppath0 := _y_[RIGHT] -- _y_[BOTTOM];
+       tmppath1 := _y_[BEGIN]
+                   -- _y_[LEFT]{down}
+                   .. _y_[MID]
+                   .. _y_[RIGHT]{up}
+                   -- _y_[END];
+                    
+       draw tmppath0 rotatedabout (C,180m);
+       draw tmppath1 rotatedabout (C,180m);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 end;
