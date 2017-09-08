@@ -276,12 +276,12 @@ _c_[RIGHT]  = zero[RIGHT] xscaled 3/2;
 _c_[TOP]    = zero[TOP];
 _c_[BOTTOM] = zero[BOTTOM];
 % Schnittpunkt zwischen o-Bogen und einer Halbgeraden
-_c_[BEGIN]    = (_c_[RIGHT]{up} .. _c_[TOP]{left})
-              intersectionpoint 
-              (((0,0) -- (infinity,0)) rotated 35 shifted C);
-_c_[END]    = (_c_[RIGHT]{down} .. _c_[BOTTOM]{left})
-              intersectionpoint 
-              (((0,0) -- (infinity,0)) rotated -35 shifted C);
+_c_[BEGIN] = (_c_[RIGHT]{up} .. _c_[TOP]{left})
+             intersectionpoint 
+             (((0,0) -- (infinity,0)) rotated 35 shifted C);
+_c_[END]   = (_c_[RIGHT]{down} .. _c_[BOTTOM]{left})
+             intersectionpoint 
+             (((0,0) -- (infinity,0)) rotated -35 shifted C);
 
 
 %
@@ -306,9 +306,56 @@ beginfig(transition("c","o"));
    draw tmppic;
 endfig;
 
+
+
 %
 % c -> o
 %
+
+start := transition("c","o");
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       aux[BEGIN] := (_c_[BOTTOM]{right} .. _c_[RIGHT]{up} .. _c_[TOP]{left})
+              intersectionpoint 
+              (((0,0) -- (infinity,0)) rotated (35-90m) shifted C);
+       aux[END]   := (_c_[RIGHT]{down} .. _c_[BOTTOM]{left} .. _c_[LEFT]{up})
+              intersectionpoint 
+              (((0,0) -- (infinity,0)) rotated (-35-90m) shifted C);
+
+       draw aux[END]
+            if (-35-90m > -90): .. _c_[BOTTOM]{left} fi
+            .. _c_[LEFT]{up}
+            .. _c_[TOP]{right}
+            if (35-90m < 0): .. _c_[RIGHT]{down} fi
+            .. aux[BEGIN];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := _c_[BOTTOM] .. _c_[LEFT] .. _c_[TOP] .. _c_[RIGHT] .. cycle;
+  
+       % Wir wollen unten eine abgerundete Kurve, daher funktioniert der oben
+       % stehende Ansatz hier nicht.
+       draw tmppath0 cutafter  (((0,0) -- (infinity,0)) rotated  (35*(1-m)-90) shifted C)
+                     cutbefore (((0,0) -- (infinity,0)) rotated (-35*(1-m)-90) shifted C);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % d
@@ -866,6 +913,29 @@ endfig;
 % r
 %
 
+_r_[BEGIN]  = (-0.15u,0.85u);
+_r_[BOTTOM] = (-0.15u,0);
+_r_[MID]    = (-0.15u,0.6u);
+_r_[TOP]    = (0,0.85u);
+aux[MID]   := (0,ypart(_r_[MID]));
+_r_[END]    = _r_[TOP] rotatedaround(aux[MID],-45);
+
+start := transition("r","r");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _r_[BEGIN] -- _r_[BOTTOM];
+   draw _r_[MID]
+        .. _r_[TOP]
+        .. _r_[END];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+beginfig(transition("r","t"));
+   draw tmppic;
+endfig;
+
 %
 % r -> r 
 %
@@ -954,6 +1024,22 @@ endfig;
 %
 % v
 %
+
+_v_[LEFT] = (-0.25u,0.85u);
+_v_[BOTTOM] = (0,0);
+_v_[RIGHT] = _v_[LEFT] xscaled -1;
+
+start := transition("v","c");
+
+beginfig(start);
+draw_grid(u);
+   pickup pc;
+
+   draw _v_[LEFT]
+        -- _v_[BOTTOM]
+        -- _v_[RIGHT];
+   setbounds currentpicture to boundingpath;
+endfig;
 
 %
 % v -> c
