@@ -99,8 +99,14 @@ for i = 0 upto 719:
        % der Minutenzeiger ist länger,
        % der Stundenzeiger kürzer.
        draw tmppath0;
-       draw C -- 4/3[C,aux1];
-       draw C -- 2/3[C,aux2];
+       
+       pickup pc scaled 2;
+       undraw C -- 4/3[C,aux1];
+       
+       pickup pc;
+       draw 4/3[C,aux1]
+            -- C
+            -- 2/3[C,aux2];
        
        setbounds currentpicture to boundingpath;
     endfig;
