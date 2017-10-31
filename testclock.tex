@@ -1,0 +1,24 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage{fontspec}
+\usepackage[margin=1cm]{geometry}
+\usepackage{ngerman}
+\usepackage{graphicx}
+\begin{document}\pagestyle{empty}
+%
+\newcommand{\showclock}[1]{%
+  \directlua{\unexpanded{
+     for index = #1,#1+999 do
+         tex.print("\\IfFileExists{clock-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps} }{}")
+     end
+  }
+}}
+\section{Uhr-O}
+\newlength\digitwidth
+\digitwidth=1.75cm
+
+\showclock 0
+
+\hspace*{-1ex}
+
+\end{document}
+

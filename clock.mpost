@@ -1,0 +1,109 @@
+%
+% clOck
+%
+% das "o" mit einer Zeigeruhr – für's Logo
+% 
+% clock-nnn:
+% nnn : laufende Nummer von 0 bis 12x60-1=719
+% (12 Stunden á 60 Minuten)
+%
+
+% Versionsnummer:
+string version;
+version := "Version: 0.01";
+show(version);
+
+outputtemplate := "%j-%c.mps";
+outputformat := "eps";
+
+numeric f;      % [f]rame index
+numeric phi[];  % rotation angle [phi1]
+numeric u;      % [u]nit
+u := 5cm;
+pair C;         % [C]enter of rotation
+C := (0,0.425u);
+pair aux[];     % [aux]iliary points
+path tmppath[]; % [t]e[mp]orary [path]
+pen pc;         % [p]en[c]ircle
+pc := pencircle scaled 0.1u;
+
+% symbolische Variablen
+numeric LEFT, RIGHT, TOP, BOTTOM;
+numeric BEGIN, END, JOINT, MID;
+numeric L_ARC, R_ARC, U_ARC, D_ARC;
+LEFT   = 1000;
+RIGHT  = 1001;
+TOP    = 1002;
+BOTTOM = 1003;
+BEGIN  = 1004;
+END    = 1005;
+JOINT  = 1006;
+MID    = 1007;
+L_ARC  = 1008; % [l]eft (part of) [arc]
+R_ARC  = 1009; % [r]ight (part of) [arc]
+U_ARC  = 1010; % [u]pright (part of) [arc]
+D_ARC  = 1011; % [d]ownright (part of) [arc]
+
+% Array für die Uhr
+pair clock[];
+
+% draft kennzeichnet den Entwurfsmodus:
+numeric draft; draft := 1;
+
+def draw_grid(expr u) =
+    if draft > 0:
+      draw (-0.6u,-0.75u) -- (-0.6u,1.5u) -- (0.6u,1.5u) -- (0.6u,-0.75u) -- cycle;
+      draw (-0.6u,0) -- (0.6u,0);
+      draw (-0.6u,0.85u) -- (0.6u,0.85u);
+      draw (-0.25u,-0.75u)--(-0.25u,1.5u);
+      draw (0.25u,-0.75u)--(0.25u,1.5u);
+    fi
+enddef;
+
+path boundingpath;
+boundingpath := (-0.6u,-0.75u)
+                -- (-0.6u,1.5u)
+                -- (0.6u,1.5u)
+                -- (0.6u,-0.75u)
+                -- cycle;
+
+
+%
+% Clock
+%
+clock[TOP]    = (0,0.85u);
+clock[BOTTOM] = (0,0);
+clock[LEFT]   = (-0.25u,0.425u) xscaled 3/2;
+clock[RIGHT]  = clock[LEFT] xscaled -1;
+
+tmppath0 := clock[TOP]
+            .. clock[RIGHT]
+            .. clock[BOTTOM]
+            .. clock[LEFT]
+            .. cycle;
+
+for i = 0 upto 719:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+            
+       % Zeiger: wir ermitteln die Schnittpunkte der o-Linie
+       % mit den Zeiger-Halbgeraden, die in C ansetzen:
+       tmppath1 := C -- (0,infinity) rotatedaround (C,-i*6);
+       tmppath2 := C -- (0,infinity) rotatedaround (C,-i/2);
+       
+       aux1 := tmppath0 intersectionpoint tmppath1;
+       aux2 := tmppath0 intersectionpoint tmppath2;
+       
+       % anschließend werden die Zeiger skaliert:
+       % der Minutenzeiger ist länger,
+       % der Stundenzeiger kürzer.
+       draw tmppath0;
+       draw C -- 4/3[C,aux1];
+       draw C -- 2/3[C,aux2];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+end
