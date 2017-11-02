@@ -99,10 +99,12 @@ pair zero[];
 
 % Arrays für die Buchstaben:
 pair _a_[], _b_[], _c_[], _d_[],
-     _e_[], _f_[], _g_[], _j_[],
-     _l_[], _m_[], _n_[], _o_[],
-     _p_[], _r_[], _s_[], _t_[],
-     _u_[], _v_[], _y_[];
+     _e_[], _f_[], _g_[], _h_[],
+     _i_[], _j_[], _k_[], _l_[],
+     _m_[], _n_[], _o_[], _p_[],
+     _q_[], _r_[], _s_[], _t_[],
+     _u_[], _v_[], _w_[], _x_[],
+     _y_[], _z_[];
 
 % draft kennzeichnet den Entwurfsmodus:
 numeric draft; draft := 1;
@@ -140,9 +142,14 @@ vardef transition(expr from, to) =
     i
 enddef;
 
-show transition("c","c");
+% einige Glyphen verwenden wir nur "standalone":
+vardef standalone(expr glyph) = 
+    save i;
+    i := (ASCII(glyph)-96)*10000;
+    i
+enddef;
 
-show transition("z","a");
+show standalone("k");
 
 %
 % Null
@@ -543,6 +550,50 @@ endfig;
 %
 
 %
+% h
+%
+
+tmp0 := 0.25;
+tmp1 := 0.85;
+_h_[BEGIN] = (-tmp0*u,1.35u);
+_h_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
+_h_[BOTTOM] = (-tmp0*u,0);
+_h_[MID]   = (0,tmp1*u);
+_h_[RIGHT] = _h_[LEFT] xscaled -1;
+_h_[END]   = _h_[BOTTOM] xscaled -1;
+
+beginfig(standalone("h"));
+   draw_grid(u);
+   pickup pc;
+
+   draw _h_[BEGIN] -- _h_[LEFT];
+   draw _h_[BOTTOM]
+        -- _h_[LEFT]
+        .. _h_[MID]
+        .. _h_[RIGHT]
+        -- _h_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% i
+%
+
+_i_[TOP]    = (0,0.85u);
+_i_[BEGIN]  = (0,0.6u);
+_i_[END]    = (0,0);
+
+beginfig(standalone("i"));
+   draw_grid(u);
+   pickup pc;
+
+   draw _i_[TOP];
+   draw _i_[BEGIN]
+        -- _i_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
 % j
 %
 
@@ -636,6 +687,28 @@ endfor
 %
 % j -> j
 %
+
+%
+% k
+%
+_k_[BEGIN]  = (-0.25u,1.35u);
+_k_[END]    = (-0.25u,0);
+_k_[MID]    = (-0.25u,0.425u);
+_k_[TOP]    = (0.25u,0.85u);
+_k_[BOTTOM] = (0.25u,0);
+
+beginfig(standalone("k"));
+   draw_grid(u);
+   pickup pc;
+
+   draw _k_[BEGIN]
+        -- _k_[END];
+        
+   draw _k_[TOP]
+        -- _k_[MID]
+        -- 4/3[_k_[MID],_k_[BOTTOM]];
+   setbounds currentpicture to boundingpath;
+endfig;
 
 %
 % l
@@ -910,6 +983,30 @@ endfig;
 %
 
 %
+% q
+%
+_q_[BEGIN]  = _p_[BEGIN] xscaled -1;
+_q_[END]    = _p_[END] xscaled -1;
+_q_[U_ARC]  = _p_[U_ARC] xscaled -1;
+_q_[D_ARC]  = _p_[D_ARC] xscaled -1;
+_q_[TOP]    = zero[TOP];
+_q_[BOTTOM] = zero[BOTTOM];
+_q_[LEFT]   = _p_[RIGHT] xscaled -1;
+
+beginfig(standalone("q"));
+   draw_grid(u);
+   pickup pc;
+
+   draw _q_[BEGIN] -- _q_[END];
+   draw _q_[U_ARC]
+        .. _q_[TOP]
+        .. _q_[LEFT]
+        .. _q_[BOTTOM]
+        .. _q_[D_ARC];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
 % r
 %
 
@@ -1046,6 +1143,50 @@ endfig;
 %
 
 %
+% w
+%
+
+tmp0 := 0.375;
+tmp1 := 0.85;
+_w_[BEGIN] = _m_[BEGIN];
+_w_[LEFT]  = (1/2*xpart(_w_[BEGIN]),0);
+_w_[MID]   = (0,0.85u);
+_w_[RIGHT] = _w_[LEFT] xscaled -1;
+_w_[END] = _w_[BEGIN] xscaled -1;
+
+beginfig(standalone("w"));
+draw_grid(u);
+   pickup pc;
+
+   draw _w_[BEGIN]
+        -- _w_[LEFT]
+        -- _w_[MID]
+        -- _w_[RIGHT]
+        -- _w_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% x
+%
+
+_x_[LEFT]  = (-0.25u,0.85u);
+_x_[RIGHT] = _x_[LEFT] xscaled -1;
+_x_[BEGIN] = (-0.25u,0);
+_x_[END]   = _x_[BEGIN] xscaled -1 ;
+
+beginfig(standalone("x"));
+draw_grid(u);
+   pickup pc;
+
+   draw _x_[BEGIN]
+        -- _x_[RIGHT];
+   draw _x_[LEFT]
+        -- 5/4[_x_[LEFT],_x_[END]];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
 % y
 %
 
@@ -1123,5 +1264,26 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+%
+% z
+%
+
+_z_[BEGIN] = _x_[LEFT];
+_z_[U_ARC] = _x_[RIGHT];
+_z_[D_ARC] = _x_[BEGIN];
+_z_[END]   = _x_[END];
+
+beginfig(standalone("z"));
+draw_grid(u);
+   pickup pc;
+
+   draw _z_[BEGIN]
+        -- _z_[U_ARC]
+        -- _z_[D_ARC]
+        -- _z_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
+
 
 end;
