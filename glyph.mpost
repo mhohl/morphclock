@@ -7,6 +7,7 @@
 % nn : laufende Nummer
 %
 % Für die Anzeige des Monats (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)
+% und des Wochentages (mon|tue|wed|thu|fri|sat|sun)
 % sind folgende Übergänge notwendig (dahinter die Kodierung):
 %
 % a -> e 0105
@@ -18,30 +19,49 @@
 % c -> n 0314
 % c -> o 0315
 % d -> j 0410
+% d -> u 0421
 % e -> a 0501
 % e -> c 0503
+% e -> d 0504
+% e -> h 0508
 % f -> m 0613
+% f -> s 0619
 % g -> p 0716
+% h -> r 0818
+% i -> t 0920
 % j -> a 1001
 % j -> f 1006
 % j -> j 1010
 % l -> g 1207
 % m -> a 1301
 % m -> j 1310
+% m -> t 1320
 % n -> b 1402
 % n -> d 1404
+% n -> e 1405
 % n -> l 1412
+% n -> n 1414
 % o -> e 1505
 % o -> n 1514
+% o -> u 1521
 % p -> a ---- schon in digit enthalten
 % p -> t 1620
+% r -> a 1601
 % r -> r 1818
 % r -> y 1825
+% s -> m 1913
 % s -> o 1915
+% s -> s 1919
+% t -> f 2006
+% t -> n 2014
 % t -> v 2022
+% t -> w 2023
 % u -> e 2105
+% u -> i 2109
+% u -> o 2115
 % u -> u 2121
 % v -> c 2203
+% w -> t 2320
 % y -> n 2514
 
 
@@ -395,6 +415,10 @@ beginfig(start);
 endfig;
 
 %
+% d -> u
+%
+
+%
 % e
 %
 
@@ -511,6 +535,14 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% e -> d
+%
+
+%
+% e -> h
+%
+
+%
 % f
 %
 
@@ -540,6 +572,10 @@ beginfig(start);
         .. _f_[END];
    setbounds currentpicture to boundingpath;
 endfig;
+
+%
+% f -> s
+%
 
 %
 % g
@@ -576,6 +612,10 @@ beginfig(standalone("h"));
 endfig;
 
 %
+% h -> r
+%
+
+%
 % i
 %
 
@@ -592,6 +632,10 @@ beginfig(standalone("i"));
         -- _i_[END];
    setbounds currentpicture to boundingpath;
 endfig;
+
+%
+% i -> t
+%
 
 %
 % j
@@ -785,6 +829,10 @@ endfig;
 %
 
 %
+% m -> t
+%
+
+%
 % n
 %
 
@@ -919,7 +967,15 @@ endfor
 % dann klappt der Bogen um.
 
 %
+% n -> e
+% 
+
+%
 % n -> l
+%
+
+%
+% n -> n
 %
 
 %
@@ -955,6 +1011,10 @@ beginfig(transition("o","n"));
 endfig;
 %
 % o -> n
+%
+
+%
+% o -> u
 %
 
 %
@@ -1034,6 +1094,10 @@ beginfig(transition("r","t"));
 endfig;
 
 %
+% r -> a
+%
+
+%
 % r -> r 
 %
 
@@ -1045,8 +1109,82 @@ endfig;
 % s
 %
 
+_s_[BEGIN]  = (0.25u,0.6375u);
+_s_[TOP]    = _o_[TOP];
+_s_[U_ARC]  = _s_[BEGIN] xscaled -1;
+_s_[MID]    = C;
+_s_[D_ARC]  = _s_[U_ARC] rotatedaround (C,180);
+_s_[BOTTOM] = _o_[BOTTOM];
+_s_[END]    = _s_[BEGIN] rotatedaround (C,180);
+
+%
+% s -> m
+%
+
 %
 % s -> o
+%
+
+start := transition("s","o");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw _s_[BEGIN]{up}
+        .. _s_[TOP]
+        .. _s_[U_ARC]{down}
+        .. _s_[MID]
+        .. _s_[D_ARC]{down}
+        .. _s_[BOTTOM]
+        .. _s_[END]{up};
+   setbounds currentpicture to boundingpath;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_s_[BEGIN],_o_[RIGHT]]{up}
+            .. _s_[TOP]
+            .. m[_s_[U_ARC],_o_[LEFT]]{down}
+            .. _s_[MID]
+            .. m[_s_[D_ARC],_o_[RIGHT]]{down}
+            .. _s_[BOTTOM]
+            .. m[_s_[END],_o_[LEFT]]{up};
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := _o_[RIGHT]{up}
+            .. _s_[TOP]
+            .. _o_[LEFT]{down}
+            .. _s_[MID]
+            .. _o_[RIGHT]{down}
+            .. _s_[BOTTOM]
+            .. _o_[LEFT]{up};
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       draw subpath (0,3-m) of tmppath0;
+       draw subpath (3+m,6) of tmppath0;
+              
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% s -> s
 %
 
 %
@@ -1060,6 +1198,14 @@ _t_[BEGIN]  = _l_[BEGIN];
 _t_[MID]    = _l_[MID];
 _t_[BOTTOM] = _l_[BOTTOM];
 _t_[END]    = _l_[END];
+
+%
+% t -> f
+%
+
+%
+% t -> u
+%
 
 %
 % t -> v
@@ -1078,6 +1224,10 @@ beginfig(start);
         .. _t_[END];
    setbounds currentpicture to boundingpath;
 endfig;
+
+%
+% t -> w
+%
 
 %
 % u
@@ -1112,6 +1262,14 @@ endfig;
 
 %
 % u -> e
+%
+
+%
+% u -> i
+%
+
+%
+% u -> o
 %
 
 %
@@ -1165,6 +1323,10 @@ draw_grid(u);
         -- _w_[END];
    setbounds currentpicture to boundingpath;
 endfig;
+
+%
+% w -> t
+%
 
 %
 % x
