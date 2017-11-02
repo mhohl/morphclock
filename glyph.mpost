@@ -404,26 +404,26 @@ _z_[END]   = _x_[END];
 % a -> e
 %
 start := transition("a","e");
+
+tmppath1 := _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. _a_[END];
+aux0 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux0);
+
+tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+% Der Schnitpunkt von a-"Bauch" und y-Achse wird
+% beim Übergang p -> a benötigt:
+_a_[MID] := tmppath2 intersectionpoint ((0,0.01u)--(0,infinity));
+   
 beginfig(start);
    draw_grid(u);
    pickup pc;
-
-   tmppath1 := _a_[BEGIN]
-               ..  _a_[TOP]
-               ..  _a_[R_ARC]
-               --- _a_[JOINT]
-               .. _a_[END];
-   aux0 := direction 2 of tmppath1;
-   phi[R_ARC] := angle(aux0);
-   % phi[R_ARC] wird für a -> p UND p -> a benötigt!
-
-   tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
-               .. _a_[L_ARC]
-               .. _a_[BOTTOM]
-               .. _a_[JOINT];
-   % Der Schnitpunkt von a-"Bauch" und y-Achse wird
-   % beim Übergang p -> a benötigt:
-   _a_[MID] := tmppath2 intersectionpoint ((0,0.01u)--(0,infinity));
 
    draw tmppath1;
    draw tmppath2;
@@ -450,6 +450,65 @@ start := transition("a","s");
 beginfig(start);
    draw tmppic;
 endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw subpath (0,4-2m) of tmppath1;
+       draw tmppath2;
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% der Winkel am a-"Bauch":
+aux1 := direction 1 of tmppath2;
+phi[L_ARC] := angle(aux1);
+% der Winkel am "Joint":
+aux2 := direction 3 of tmppath2;
+phi[JOINT] := angle(aux2);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % Hilfspfad; wir benötigen den Winkel beim Punkt _a_[JOINT], 
+       tmppath3 := m[_a_[L_ARC],_s_[END]]{dir m[phi[L_ARC],-90]}
+                   .. _a_[BOTTOM]
+                   .. m[_a_[JOINT],_s_[D_ARC]]
+                   .. _s_[MID]
+                   .. _s_[U_ARC]{up};
+       % dieser Winkel soll 90 = up nicht überschreiten:
+       phi[JOINT] := min(angle(direction 2 of tmppath3),90);
+
+       % Der komplette Pfad, bestehend aus dem Rest von a und einem vollständigen s:
+       tmppath4 := m[_a_[BEGIN],_s_[U_ARC]]
+                   .. _a_[TOP]
+                   .. _a_[R_ARC]{dir phi[R_ARC]}
+                   .. m[_a_[L_ARC],_s_[END]]{dir m[phi[L_ARC],-90]}
+                      % Übergang vom ursprünglichen Winkel zu -90 = down
+                   .. _a_[BOTTOM]
+                   .. m[_a_[JOINT],_s_[D_ARC]]{dir phi[JOINT]}
+                   .. _s_[MID]
+                   .. _s_[U_ARC]{up}
+                   .. _s_[TOP]
+                   .. _s_[BEGIN]{down};
+
+       draw subpath (3m,5+4m) of tmppath4;         
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 
 %
 % a -> u
@@ -1265,6 +1324,7 @@ beginfig(start);
         .. _s_[D_ARC]{down}
         .. _s_[BOTTOM]
         .. _s_[END]{up};
+   
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
