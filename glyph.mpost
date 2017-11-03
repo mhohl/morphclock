@@ -786,13 +786,20 @@ beginfig(start);
 
    draw _f_[LEFT] -- _f_[RIGHT];
 
-   draw _f_[BEGIN]
-        -- _f_[MID]
-        .. _f_[TOP]
-        .. _f_[END];
+   tmppath0 :=  _f_[BEGIN]
+                -- _f_[MID]
+                .. _f_[TOP]
+                .. _f_[END];
+   % Wir brauchen den Winkel an der Spitze für den Übergang f -> s
+   phi[BEGIN] := angle(direction 0 of tmppath0); 
+   
+   draw tmppath0;
+   
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
+
+
 
 %
 % f -> s
@@ -803,6 +810,67 @@ start := transition("f","s");
 beginfig(start);
    draw tmppic;
 endfig;
+
+% Wir schieben das f in die Mitte und stauchen es
+aux[LEFT]  := C shifted (-0.1u,0); % halbe Breite des f-Strichs: 0.1u
+aux[RIGHT] := C shifted(0.1u,0);
+
+aux[END]   := _f_[END] shifted (0.15u,-0.5u); % 1.35u (f-Höhe)-0.85u (s-Höhe)
+aux[TOP]   := _f_[TOP] shifted (0.15u,-0.5u);
+aux[MID]   := _f_[MID] shifted (0.15u,-0.5u);
+aux[BEGIN] := _f_[BEGIN] shifted (0.15u,0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_f_[LEFT],aux[LEFT]]
+            -- m[_f_[RIGHT],aux[RIGHT]];
+
+       draw m[_f_[BEGIN],aux[BEGIN]]
+            -- m[_f_[MID],aux[MID]]
+            .. m[_f_[TOP],aux[TOP]]
+            .. m[_f_[END],aux[END]];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[D_ARC] := 1/2[_s_[MID],_s_[BOTTOM]];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       t := 1/sqrt(m);
+       
+       draw m[aux[LEFT],C]
+            -- m[aux[RIGHT],C];
+
+       draw m[aux[END],_s_[BEGIN]]{dir (m*m)[phi[BEGIN],90]}
+            .. m[aux[TOP],_s_[TOP]]
+            .. (m*m)[aux[MID],_s_[U_ARC]]{down}
+            %.. tension t
+            .. _s_[MID]
+            %.. tension t
+            .. (m*m)[aux[D_ARC],_s_[D_ARC]]{down}
+            .. tension t
+            .. _s_[BOTTOM]
+            .. (1*m)[aux[BEGIN],_s_[END]]{up};
+       
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 
 %
 % g
@@ -887,7 +955,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 %
 % j -> a
@@ -1323,7 +1390,7 @@ beginfig(start);
    pickup pc;
 
    draw _r_[BEGIN] -- _r_[BOTTOM];
-   draw _r_[MID]
+   draw _r_[MID]{up}
         .. _r_[TOP]
         .. _r_[END];
    setbounds currentpicture to boundingpath;
