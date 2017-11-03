@@ -847,6 +847,48 @@ beginfig(start);
    setbounds currentpicture to boundingpath;
 endfig;
 
+aux[MID]    := (0,0.15u);
+aux[BOTTOM] := _t_[BOTTOM] shifted (0.15u,0);
+aux[END]    := _t_[END] shifted (0.15u,0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw _i_[TOP];
+       draw _i_[BEGIN]
+            -- m[_i_[END],aux[MID]]
+            .. m[_i_[END],aux[BOTTOM]]
+            .. m[_i_[END],aux[END]];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_i_[TOP],_t_[LEFT]]
+            -- m[_i_[TOP],_t_[RIGHT]];
+       draw m[_i_[BEGIN],_t_[BEGIN]]
+            -- m[aux[MID],_t_[MID]]
+            .. m[aux[BOTTOM],_t_[BOTTOM]]
+            .. m[aux[END],_t_[END]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % j -> a
 %
