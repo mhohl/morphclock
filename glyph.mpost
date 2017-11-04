@@ -242,6 +242,21 @@ _f_[LEFT]   = (-0.25u,0.85u);
 _f_[RIGHT]  = (-0.05u,0.85u);
 
 % g
+_g_[TOP]    = (0,0.85u);
+_g_[LEFT]   = (-0.25u,0.5u);
+% 0.15u höher als Nulllinie, daher ist die Mitte bei
+% 0.15u+1/2(0.85u-0.15u) = 0.5u
+_g_[RIGHT]  = (0.25u,0.5u);
+_g_[BOTTOM] = (0,0.15u);
+
+_g_[BEGIN]  = (0.25u,0.85u); % "Schwänzchen" oben rechts
+
+% _g_[JOINT] wird später definiert
+_g_[U_ARC]  = (-0.15u,-0.1u);
+_g_[L_ARC]  = (-0.325u,-0.25u);
+_g_[R_ARC]  = (0.325u,-0.25u);
+_g_[D_ARC]  = (0,-0.55u);
+_g_[END]    = (0.15u,-0.1u);
 
 % h
 tmp0 := 0.25;
@@ -879,6 +894,36 @@ endfor
 %
 % g -> p
 %
+
+start := transition("g","p");
+
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+   
+   draw _g_[BEGIN] -- _g_[TOP];
+   
+   tmppath0 := _g_[TOP]
+               .. _g_[LEFT]
+               .. _g_[BOTTOM]
+               .. _g_[RIGHT]
+               .. cycle;
+   tmppath1 := (C -- (0,infinity)) rotatedaround (C,135);
+   
+   _g_[JOINT] := tmppath0 intersectionpoint tmppath1;
+   (tmp[JOINT], whatever) = tmppath0 intersectiontimes tmppath1;
+   phi[JOINT] := angle(direction tmp[JOINT] of tmppath0);
+    
+   draw tmppath0;
+   
+   draw _g_[JOINT]{dir phi[JOINT]}
+        .. _g_[U_ARC]
+        .. _g_[L_ARC]
+        .. _g_[D_ARC]
+        .. _g_[R_ARC]
+        .. _g_[END];
+   setbounds currentpicture to boundingpath;
+endfig;
 
 %
 % h -> r
