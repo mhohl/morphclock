@@ -908,7 +908,8 @@ beginfig(start);
                .. _g_[BOTTOM]
                .. _g_[RIGHT]
                .. cycle;
-   tmppath1 := (C -- (0,infinity)) rotatedaround (C,135);
+   aux[MID] := (0,0.5[ypart(_g_[TOP]),ypart(_g_[BOTTOM])]);
+   tmppath1 := (aux[MID] -- (0,infinity)) rotatedaround (aux[MID],135);
    
    _g_[JOINT] := tmppath0 intersectionpoint tmppath1;
    (tmp[JOINT], whatever) = tmppath0 intersectiontimes tmppath1;
@@ -922,8 +923,87 @@ beginfig(start);
         .. _g_[D_ARC]
         .. _g_[R_ARC]
         .. _g_[END];
+
    setbounds currentpicture to boundingpath;
 endfig;
+
+% Wir ziehen die beiden Bogenpunkte zur Senkrechten durch _g_[LEFT]:
+aux[U_ARC] := (xpart(_g_[LEFT]),ypart(_g_[U_ARC]));
+aux[L_ARC] := (xpart(_g_[LEFT]),ypart(_g_[L_ARC]));
+% Der untere Teil des Bogens wandert nach unten:
+aux[D_ARC] := (xpart(_g_[D_ARC]),ypart(_p_[END]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw _g_[BEGIN] -- _g_[TOP];
+   
+       % Der Schnittpunkt _g_[JOINT] wandert an der Rundung entlang Richtung _g_[LEFT]
+       % und ist am Ende deckungsgleich:
+       tmppath1 := (aux[MID] -- (0,infinity)) rotatedaround (aux[MID],m[135,90]);
+   
+       _g_[JOINT] := tmppath0 intersectionpoint tmppath1;
+       tmp[JOINT] := xpart(tmppath0 intersectiontimes tmppath1);
+       phi[JOINT] := angle(direction tmp[JOINT] of tmppath0);
+    
+       draw tmppath0;
+   
+       draw _g_[JOINT]{dir phi[JOINT]}
+            .. m[_g_[U_ARC],aux[U_ARC]]
+            .. m[_g_[L_ARC],aux[L_ARC]]
+            .. _g_[D_ARC]
+            .. _g_[R_ARC]
+            .. _g_[END];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Die Hilfspunkte aux[U_ARC] und aux[L_ARC] wandern zur finalen x-Koordinate:
+aux[TOP] := (xpart(_p_[END]),ypart(aux[U_ARC]));
+aux[MID] := (xpart(_p_[END]),ypart(aux[D_ARC]));
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := m[_g_[LEFT],_p_[U_ARC]]
+                   .. m[_g_[TOP],_p_[TOP]]
+                   .. m[_g_[RIGHT],_p_[RIGHT]]
+                   .. m[_g_[BOTTOM],_p_[BOTTOM]]
+                   .. m[_g_[LEFT],_p_[D_ARC]];
+                   
+       tmp0 := xpart(_g_[BEGIN])-xpart(_g_[TOP]);
+       tmp1 := ypart(_p_[BEGIN])-ypart(_p_[U_ARC]);
+       
+       tmppath1 := (0,0)--(m[tmp0,tmp1],0);
+       
+       draw tmppath1 rotatedabout ((0,0),90*m) shifted point 1-m of tmppath0;
+       
+       tmppath2 := m[_g_[LEFT],_p_[U_ARC]]
+                   -- m[_g_[LEFT],_p_[D_ARC]]
+                   .. m[aux[U_ARC],aux[TOP]]
+                   .. m[aux[L_ARC],aux[MID]]{down}
+                   .. m[_g_[D_ARC],_p_[END]]
+                   .. m[_g_[R_ARC],_g_[D_ARC]]
+                   .. m[_g_[END],_g_[R_ARC]];
+        
+       draw tmppath0;            
+       draw subpath (0,6-2m) of tmppath2;
+      
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % h -> r
