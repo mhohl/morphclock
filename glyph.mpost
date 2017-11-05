@@ -243,18 +243,18 @@ _f_[RIGHT]  = (-0.05u,0.85u);
 
 % g
 _g_[TOP]    = (0,0.85u);
-_g_[LEFT]   = (-0.25u,0.5u);
+_g_[LEFT]   = (-0.325u,0.5u);
 % 0.15u höher als Nulllinie, daher ist die Mitte bei
 % 0.15u+1/2(0.85u-0.15u) = 0.5u
-_g_[RIGHT]  = (0.25u,0.5u);
+_g_[RIGHT]  = (0.325u,0.5u);
 _g_[BOTTOM] = (0,0.15u);
 
 _g_[BEGIN]  = (0.25u,0.85u); % "Schwänzchen" oben rechts
 
 % _g_[JOINT] wird später definiert
 _g_[U_ARC]  = (-0.15u,-0.1u);
-_g_[L_ARC]  = (-0.325u,-0.25u);
-_g_[R_ARC]  = (0.325u,-0.25u);
+_g_[L_ARC]  = (-0.375u,-0.25u);
+_g_[R_ARC]  = (0.375u,-0.25u);
 _g_[D_ARC]  = (0,-0.55u);
 _g_[END]    = (0.15u,-0.1u);
 
@@ -355,9 +355,9 @@ _s_[BEGIN]  = (0.25u,0.6375u);
 _s_[TOP]    = _o_[TOP];
 _s_[U_ARC]  = _s_[BEGIN] xscaled -1;
 _s_[MID]    = C;
-_s_[D_ARC]  = _s_[U_ARC] rotatedaround (C,180);
+_s_[D_ARC]  = (0.3u,0.2125u);
 _s_[BOTTOM] = _o_[BOTTOM];
-_s_[END]    = _s_[BEGIN] rotatedaround (C,180);
+_s_[END]    = (-0.3u,0.2125u);
 
 % t
 _t_[LEFT]   = _f_[LEFT];
