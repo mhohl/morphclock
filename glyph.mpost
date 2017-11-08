@@ -1701,6 +1701,87 @@ beginfig(start);
    tmppic := currentpicture;
 endfig;
 
+% Rotationszentrum
+aux[MID]   := (xpart(_l_[BOTTOM]),ypart(_l_[MID]));
+% Die Hilfspunkte für den geschlossenen Kreis,
+% jeweils als Verlängerung durch das Rotationszentrum
+% des Bogens
+aux[RIGHT] := 2[_t_[MID],aux[MID]];
+aux[TOP]   := 2[_t_[BOTTOM],aux[MID]];
+
+tmppath0 := _t_[MID]
+            .. _t_[BOTTOM]
+            .. _t_[END]
+            .. aux[RIGHT]
+            .. aux[TOP]
+            .. cycle;
+
+tmppath1 := _t_[LEFT] -- _t_[RIGHT];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       % Der t-Stamm wird oben verkürzt, um für
+       % den f-Bogen Platz zu machen:
+       
+       draw min(2m,1)[_t_[BEGIN],_f_[MID]]
+            -- _t_[MID];
+       
+       % Der untere Bogen wird zum Kreis aufgerollt (min(2m,1))
+       % und danach bis zum Strich bewegt (max(2m-1,0)):
+       
+       tmp0 := max(2m-1,0)*(ypart(_t_[LEFT])-ypart(_t_[MID]));
+       draw (subpath (0,3*min(2m,1)+2) of tmppath0) shifted (0,tmp0);
+       
+       % Der Querstrich wandert nach links, um den Kreis vorbeizulassen:
+
+       tmp1 := max(2m-1,0)*(xpart(_t_[LEFT])-xpart(_t_[MID]));
+       draw tmppath1 shifted (tmp1,0);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Andere Rotationsrichtung, zusätzlicher Hilfspunkt
+aux[U_ARC] := _t_[BOTTOM] rotatedabout (aux[MID],135);
+tmppath0 := _t_[MID]
+            .. aux[TOP]
+            .. aux[U_ARC]
+            .. aux[RIGHT]
+            .. _t_[BOTTOM]
+            .. cycle;
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       % der Stamm wird nun nach unten verlängert:
+       draw _f_[MID]
+            -- max(2m-1,0)[_t_[MID],_f_[BEGIN]];
+            
+       % der Kreis wandert weiter und entrollt sich wieder
+       tmp0 := min(2m,1)[ypart(_t_[LEFT]),ypart(_f_[MID])]-ypart(_t_[MID]);
+       draw (subpath (0,5-3*max(2m-1,0)) of tmppath0) shifted (0,tmp0);
+       
+       % Der Querstrich wandert wieder zurück:
+
+       tmp1 := min(2(1-m),1)*(xpart(_t_[LEFT])-xpart(_t_[MID]));
+       draw tmppath1 shifted (tmp1,0);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % t -> u
 %
