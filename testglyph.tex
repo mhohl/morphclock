@@ -17,6 +17,8 @@
   }
 }}
 \tableofcontents
+\section{Ziffern}
+\section{Interpunktion}
 \section{Buchstaben}
 \newlength\digitwidth
 \digitwidth=2.5cm
@@ -46,7 +48,7 @@
 \includegraphics[width=\digitwidth]{glyph-240000.mps} %x
 \includegraphics[width=\digitwidth]{glyph-251400.mps} %y
 \includegraphics[width=\digitwidth]{glyph-260000.mps} %z
-
+\includegraphics[width=\digitwidth]{clock-42.mps} % Uhr
 \newpage
 \digitwidth=1.75cm
 \section{Übergang a … e }
@@ -356,6 +358,17 @@
 
 \showglyphs{251400}
 \hspace*{-1ex}
+
 \newpage
+\section{Uhr}
+
+\directlua{\unexpanded{
+     for index = 1,719 do
+         tex.print("\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps}")
+     end
+  }
+}
+
+\hspace*{-1ex}
 \end{document}
 

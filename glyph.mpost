@@ -1,10 +1,11 @@
 %
-% glyph
+% glyph.mpost
 %
-% die Bilder werden in der Form glyph.ffttnn erzeugt:
+% die Ziffern und Buchstaben werden in der Form glyph.ffttnn erzeugt:
 % f = "from": Startziffer (Position im Alphabet)
 % t = "to":   Endziffer
 % nn : laufende Nummer
+%
 %
 % Für die Anzeige des Monats (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)
 % und des Wochentages (mon|tue|wed|thu|fri|sat|sun)
@@ -114,8 +115,14 @@ R_ARC  = 1009; % [r]ight (part of) [arc]
 U_ARC  = 1010; % [u]pright (part of) [arc]
 D_ARC  = 1011; % [d]ownright (part of) [arc]
 
-% Array für die Null
-pair zero[];
+
+% Arrays für die Koordinaten der Ziffern:
+pair zero[], one[],   two[], three[], four[];
+pair five[], six[], seven[], eight[], nine[];
+
+% Array für den Doppelpunkt:
+
+pair colon[];
 
 % Arrays für die Buchstaben:
 pair _a_[], _b_[], _c_[], _d_[],
@@ -157,7 +164,6 @@ primarydef z yshifted yy = z shifted (0,yy) enddef;
 
 % eine Funktion zur Berechnung des Startwertes gemäß ffttnn:
 vardef transition(expr from, to) =
-    save i;
     i := (ASCII(from)-96)*10000+(ASCII(to)-96)*100;
     i
 enddef;
@@ -169,7 +175,11 @@ vardef standalone(expr glyph) =
     i
 enddef;
 
-show standalone("k");
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Part I: Ziffern
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %
 % Null
@@ -179,9 +189,65 @@ zero[BOTTOM] = (0,0);
 zero[LEFT]   = (-0.25u,0.425u);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%%%%%%%%%% Definition der Buchstaben
+% Part II: Interpunktion
 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ":"
+colon[TOP]    := (0,0.7u);
+colon[BOTTOM] := (0,0.15u);
+
+aux[TOP] := (0,0.475u);
+aux[BOTTOM] := (0,0.375u);
+
+start := transition(":",":");
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+   
+   draw colon[TOP];
+   draw colon[BOTTOM];
+   setbounds currentpicture to boundingpath;
+endfig;
+
+%
+% ":" -> ":"
+%
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[colon[TOP],aux[TOP]];
+       draw m[colon[BOTTOM],aux[BOTTOM]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       draw m[aux[TOP],colon[TOP]];
+       draw m[aux[BOTTOM],colon[BOTTOM]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Part III: Buchstaben
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % a
 _a_[BEGIN]  = (-0.25u,0.6u);
@@ -1885,7 +1951,7 @@ endfor
 
 % Die Punkte _u_[LEFT] und _u_[RIGHT] wandern
 % zum i-Stamm:
-aux[MID] := 1/2[_u_[LEFT],_u_[RIGHT]]; show (aux[MID]/u);
+aux[MID] := 1/2[_u_[LEFT],_u_[RIGHT]];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -2066,5 +2132,49 @@ draw_grid(u);
         -- _z_[END];
    setbounds currentpicture to boundingpath;
 endfig;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Part VI: Uhrsymbol im "o"
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+outputtemplate := "clock-%c.mps";
+
+tmppath0 := _o_[TOP]
+            .. _o_[RIGHT]
+            .. _o_[BOTTOM]
+            .. _o_[LEFT]
+            .. cycle;
+
+for i = 0 upto 719:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+            
+       % Zeiger: wir ermitteln die Schnittpunkte der o-Linie
+       % mit den Zeiger-Halbgeraden, die in C ansetzen:
+       tmppath1 := C -- (0,infinity) rotatedaround (C,-i*6);
+       tmppath2 := C -- (0,infinity) rotatedaround (C,-i/2);
+       
+       aux1 := tmppath0 intersectionpoint tmppath1;
+       aux2 := tmppath0 intersectionpoint tmppath2;
+       
+       % anschließend werden die Zeiger skaliert:
+       % der Minutenzeiger ist länger,
+       % der Stundenzeiger kürzer.
+       draw tmppath0;
+       
+       pickup pc scaled 2;
+       undraw C -- 4/3[C,aux1];
+       
+       pickup pc;
+       draw 4/3[C,aux1]
+            -- C
+            -- 2/3[C,aux2];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 end;
