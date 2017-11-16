@@ -1,364 +1,115 @@
 \documentclass[a4paper,landscape]{article}
 \usepackage{fontspec}
+\usepackage{luacode}
 \usepackage[margin=1cm]{geometry}
 \usepackage{ngerman}
 \usepackage{graphicx}
-%\usepackage{pgffor}
 \usepackage[toc]{multitoc}
 \setlength{\columnseprule}{0.4pt}
 \renewcommand{\multicolumntoc}{3}
 \begin{document}\pagestyle{empty}
 %
-\newcommand{\showglyphs}[1]{%
+\newcommand{\showtransition}[2]{%
+  \subsection{Übergang #1 - #2 }
   \directlua{\unexpanded{
-     for index = #1,#1+99 do
+    from = string.byte(tostring("#1"))-32
+    to = string.byte(tostring("#2"))-32
+    res = from * 10000 + to * 100
+    % print ("Hallo" , from, to )
+    for index = res,res+99 do
          tex.print("\\IfFileExists{glyph-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps} }{}")
      end
-  }
-}}
+  }}
+  \hspace*{-1ex}
+  \newpage
+}
 \tableofcontents
 \section{Ziffern}
 \section{Interpunktion}
 \section{Buchstaben}
 \newlength\digitwidth
 \digitwidth=2.5cm
-\includegraphics[width=\digitwidth]{glyph-10500.mps}  %a
-\includegraphics[width=\digitwidth]{glyph-21800.mps}  %b
-\includegraphics[width=\digitwidth]{glyph-31400.mps}  %c
-\includegraphics[width=\digitwidth]{glyph-41000.mps}  %d
-\includegraphics[width=\digitwidth]{glyph-50100.mps}  %e
-\includegraphics[width=\digitwidth]{glyph-61300.mps}  %f
-\includegraphics[width=\digitwidth]{glyph-71600.mps}  %g
-\includegraphics[width=\digitwidth]{glyph-81800.mps}  %h
-\includegraphics[width=\digitwidth]{glyph-92000.mps}  %i
-\includegraphics[width=\digitwidth]{glyph-100100.mps} %j
-\includegraphics[width=\digitwidth]{glyph-110000.mps} %k
-\includegraphics[width=\digitwidth]{glyph-120700.mps} %l
-\includegraphics[width=\digitwidth]{glyph-130100.mps} %m
-\includegraphics[width=\digitwidth]{glyph-140200.mps} %n
-\includegraphics[width=\digitwidth]{glyph-150500.mps} %o
-\includegraphics[width=\digitwidth]{glyph-162000.mps} %p
-\includegraphics[width=\digitwidth]{glyph-170000.mps} %q
-\includegraphics[width=\digitwidth]{glyph-180100.mps} %r
-\includegraphics[width=\digitwidth]{glyph-191500.mps} %s
-\includegraphics[width=\digitwidth]{glyph-202200.mps} %t
-\includegraphics[width=\digitwidth]{glyph-210500.mps} %u
-\includegraphics[width=\digitwidth]{glyph-220300.mps} %v
-\includegraphics[width=\digitwidth]{glyph-232000.mps} %w
-\includegraphics[width=\digitwidth]{glyph-240000.mps} %x
-\includegraphics[width=\digitwidth]{glyph-251400.mps} %y
-\includegraphics[width=\digitwidth]{glyph-260000.mps} %z
-\includegraphics[width=\digitwidth]{clock-42.mps} % Uhr
-\newpage
+%\includegraphics[width=\digitwidth]{glyph-10500.mps}  %a
+%\includegraphics[width=\digitwidth]{glyph-21800.mps}  %b
+%\includegraphics[width=\digitwidth]{glyph-31400.mps}  %c
+%\includegraphics[width=\digitwidth]{glyph-41000.mps}  %d
+%\includegraphics[width=\digitwidth]{glyph-50100.mps}  %e
+%\includegraphics[width=\digitwidth]{glyph-61300.mps}  %f
+%\includegraphics[width=\digitwidth]{glyph-71600.mps}  %g
+%\includegraphics[width=\digitwidth]{glyph-81800.mps}  %h
+%\includegraphics[width=\digitwidth]{glyph-92000.mps}  %i
+%\includegraphics[width=\digitwidth]{glyph-100100.mps} %j
+%\includegraphics[width=\digitwidth]{glyph-110000.mps} %k
+%\includegraphics[width=\digitwidth]{glyph-120700.mps} %l
+%\includegraphics[width=\digitwidth]{glyph-130100.mps} %m
+%\includegraphics[width=\digitwidth]{glyph-140200.mps} %n
+%\includegraphics[width=\digitwidth]{glyph-150500.mps} %o
+%\includegraphics[width=\digitwidth]{glyph-162000.mps} %p
+%\includegraphics[width=\digitwidth]{glyph-170000.mps} %q
+%\includegraphics[width=\digitwidth]{glyph-180100.mps} %r
+%\includegraphics[width=\digitwidth]{glyph-191500.mps} %s
+%\includegraphics[width=\digitwidth]{glyph-202200.mps} %t
+%\includegraphics[width=\digitwidth]{glyph-210500.mps} %u
+%\includegraphics[width=\digitwidth]{glyph-220300.mps} %v
+%\includegraphics[width=\digitwidth]{glyph-232000.mps} %w
+%\includegraphics[width=\digitwidth]{glyph-240000.mps} %x
+%\includegraphics[width=\digitwidth]{glyph-251400.mps} %y
+%\includegraphics[width=\digitwidth]{glyph-260000.mps} %z
+%\includegraphics[width=\digitwidth]{clock-42.mps} % Uhr
+%\newpage
 \digitwidth=1.75cm
-\section{Übergang a … e }
 
-\showglyphs{10500}
-
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang a … m }
-
-\showglyphs{11300}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang a … s }
-
-\showglyphs{11900}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang a … u }
-
-\showglyphs{12100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang b … r }
-
-\showglyphs{21800}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang c … n }
-
-\showglyphs{31400}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang c … o }
-
-\showglyphs{31500}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang d … j }
-
-\showglyphs{41000}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang d … u }
-
-\showglyphs{42100}
-\hspace*{-1ex}
-\newpage
-
-
-\section{Übergang e … a }
-
-\showglyphs{50100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang e … c }
-
-\showglyphs{50300}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang e … d }
-
-\showglyphs{50400}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang e … h }
-
-\showglyphs{50800}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang f … m }
-
-\showglyphs{61300}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang f … s }
-
-\showglyphs{61900}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang g … p }
-
-\showglyphs{71600}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang h … r }
-
-\showglyphs{81800}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang i … t }
-
-\showglyphs{92000}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang j … a }
-
-\showglyphs{100100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang j … f }
-
-\showglyphs{100600}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang j … j }
-
-\showglyphs{101000}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang l … g }
-
-\showglyphs{120700}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang m … a }
-
-\showglyphs{130100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang m … j }
-
-\showglyphs{131000}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang m … t }
-
-\showglyphs{132000}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang n … b }
-
-\showglyphs{140200}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang n … d }
-
-\showglyphs{140400}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang n … e }
-
-\showglyphs{140500}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang n … l }
-
-\showglyphs{141200}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang n … n }
-
-\showglyphs{141400}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang o … e }
-
-\showglyphs{150500}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang o … n }
-
-\showglyphs{151400}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang o … u }
-
-\showglyphs{152100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang p … t }
-
-\showglyphs{162000}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang r … a }
-
-\showglyphs{180100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang r … r }
-
-\showglyphs{181800}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang r … y }
-
-\showglyphs{182500}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang s … m }
-
-\showglyphs{191300}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang s … o }
-
-\showglyphs{191500}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang s … s }
-
-\showglyphs{191900}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang t … f }
-
-\showglyphs{200600}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang t … u }
-
-\showglyphs{202100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang t … v }
-
-\showglyphs{202200}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang t … w }
-
-\showglyphs{202300}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang u … e }
-
-\showglyphs{210500}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang u … i }
-
-\showglyphs{210900}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang u … o }
-
-\showglyphs{211500}
-\hspace*{-1ex}
-\newpage
-
-
-\section{Übergang u … u }
-
-\showglyphs{212100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang v … c }
-
-\showglyphs{220300}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang w … t }
-
-\showglyphs{232100}
-\hspace*{-1ex}
-\newpage
-
-\section{Übergang y … n }
-
-\showglyphs{251400}
-\hspace*{-1ex}
-
+\showtransition{a}{e}
+\showtransition{a}{m}
+\showtransition{a}{s}
+\showtransition{a}{u}
+\showtransition{b}{r}
+\showtransition{c}{n}
+\showtransition{c}{o}
+\showtransition{d}{j}
+\showtransition{d}{u}
+\showtransition{e}{a}
+\showtransition{e}{c}
+\showtransition{e}{d}
+\showtransition{e}{h}
+\showtransition{f}{m}
+\showtransition{f}{s}
+\showtransition{g}{p}
+\showtransition{h}{r}
+\showtransition{i}{t}
+\showtransition{j}{a}
+\showtransition{j}{f}
+\showtransition{j}{j}
+\showtransition{l}{g}
+\showtransition{m}{a}
+\showtransition{m}{j}
+\showtransition{m}{t}
+\showtransition{n}{b}
+\showtransition{n}{d}
+\showtransition{n}{e}
+\showtransition{n}{l}
+\showtransition{n}{n}
+\showtransition{o}{e}
+\showtransition{o}{n}
+\showtransition{o}{u}
+\showtransition{p}{t}
+\showtransition{r}{a}
+\showtransition{r}{r}
+\showtransition{r}{y}
+\showtransition{s}{m}
+\showtransition{s}{o}
+\showtransition{s}{s}
+\showtransition{t}{f}
+\showtransition{t}{u}
+\showtransition{t}{v}
+\showtransition{t}{w}
+\showtransition{u}{e}
+\showtransition{u}{i}
+\showtransition{u}{o}
+\showtransition{u}{u}
+\showtransition{v}{c}
+\showtransition{w}{t}
+\showtransition{y}{n}
 \newpage
 \section{Uhr}
 

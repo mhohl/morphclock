@@ -164,14 +164,14 @@ primarydef z yshifted yy = z shifted (0,yy) enddef;
 
 % eine Funktion zur Berechnung des Startwertes gemäß ffttnn:
 vardef transition(expr from, to) =
-    i := (ASCII(from)-96)*10000+(ASCII(to)-96)*100;
+    i := (ASCII(from)-32)*10000+(ASCII(to)-32)*100;
     i
 enddef;
 
 % einige Glyphen verwenden wir nur "standalone":
 vardef standalone(expr glyph) = 
     save i;
-    i := (ASCII(glyph)-96)*10000;
+    i := (ASCII(glyph)-32)*10000;
     i
 enddef;
 
