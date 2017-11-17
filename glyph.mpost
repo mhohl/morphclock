@@ -36,6 +36,7 @@
 % l -> g
 % m -> a
 % m -> j
+% m -> m
 % m -> t
 % n -> b
 % n -> d
@@ -75,7 +76,7 @@ show("call with '-numbersystem=double' to prevent overflow errors");
 outputtemplate := "%j-%c.mps";
 outputformat := "eps";
 
-warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
+%warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
 numeric f;      % [f]rame index
 numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
@@ -580,6 +581,15 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
+% Wir brauchen den Winkel am unteren Ansatz des p-Bogens:
+tmppath0 := _p_[D_ARC]
+            .. _p_[BOTTOM]
+            .. _p_[RIGHT]
+            .. _p_[TOP]
+            .. _p_[U_ARC];
+aux0 := direction 0 of tmppath0;
+phi[D_ARC] := angle(aux0);
+
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
@@ -598,17 +608,7 @@ for i = start+fpht+1 upto start+2fpht-1:
                      ..  _a_[TOP]
                      ..  m[_a_[R_ARC],_p_[RIGHT]]
                      --- m[_a_[JOINT],_p_[RIGHT]];
-       aux[R_ARC] := point 3-3m of tmppath1;
-
-       % Wir brauchen den Winkel am unteren Ansatz des p-Bogens:
-       tmppath0 := _p_[D_ARC]
-                   .. _p_[BOTTOM]
-                   .. _p_[RIGHT]
-                   .. _p_[TOP]
-                   .. _p_[U_ARC];
-       aux0 := direction 0 of tmppath0;
-       phi[D_ARC] := angle(aux0);
-       % phi[D_ARC] wird auch für die Transformation p -> a benötigt!
+       aux[R_ARC] := point 3-3m of tmppath1;     
 
        % Ein Hilfspfad beschreibt den Weg von aux[L_ARC] -> _a_[BOTTOM]
        tmppath2    := aux[L_ARC] .. _a_[BOTTOM]{right};
@@ -634,6 +634,19 @@ start := transition("a","s");
 beginfig(start);
    draw tmppic;
 endfig;
+
+tmppath1 := _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. _a_[END];
+aux0 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux0);
+
+tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -1875,12 +1888,14 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. m[aux[R_ARC],_a_[JOINT]];
 
        % die beiden Pfade überschneiden sich am Anfang sichtbar, daher
-       % kürzen wir den "Bauch"-Pfad:
-       aux0 := tmppath1 intersectiontimes tmppath2; show(aux0);
-
+       % kürzen wir den "Bauch"-Pfad
+       % [durch die Verwendung von "-numbersystem=double" ist die
+       % Berechnung der intersectiontime z.T. fehlerhaft; die erste
+       % Koordinate scheint korrekt zu sein, die zweite falsch.
+       aux0 := tmppath2 intersectiontimes tmppath1;
+       
        draw tmppath1;
-       draw subpath (ypart(aux0),4) of tmppath2;
-       draw tmppath2;
+       draw subpath (xpart(aux0),4) of tmppath2;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
