@@ -9,6 +9,12 @@
 \renewcommand{\multicolumntoc}{3}
 \begin{document}\pagestyle{empty}
 %
+\newcommand{\showglyph}[1]{%
+  \directlua{\unexpanded{
+    index = string.byte(tostring("#1"))-32
+    tex.print("\\IfFileExists{glyph-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps} }{}")
+  }}
+}
 \newcommand{\showtransition}[2]{%
   \subsection{Übergang #1…#2}
   \directlua{\unexpanded{
@@ -23,38 +29,49 @@
   \hspace*{-1ex}
   \newpage
 }
-\tableofcontents
+\newcommand{\showclock}[1]{%
+  \IfFileExists{clock-#1.mps}{\includegraphics[width=\digitwidth]{clock-#1.mps} }{}
+}
+\newcommand{\showclocks}{%
+  \directlua{\unexpanded{
+     for index = 1,719 do
+         tex.print("\\IfFileExists{clock-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps} }{}")
+     end
+  }}
+}
+\tableofcontents\newpage
 \section{Übersicht}
 \newlength\digitwidth
 \digitwidth=2.5cm
-%\includegraphics[width=\digitwidth]{glyph-10500.mps}  %a
-%\includegraphics[width=\digitwidth]{glyph-21800.mps}  %b
-%\includegraphics[width=\digitwidth]{glyph-31400.mps}  %c
-%\includegraphics[width=\digitwidth]{glyph-41000.mps}  %d
-%\includegraphics[width=\digitwidth]{glyph-50100.mps}  %e
-%\includegraphics[width=\digitwidth]{glyph-61300.mps}  %f
-%\includegraphics[width=\digitwidth]{glyph-71600.mps}  %g
-%\includegraphics[width=\digitwidth]{glyph-81800.mps}  %h
-%\includegraphics[width=\digitwidth]{glyph-92000.mps}  %i
-%\includegraphics[width=\digitwidth]{glyph-100100.mps} %j
-%\includegraphics[width=\digitwidth]{glyph-110000.mps} %k
-%\includegraphics[width=\digitwidth]{glyph-120700.mps} %l
-%\includegraphics[width=\digitwidth]{glyph-130100.mps} %m
-%\includegraphics[width=\digitwidth]{glyph-140200.mps} %n
-%\includegraphics[width=\digitwidth]{glyph-150500.mps} %o
-%\includegraphics[width=\digitwidth]{glyph-162000.mps} %p
-%\includegraphics[width=\digitwidth]{glyph-170000.mps} %q
-%\includegraphics[width=\digitwidth]{glyph-180100.mps} %r
-%\includegraphics[width=\digitwidth]{glyph-191500.mps} %s
-%\includegraphics[width=\digitwidth]{glyph-202200.mps} %t
-%\includegraphics[width=\digitwidth]{glyph-210500.mps} %u
-%\includegraphics[width=\digitwidth]{glyph-220300.mps} %v
-%\includegraphics[width=\digitwidth]{glyph-232000.mps} %w
-%\includegraphics[width=\digitwidth]{glyph-240000.mps} %x
-%\includegraphics[width=\digitwidth]{glyph-251400.mps} %y
-%\includegraphics[width=\digitwidth]{glyph-260000.mps} %z
-%\includegraphics[width=\digitwidth]{clock-42.mps} % Uhr
-%\newpage
+\showglyph{:}
+\showglyph{a}
+\showglyph{b}
+\showglyph{c}
+\showglyph{d}
+\showglyph{e}
+\showglyph{f}
+\showglyph{g}
+\showglyph{h}
+\showglyph{i}
+\showglyph{j}
+\showglyph{k}
+\showglyph{l}
+\showglyph{m}
+\showglyph{n}
+\showglyph{o}
+\showglyph{p}
+\showglyph{q}
+\showglyph{r}
+\showglyph{s}
+\showglyph{t}
+\showglyph{u}
+\showglyph{v}
+\showglyph{w}
+\showglyph{x}
+\showglyph{y}
+\showglyph{z}
+\showclock{42}
+\newpage
 \digitwidth=1.75cm
 
 \section{Ziffern}
@@ -67,6 +84,7 @@
 
 \showtransition{a}{e}
 \showtransition{a}{m}
+\showtransition{a}{p}
 \showtransition{a}{s}
 \showtransition{a}{u}
 \showtransition{b}{r}
@@ -98,6 +116,7 @@
 \showtransition{o}{e}
 \showtransition{o}{n}
 \showtransition{o}{u}
+\showtransition{p}{a}
 \showtransition{p}{t}
 \showtransition{r}{a}
 \showtransition{r}{r}
@@ -119,12 +138,7 @@
 \newpage
 \section{Uhr}
 
-\directlua{\unexpanded{
-     for index = 1,719 do
-         tex.print("\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps}")
-     end
-  }
-}
+\showclocks
 
 \hspace*{-1ex}
 \end{document}
