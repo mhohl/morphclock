@@ -10,7 +10,7 @@
 \begin{document}\pagestyle{empty}
 %
 \newcommand{\showtransition}[2]{%
-  \subsection{Übergang #1 - #2 }
+  \subsection{Übergang #1…#2}
   \directlua{\unexpanded{
     from = string.byte(tostring("#1"))-32
     to = string.byte(tostring("#2"))-32
@@ -24,9 +24,7 @@
   \newpage
 }
 \tableofcontents
-\section{Ziffern}
-\section{Interpunktion}
-\section{Buchstaben}
+\section{Übersicht}
 \newlength\digitwidth
 \digitwidth=2.5cm
 %\includegraphics[width=\digitwidth]{glyph-10500.mps}  %a
@@ -58,6 +56,14 @@
 %\includegraphics[width=\digitwidth]{clock-42.mps} % Uhr
 %\newpage
 \digitwidth=1.75cm
+
+\section{Ziffern}
+
+\section{Interpunktion}
+\showtransition{:}{:}
+
+\section{Buchstaben}
+
 
 \showtransition{a}{e}
 \showtransition{a}{m}
