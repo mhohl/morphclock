@@ -3450,6 +3450,76 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% der t-Strich wächst zu einem um 90° gedrehten
+% u-Strich:
+
+aux[LEFT]  := (xpart(_u_[END])-ypart(1[_u_[BOTTOM],_u_[END]]),ypart(_t_[LEFT]));
+aux[RIGHT] := (xpart(_u_[END]),ypart(_t_[RIGHT]));
+
+% der Schnittpunkt des t-Striches mit dem t-Stamm:
+aux[MID]   := (_t_[LEFT] -- _t_[RIGHT])
+              intersectionpoint
+              (_t_[BEGIN] -- _t_[MID]);
+
+tmppath0 := _t_[BEGIN]
+            -- aux[MID]
+            -- _t_[MID]{down}
+            .. _t_[BOTTOM]
+            .. _t_[END];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       % der Strich wird breiter
+       draw m[_t_[LEFT],aux[LEFT]]
+            -- m[_t_[RIGHT],aux[RIGHT]];
+   
+       % der t-Stamm schrumpft, bis er bündig mit dem
+       % t-Strich liegt:
+       draw subpath (m,4) of tmppath0;
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% wir brauchen den Hilfspunkt, der auf halbem Weg zwischen
+% _u_[MID] und _u_[RIGHT] liegt:
+
+tmppath1 := _u_[BEGIN]
+            -- _u_[LEFT]{down}
+            .. _u_[MID]
+            .. _u_[RIGHT]{up}
+            -- _u_[END];
+aux[R_ARC] := point 2.5 of tmppath1;
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       tmppath0 := m[aux[MID],_u_[BEGIN]]
+                   -- m[_t_[MID],_u_[LEFT]]{down}
+                   .. m[_t_[BOTTOM],_u_[MID]]
+                   .. m[_t_[END],aux[R_ARC]]
+                   .. m[_t_[MID] xscaled -1,_u_[RIGHT]]{up}
+                   -- m[aux[MID] xscaled -1,_u_[END]];
+       % rotiere den überdimensionierten t-Strich nach unten:
+       draw (aux[LEFT] -- aux[RIGHT]) rotatedaround (aux[RIGHT],90m);
+       draw subpath (0,3+2m) of tmppath0;
+       
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % t -> v
 %
