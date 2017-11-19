@@ -1497,7 +1497,7 @@ _g_[D_ARC]  = (0,-0.55u);
 _g_[END]    = (0.15u,-0.1u);
 
 % h
-tmp0 := 0.25;
+tmp0 := 0.275;
 tmp1 := 0.85;
 _h_[BEGIN] = (-tmp0*u,1.35u);
 _h_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
@@ -1547,7 +1547,7 @@ _m_[RIGHT] = _m_[LEFT] xscaled -1;
 _m_[END]   = _m_[BOTTOM] xscaled -1;
 
 % n
-tmp0 := 0.25;
+tmp0 := 0.275;
 tmp1 := 0.85;
 _n_[BEGIN] = (-tmp0*u,tmp1*u);
 _n_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
@@ -1615,7 +1615,7 @@ _u_[LEFT]   = _n_[RIGHT]  rotatedaround(C,180);
 _u_[END]    = _n_[BOTTOM] rotatedaround(C,180);
 
 % v
-_v_[LEFT] = (-0.25u,0.85u);
+_v_[LEFT] = (-0.275u,0.85u);
 _v_[BOTTOM] = (0,0);
 _v_[RIGHT] = _v_[LEFT] xscaled -1;
 
@@ -1629,9 +1629,9 @@ _w_[RIGHT] = _w_[LEFT] xscaled -1;
 _w_[END] = _w_[BEGIN] xscaled -1;
 
 % x
-_x_[LEFT]  = (-0.25u,0.85u);
+_x_[LEFT]  = (-0.275u,0.85u);
 _x_[RIGHT] = _x_[LEFT] xscaled -1;
-_x_[BEGIN] = (-0.25u,0);
+_x_[BEGIN] = (-0.275u,0);
 _x_[END]   = _x_[BEGIN] xscaled -1 ;
 
 % y
