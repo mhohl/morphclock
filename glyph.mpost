@@ -1424,8 +1424,8 @@ endfor
 % a
 _a_[BEGIN]  = (-0.25u,0.6u);
 _a_[TOP]    = zero[TOP];
-_a_[R_ARC]  = _a_[BEGIN] xscaled -1;
-_a_[JOINT]  = (0.25u,0.15u);
+_a_[R_ARC]  = (0.275u,0.6u);
+_a_[JOINT]  = (0.275u,0.15u);
 _a_[END]    = (0.325u,0);
 _a_[L_ARC]  = _a_[JOINT] xscaled -1;
 _a_[BOTTOM] = zero[BOTTOM];
