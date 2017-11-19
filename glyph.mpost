@@ -2748,9 +2748,9 @@ draw_grid(u);
 
    draw _n_[BEGIN] -- _n_[LEFT];
    draw _n_[BOTTOM]
-        -- _n_[LEFT]
+        -- _n_[LEFT]{up}
         .. _n_[MID]
-        .. _n_[RIGHT]
+        .. _n_[RIGHT]{down}
         --_n_[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -2829,9 +2829,9 @@ for i = start+1 upto start+fpht:
             -- _n_[LEFT];
         
        draw _n_[BOTTOM]
-            -- _n_[LEFT]
+            -- _n_[LEFT]{up}
             .. _n_[MID]
-            .. _n_[RIGHT]
+            .. _n_[RIGHT]{down}
             -- _n_[END];
             
        draw (xpart(_n_[RIGHT]),m[ypart(_n_[RIGHT]),ypart(_d_[BEGIN])])
@@ -2878,6 +2878,70 @@ start := transition("n","l");
 beginfig(start);
    draw tmppic;
 endfig;
+
+aux[BEGIN]  := (xpart(_l_[BEGIN]),ypart(_n_[BEGIN]));
+aux[BOTTOM] := (xpart(_l_[BEGIN]),ypart(_n_[BOTTOM]));
+aux[LEFT]   := (xpart(_l_[BEGIN]),ypart(_n_[LEFT]));
+aux[RIGHT]  := aux[LEFT] xscaled -1;
+aux[END]    := aux[BOTTOM] xscaled -1;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_n_[BEGIN],aux[BEGIN]]
+            -- m[_n_[LEFT],aux[LEFT]];
+       draw m[_n_[BOTTOM],aux[BOTTOM]]
+            -- m[_n_[LEFT],aux[LEFT]]{up}
+            .. _n_[MID]
+            .. m[_n_[RIGHT],aux[RIGHT]]{down}
+            -- m[_n_[END],aux[END]];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Wir suchen den Punkt auf halbem Weg zwischen
+% aux[LEFT] und _n_[MID]:
+tmppath0 := aux[BOTTOM]
+            -- aux[LEFT]{up}
+            .. _n_[MID]
+            .. aux[RIGHT]{down}
+            -- aux[END];
+
+aux[L_ARC] := point 1.5 of tmppath0;
+
+% Wir lassen den Startpunkt weg und bauen den Hilfspunkt ein:
+tmppath1 := aux[LEFT]{up}
+            .. aux[L_ARC]
+            .. _n_[MID]
+            .. aux[RIGHT]{down}
+            -- aux[END];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       % der n-Stamm wandert schnell zum Start von l ...
+       draw (aux[BEGIN] -- aux[BOTTOM]) 
+            shifted (min(2m,1)[aux[BEGIN],_l_[BEGIN]]-aux[BEGIN]);
+       % während sich der Rest im Bogen verkürzt und
+       % um 180° dreht – am Ende überlagern sich beide
+       % geraden Abschnitte teilweise und bilden den
+       % l-Strich:
+       draw (subpath (m,4) of tmppath1) rotatedaround (C,-180m);
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % n -> n
@@ -3789,7 +3853,7 @@ for i = start+1 upto start+fpht:
                    .. _y_[BOTTOM]{up}
                    -- _y_[RIGHT];
                    
-       draw subpath (2m,2) of tmppath0;
+       draw subpath (m,2) of tmppath0;
        
        draw _y_[BEGIN]
         -- _y_[LEFT]{down}
@@ -3809,7 +3873,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
        
-       tmppath0 := _y_[RIGHT] -- (m*m)[_y_[RIGHT],_y_[BOTTOM]];
+       tmppath0 := _y_[RIGHT] -- _y_[BOTTOM];
        tmppath1 := _y_[BEGIN]
                    -- _y_[LEFT]{down}
                    .. _y_[MID]
