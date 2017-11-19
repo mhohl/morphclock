@@ -201,7 +201,7 @@ enddef;
 % 0
 zero[TOP]    = (0,0.85u);
 zero[BOTTOM] = (0,0);
-zero[LEFT]   = (-0.25u,0.425u);
+zero[LEFT]   = (-0.275u,0.425u);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
 % 1
@@ -217,12 +217,13 @@ two[JOINT] = (-0.25u,0);
 two[END]   = (0.25u,0);
 
 % 3
-three[BEGIN] = (-0.25u,0.65u);
-three[TOP]   = two[TOP];
-three[U_ARC] = (0.25u,0.5u);
-three[JOINT] = (-0.15u,0);
-three[D_ARC] = (0.3u,-0.5u);
-three[END]   = three[D_ARC] xscaled -1;
+three[BEGIN]  = (-0.25u,0.65u);
+three[TOP]    = two[TOP];
+three[U_ARC]  = (0.25u,0.5u);
+three[JOINT]  = (-0.15u,0);
+three[D_ARC]  = (0.3u,-0.5u);
+three[BOTTOM] = (0,-0.65u);
+three[END]    = three[D_ARC] xscaled -1;
 
 % 4
 four[LEFT]   = (-0.25u,0);
@@ -241,8 +242,8 @@ five[END]   = (-0.275u,-0.65u);
 
 % 6
 six[BEGIN]  = (0.25u,1.35u);
-six[LEFT]   = zero[LEFT] xscaled 3/2;
-six[RIGHT]  = zero[RIGHT] xscaled 3/2;
+six[LEFT]   = zero[LEFT] xscaled 15/11; % 0.275 -> 0.375
+six[RIGHT]  = zero[RIGHT] xscaled 15/11;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
 
@@ -1440,11 +1441,10 @@ _b_[BOTTOM] = _p_[BOTTOM];
 _b_[RIGHT]  = _p_[RIGHT];
 
 % c
-% kopiert von Sechs
-_c_[LEFT]   = zero[LEFT] xscaled 3/2;
-_c_[RIGHT]  = zero[RIGHT] xscaled 3/2;
-_c_[TOP]    = zero[TOP];
-_c_[BOTTOM] = zero[BOTTOM];
+_c_[LEFT]   = six[LEFT];
+_c_[RIGHT]  = six[RIGHT];
+_c_[TOP]    = six[TOP];
+_c_[BOTTOM] = six[BOTTOM];
 % Schnittpunkt zwischen o-Bogen und einer Halbgeraden
 _c_[BEGIN] = (_c_[RIGHT]{up} .. _c_[TOP]{left})
              intersectionpoint 
