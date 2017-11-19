@@ -230,7 +230,7 @@ four[LEFT]   = (-0.25u,0);
 four[TOP]    = (0.25u,0.85u);
 four[MID]    = four[LEFT] xscaled -1;
 four[BOTTOM] = (0.25u,-0.65u);
-four[RIGHT]  = (0.4u,0); % TODO: teste 0.375
+four[RIGHT]  = (0.375u,0);
 
 % 5
 five[BEGIN] = four[TOP];
