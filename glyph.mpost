@@ -237,7 +237,7 @@ five[LEFT]  = five[BEGIN] xscaled -1;
 five[JOINT] = four[LEFT];
 five[U_ARC] = (0,0.1u);
 five[R_ARC] = (0.3u,-0.425u);
-five[END]   = (-0.3u,-0.7u);
+five[END]   = (-0.275u,-0.65u);
 
 % 6
 six[BEGIN]  = (0.25u,1.35u);
