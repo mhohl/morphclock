@@ -23,19 +23,41 @@
     res = from * 10000 + to * 100
     % print ("Hallo" , from, to )
     for index = res,res+99 do
-         tex.print("\\IfFileExists{glyph-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps} }{}")
+         if math.fmod(index+1,10) == 0 then
+            maybenewline="\\newline"
+         else
+            maybenewline="\\hfill"
+         end
+         num = index-res
+         if num < 10 then num = "0" .. num end
+         tex.print("\\IfFileExists{glyph-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps}←"
+                    .. num .. maybenewline .. "}{}")
      end
   }}
   \hspace*{-1ex}
   \newpage
 }
 \newcommand{\showclock}[1]{%
-  \IfFileExists{clock-#1.mps}{\includegraphics[width=\digitwidth]{clock-#1.mps} }{}
+  \IfFileExists{clock-#1.mps}{\includegraphics[width=\digitwidth]{clock-#1.mps}}{}
 }
 \newcommand{\showclocks}{%
   \directlua{\unexpanded{
-     for index = 1,719 do
-         tex.print("\\IfFileExists{clock-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps} }{}")
+     for index = 0,719 do
+         if math.fmod(index+1,10) == 0 then
+            maybenewline="\\newline"
+         else
+            maybenewline="\\hfill"
+         end
+         num = index
+         if num < 10 then
+            num ="00" .. num
+         elseif num < 100 then
+            num = "0" .. num
+         end
+         tex.print("\\IfFileExists{clock-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps}←"
+                    .. num .. maybenewline .. "}{}")
      end
   }}
 }
@@ -43,6 +65,16 @@
 \section{Übersicht}
 \newlength\digitwidth
 \digitwidth=2.5cm
+\showglyph{0}
+\showglyph{1}
+\showglyph{2}
+\showglyph{3}
+\showglyph{4}
+\showglyph{5}
+\showglyph{6}
+\showglyph{7}
+\showglyph{8}
+\showglyph{9}
 \showglyph{:}
 \showglyph{a}
 \showglyph{b}
@@ -75,7 +107,21 @@
 \digitwidth=1.75cm
 
 \section{Ziffern}
-
+\showtransition{0}{1}
+\showtransition{1}{2}
+\showtransition{2}{3}
+\showtransition{3}{4}
+\showtransition{4}{5}
+\showtransition{5}{6}
+\showtransition{6}{7}
+\showtransition{7}{8}
+\showtransition{8}{9}
+\showtransition{9}{0}
+\showtransition{1}{0}
+\showtransition{2}{0}
+\showtransition{2}{1}
+\showtransition{3}{0}
+\showtransition{5}{0}
 \section{Interpunktion}
 \showtransition{:}{:}
 
@@ -107,6 +153,7 @@
 \showtransition{l}{g}
 \showtransition{m}{a}
 \showtransition{m}{j}
+\showtransition{m}{m}	
 \showtransition{m}{t}
 \showtransition{n}{b}
 \showtransition{n}{d}
