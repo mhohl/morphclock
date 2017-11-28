@@ -3910,7 +3910,7 @@ endfig;
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-outputtemplate := "clock-%c.mps";
+outputtemplate := "%j-clock-%c.mps";
 
 tmppath0 := _o_[TOP]
             .. _o_[RIGHT]
@@ -3943,7 +3943,7 @@ for i = 0 upto 719:
        draw 4/3[C,aux1]
             -- C
             -- 2/3[C,aux2];
-       
+
        setbounds currentpicture to boundingpath;
     endfig;
 endfor

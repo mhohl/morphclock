@@ -1,5 +1,6 @@
 #!/bin/bash
 SOURCE=glyph.mpost
+NAME=glyph
 SVGDIR=./svgglyph/
 
 test -d $SVGDIR || mkdir $SVGDIR
@@ -19,13 +20,13 @@ function format_name {
    local i=$1
    if [ $i -lt 100 ]; then
       to=$( chr $(( i + 32 )) )
-      target="glyph-${to}"
+      target="${NAME}-${to}"
    else
       from=$( chr $(( i / 10000 + 32 )) )
       i=$(( i % 10000 ))
       to=$( chr $(( i / 100 + 32 )) )
       printf -v index %02d $(( i % 100 ))
-      target="glyph-${from}${to}${index}"
+      target="${NAME}-${from}${to}-${index}"
    fi
    echo $target
 }
@@ -38,10 +39,11 @@ cd $SVGDIR
 rm -rf *.svg
 mpost -numbersystem=double $SOURCE > /dev/null
 rm $SOURCE
-for f in glyph*.svg; do
-    # only files like glyph-*.svg are changed
-    i=$( echo "${f%.svg}" | sed "s/glyph-//" )
-    mv glyph-$i.svg $(format_name $i).svg
+for f in *.svg; do
+    i=$( echo "${f%.svg}" | sed "s/${NAME}-//" )
+    if [[ $i != clock* ]]; then
+       mv ${NAME}-$i.svg $(format_name $i).svg
+    fi
 done
 cd ..
 
