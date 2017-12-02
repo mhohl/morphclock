@@ -2164,6 +2164,61 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+tmppath0 := _e_[LEFT]
+            -- _e_[RIGHT]{up}
+            .. _e_[TOP]
+            .. _e_[LEFT]
+            .. _e_[BOTTOM]
+            .. _e_[END];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw (subpath (0,5-2m) of tmppath0) rotatedaround (C,90m);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Der waagrechte Strich ist um 90° gedreht und wird zum d-Strich
+aux[BEGIN]  := _e_[RIGHT] rotatedaround (C,90);
+aux[END]    := _e_[LEFT]  rotatedaround (C,90);
+% Der obere Bogen vom e ist gedreht und wird zum d-Bauch:
+aux[LEFT]   := _e_[TOP] rotatedaround (C,90);
+
+% Wir definieren noch zwei Hilfspunkte auf dem Bogen:
+tmppath1 := aux[END] .. aux[LEFT] .. aux[BEGIN];
+aux[TOP] := point 1.75 of tmppath1;
+aux[BOTTOM] := point 0.25 of tmppath1;
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[aux[BEGIN],_d_[BEGIN]]
+            -- m[aux[END],_d_[END]];
+            
+       draw m[aux[BEGIN],_d_[U_ARC]]
+            .. m[aux[TOP],_d_[TOP]]
+            .. m[aux[LEFT],_d_[LEFT]]
+            .. m[aux[BOTTOM],_d_[BOTTOM]]
+            .. m[aux[END],_d_[D_ARC]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+
 %
 % e -> h
 %
