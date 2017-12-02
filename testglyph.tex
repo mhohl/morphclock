@@ -39,7 +39,7 @@
   \newpage
 }
 \newcommand{\showclock}[1]{%
-  \IfFileExists{clock-#1.mps}{\includegraphics[width=\digitwidth]{clock-#1.mps}}{}
+  \IfFileExists{glyph-clock-#1.mps}{\includegraphics[width=\digitwidth]{glyph-clock-#1.mps}}{}
 }
 \newcommand{\showclocks}{%
   \directlua{\unexpanded{
@@ -55,8 +55,8 @@
          elseif num < 100 then
             num = "0" .. num
          end
-         tex.print("\\IfFileExists{clock-" .. index .. ".mps}
-                    {\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps}←"
+         tex.print("\\IfFileExists{glyph-clock-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{glyph-clock-" .. index ..".mps}←"
                     .. num .. maybenewline .. "}{}")
      end
   }}
