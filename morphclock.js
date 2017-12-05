@@ -336,7 +336,7 @@ function renderTime() {
         }
         // set new path information
         var idx = src.slice(-2);
-        var path_array = morphpath["md-" + main[idx] + "-" + morph[idx]];
+        var path_array = morphpath[main[idx] + "-" + morph[idx]];
         for (var i=0, len=path_array.length; i < len; i++) {
             var path = document.createElementNS (xmlns, "path");
             path.setAttribute ('class', "svg-path");

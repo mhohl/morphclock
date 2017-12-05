@@ -1,5 +1,5 @@
-# Makefile für »digits«
-TARGET = digit
+# Makefile für »morphclock«
+TARGET = glyph
 
 SHELL = /bin/bash
 .SUFFIXES:
@@ -7,14 +7,15 @@ SHELL = /bin/bash
 
 # executables
 MPEXEC = mpost
+MPOPTS = "-numbersystem=double"
 
 ${TARGET}-*.mps: ${TARGET}.mpost
-	mpost $<
+	${MPEXEC} ${MPOPTS} $<
 
 svg/*.svg: ${TARGET}.mpost
 	bash generate_svg.sh
 
-testdigit.pdf: testdigit.tex ${TARGET}-*.mps
+testglyph.pdf: testglyph.tex ${TARGET}-*.mps
 	lualatex $<
 
 morphpaths.js: svg/*.svg
@@ -29,7 +30,7 @@ morphclock.min.js: morphpaths.js morphclock.js
 	sed -i "/last-modified/ s/\(content=\).*\(\"\)/\1\"$(shell date +"%Y-%m-%d@%T %Z" )\2/" $@
 
 .PHONY: test paths min html all install
-test: testdigit.pdf
+test: testglyph.pdf
 
 paths: morphpaths.js
 

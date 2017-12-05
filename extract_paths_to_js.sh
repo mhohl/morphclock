@@ -2,7 +2,7 @@
 
 first=true
 
-version=$( grep Version digit.log | sed "s/.*\"Version:[ ]*\(.*\)\".*/\1/" )
+version=$( grep Version glyph.log | sed "s/.*\"Version:[ ]*\(.*\)\".*/\1/" )
 
 echo "morphpath = {"
 echo "   version: '$version',"
