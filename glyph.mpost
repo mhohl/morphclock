@@ -117,6 +117,12 @@ def draw_grid(expr u) =
     fi
 enddef;
 
+def TODO(expr u) =
+      draw (-0.25u,0.85u);
+      draw (0.25u,0.85u);
+      draw (-0.25u,0.15u) .. (0,0) .. (0.25u,0.15u);
+enddef;
+
 path boundingpath;
 boundingpath := (-0.6u,-0.75u)
                 -- (-0.6u,1.5u)
@@ -2098,7 +2104,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       %TODO
+       TODO(u);
 
        setbounds currentpicture to boundingpath;
     endfig;
@@ -2918,6 +2924,10 @@ endfor
 
 start := transition("n","d");
 
+beginfig(start);
+draw tmppic;
+endfig;
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -2951,7 +2961,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
        t := 2-m;
 
-       
+       TODO(u);
 
        setbounds currentpicture to boundingpath;
     endfig;
