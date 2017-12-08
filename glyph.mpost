@@ -2096,6 +2096,33 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
+% die Hilfspunkte für den Übergang vom gedrehten e zum a:
+aux[BEGIN] := aux[END] rotatedaround (C,180);
+aux[TOP]   := _e_[BOTTOM] rotatedaround (C,180);
+aux[RIGHT] := zero[LEFT] rotatedaround (C,180);
+aux[L_ARC] := zero[RIGHT] rotatedaround (C,180);
+aux[BOTTOM] := _e_[TOP] rotatedaround (C,180);
+
+% einige Winkel
+tmppath1 := _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. _a_[END];
+aux2 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux2);
+aux4 := direction 4 of tmppath1;
+phi[END] := angle(aux4);
+
+tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+aux1 := direction 1 of tmppath2;
+phi[L_ARC] := angle(aux1);
+aux3 := direction 3 of tmppath2;
+phi[JOINT] := angle(aux3);
+
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
@@ -2103,8 +2130,23 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
+       
+       % Wir behandeln den e-Strich und den nach unten
+       % gedrehten e-Boden als zwei zusammenhängende
+       % Pfade und passen die Winkel sukzessive an,
+       % sodass am Ende ein glatter Übergang im Punkt
+       % _a_[L_ARC] entsteht:
+       draw m[aux[RIGHT],_a_[R_ARC]]{dir m[-180,phi[R_ARC]]}
+            .. m[aux[L_ARC],_a_[L_ARC]]{dir m[-180,phi[L_ARC]]}
+         &  m[aux[L_ARC],_a_[L_ARC]]{dir m[-90,phi[L_ARC]]}
+            .. m[aux[BOTTOM],_a_[BOTTOM]]
+            .. m[aux[RIGHT],_a_[JOINT]]{dir m[90,phi[JOINT]]};      
 
-       TODO(u);
+       draw m[aux[BEGIN],_a_[BEGIN]]
+            .. m[aux[TOP],_a_[TOP]]
+            .. m[aux[RIGHT],_a_[R_ARC]]
+            --- m[aux[RIGHT],_a_[JOINT]]
+            .. m[aux[BOTTOM],_a_[END]]{dir m[-180,phi[END]]};
 
        setbounds currentpicture to boundingpath;
     endfig;
