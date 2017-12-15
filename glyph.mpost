@@ -3747,6 +3747,67 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Hilfspunkte
+% wir erweitern den t-Bogen zu einem Halbkreis:
+aux[R_ARC] := _t_[MID] xscaled -1;
+% Hilfspunkte im v:
+tmppath0 := (-infinity,ypart(_t_[MID]))
+            -- (infinity,ypart(_t_[MID]));
+aux[LEFT]  := (_v_[LEFT] -- _v_[BOTTOM]) intersectionpoint tmppath0;
+aux[RIGHT] := (_v_[BOTTOM] -- _v_[RIGHT]) intersectionpoint tmppath0;
+aux[END] := 1/2[_v_[BOTTOM],_v_[RIGHT]];
+
+phi[LEFT]  := angle(_v_[BOTTOM]-_v_[LEFT]); show phi[LEFT];
+phi[RIGHT] := angle(_v_[RIGHT]-_v_[BOTTOM]); show phi[RIGHT];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw _t_[LEFT] -- _t_[RIGHT];
+       
+       tmppath1 := m[_t_[BEGIN],_v_[LEFT]]
+                   -- m[_t_[MID],aux[LEFT]] %{dir m[-90,phi[LEFT]]}
+                   .. m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[LEFT]]}
+                   & m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[RIGHT]]}
+                   .. m[_t_[END],aux[RIGHT]]
+                   .. m[aux[R_ARC],aux[END]];
+                   
+       draw subpath (0,3+m) of tmppath1;
+            
+
+      
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_t_[LEFT],aux[END]]
+            -- m[_t_[RIGHT],_v_[RIGHT]];
+
+       draw _v_[LEFT]
+            -- _v_[BOTTOM]
+            -- aux[END];       
+              
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+
+
 %
 % t -> w
 %
@@ -3756,6 +3817,53 @@ start := transition("t","w");
 beginfig(start);
    draw tmppic;
 endfig;
+
+% Wir zeichnen den Übergang t -> v in der ersten Hälfte,
+% also doppelt so schnell:
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw max(0,2m-1)[_t_[LEFT],aux[END]]
+            -- max(0,2m-1)[_t_[RIGHT],_v_[RIGHT]];
+
+       tmppath1 := min(2m,1)[_t_[BEGIN],_v_[LEFT]]
+                   -- min(2m,1)[_t_[MID],aux[LEFT]]
+                   .. min(2m,1)[_t_[BOTTOM],_v_[BOTTOM]]{dir min(2m,1)[0,phi[LEFT]]}
+                   & min(2m,1)[_t_[BOTTOM],_v_[BOTTOM]]{dir min(2m,1)[0,phi[RIGHT]]}
+                   .. min(2m,1)[_t_[END],aux[RIGHT]]
+                   .. min(2m,1)[aux[R_ARC],aux[END]];
+                   
+       draw subpath (0,3+min(2m,1)) of tmppath1;
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% wir verdoppeln das v zum w
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_v_[LEFT],_w_[BEGIN]]
+            -- m[_v_[BOTTOM],_w_[LEFT]]
+            -- m[_v_[RIGHT],_w_[MID]];
+       draw m[_v_[LEFT],_w_[MID]]
+            -- m[_v_[BOTTOM],_w_[RIGHT]]
+            -- m[_v_[RIGHT],_w_[END]];
+              
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 
 %
 % u -> ()
