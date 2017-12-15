@@ -3828,17 +3828,17 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
        
-       draw max(0,2m-1)[_t_[LEFT],aux[END]]
-            -- max(0,2m-1)[_t_[RIGHT],_v_[RIGHT]];
+       draw m[_t_[LEFT],aux[END]]
+            -- m[_t_[RIGHT],_v_[RIGHT]];
 
-       tmppath1 := min(2m,1)[_t_[BEGIN],_v_[LEFT]]
-                   -- min(2m,1)[_t_[MID],aux[LEFT]]
-                   .. min(2m,1)[_t_[BOTTOM],_v_[BOTTOM]]{dir min(2m,1)[0,phi[LEFT]]}
-                   & min(2m,1)[_t_[BOTTOM],_v_[BOTTOM]]{dir min(2m,1)[0,phi[RIGHT]]}
-                   .. min(2m,1)[_t_[END],aux[RIGHT]]
-                   .. min(2m,1)[aux[R_ARC],aux[END]];
+       tmppath1 := m[_t_[BEGIN],_v_[LEFT]]
+                   -- m[_t_[MID],aux[LEFT]]
+                   .. m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[LEFT]]}
+                   & m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[RIGHT]]}
+                   .. m[_t_[END],aux[RIGHT]]
+                   .. m[aux[R_ARC],aux[END]];
                    
-       draw subpath (0,3+min(2m,1)) of tmppath1;
+       draw subpath (0,3+m) of tmppath1;
        
        setbounds currentpicture to boundingpath;
     endfig;
