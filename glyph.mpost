@@ -3563,6 +3563,7 @@ beginfig(start);
         -- _t_[MID]{down}
         .. _t_[BOTTOM]
         .. _t_[END];
+
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -3713,6 +3714,7 @@ tmppath1 := _u_[BEGIN]
             .. _u_[RIGHT]{up}
             -- _u_[END];
 aux[R_ARC] := point 2.5 of tmppath1;
+show angle(direction 1 of tmppath1);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3757,8 +3759,8 @@ aux[LEFT]  := (_v_[LEFT] -- _v_[BOTTOM]) intersectionpoint tmppath0;
 aux[RIGHT] := (_v_[BOTTOM] -- _v_[RIGHT]) intersectionpoint tmppath0;
 aux[END] := 1/2[_v_[BOTTOM],_v_[RIGHT]];
 
-phi[LEFT]  := angle(_v_[BOTTOM]-_v_[LEFT]); show phi[LEFT];
-phi[RIGHT] := angle(_v_[RIGHT]-_v_[BOTTOM]); show phi[RIGHT];
+phi[LEFT]  := angle(_v_[BOTTOM]-_v_[LEFT]);
+phi[RIGHT] := angle(_v_[RIGHT]-_v_[BOTTOM]);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -4052,6 +4054,57 @@ start := transition("w","t");
 beginfig(start);
    draw tmppic;
 endfig;
+
+
+% ein Hilfspunkt über _w_[RIGHT] auf halber Buchstabenhöhe
+aux[RIGHT] := (xpart(_w_[RIGHT]),ypart(1/2[_w_[MID],_w_[RIGHT]]));
+phi[RIGHT] := angle(aux[RIGHT]-_w_[MID]); show phi[RIGHT];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       tmppath0 := _w_[MID]
+                   -- min(2m,1)[_w_[RIGHT],aux[RIGHT]]
+                   -- m[_w_[END],_w_[MID]];
+       
+       draw _w_[BEGIN]
+            -- _w_[LEFT]
+            -- _w_[MID];
+       
+       draw tmppath0 rotatedaround (_w_[MID],m[0,180-phi[RIGHT]]);    
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[LEFT] := aux[RIGHT] rotatedaround (_w_[MID],180-phi[RIGHT]);
+aux[MID]  := 1/2[_w_[LEFT],_w_[MID]];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+      
+       draw m[aux[LEFT],_t_[LEFT]]
+            -- m[_w_[MID],_t_[RIGHT]];
+            
+       draw m[_w_[BEGIN],_t_[BEGIN]]
+            -- m[_w_[LEFT],_t_[MID]]
+         &  m[_w_[LEFT],_t_[MID]]
+            .. m[aux[MID],_t_[BOTTOM]]
+            .. m[_w_[MID],_t_[END]];
+              
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % x -> ()
