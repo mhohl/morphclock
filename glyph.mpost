@@ -2582,6 +2582,54 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+aux[BEGIN]  := (xpart(_r_[BEGIN]),ypart(_h_[BEGIN]));
+aux[LEFT]   := (xpart(_r_[MID]),ypart(_h_[LEFT]));
+aux[RIGHT]  := _r_[TOP] rotatedaround
+              ((xpart(_r_[TOP]),ypart(_r_[MID])),-90);
+aux[END]    := (xpart(aux[RIGHT]),0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_h_[BEGIN],aux[BEGIN]]
+            -- m[_h_[LEFT],aux[LEFT]];
+       draw m[_h_[BOTTOM],_r_[BOTTOM]]
+            -- m[_h_[LEFT],aux[LEFT]]{up}
+            .. _h_[MID]
+            .. m[_h_[RIGHT],aux[RIGHT]]{down}
+            -- m[_h_[END],aux[END]];
+        
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := _r_[MID]{up}
+                   .. _r_[TOP]
+                   .. _r_[END]
+                   .. aux[RIGHT]{down}
+                   -- aux[END];
+
+       draw _r_[BOTTOM]
+            -- m[aux[BEGIN],_r_[BEGIN]];
+       draw subpath (0,4-2m) of tmppath0;
+      
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % i -> ()
 %
@@ -3714,7 +3762,6 @@ tmppath1 := _u_[BEGIN]
             .. _u_[RIGHT]{up}
             -- _u_[END];
 aux[R_ARC] := point 2.5 of tmppath1;
-show angle(direction 1 of tmppath1);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -4058,7 +4105,7 @@ endfig;
 
 % ein Hilfspunkt über _w_[RIGHT] auf halber Buchstabenhöhe
 aux[RIGHT] := (xpart(_w_[RIGHT]),ypart(1/2[_w_[MID],_w_[RIGHT]]));
-phi[RIGHT] := angle(aux[RIGHT]-_w_[MID]); show phi[RIGHT];
+phi[RIGHT] := angle(aux[RIGHT]-_w_[MID]);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
