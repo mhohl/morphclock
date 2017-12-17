@@ -4007,6 +4007,57 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       tmppath0 := _u_[RIGHT] -- _u_[BOTTOM];
+       tmppath1 := _u_[BEGIN]
+                   -- _u_[LEFT]{down}
+                   .. _u_[MID]
+                   .. _u_[RIGHT]{up}
+                   -- _u_[END];
+
+       draw tmppath0 rotatedaround (C,-90m);
+       draw tmppath1 rotatedaround (C,-90m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Das rotierte u wird in aux-Variablen abgelegt:
+aux[LEFT]   := _u_[MID] rotatedaround (C,-90);
+aux[TOP]    := _u_[LEFT] rotatedaround (C,-90);
+aux[RIGHT]  := _u_[BEGIN] rotatedaround (C,-90);
+aux[BOTTOM] := _u_[RIGHT] rotatedaround (C,-90);
+aux[END]    := _u_[END] rotatedaround (C,-90);
+
+aux[BEGIN]  := _u_[BOTTOM] rotatedaround (C,-90);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       draw m[aux[BEGIN],_e_[LEFT]]
+            -- m[aux[END],_e_[RIGHT]];
+      
+       draw m[aux[RIGHT],_e_[RIGHT]]
+            .. m[aux[TOP],_e_[TOP]]{left}
+            .. m[aux[LEFT],_e_[LEFT]]
+            .. m[aux[BOTTOM],_e_[BOTTOM]]{right}
+            .. m[aux[END],_e_[END]];
+              
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % u -> i
 %
