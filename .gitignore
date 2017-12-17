@@ -4,9 +4,10 @@
 *.toc
 *.mps
 *.pdf
+*.out
 morphpaths.js
 morphclock.min.js
 
 upload_morph.sh
 svg/
-svgglyph/
+
