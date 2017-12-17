@@ -2007,10 +2007,6 @@ endfor
 
 start := standalone("d");
 
-%
-% d -> j
-%
-
 beginfig(start);
    draw_grid(u);
    pickup pc;
@@ -2025,11 +2021,78 @@ beginfig(start);
    tmppic := currentpicture;
 endfig;
 
+%
+% d -> j
+%
+
 start := transition("d","j");
 
 beginfig(start);
    draw tmppic;
 endfig;
+
+% Die Mitte zwischen linkem Bauch und d-Stamm:
+tmp0 := (xpart(_d_[END])-xpart(_d_[LEFT]))/2; show (tmp0/u);
+aux[MID]    := _d_[END] shifted (-tmp0,tmp0);
+aux[TOP]    := aux[MID] shifted (0,tmp0);
+aux[BOTTOM] := aux[MID] shifted (0,-tmp0);
+aux[LEFT]   := aux[MID] shifted (-tmp0,0);
+aux[RIGHT]  := aux[MID] shifted (tmp0,0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw _d_[BEGIN] -- _d_[END];
+       draw m[_d_[U_ARC],aux[RIGHT]]
+            .. m[_d_[TOP],aux[TOP]]
+            .. m[_d_[LEFT],aux[LEFT]]
+            .. m[_d_[BOTTOM],aux[BOTTOM]]
+            .. m[_d_[D_ARC],aux[RIGHT]];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Als Erweiterung für den Bogen am d-Stamm definieren
+% wir zwei Zusatzpunkte:
+
+aux[D_ARC] := _d_[END] shifted (-0.15u,-0.15u);
+aux[L_ARC] := aux[D_ARC] rotatedaround
+              ((xpart(aux[D_ARC]),ypart(_d_[END])),-45);
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       tmppath0 := m[_d_[BEGIN],_j_[BEGIN]]
+                   -- m[_d_[END],_j_[MID]]{down}
+                   .. m[aux[D_ARC],_j_[BOTTOM]]
+                   .. m[aux[L_ARC],_j_[END]];
+                   
+       draw subpath (0,1+2m) of tmppath0;
+       
+       draw m[aux[RIGHT],_j_[TOP]]
+            .. m[aux[TOP],_j_[TOP]]
+            .. m[aux[LEFT],_j_[TOP]]
+            .. m[aux[BOTTOM],_j_[TOP]]
+            .. cycle;
+       
+       % Um Artefakte in kleinen Schlaufen zu vermeiden:
+       
+       if m > 0.85: draw m[aux[MID],_j_[TOP]]; fi
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % d -> u
