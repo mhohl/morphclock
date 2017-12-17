@@ -1612,6 +1612,9 @@ _t_[MID]    = _l_[MID];
 _t_[BOTTOM] = _l_[BOTTOM];
 _t_[END]    = _l_[END];
 
+_t_[JOINT]  = (_t_[LEFT] -- _t_[RIGHT]) intersectionpoint
+              (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt
+
 % u
 _u_[BOTTOM] = _n_[BEGIN]  rotatedaround(C,180);
 _u_[RIGHT]  = _n_[LEFT]   rotatedaround(C,180);
@@ -2995,6 +2998,73 @@ start := transition("m","t");
 beginfig(start);
    draw tmppic;
 endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       tmppath0 := m[_m_[BEGIN],_m_[LEFT]] -- _m_[LEFT];
+       tmppath1 := _m_[BOTTOM]
+                   -- _m_[LEFT]{up}
+                   .. _m_[L_ARC]
+                   .. _m_[JOINT]{down}
+                   &  _m_[JOINT]{up}
+                   .. _m_[R_ARC]
+                   .. _m_[RIGHT]{down}
+                   -- _m_[END];
+       tmppath2 :=  _m_[MID] -- _m_[JOINT];
+       
+       draw tmppath0 rotatedaround (C,90m);
+       draw tmppath1 rotatedaround (C,90m);
+       draw tmppath2 rotatedaround (C,90m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Hilfspunkte; das m ist bereits gedreht:
+aux[BOTTOM] := _m_[BOTTOM] rotatedaround (C,90);
+aux[LEFT]   := _m_[LEFT] rotatedaround (C,90);
+aux[L_ARC]  := _m_[L_ARC] rotatedaround (C,90);
+aux[JOINT]  := _m_[JOINT] rotatedaround (C,90);
+aux[R_ARC]  := _m_[R_ARC] rotatedaround (C,90);
+aux[RIGHT]  := _m_[RIGHT] rotatedaround (C,90);
+aux[END]    := _m_[END] rotatedaround (C,90);
+aux[MID]    := _m_[MID] rotatedaround (C,90);
+
+% weitere Hilfspunkte; wir brauchen für den
+% obenren Bogen "ARC" resp. das Teilstück zwischen 
+% t-Strich und t-Spitze einen unteren "D" und
+% einen oberen "U" Hilfspunkt;
+aux[D_ARC] := 1/3[_t_[JOINT],_t_[BEGIN]];
+aux[U_ARC] := 2/3[_t_[JOINT],_t_[BEGIN]];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[aux[BOTTOM],_t_[END]]
+            .. m[aux[LEFT],_t_[BOTTOM]]{left}
+            .. m[aux[L_ARC],_t_[MID]]{up}
+            .. m[aux[JOINT],_t_[JOINT]]{dir m[0,90]}
+            &  m[aux[JOINT],_t_[JOINT]]{dir m[180,90]}
+            .. m[aux[R_ARC],aux[D_ARC]]
+            .. m[aux[RIGHT],aux[U_ARC]]{dir m[0,90]}
+            .. m[aux[END],_t_[BEGIN]];
+       draw m[aux[JOINT],_t_[LEFT]]
+            -- m[aux[MID],_t_[RIGHT]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 
 %
 % n -> ()
