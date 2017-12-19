@@ -3801,6 +3801,77 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Wir machen das s unten so schmal wie oben:
+aux[D_ARC] := (xpart(_s_[BEGIN]),ypart(_s_[D_ARC]));
+aux[END]   := (xpart(_s_[U_ARC]),ypart(_s_[END]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       tmppath0 := _s_[MID]
+                   .. _s_[BEGIN]{up}
+                   .. _s_[TOP]
+                   .. _s_[U_ARC]{down}
+                   .. _s_[MID]
+                   .. m[_s_[D_ARC],aux[D_ARC]]{down}
+                   .. _s_[BOTTOM]
+                   .. m[_s_[END],aux[END]]{up};
+                   
+       draw (subpath (1-m,7) of tmppath0) rotatedaround (_s_[MID],90m);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[BOTTOM] := _s_[U_ARC]  rotatedaround (_s_[MID],90);
+aux[LEFT]   := _s_[TOP]    rotatedaround (_s_[MID],90);
+aux[L_ARC]  := _s_[BEGIN]  rotatedaround (_s_[MID],90);
+aux[JOINT]  := _s_[MID];
+aux[R_ARC]  := aux[D_ARC]  rotatedaround (_s_[MID],90);
+aux[RIGHT]  := _s_[BOTTOM] rotatedaround (_s_[MID],90);
+aux[END]    := aux[END]    rotatedaround (_s_[MID],90);
+
+tmppath0 := aux[BOTTOM]{right}
+            .. aux[JOINT]
+            .. aux[R_ARC]{right}
+            .. aux[RIGHT]{down}
+            .. aux[END]{left};
+aux0 := direction 1 of tmppath0;
+phi[JOINT] := angle(aux0);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       draw m[aux[BOTTOM],_m_[MID]]{dir m[0,90]}
+            .. m[aux[JOINT],_m_[JOINT]]{dir m[phi[JOINT],90]}
+            .. m[aux[R_ARC],_m_[R_ARC]]{right}
+            .. m[aux[RIGHT],_m_[RIGHT]]{down}
+            .. m[aux[END],_m_[END]]{dir m[180,270]};
+            
+       draw m[aux[BOTTOM],_m_[BOTTOM]]{dir m[180,90]}
+            .. m[aux[LEFT],_m_[LEFT]]{up}
+            .. m[aux[L_ARC],_m_[L_ARC]]{right}
+            .. m[aux[JOINT],_m_[JOINT]];
+            
+       tmppath1 := m[aux[LEFT],_m_[LEFT]]
+                   -- _m_[BEGIN];
+       draw subpath (0,(max(0,2m-1))) of tmppath1;
+              
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % s -> o
 %
