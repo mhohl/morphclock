@@ -3421,6 +3421,77 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_o_[TOP],_o_[BOTTOM]]
+            .. _o_[RIGHT]
+            .. _o_[BOTTOM]
+            .. _o_[LEFT]
+            .. cycle;
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := _o_[BOTTOM]{right}
+            .. _o_[RIGHT]
+            .. _o_[BOTTOM]{left}
+            .. _o_[LEFT]
+            .. cycle;
+
+% Die Figur kann aus eigedrückte Schale oder als
+% acht gezeichnet werden; daher ist aux[LEFT] nicht
+% eindeutig auf 2.5
+aux[RIGHT] := point 1.5 of tmppath0;
+aux[LEFT]  := aux[RIGHT] xscaled -1;
+% der kleinere, innere Bogen:
+aux[R_ARC] := point 0.5 of tmppath0;
+aux[L_ARC] := aux[R_ARC] xscaled -1;
+
+aux0 := direction 1 of tmppath0;
+phi[END]   := angle(aux0);
+phi[BEGIN] := -phi[END];
+aux1 := direction 1.5 of tmppath0;
+phi[RIGHT] := angle(aux1);
+phi[LEFT]  := -phi[RIGHT];
+aux2 := direction 0.5 of tmppath0;
+phi[R_ARC] := angle(aux2);
+phi[L_ARC] := -phi[R_ARC];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw _o_[BOTTOM]
+            .. m[aux[R_ARC],_u_[RIGHT]]{dir m[phi[R_ARC],90]}
+            .. {dir m[phi[END],90]}m[_o_[RIGHT],_u_[END]]{dir m[phi[END],-90]}
+            .. m[aux[RIGHT],_u_[RIGHT]]{dir m[phi[RIGHT],-90]}
+            .. _o_[BOTTOM]
+            .. m[aux[LEFT],_u_[LEFT]]{dir m[phi[LEFT],90]}
+            .. {dir m[phi[BEGIN],90]}m[_o_[LEFT],_u_[BEGIN]]{dir m[phi[BEGIN],-90]}
+            .. m[aux[L_ARC],_u_[LEFT]]{dir m[phi[L_ARC],-90]}
+            .. cycle;
+            
+       tmppath1 := m[aux[RIGHT],_u_[RIGHT]]
+                   -- _u_[BOTTOM];
+                   
+       draw subpath (0,(max(0,2m-1))) of tmppath1;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % p -> ()
 %
