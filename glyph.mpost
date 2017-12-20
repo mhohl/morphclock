@@ -4424,7 +4424,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
       
-       t := 1/(1-m);
        draw m[aux[LEFT],_i_[TOP]]
             .. m[aux[RIGHT],_i_[TOP]];
             
@@ -4452,6 +4451,52 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+aux[BEGIN] := (0,xpart(_u_[END])-xpart(_u_[BEGIN])) shifted _u_[END];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       tmppath0 := min(2m,1)[_u_[END],aux[BEGIN]]
+                  -- min(2m,1)[_u_[BOTTOM],_u_[END]];
+       draw tmppath0 rotatedaround (_u_[END],90*max(2m-1,0));
+       draw _u_[BEGIN]
+            -- _u_[LEFT]{down}
+            .. _u_[MID]
+            .. _u_[RIGHT]{up}
+            -- _u_[END];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+aux[MID] := 1/2[_u_[BEGIN],_u_[END]];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+      
+       draw m[_u_[BEGIN],_o_[LEFT]]{dir m[0,90]}
+            .. m[aux[MID],_o_[TOP]]
+            .. m[_u_[END],_o_[RIGHT]]{dir m[0,-90]};
+       draw m[_u_[BEGIN],_o_[LEFT]]
+            -- m[_u_[LEFT],_o_[LEFT]]{down}
+            .. m[_u_[MID],_o_[BOTTOM]]
+            .. m[_u_[RIGHT],_o_[RIGHT]]{up}
+            -- m[_u_[END],_o_[RIGHT]];
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 %
 % u -> u
 %
