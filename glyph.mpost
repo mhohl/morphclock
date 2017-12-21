@@ -3411,6 +3411,75 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Ein Hilfspunkt, der zur "Spitze" des n wandert:
+tmppath0 := _o_[TOP]
+            .. _o_[RIGHT]
+            .. _o_[BOTTOM]
+            .. _o_[LEFT]
+            .. cycle;
+aux[BEGIN] := point 3.5 of tmppath0;
+% Der andere bleibt unverändert und formt die Spitze aus:
+aux[U_ARC] := point 3.75 of tmppath0;
+% Zwei weitere Hilfspunkte, die von der Grundlinie
+% so weit entfernt sind wie der Bogenansatz zur Oberkante:
+tmp0 := ypart(_n_[BEGIN])-ypart(_n_[LEFT]);
+aux[LEFT]  := _n_[BOTTOM] shifted (0,tmp0);
+aux[RIGHT] := _n_[END] shifted (0,tmp0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[aux[BEGIN],_n_[BEGIN]]
+            .. aux[U_ARC]
+            .. _o_[TOP]{right}
+            .. m[_o_[RIGHT],_n_[RIGHT]]{down}
+            .. m[_o_[RIGHT],aux[RIGHT]]{down}
+            .. _o_[BOTTOM]
+            .. m[_o_[LEFT],aux[LEFT]]{up}
+            .. m[_o_[LEFT],_n_[LEFT]]{up}
+            .. cycle;
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := _n_[LEFT]{up}
+            .. _n_[BEGIN]
+            .. aux[U_ARC]
+            .. _n_[MID]
+            .. _n_[RIGHT]{down};
+aux1 := direction 1 of tmppath0;
+phi[BEGIN] := angle(aux1);
+aux2 := direction 2 of tmppath0;
+phi[U_ARC] := angle(aux2);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_o_[BOTTOM],_n_[BOTTOM]]
+            .. aux[LEFT]{up}
+            .. _n_[LEFT]{up}
+            .. {dir m[phi[BEGIN],90]}_n_[BEGIN]{dir m[phi[BEGIN],-90]}
+            .. m[aux[U_ARC],_n_[LEFT]]{dir m[phi[U_ARC],90]}
+            .. _n_[MID]
+            .. _n_[RIGHT]{down}
+            .. aux[RIGHT]{down}
+            .. m[_o_[BOTTOM],_n_[END]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % o -> u
 %
@@ -3490,7 +3559,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 %
 % p -> ()
@@ -4589,7 +4657,7 @@ tmppath0 := _c_[BEGIN]
             -- _c_[LEFT]
             -- _c_[END];
 aux0 := direction 0 of tmppath0;
-phi[U_ARC] := angle(aux0); show(phi[U_ARC]);
+phi[U_ARC] := angle(aux0);
 aux2 := direction 2 of tmppath0;
 phi[D_ARC] := angle(aux2);
 
