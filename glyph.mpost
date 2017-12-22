@@ -2972,6 +2972,71 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Der rechte Bogen wandert an der Strecke _m_[JOINT]/_m_[MID]
+% nach unten:
+aux[R_ARC] := _m_[R_ARC] shifted -(0,ypart(_m_[JOINT])-ypart(_m_[MID]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       % Der kleine Strich wird zum Punkt:
+       draw _m_[BEGIN]
+            -- m[_m_[LEFT],_m_[BEGIN]];
+       % Der erste m-Bogen bleibt unverändert
+       draw _m_[BOTTOM]
+            -- _m_[LEFT]{up}
+            .. _m_[L_ARC]
+            .. _m_[JOINT]{down}
+            -- _m_[MID];
+       % während der zweite schrumpft:
+       draw m[_m_[JOINT],_m_[MID]]{up}
+            .. m[_m_[R_ARC],aux[R_ARC]]
+            .. m[_m_[RIGHT],_m_[END]]{down}
+            -- _m_[END];
+             
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Der Bogen muss verkleinert werden, dazu wird der
+% Radius ermittelt:
+tmp0 := xpart(_j_[MID])-xpart(_j_[BOTTOM]);
+aux[END] := _m_[MID] shifted (2*tmp0,0); show(aux[END]/u);
+aux[TOP] := _m_[MID] shifted (tmp0,tmp0); show(aux[TOP]/u);
+ 
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % Der Punkt wandert im Bogen zur j-Position:
+       draw _m_[BEGIN] rotatedabout (1/2[_m_[BEGIN],_j_[TOP]],-180m);
+       
+       % Der erste Bogen wird zum j-Stamm
+       tmppath0 := _m_[BOTTOM]
+                   -- _m_[LEFT]{up}
+                   .. _m_[L_ARC]
+                   .. m[_m_[JOINT],_j_[BEGIN]]{down}
+                   -- m[_m_[MID],_j_[MID]];
+       draw subpath (3m,4) of tmppath0;
+       % der zweite Bogen passt seine Größe an das j an und
+       % klappt um 180° nach unten:
+       tmppath1 := _m_[MID]{up}
+                   .. m[aux[R_ARC],aux[TOP]]
+                   .. m[_m_[END],aux[END]]{down};
+       draw subpath (0,2-0.5m) of tmppath1 shifted m[_m_[MID],_j_[MID]] rotatedaround (m[_m_[MID],_j_[MID]],-180m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % m -> m
 %
