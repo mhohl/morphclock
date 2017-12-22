@@ -2423,6 +2423,64 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Der Hilfspunkt in der Mitte des Bogens, der
+% dann zu _m_[JOINT] wird:
+aux[JOINT] := (xpart(_m_[JOINT]),ypart(_m_[L_ARC]));
+% Der f-Strich wandert nach unten:
+aux[LEFT]  := (xpart(_f_[LEFT]),ypart(_m_[JOINT])) shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
+aux[RIGHT] := (xpart(_f_[RIGHT]),ypart(_m_[JOINT])) shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
+aux[MID] := 1/2[aux[LEFT],aux[RIGHT]];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       draw m[_f_[LEFT],aux[LEFT]]
+            -- m[_f_[RIGHT],aux[RIGHT]];
+       draw m[_f_[BEGIN],_m_[BOTTOM]]
+            -- m[_f_[MID],_m_[LEFT]]{up}
+            .. m[_f_[TOP],_m_[L_ARC]]
+            .. m[_f_[TOP],aux[JOINT]]
+            .. m[_f_[TOP],_m_[R_ARC]]
+            .. m[_f_[END],_m_[RIGHT]]{dir m[-45,-90]};
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       % der f-Strich zerfällt in zwei Teile
+       draw m[aux[LEFT],_m_[BEGIN]]
+            -- m[aux[MID],_m_[LEFT]];
+       draw m[aux[MID],_m_[JOINT]]
+            -- m[aux[RIGHT],_m_[MID]];
+       % der erweiterte f-Bogen bekommt die
+       % "Mittendelle" und einen verlängerten
+       % Abstrich rechts
+       draw _m_[BOTTOM]
+            -- _m_[LEFT]{up}
+            .. _m_[L_ARC]
+            .. {dir m[0,-90]}m[aux[JOINT],_m_[JOINT]]{dir m[0,90]}
+            .. _m_[R_ARC]
+            .. _m_[RIGHT]{down}
+            .. m[_m_[RIGHT],_m_[END]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % f -> s
 %
