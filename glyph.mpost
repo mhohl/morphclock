@@ -3881,14 +3881,67 @@ for i = start+1 upto start+2fpht-1:
     endfig;
 endfor
 %
-% r -> t
+% r -> y
 %
 
-start := transition("r","t");
+start := transition("r","y");
 
 beginfig(start);
    draw tmppic;
 endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+       
+       tmppath0 := _r_[BEGIN] -- _r_[BOTTOM];
+       tmppath1 := _r_[MID]{up}
+                   .. _r_[TOP]
+                   .. _r_[END];
+       
+       draw tmppath0 rotatedaround (C,-90m);
+       draw tmppath1 rotatedaround (C,-90m);
+       
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[BEGIN] := _r_[BOTTOM] rotatedaround (C,-90);
+aux[END]   := _r_[BEGIN]  rotatedaround (C,-90);
+aux[LEFT]  := 1/4[aux[BEGIN],aux[END]];
+aux[MID]   := 1/2[aux[BEGIN],aux[END]];
+aux[RIGHT] := 3/4[aux[BEGIN],aux[END]];
+
+aux[D_ARC]  := _r_[END] rotatedaround (C,-90);
+aux[BOTTOM] := _r_[TOP] rotatedaround (C,-90);
+% Der Punkt wandert ebenfalls zu _y_[RIGHT],
+% aber aux[RIGHT] ist schon belegt:
+aux[JOINT]  := _r_[MID] rotatedaround (C,-90);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       draw m[aux[BEGIN],_y_[BEGIN]]
+            .. m[aux[LEFT],_y_[LEFT]]{dir m[0,-90]}
+            .. m[aux[MID],_y_[MID]]
+            .. m[aux[RIGHT],_y_[RIGHT]]{dir m[0,90]}
+            .. m[aux[END],_y_[END]];
+       draw min(2m,1)[aux[JOINT],_y_[RIGHT]]
+            .. min(2m,1)[aux[BOTTOM],_y_[BOTTOM]]{down}
+            .. min(2m,1)[aux[D_ARC],_y_[D_ARC]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 
 %
 % s -> ()
