@@ -3197,8 +3197,8 @@ endfor
 % Der Bogen muss verkleinert werden, dazu wird der
 % Radius ermittelt:
 tmp0 := xpart(_j_[MID])-xpart(_j_[BOTTOM]);
-aux[END] := _m_[MID] shifted (2*tmp0,0); show(aux[END]/u);
-aux[TOP] := _m_[MID] shifted (tmp0,tmp0); show(aux[TOP]/u);
+aux[END] := _m_[MID] shifted (2*tmp0,0);
+aux[TOP] := _m_[MID] shifted (tmp0,tmp0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
