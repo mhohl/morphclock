@@ -1891,6 +1891,80 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+tmppath1 := _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. _a_[END];
+aux0 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux0);
+
+tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+
+aux[MID] := point 1/2 of tmppath2;
+
+tmppath3 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. aux[MID]
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. m[_a_[END],_u_[BOTTOM]];
+       draw subpath (m,4) of tmppath3;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% der Winkel am Ende des verkürzten a-Bauches:
+aux1 := direction 1 of tmppath3;
+phi[MID] := angle(aux1);
+% Der Winkel am a-Bauch
+aux2 := direction 2 of tmppath3;
+phi[L_ARC] := angle(aux2);
+% der Winkel am "Joint":
+aux4 := direction 4 of tmppath3;
+phi[JOINT] := angle(aux4);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := _a_[BEGIN]
+                   ..  _a_[TOP]
+                   ..  m[_a_[R_ARC],_u_[END]]
+                   --- m[_a_[JOINT],_u_[RIGHT]]
+                   .. _u_[BOTTOM];
+
+       draw subpath (2m,4) of tmppath0;
+       draw m[aux[MID],_u_[BEGIN]]{dir m[phi[MID],-90]}
+            .. m[_a_[L_ARC],_u_[LEFT]]{dir m[phi[L_ARC],-90]}
+            .. m[_a_[BOTTOM],_u_[MID]]
+            .. m[_a_[JOINT],_u_[RIGHT]]{dir m[phi[JOINT],90]};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % b -> ()
 %
@@ -2107,6 +2181,65 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Winkel
+tmppath0 := _d_[U_ARC]
+            .. _d_[TOP]
+            .. _d_[LEFT]
+            .. _d_[BOTTOM]
+            .. _d_[D_ARC];
+aux1 := direction 1 of tmppath0;
+phi[TOP] := angle(aux1);
+aux3 := direction 3 of tmppath0;
+phi[BOTTOM] := angle(aux3);
+
+% Hilfspunkte gedrehtes u:
+aux[BEGIN] := _u_[BEGIN] rotatedaround (C,-90);
+aux[LEFT]  := _u_[LEFT]  rotatedaround (C,-90);
+aux[MID]   := _u_[MID]   rotatedaround (C,-90);
+aux[RIGHT] := _u_[RIGHT] rotatedaround (C,-90);
+aux[END]   := _u_[END]   rotatedaround (C,-90);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _d_[BEGIN] -- _d_[END];
+       draw m[_d_[U_ARC],aux[BEGIN]]
+            .. m[_d_[TOP],aux[LEFT]]{dir m[phi[TOP],-180]}
+            .. m[_d_[LEFT],aux[MID]]
+            .. m[_d_[BOTTOM],aux[RIGHT]]{dir m[phi[BOTTOM],0]}
+            .. m[_d_[D_ARC],aux[END]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_d_[BEGIN],_u_[END]]
+            -- m[_d_[END],_u_[BOTTOM]];
+
+       tmppath0 := aux[BEGIN]
+            .. aux[LEFT]{left}
+            .. aux[MID]
+            .. aux[RIGHT]{right}
+            .. aux[END];
+       draw tmppath0 rotatedaround (C,90m);
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 %
 % e -> ()
 %
