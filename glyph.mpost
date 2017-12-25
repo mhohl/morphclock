@@ -3429,6 +3429,13 @@ beginfig(start);
 draw tmppic;
 endfig;
 
+tmppath0 := _n_[BEGIN] -- _n_[LEFT];
+tmppath1 := _n_[BOTTOM]
+            -- _n_[LEFT]{up}
+            .. _n_[MID]
+            .. _n_[RIGHT]{down}
+            --_n_[END];
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -3437,21 +3444,34 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw m[_n_[BEGIN],_n_[LEFT]]
-            -- _n_[LEFT];
-
-       draw _n_[BOTTOM]
-            -- _n_[LEFT]{up}
-            .. _n_[MID]
-            .. _n_[RIGHT]{down}
-            -- _n_[END];
-
-       draw (xpart(_n_[RIGHT]),m[ypart(_n_[RIGHT]),ypart(_d_[BEGIN])])
-            -- _n_[RIGHT];
+       draw tmppath0 rotatedaround (C,90m);
+       draw tmppath1 rotatedaround (C,90m);
 
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% Wir benötigen die Winkel beim d-Bogen:
+tmppath2 := _d_[U_ARC]
+            .. _d_[TOP]
+            .. _d_[LEFT]
+            .. _d_[BOTTOM]
+            .. _d_[D_ARC];
+aux1 := direction 1 of tmppath2;
+phi[TOP] := angle(aux1);
+aux3 := direction 3 of tmppath2;
+phi[BOTTOM] := angle(aux3);
+
+% das n ist gedreht und wird dann zum d-Bogen:
+aux[U_ARC]  := _n_[END]    rotatedaround (C,90);
+aux[TOP]    := _n_[RIGHT]  rotatedaround (C,90);
+aux[LEFT]   := _n_[MID]    rotatedaround (C,90);
+aux[BOTTOM] := _n_[LEFT]   rotatedaround (C,90);
+aux[D_ARC]  := _n_[BOTTOM] rotatedaround (C,90);
+% der n-Strich wird zum d_Strich
+% (Index RIGHT für die Spitze des d-Strichs)
+aux[BEGIN]  := _n_[BEGIN]  rotatedaround (C,90);
+aux[RIGHT]  := _d_[BEGIN] rotatedaround (_d_[END],90);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3460,16 +3480,21 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 2-m;
 
-       TODO(u);
+       % Der Bogen wird umgeformt:
+       draw m[aux[U_ARC],_d_[U_ARC]]
+            .. m[aux[TOP],_d_[TOP]]{dir m[-180,phi[TOP]]}
+            .. m[aux[LEFT],_d_[LEFT]]
+            .. m[aux[BOTTOM],_d_[BOTTOM]]{dir m[0,phi[BOTTOM]]}
+            .. m[aux[D_ARC],_d_[D_ARC]];
 
+       % Der Strich klappt nach oben und wird länger:
+       tmppath0 := m[aux[D_ARC],_d_[END]]
+                   -- m[aux[BEGIN],aux[RIGHT]];
+       draw tmppath0 rotatedaround (_d_[END],-90m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
-% TODO: der Stiel schrumpft und wächst gleichzeitig rechts nach oben (gespiegeltes h),
-% dann klappt der Bogen um.
 
 %
 % n -> e
