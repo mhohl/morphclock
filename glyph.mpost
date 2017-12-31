@@ -3042,6 +3042,77 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Der Endwinkel beim j soll in der ersten Hälfte
+% des Überganges unverändert bleiben:
+tmppath0 := _j_[MID]{down}
+            .. _j_[BOTTOM]
+            .. _j_[END];
+aux2 := direction 2 of tmppath0;
+phi[END] := angle(aux2);
+
+aux[MID] := 1/2[_j_[BEGIN],_j_[MID]];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath1 := _j_[BEGIN]
+                   .. aux[MID]
+                   .. _j_[MID]{down}
+                   .. _j_[BOTTOM]
+                   .. _j_[END]{dir phi[END]}
+                   .. aux[MID]{dir 30};
+       draw _j_[TOP];
+       draw subpath (0,4+m) of tmppath1;	
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[TOP] := 1/2[_j_[BEGIN],aux[MID]];
+
+tmppath1 := _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. _a_[END];
+aux0 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux0);
+
+tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+aux3 := direction 3 of tmppath2;
+phi[JOINT] := 180+angle(aux3);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+       
+       aux[END] := min(2m,1)[_j_[TOP],_a_[END]];
+
+       draw m[_j_[BEGIN],_a_[BEGIN]]
+            .. m[aux[TOP],_a_[TOP]]
+            .. m[aux[MID],_a_[R_ARC]]{dir m[-90,phi[R_ARC]]}
+            .. {dir m[-90,phi[R_ARC]]}m[_j_[MID],_a_[JOINT]]{dir m[270,phi[JOINT]]}
+            .. m[_j_[BOTTOM],_a_[BOTTOM]]
+            .. m[_j_[END],_a_[L_ARC]]
+            .. m[aux[MID],_a_[R_ARC]]{dir m[30,180+phi[R_ARC]]};
+       draw max(2m-1,0)[aux[END],_a_[JOINT]]{dir phi[R_ARC]}
+            .. aux[END];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % j -> f
 %
