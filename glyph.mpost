@@ -4189,6 +4189,80 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% einige Winkel
+tmppath0 := _r_[MID]{up}
+            .. _r_[TOP]
+            .. _r_[END];
+aux2 := direction 2 of tmppath0;
+phi[END] := angle(aux2);
+tmppath1 := _a_[BEGIN]
+            ..  _a_[TOP]
+            ..  _a_[R_ARC]
+            --- _a_[JOINT]
+            .. _a_[END];
+aux0 := direction 0 of tmppath1;
+phi[BEGIN] := angle(aux0);
+aux2 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux2);
+
+tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[_r_[BEGIN],_r_[MID]]
+            -- _r_[BOTTOM];
+       draw _r_[MID]{up}
+            .. _r_[TOP]
+            .. _r_[END];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := _r_[BOTTOM]
+                   .. m[_r_[MID],_a_[BEGIN]]{dir m[90,phi[BEGIN]]}
+                   .. m[_r_[TOP],_a_[TOP]]
+                   .. m[_r_[END],_a_[R_ARC]]{dir m[phi[END],phi[R_ARC]]}
+                  --- _a_[JOINT]
+                   .. _a_[END];
+       % Der Winkel phi[JOINT] wird am Ende zu phi[R_ARC],
+       % so wird allerdings verhindert, dass tmppath1 zu "weich"
+       % verläuft und rechts neben den Linienabschnitt "---"
+       % herausragt
+       aux4 := direction 4 of tmppath0;
+       phi[JOINT] := angle(aux4);
+
+       tmppath1 := _r_[BOTTOM]
+                   .. m[_r_[MID],_a_[BEGIN]]{dir m[90,phi[BEGIN]]}
+                   .. m[_r_[TOP],_a_[TOP]]
+                   .. m[_r_[END],_a_[R_ARC]]{dir phi[JOINT]}
+                  .. _a_[L_ARC]
+                  .. _a_[BOTTOM]
+                  .. _a_[JOINT];
+
+       draw subpath (m,3+2m) of tmppath0;
+       draw subpath (m,3+3f) of tmppath1; % f statt m, da etwas langsamer
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 %
 % r -> r
 %
