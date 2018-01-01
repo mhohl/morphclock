@@ -10,13 +10,14 @@ MPEXEC = mpost
 MPOPTS = "-numbersystem=double"
 
 ${TARGET}-*.mps: ${TARGET}.mpost
+	rm ${TARGET}-*.mps
 	${MPEXEC} ${MPOPTS} $<
 
 svg/*.svg: ${TARGET}.mpost
 	bash generate_svg.sh
 
 testglyph.pdf: testglyph.tex ${TARGET}-*.mps
-	lualatex $<
+	lualatex $< > /dev/null
 
 morphpaths.js: svg/*.svg
 	bash extract_paths_to_js.sh $^ > $@
@@ -42,8 +43,3 @@ all: test min html
 
 install:
 	bash upload_morph.sh
-
-
-
-
-

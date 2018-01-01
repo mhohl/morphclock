@@ -1671,14 +1671,14 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux0);
+aux2 := direction 2 of tmppath1;
+phi[R_ARC] := angle(aux2);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
             .. _a_[BOTTOM]
             .. _a_[JOINT];
-% Der Schnitpunkt von a-"Bauch" und y-Achse wird
+% Der Schnittpunkt von a-"Bauch" und y-Achse wird
 % beim Übergang p -> a benötigt:
 _a_[MID] := tmppath2 intersectionpoint ((0,0.01u)--(0,infinity));
 
@@ -1703,6 +1703,85 @@ start := transition("a","e");
 beginfig(start);
    draw tmppic;
 endfig;
+
+% weitere Winkel
+aux0 := direction 0 of tmppath1;
+phi[BEGIN] := angle(aux0);
+
+tmppath3 := _a_[TOP]
+            .. _a_[R_ARC]
+           --- _a_[JOINT]
+            .. _a_[BOTTOM]
+            .. _a_[L_ARC]
+            .. _a_[BEGIN]
+            .. cycle;
+aux4 := direction 4 of tmppath3;
+phi[L_ARC] := angle(aux4);
+aux5 := direction 5 of tmppath3;
+phi[U_ARC] := angle(aux5);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       % der äußere Bogenzug wird nahezu unverändert
+       % gezeichnet, nur der Winkel bei _a_[BEGIN]
+       % nähert sich dem der geschlossenen a-Figur:
+       tmppath1 := _a_[BEGIN]{dir m[phi[BEGIN],phi[U_ARC]]}
+                   .. _a_[TOP]
+                   .. _a_[R_ARC]
+                  --- _a_[JOINT]
+                   .. _a_[END];
+
+       % der Hilfspunkt aux[R_ARC] wandert von _a_[R_ARC]
+       % über _a_[TOP] zu _a_[BEGIN] am a-Bogen entlang;
+       aux[R_ARC] := point (2-2m) of tmppath1;
+
+       draw tmppath1;
+       draw aux[R_ARC]{dir m[phi[R_ARC],phi[U_ARC]-180]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% zwei Hilfspunkte:
+aux[D_ARC] := 1/4[_e_[LEFT],_e_[RIGHT]] rotatedaround (C,90);
+aux[U_ARC] := 3/4[_e_[LEFT],_e_[RIGHT]] rotatedaround (C,90);
+% wir rotieren das e, morphen das a zur rotierten
+% Version und drehen gleichzeitig zurück:
+aux[TOP]    := _e_[TOP]    rotatedaround (C,90);
+aux[LEFT]   := _e_[LEFT]   rotatedaround (C,90);
+aux[RIGHT]  := _e_[RIGHT]  rotatedaround (C,90);
+aux[BOTTOM] := _e_[BOTTOM] rotatedaround (C,90);
+aux[END]    := _e_[END]    rotatedaround (C,90);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath1 := m[_a_[BEGIN],aux[TOP]]
+                   .. {right}m[_a_[TOP],aux[RIGHT]]{dir m[0,-90]}
+                   .. m[_a_[R_ARC],aux[U_ARC]]
+                  --- m[_a_[JOINT],aux[D_ARC]]
+                   .. {dir m[180,270]}m[_a_[BOTTOM],aux[LEFT]]{left}
+                   .. m[_a_[L_ARC],aux[TOP]]
+                   .. cycle;
+       draw tmppath1 ;%rotatedaround (C,-90m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 
 %
 % a -> m
@@ -3067,7 +3146,7 @@ for i = start+1 upto start+fpht:
                    .. _j_[END]{dir phi[END]}
                    .. aux[MID]{dir 30};
        draw _j_[TOP];
-       draw subpath (0,4+m) of tmppath1;	
+       draw subpath (0,4+m) of tmppath1;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3096,7 +3175,7 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       
+
        aux[END] := min(2m,1)[_j_[TOP],_a_[END]];
 
        draw m[_j_[BEGIN],_a_[BEGIN]]
