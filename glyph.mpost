@@ -1715,9 +1715,10 @@ tmppath3 := _a_[TOP]
             .. _a_[L_ARC]
             .. _a_[BEGIN]
             .. cycle;
-aux4 := direction 4 of tmppath3;
-phi[L_ARC] := angle(aux4);
+
 aux5 := direction 5 of tmppath3;
+% Wir nennen den Winkel an _a_[BEGIN]
+% phi[U_ARC], weil phi[BEGIN] schon vergeben ist;
 phi[U_ARC] := angle(aux5);
 
 for i = start+1 upto start+fpht:
@@ -1750,16 +1751,36 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-% zwei Hilfspunkte:
-aux[D_ARC] := 1/4[_e_[LEFT],_e_[RIGHT]] rotatedaround (C,90);
-aux[U_ARC] := 3/4[_e_[LEFT],_e_[RIGHT]] rotatedaround (C,90);
-% wir rotieren das e, morphen das a zur rotierten
-% Version und drehen gleichzeitig zurück:
+% wir setzen einen Hilfspunkt in der oberen Hälfte des
+% e-Bogens: zwei zwischen _e_[LEFT] und _e_[TOP] sowie
+% einen zwischen _e_[TOP] und _e_[RIGHT].
+tmppath0 := (_e_[LEFT]{up}
+            .. _e_[TOP]
+            .. _e_[RIGHT]{down}) rotatedaround (C,90);
+aux[L_ARC] := point 1/6 of tmppath0;
+aux[U_ARC] := point 1/3 of tmppath0;
+aux[R_ARC] := point 3/2 of tmppath0;
+
+% Wir setzen dann die Zuordnungen
+% aux[L_ARC] <-> _a_[BOTTOM]
+% aux[U_ARC] <-> _a_[L_ARC]
+% aux[R_ARC] <-> _a_[TOP]
+% Zusätzlich rotieren wir das e, morphen das a
+% zur rotierten Version und drehen gleichzeitig zurück:
 aux[TOP]    := _e_[TOP]    rotatedaround (C,90);
 aux[LEFT]   := _e_[LEFT]   rotatedaround (C,90);
 aux[RIGHT]  := _e_[RIGHT]  rotatedaround (C,90);
 aux[BOTTOM] := _e_[BOTTOM] rotatedaround (C,90);
 aux[END]    := _e_[END]    rotatedaround (C,90);
+
+% Ein Hilfspunkt im "Anhängsel":
+tmppath2 := _a_[JOINT]{dir phi[R_ARC]}
+            .. _a_[END];
+aux[MID] := point 1/2 of tmppath2;
+% Der Weg des "Anhängsels":
+tmppath3 := aux[LEFT]{right}
+            .. aux[BOTTOM]
+            .. aux[END];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -1770,13 +1791,18 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
 
        tmppath1 := m[_a_[BEGIN],aux[TOP]]
-                   .. {right}m[_a_[TOP],aux[RIGHT]]{dir m[0,-90]}
-                   .. m[_a_[R_ARC],aux[U_ARC]]
-                  --- m[_a_[JOINT],aux[D_ARC]]
-                   .. {dir m[180,270]}m[_a_[BOTTOM],aux[LEFT]]{left}
-                   .. m[_a_[L_ARC],aux[TOP]]
+                   .. m[_a_[TOP],aux[R_ARC]]
+                   .. {dir m[phi[R_ARC],0]}m[_a_[R_ARC],aux[RIGHT]]{dir m[phi[R_ARC],-90]}
+                  --- {dir m[phi[R_ARC],-90]}m[_a_[JOINT],aux[LEFT]]{dir m[phi[R_ARC],-180]}
+                   .. m[_a_[BOTTOM],aux[L_ARC]]
+                   .. m[_a_[L_ARC],aux[U_ARC]]
                    .. cycle;
-       draw tmppath1 ;%rotatedaround (C,-90m);
+       draw tmppath1 rotatedaround (C,-90m);
+
+       tmppath2 := m[_a_[JOINT],aux[LEFT]]{dir m[phi[R_ARC],0]}
+                   .. m[aux[MID],(point m of tmppath3)]
+                   .. m[_a_[END],(point 2m of tmppath3)];
+       draw tmppath2 rotatedaround (C,-90m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
