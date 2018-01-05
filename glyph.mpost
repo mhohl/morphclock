@@ -3693,6 +3693,25 @@ beginfig(start);
 draw tmppic;
 endfig;
 
+% der n-Bogen wird zum um 90° rotierten
+% b-Bauch:
+aux[BOTTOM] := _b_[U_ARC]  rotatedaround (C,90);
+aux[LEFT]   := _b_[TOP]    rotatedaround (C,90);
+aux[MID]    := _b_[RIGHT]  rotatedaround (C,90);
+aux[RIGHT]  := _b_[BOTTOM] rotatedaround (C,90);
+aux[END]    := _b_[D_ARC]  rotatedaround (C,90);
+
+tmppath0 := aux[BOTTOM]
+            .. aux[LEFT]
+            .. aux[MID]
+            .. aux[RIGHT]
+            .. aux[END];
+aux1 := direction 1 of tmppath0;
+phi[LEFT] := angle(aux1);
+aux3 := direction 3 of tmppath0;
+phi[RIGHT] := angle(aux3);
+show(phi[LEFT],phi[RIGHT]);
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -3701,13 +3720,19 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw m[_n_[BEGIN],_b_[BEGIN]]
-            .. _n_[LEFT]
-            .. m[_n_[BOTTOM],_b_[END]];
-       draw _n_[LEFT]
-            .. _n_[MID]
-            .. _n_[RIGHT]
-            --_n_[END];
+       % der n-Strick bleibt in Kontakt mit dem
+       % Anfang des Bogens und passt sich der Bogenhöhe an:
+       tmp0 := xpart(m[_n_[BOTTOM],aux[BOTTOM]]);
+       tmp1 := ypart(m[_n_[MID],aux[MID]]);
+       tmp2 := ypart(m[_n_[BOTTOM],aux[BOTTOM]]);
+       draw (tmp0,tmp1) -- (tmp0,tmp2);
+
+       % der n-Bogen wird zum gedrehten b-Bogen:
+       draw m[_n_[BOTTOM],aux[BOTTOM]]
+            .. m[_n_[LEFT],aux[LEFT]]{dir m[90,phi[LEFT]]}
+            .. m[_n_[MID],aux[MID]]
+            .. m[_n_[RIGHT],aux[RIGHT]]{dir m[-90,phi[RIGHT]]}
+            .. m[_n_[END],aux[END]];
 
        setbounds currentpicture to boundingpath;
     endfig;
@@ -3720,19 +3745,19 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 2-m;
 
-       draw _b_[BEGIN]
-            .. m[_n_[LEFT],_b_[U_ARC]]
-            .. _b_[END];
+       tmppath1 := tmppath0 rotatedaround (C,-90m);
 
-       draw m[_n_[LEFT],_b_[U_ARC]]
-           .. m[_n_[MID],_b_[TOP]]
-           .. m[_n_[RIGHT],_b_[RIGHT]]
-           .. tension t .. m[_n_[END],_b_[RIGHT]]{down}
-           .. m[_n_[END],_b_[BOTTOM]]
-           .. m[_n_[END],_b_[D_ARC]];
+       % der n-Strich bleibt am Startpunkt des Bogens verankert;
+       % wenn Unterteil des Bogens unter den Startpunkt fällt,
+       % übernimmt der Strich dessen Höhe, die Spitze wandert
+       % gleichzeitig zum Endpunkt:
+       tmp0 := xpart(point 0 of tmppath1);
+       tmp1 := ypart(m[aux[MID],_b_[BEGIN]]);
+       tmp2 := min(ypart(point 0 of tmppath1),ypart(point 3 of tmppath1));
 
+       draw (tmp0,tmp1) -- (tmp0,tmp2);
+       draw tmppath1;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
