@@ -2100,6 +2100,74 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% das b wird auf die Breite und Position des r
+% verschoben:
+aux[BEGIN]  := (xpart(_r_[BEGIN]),ypart(_b_[BEGIN]));
+aux[U_ARC]  := (xpart(_r_[BEGIN]),ypart(_b_[U_ARC]));
+aux[D_ARC]  := (xpart(_r_[BEGIN]),ypart(_b_[D_ARC]));
+aux[END]    := (xpart(_r_[BEGIN]),ypart(_b_[END]));
+
+aux[TOP]    := (xpart(_r_[TOP]),ypart(_b_[TOP]));
+aux[BOTTOM] := (xpart(_r_[TOP]),ypart(_b_[BOTTOM]));
+
+tmp0 := xpart(_r_[TOP])-xpart(_r_[BEGIN]);
+aux[RIGHT]  := (xpart(_r_[TOP])+tmp0,ypart(_b_[RIGHT]));
+
+% der Winkel bei U_ARC darf die Senkrechte nicht
+% überschreiten:
+tmppath0 := _b_[U_ARC]
+            .. _b_[TOP]
+            .. _b_[RIGHT]
+            .. _b_[BOTTOM]
+            .. _b_[D_ARC];
+aux0 := direction 0 of tmppath0;
+phi[U_ARC] := angle(aux0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[_b_[BEGIN],aux[BEGIN]]
+            -- m[_b_[END],aux[END]];
+       draw m[_b_[U_ARC],aux[U_ARC]]{dir m[phi[U_ARC],90]}
+            .. m[_b_[TOP],aux[TOP]]
+            .. m[_b_[RIGHT],aux[RIGHT]]
+            .. m[_b_[BOTTOM],aux[BOTTOM]]
+            .. m[_b_[D_ARC],aux[D_ARC]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := _r_[MID]{up} .. _r_[TOP] .. _r_[END];
+aux2 := direction 2 of tmppath0;
+phi[END] := angle(aux2);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[aux[BEGIN],_r_[BEGIN]]
+            -- m[aux[END],_r_[BOTTOM]];
+       tmppath1 := m[aux[U_ARC],_r_[MID]]{up}
+                   .. m[aux[TOP],_r_[TOP]]
+                   .. m[aux[RIGHT],_r_[END]]{dir max(2m-1,0)[-90,phi[END]]}
+                   .. aux[BOTTOM]
+                   ..aux[D_ARC];
+       draw subpath (0,4-2m) of tmppath1;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % c -> ()
 %
@@ -3710,7 +3778,6 @@ aux1 := direction 1 of tmppath0;
 phi[LEFT] := angle(aux1);
 aux3 := direction 3 of tmppath0;
 phi[RIGHT] := angle(aux3);
-show(phi[LEFT],phi[RIGHT]);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
