@@ -3540,6 +3540,83 @@ beginfig(start);
 draw tmppic;
 endfig;
 
+tmppath0 := _m_[MID]
+            -- _m_[JOINT]{up}
+            .. _m_[R_ARC]
+            .. _m_[RIGHT]{down}
+            -- _m_[END];
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[_m_[BEGIN],_m_[LEFT]]
+            -- _m_[LEFT];
+       tmppath1 := _m_[BOTTOM]
+                   -- _m_[LEFT]{up}
+                   .. (m+1)[_m_[LEFT],_m_[L_ARC]]
+                   .. m[_m_[JOINT],_m_[RIGHT]]{down}
+                   -- m[_m_[MID],_m_[END]];
+       draw tmppath1 cutafter tmppath0;
+       draw tmppath0;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% einige Winkel vom a:
+tmppath2 := _a_[BEGIN]
+            .. _a_[TOP]
+            .. _a_[R_ARC]
+           --- _a_[JOINT]
+            .. _a_[END];
+aux0 := direction 0 of tmppath2;
+phi[BEGIN] := angle(aux0);
+aux2 := direction 2 of tmppath2;
+phi[R_ARC] := angle(aux2);
+tmppath3 := _a_[R_ARC]{dir phi[R_ARC]}
+            .. _a_[L_ARC]
+            .. _a_[BOTTOM]
+            .. _a_[JOINT];
+aux1 := direction 1 of tmppath3;
+phi[L_ARC] := angle(aux1);
+aux2 := direction 2 of tmppath3;
+phi[BOTTOM] := angle(aux2); show(phi[R_ARC]);
+% Hilfspunkte:
+aux[TOP]   := 2[_m_[LEFT],_m_[L_ARC]];
+aux[JOINT] := 2/3[_m_[RIGHT],_m_[END]];
+aux[MID]   := point 1/2 of tmppath3;
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := m[_m_[RIGHT],_a_[R_ARC]]{dir m[-270,phi[R_ARC]]}
+                   .. m[_m_[R_ARC],aux[MID]]
+                   .. m[_m_[JOINT],_a_[L_ARC]]{dir m[-90,phi[L_ARC]]}
+                   .. {dir m[-90,phi[BOTTOM]]}m[_m_[MID],_a_[BOTTOM]]{dir m[0,phi[BOTTOM]]}
+                   .. m[aux[JOINT],_a_[JOINT]];
+
+       tmppath1 := _m_[BOTTOM]
+                   .. m[_m_[LEFT],_a_[BEGIN]]{dir m[90,phi[BEGIN]]}
+                   .. m[aux[TOP],_a_[TOP]]
+                   .. m[_m_[RIGHT],_a_[R_ARC]]{dir m[-90,phi[R_ARC]]}
+                  --- m[aux[JOINT],_a_[JOINT]]
+                   .. m[_m_[END],_a_[END]];
+       draw subpath (0,3+m) of tmppath0;
+       draw subpath (m,5) of tmppath1;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % m -> j
 %
