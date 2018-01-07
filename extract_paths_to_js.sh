@@ -4,9 +4,10 @@ first=true
 
 version=$( grep Version glyph.log | sed "s/.*\"Version:[ ]*\(.*\)\".*/\1/" )
 
+sortedargs=$( echo $@ | sort )
 echo "morphpath = {"
 echo "   version: '$version',"
-for f in $@; do
+for f in $sortedargs; do
    if [ "$first" ] ; then
       # some leading spaces
       echo -n "  "
