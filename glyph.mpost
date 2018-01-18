@@ -5914,10 +5914,23 @@ endfig;
 
 outputtemplate := "%j-clock-%c.mps";
 
-tmppath0 := _o_[TOP]
-            .. _o_[RIGHT]
-            .. _o_[BOTTOM]
-            .. _o_[LEFT]
+% Um das Uhr-Oval zu zeichnen, werden die Punkte in Hilfsvariablen kopiert;
+% mittels modulo-Berechnungen können dann die Punkte passend angesprochen
+% werden:
+aux[0] := _o_[TOP];
+aux[1] := _o_[RIGHT];
+aux[2] := _o_[BOTTOM];
+aux[3] := _o_[LEFT];
+% Dasselbe gilt für die Winkel:
+phi[0] := 0;
+phi[1] := -90;
+phi[2] := 180;
+phi[3] := 90;
+% Das Oval wird komplett als Pfad hinterlegt:
+tmppath0 := aux[0]
+            .. aux[1]
+            .. aux[2]
+            .. aux[3]
             .. cycle;
 
 for i = 0 upto 719:
@@ -5929,22 +5942,48 @@ for i = 0 upto 719:
        % mit den Zeiger-Halbgeraden, die in C ansetzen:
        tmppath1 := C -- (0,infinity) rotatedaround (C,-i*6);
        tmppath2 := C -- (0,infinity) rotatedaround (C,-i/2);
+       % TOP ist der längere Minutenzeiger, BOTTOM der Stundenzeiger:
+       aux[TOP]    := tmppath0 intersectionpoint tmppath1;
+       aux[BOTTOM] := tmppath0 intersectionpoint tmppath2;
 
-       aux1 := tmppath0 intersectionpoint tmppath1;
-       aux2 := tmppath0 intersectionpoint tmppath2;
+       % parallel zum Stundenzeiger werden Halbgeraden definiert:
+       tmppath3 := (C -- (0,infinity)) shifted (-0.15u,0) rotatedaround (C,-i*6);
+       tmppath4 := (C -- (0,infinity)) shifted (0.15u,0)  rotatedaround (C,-i*6);
+       % die Schnittpunkte mit dem Oval bilden BEGIN und END der
+       % offenen Begrenzungslinie:
+       aux[BEGIN] := tmppath0 intersectionpoint tmppath4;
+       aux[END] := tmppath0 intersectionpoint tmppath3;
+
+       % zusätzlich werden die Winkel in diesen Punkten bestimmt und
+       % per ceiling-Funktion der jeweilige Quadrat beziffert, in dem
+       % die Punkte gerade liegen:
+       %
+       %   4  |  1
+       % -----+-----
+       %   3  |  2
+       %
+       tmp[BEGIN] := xpart(tmppath0 intersectiontimes tmppath4);
+       phi[BEGIN] := angle(direction tmp[BEGIN] of tmppath0);
+       tmp[BEGIN] := ceiling(tmp[BEGIN]);
+       tmp[END]   := xpart(tmppath0 intersectiontimes tmppath3);
+       phi[END]   := angle(direction tmp[END] of tmppath0);
+       tmp[END]   := ceiling(tmp[END]);
 
        % anschließend werden die Zeiger skaliert:
        % der Minutenzeiger ist länger,
        % der Stundenzeiger kürzer.
-       draw tmppath0;
-
-       pickup pc scaled 2;
-       undraw C -- 4/3[C,aux1];
-
-       pickup pc;
-       draw 4/3[C,aux1]
+       draw 4/3[C,aux[TOP]]
             -- C
-            -- 2/3[C,aux2];
+            -- 2/3[C,aux[BOTTOM]];
+       % das Oval:
+       draw aux[BEGIN]{dir phi[BEGIN]}
+            .. aux[tmp[BEGIN] mod 4]{dir phi[tmp[BEGIN] mod 4]}
+            .. aux[(tmp[BEGIN]+1) mod 4]{dir phi[(tmp[BEGIN]+1) mod 4]}
+            .. aux[(tmp[BEGIN]+2) mod 4]{dir phi[(tmp[BEGIN]+2) mod 4]}
+            if (tmp[END] mod 4) <> ((tmp[BEGIN]+3) mod 4):
+            .. aux[(tmp[BEGIN]+3) mod 4]{dir phi[(tmp[BEGIN]+3) mod 4]}
+            fi
+            .. aux[END]{dir phi[END]};
 
        setbounds currentpicture to boundingpath;
     endfig;
