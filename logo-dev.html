@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
+    <title>morphclock: demo</title>
+  </head>
+  <body>
+    <script type='text/javascript' language='javascript' src='morphpaths.js'></script>
+    <script type='text/javascript' language='javascript' src='morphlogo.js'></script>
+    
+    <svg style="position:absolute; width:0; height:0">
+      <defs>
+        <linearGradient id="Gradient-1" x1="0" y1="0" x2="0" y2="100%" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="red" />
+            <stop offset="100%" stop-color="blue" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <h1>morphlogo: demo</h1>
+    <p>
+       <strong>morphlogok</strong> ist ein animiertes Logo für Webseiten.
+    </p>
+    <p>
+       Die Einbindung ist denkbar einfach: Der javascript-Code wird mit
+       <div class="code">
+          &lt;script type='text/javascript' language='javascript' src='morphlogo.min.js'&gt;&lt;/script&gt;
+       </div>
+       nach dem body-Tag eingefügt, das Logo selber wird mit
+       <div class="code">
+          &lt;div id="morphlogo"&gt;&lt;/div&gt;
+       </div>
+       eingesetzt und aktiviert.
+    </p>
+    <p>
+    Und so sieht es aus:
+    </p>
+    <div id="morphlogo"></div>
+    
+    <p>
+    <button onclick="morphlogo().style.stroke='yellow'">Gelb/Yellow</button>
+    <button onclick="morphlogo().style.stroke='black'">Schwarz/Black</button>
+    <button onclick="morphlogo().style.stroke='green'">Grün/Green</button>
+    <button onclick="morphlogo().style.stroke='red'">Rot/Red</button>
+    <button onclick="morphlogo().style.stroke='blue'">Blau/Blue</button>
+    <button onclick="morphlogo().style.stroke='url(#Gradient-1)'">Gradient</button>
+    <br>
+    <button onclick="morphlogoSetWidth('50%')">50%</button>
+    <button onclick="morphlogoSetWidth('75%')">75%</button>
+    <button onclick="morphlogoSetWidth('100%')">100%</button>
+    <button onclick="morphlogoSetWidth(666)">666px</button>
+    </p>
+    <p>
+       <strong>morphclock</strong> is an animated logo for web pages.
+    </p>
+    <p>
+       Embedding is quite easy: insert the javascript code after the body-tag like this:
+       <div class="code">
+          &lt;script type='text/javascript' language='javascript' src='morphlogo.min.js'&gt;&lt;/script&gt;
+       </div>
+       and activate the logo by inserting
+       <div class="code">
+          &lt;div id="morphlogo"&gt;&lt;/div&gt;
+       </div>
+       anywhere on the web page.
+    </p>
+
+  </body>
+</html>
