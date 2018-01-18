@@ -150,7 +150,7 @@ function calcCharWidth(data) {
                      number_of_small_overlaps*small_overlap -
                      number_of_big_overlaps*big_overlap)
      *
-     * where big_overlap is used for ':' and the space bevore 'am/pm'
+     * where big_overlap is used for ':' and the space before 'am/pm'
      */
     var n_of_chars, n_of_sover, n_of_bover;
     n_of_chars = data.length;
