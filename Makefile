@@ -10,7 +10,7 @@ MPEXEC = mpost
 MPOPTS = "-numbersystem=double"
 
 ${TARGET}-*.mps: ${TARGET}.mpost
-	rm ${TARGET}-*.mps
+	@rm -f ${TARGET}-*.mps
 	${MPEXEC} ${MPOPTS} $<
 
 svg/*.svg: ${TARGET}.mpost
@@ -23,7 +23,7 @@ morphpaths.js: svg/*.svg
 	bash extract_paths_to_js.sh $^ > $@
 
 morphclock.min.js: morphpaths.js morphclock.js
-	uglifyjs $^ > $<
+	uglifyjs $^ > $@
 
 .PHONY: test paths min all
 test: testglyph.pdf

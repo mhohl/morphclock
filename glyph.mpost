@@ -37,9 +37,15 @@
 % n := hour*60+min (also n = 0 ... 719)
 % abgelegt.
 
+% TODO:
+%
+% - r breiter
+% - symbolische Längen/Maße
+%
+
 % Versionsnummer:
 string version;
-version := "Version: 0.01";
+version := "Version: 1.01";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -50,24 +56,35 @@ outputformat := "eps";
 %warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
 numeric f;      % [f]rame index
-numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
-fpht := 50;
 numeric start;  % [start] of transition;
 numeric m;      % [m]orph factor
 numeric t;      % [t]ension
 numeric tt;     % ano[t]her [t]ension ;-)
 numeric phi[];  % rotation angle [phi1]
-numeric u;      % [u]nit
-u := 5cm;
 numeric q;      % [q]adratic factor
-pair C;         % [C]enter of rotation
-C := (0,0.425u);
-pen pc;         % [p]en[c]ircle
-pc := pencircle scaled 0.1u;
 path tmppath[]; % [t]e[mp]orary [path]
 numeric tmp[];  % [t]e[mp]orary variable
 pair aux[];     % [aux]iliary points;
 picture tmppic; % [t]e[mp]orary [pic]ture
+
+% vordefinierte Einheiten
+numeric u;      % [u]nit
+u := 5cm;
+
+pen pc;         % [p]en[c]ircle
+pc := pencircle scaled 0.1u;
+
+numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
+fpht := 50;
+
+pair C;         % [C]enter of rotation
+C := (0,0.425u);
+
+numeric asc;    % [asc]ender
+asc := 1.35u;
+
+numeric dsc;    % [d]e[sc]ender;
+dsc := -0.65u;
 
 % symbolische Variablen
 numeric LEFT, RIGHT, TOP, BOTTOM;
@@ -1476,14 +1493,15 @@ _e_[BOTTOM] = _c_[BOTTOM];
 _e_[END]    = _c_[END];
 
 % f
-_f_[BEGIN]  = (-0.15u,0);
-_f_[MID]    = (-0.15u,1.2u);
+tmp0 := 0.25u;
+_f_[BEGIN]  = (-tmp0,0);
+_f_[MID]    = (-tmp0,1.35u-tmp0);
 _f_[TOP]    = (0, 1.35u);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-0.25u,0.85u);
-_f_[RIGHT]  = (-0.05u,0.85u);
+_f_[LEFT]   = (-tmp0-0.1u,0.85u);
+_f_[RIGHT]  = (-tmp0+0.15u,0.85u);
 
 % g
 _g_[TOP]    = (0,0.85u);
@@ -1518,9 +1536,10 @@ _i_[BEGIN]  = (0,0.6u);
 _i_[END]    = (0,0);
 
 % j
-_j_[TOP]    = (0.15u, 0.85u);
-_j_[BEGIN]  = (0.15u,0.6u);
-_j_[MID]    = (0.15u,-0.5u);
+tmp0 := 0.25u;
+_j_[TOP]    = (tmp0, 0.85u);
+_j_[BEGIN]  = (tmp0,0.6u);
+_j_[MID]    = (tmp0,-0.65u+tmp0);
 _j_[BOTTOM] = (0,-0.65u);
 _j_[END]    = _j_[BOTTOM] rotatedaround
               ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
@@ -1533,8 +1552,9 @@ _k_[TOP]    = (0.25u,0.85u);
 _k_[BOTTOM] = (0.25u,0);
 
 % l
-_l_[BEGIN]  = (-0.15u,1.35u);
-_l_[MID]    = (-0.15u,0.15u);
+tmp0 := 0.25u;
+_l_[BEGIN]  = (-tmp0,1.35u);
+_l_[MID]    = (-tmp0,tmp0);
 _l_[BOTTOM] = (0,0);
 _l_[END]    = _l_[BOTTOM] rotatedaround
               ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
@@ -1613,7 +1633,7 @@ _t_[BOTTOM] = _l_[BOTTOM];
 _t_[END]    = _l_[END];
 
 _t_[JOINT]  = (_t_[LEFT] -- _t_[RIGHT]) intersectionpoint
-              (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt
+              (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt Querstrich/Stamm
 
 % u
 _u_[BOTTOM] = _n_[BEGIN]  rotatedaround(C,180);
