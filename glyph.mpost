@@ -38,11 +38,13 @@
 % abgelegt.
 
 % TODO:
-%
-% - r breiter
+%- "3"
+% - b -> r // h -> r, // r -> a
 % - symbolische Längen/Maße
 % - j wiggle
-% - Strich bei 1 und i
+% - Strich bei 1?
+% - i -> t //  u -> i
+% - l -> g
 
 % Versionsnummer:
 string version;
@@ -260,7 +262,7 @@ three[TOP]    = two[TOP];
 three[U_ARC]  = (sw,0.5u);
 three[JOINT]  = (-0.15u,0);
 three[D_ARC]  = (0.3u,-0.5u);
-three[BOTTOM] = (0,dsc);
+three[BOTTOM] = (0,dsc); % TODO: verwende diesen Punkt!
 three[END]    = three[D_ARC] xscaled -1;
 
 % 4
@@ -1508,15 +1510,14 @@ _e_[BOTTOM] = _c_[BOTTOM];
 _e_[END]    = _c_[END];
 
 % f
-
-_f_[BEGIN]  = (-sw,0);
-_f_[MID]    = (-sw,asc-sw);
+_f_[BEGIN]  = (-mw,0);
+_f_[MID]    = (-mw,asc-mw);
 _f_[TOP]    = (0, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-sw-0.1u,xh);
-_f_[RIGHT]  = (-sw+0.15u,xh);
+_f_[LEFT]   = (-mw-0.1u,xh);
+_f_[RIGHT]  = (-mw+0.15u,xh);
 
 % g
 _g_[TOP]    = (0,xh);
@@ -1544,15 +1545,18 @@ _h_[RIGHT] = _h_[LEFT] xscaled -1;
 _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
-_i_[TOP]    = (0,xh);
-_i_[BEGIN]  = (0,0.6u);
-_i_[END]    = (0,0);
+_i_[TOP]    = (-mw,xh);
+_i_[BEGIN]  = (-mw,0.6u);
+_i_[MID]    = (-mw,mw);
+_i_[BOTTOM] = (0,0);
+_i_[END]    = _i_[BOTTOM] rotatedaround
+              ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
 
 % j
 tmp0 := sw;
-_j_[TOP]    = (sw, xh);
-_j_[BEGIN]  = (sw,0.6u);
-_j_[MID]    = (sw,dsc+sw);
+_j_[TOP]    = (mw, xh);
+_j_[BEGIN]  = (mw,0.6u);
+_j_[MID]    = (mw,dsc+mw);
 _j_[BOTTOM] = (0,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
               ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
@@ -1565,8 +1569,8 @@ _k_[TOP]    = (sw,xh);
 _k_[BOTTOM] = (sw,0);
 
 % l
-_l_[BEGIN]  = (-sw,asc);
-_l_[MID]    = (-sw,sw);
+_l_[BEGIN]  = (-mw,asc);
+_l_[MID]    = (-mw,mw);
 _l_[BOTTOM] = (0,0);
 _l_[END]    = _l_[BOTTOM] rotatedaround
               ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
@@ -1615,9 +1619,9 @@ _q_[BOTTOM] = zero[BOTTOM];
 _q_[LEFT]   = _p_[RIGHT] xscaled -1;
 
 % r
-_r_[BEGIN]  = (-0.15u,xh);
-_r_[BOTTOM] = (-0.15u,0);
-_r_[MID]    = (-0.15u,0.6u);
+_r_[BEGIN]  = (-mw,xh);
+_r_[BOTTOM] = (-mw,0);
+_r_[MID]    = (-mw,xh-mw);
 _r_[TOP]    = (0,xh);
 _r_[END]    = _r_[TOP] rotatedaround
               ((xpart(_r_[TOP]),ypart(_r_[MID])),-45);
@@ -3236,7 +3240,9 @@ beginfig(start);
 
    draw _i_[TOP];
    draw _i_[BEGIN]
-        -- _i_[END];
+        -- _i_[MID]{down}
+        .. _i_[BOTTOM]
+        .. _i_[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 
