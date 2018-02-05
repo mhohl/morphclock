@@ -93,6 +93,8 @@ numeric sw;     % [s]mall [w]idth;
 sw := 0.25u;
 numeric mw;     % [m]edium [w]idth;
 mw := 11/10*sw;
+numeric iw;     % [i]ntermediate [w]idth;
+iw := 13/10*sw;
 numeric lw;     % [l]arge [w]idth;
 lw := 3/2*sw;
 
@@ -1463,7 +1465,7 @@ _a_[BEGIN]  = (-sw,0.6u);
 _a_[TOP]    = zero[TOP];
 _a_[R_ARC]  = (mw,0.6u);
 _a_[JOINT]  = (mw,0.15u);
-_a_[END]    = (0.325u,0);
+_a_[END]    = (iw,0);
 _a_[L_ARC]  = _a_[JOINT] xscaled -1;
 _a_[BOTTOM] = zero[BOTTOM];
 
@@ -1518,10 +1520,10 @@ _f_[RIGHT]  = (-sw+0.15u,xh);
 
 % g
 _g_[TOP]    = (0,xh);
-_g_[LEFT]   = (-0.325u,0.5u);
+_g_[LEFT]   = (-iw,0.5u);
 % 0.15u höher als Nulllinie, daher ist die Mitte bei
 % 0.15u+1/2(xh-0.15u) = 0.5u
-_g_[RIGHT]  = (0.325u,0.5u);
+_g_[RIGHT]  = (iw,0.5u);
 _g_[BOTTOM] = (0,0.15u);
 
 _g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
@@ -1570,11 +1572,10 @@ _l_[END]    = _l_[BOTTOM] rotatedaround
               ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
 
 % m
-tmp0 := 0.375;
-_m_[BEGIN] = (-tmp0*u,xh);
-_m_[LEFT]  = (-tmp0*u,3/4*xh);
-_m_[BOTTOM] = (-tmp0*u,0);
-_m_[L_ARC] = (-.5tmp0*u,xh);
+_m_[BEGIN] = (-lw,xh);
+_m_[LEFT]  = (-lw,3/4*xh);
+_m_[BOTTOM] = (-lw,0);
+_m_[L_ARC] = (-lw/2,xh);
 _m_[JOINT] = (0,0.65u);
 _m_[MID]   = (0,0);
 _m_[R_ARC] = _m_[L_ARC] xscaled -1;
@@ -1596,13 +1597,13 @@ _o_[TOP]    = _c_[TOP];
 _o_[BOTTOM] = _c_[BOTTOM];
 
 % p
-_p_[BEGIN]  = (-0.325u,xh);
-_p_[END]    = (-0.325u,dsc);
-_p_[U_ARC]  = (-0.325u,0.6u); % [u]pper end of [arc]
-_p_[D_ARC]  = (-0.325u,0.15u);
+_p_[BEGIN]  = (-iw,xh);
+_p_[END]    = (-iw,dsc);
+_p_[U_ARC]  = (-iw,0.6u); % [u]pper end of [arc]
+_p_[D_ARC]  = (-iw,0.15u);
 _p_[TOP]    = zero[TOP];
 _p_[BOTTOM] = zero[BOTTOM];
-_p_[RIGHT]  = (0.325u,xh/2);
+_p_[RIGHT]  = (iw,xh/2);
 
 % q
 _q_[BEGIN]  = _p_[BEGIN] xscaled -1;
