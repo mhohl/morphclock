@@ -41,7 +41,8 @@
 %
 % - r breiter
 % - symbolische Längen/Maße
-%
+% - j wiggle
+% - Strich bei 1 und i
 
 % Versionsnummer:
 string version;
@@ -71,20 +72,32 @@ picture tmppic; % [t]e[mp]orary [pic]ture
 numeric u;      % [u]nit
 u := 5cm;
 
+numeric pendia; % [pen] [dia]meter
+pendia := 0.1u;
 pen pc;         % [p]en[c]ircle
-pc := pencircle scaled 0.1u;
+pc := pencircle scaled pendia;
 
 numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
 fpht := 50;
-
-pair C;         % [C]enter of rotation
-C := (0,0.425u);
 
 numeric asc;    % [asc]ender
 asc := 1.35u;
 
 numeric dsc;    % [d]e[sc]ender;
 dsc := -0.65u;
+
+numeric xh;     % [x]-[h]eight
+xh := 0.85u;
+
+numeric sw;     % [s]mall [w]idth;
+sw := 0.25u;
+numeric mw;     % [m]edium [w]idth;
+mw := 11/10*sw;
+numeric lw;     % [l]arge [w]idth;
+lw := 3/2*sw;
+
+pair C;         % [C]enter of rotation
+C := (0,xh/2);
 
 % symbolische Variablen
 numeric LEFT, RIGHT, TOP, BOTTOM;
@@ -128,16 +141,16 @@ def draw_grid(expr u) =
     if draft > 0:
       draw (-0.6u,-0.75u) -- (-0.6u,1.5u) -- (0.6u,1.5u) -- (0.6u,-0.75u) -- cycle;
       draw (-0.6u,0) -- (0.6u,0);
-      draw (-0.6u,0.85u) -- (0.6u,0.85u);
-      draw (-0.25u,-0.75u)--(-0.25u,1.5u);
-      draw (0.25u,-0.75u)--(0.25u,1.5u);
+      draw (-0.6u,xh) -- (0.6u,xh);
+      draw (-sw,-0.75u)--(-sw,1.5u);
+      draw (sw,-0.75u)--(sw,1.5u);
     fi
 enddef;
 
 def TODO(expr u) =
-      draw (-0.25u,0.85u);
-      draw (0.25u,0.85u);
-      draw (-0.25u,0.15u) .. (0,0) .. (0.25u,0.15u);
+      draw (-sw,xh);
+      draw (sw,xh);
+      draw (-sw,0.15u) .. (0,0) .. (sw,0.15u);
 enddef;
 
 path boundingpath;
@@ -222,13 +235,13 @@ enddef;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 0
-zero[TOP]    = (0,0.85u);
+zero[TOP]    = (0,xh);
 zero[BOTTOM] = (0,0);
-zero[LEFT]   = (-0.275u,0.425u);
+zero[LEFT]   = (-mw,xh/2);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
 % 1
-one[BEGIN]  = (-0.25u,0.55u);
+one[BEGIN]  = (-sw,0.55u);
 one[TOP]    = zero[TOP];
 one[BOTTOM] = zero[BOTTOM];
 
@@ -236,35 +249,35 @@ one[BOTTOM] = zero[BOTTOM];
 two[BEGIN] = one[BEGIN];
 two[TOP]   = one[TOP];
 two[R_ARC] = (0.225u,0.55u);
-two[JOINT] = (-0.25u,0);
-two[END]   = (0.25u,0);
+two[JOINT] = (-sw,0);
+two[END]   = (sw,0);
 
 % 3
-three[BEGIN]  = (-0.25u,0.65u);
+three[BEGIN]  = (-sw,0.65u);
 three[TOP]    = two[TOP];
-three[U_ARC]  = (0.25u,0.5u);
+three[U_ARC]  = (sw,0.5u);
 three[JOINT]  = (-0.15u,0);
 three[D_ARC]  = (0.3u,-0.5u);
-three[BOTTOM] = (0,-0.65u);
+three[BOTTOM] = (0,dsc);
 three[END]    = three[D_ARC] xscaled -1;
 
 % 4
-four[LEFT]   = (-0.25u,0);
-four[TOP]    = (0.25u,0.85u);
+four[LEFT]   = (-sw,0);
+four[TOP]    = (sw,xh);
 four[MID]    = four[LEFT] xscaled -1;
-four[BOTTOM] = (0.25u,-0.65u);
-four[RIGHT]  = (0.375u,0);
+four[BOTTOM] = (sw,dsc);
+four[RIGHT]  = (lw,0);
 
 % 5
 five[BEGIN] = four[TOP];
 five[LEFT]  = five[BEGIN] xscaled -1;
 five[JOINT] = four[LEFT];
 five[U_ARC] = (0,0.1u);
-five[R_ARC] = (0.3u,-0.425u);
-five[END]   = (-0.275u,-0.65u);
+five[R_ARC] = (0.3u,-xh/2);
+five[END]   = (-mw,dsc);
 
 % 6
-six[BEGIN]  = (0.25u,1.35u);
+six[BEGIN]  = (sw,asc);
 six[LEFT]   = zero[LEFT] xscaled 15/11; % 0.275 -> 0.375
 six[RIGHT]  = zero[RIGHT] xscaled 15/11;
 six[TOP]    = zero[TOP];
@@ -272,16 +285,16 @@ six[BOTTOM] = zero[BOTTOM];
 
 % 7
 seven[BEGIN] = (-0.3u,0.75u);
-seven[LEFT]  = (-0.3u,0.85u);
+seven[LEFT]  = (-0.3u,xh);
 seven[JOINT] = seven[LEFT] xscaled -1;
 seven[MID]   = (0.1u,0.15u);
-seven[END]   = (0,-0.65u);
+seven[END]   = (0,dsc);
 % Hilfspunkt:
 seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
 % 8
-eight[MID]    = (0,0.85u);
-eight[L_ARC]  = (-0.25u,1.1u);
+eight[MID]    = (0,xh);
+eight[L_ARC]  = (-sw,1.1u);
 eight[R_ARC]  = eight[L_ARC] xscaled -1;
 eight[LEFT]   = (-0.4u,0.35u);
 eight[RIGHT]  = eight[LEFT] xscaled -1;
@@ -292,7 +305,7 @@ nine[TOP]    = six[TOP];
 nine[LEFT]   = six[LEFT];
 nine[RIGHT]  = six[RIGHT];
 nine[BOTTOM] = six[BOTTOM];
-nine[END]    = (-0.25u,-0.65u);
+nine[END]    = (-sw,dsc);
 
 %
 %%%%%%%%%%%% Ziffern/Übergänge
@@ -1385,7 +1398,7 @@ colon[TOP]    := (0,0.7u);
 colon[BOTTOM] := (0,0.15u);
 
 aux[TOP] := (0,0.475u);
-aux[BOTTOM] := (0,0.375u);
+aux[BOTTOM] := (0,lw);
 
 %
 %%%%%%%%%%%% Interpunktion/Übergänge
@@ -1446,10 +1459,10 @@ endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % a
-_a_[BEGIN]  = (-0.25u,0.6u);
+_a_[BEGIN]  = (-sw,0.6u);
 _a_[TOP]    = zero[TOP];
-_a_[R_ARC]  = (0.275u,0.6u);
-_a_[JOINT]  = (0.275u,0.15u);
+_a_[R_ARC]  = (mw,0.6u);
+_a_[JOINT]  = (mw,0.15u);
 _a_[END]    = (0.325u,0);
 _a_[L_ARC]  = _a_[JOINT] xscaled -1;
 _a_[BOTTOM] = zero[BOTTOM];
@@ -1493,79 +1506,75 @@ _e_[BOTTOM] = _c_[BOTTOM];
 _e_[END]    = _c_[END];
 
 % f
-tmp0 := 0.25u;
-_f_[BEGIN]  = (-tmp0,0);
-_f_[MID]    = (-tmp0,1.35u-tmp0);
-_f_[TOP]    = (0, 1.35u);
+
+_f_[BEGIN]  = (-sw,0);
+_f_[MID]    = (-sw,asc-sw);
+_f_[TOP]    = (0, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-tmp0-0.1u,0.85u);
-_f_[RIGHT]  = (-tmp0+0.15u,0.85u);
+_f_[LEFT]   = (-sw-0.1u,xh);
+_f_[RIGHT]  = (-sw+0.15u,xh);
 
 % g
-_g_[TOP]    = (0,0.85u);
+_g_[TOP]    = (0,xh);
 _g_[LEFT]   = (-0.325u,0.5u);
 % 0.15u höher als Nulllinie, daher ist die Mitte bei
-% 0.15u+1/2(0.85u-0.15u) = 0.5u
+% 0.15u+1/2(xh-0.15u) = 0.5u
 _g_[RIGHT]  = (0.325u,0.5u);
 _g_[BOTTOM] = (0,0.15u);
 
-_g_[BEGIN]  = (0.25u,0.85u); % "Schwänzchen" oben rechts
+_g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
 
 % _g_[JOINT] wird später definiert
 _g_[U_ARC]  = (-0.15u,-0.1u);
-_g_[L_ARC]  = (-0.375u,-0.25u);
-_g_[R_ARC]  = (0.375u,-0.25u);
+_g_[L_ARC]  = (-lw,-sw);
+_g_[R_ARC]  = (lw,-sw);
 _g_[D_ARC]  = (0,-0.55u);
 _g_[END]    = (0.15u,-0.1u);
 
 % h
-tmp0 := 0.275;
-tmp1 := 0.85;
-_h_[BEGIN] = (-tmp0*u,1.35u);
-_h_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
-_h_[BOTTOM] = (-tmp0*u,0);
-_h_[MID]   = (0,tmp1*u);
+_h_[BEGIN] = (-mw,asc);
+_h_[LEFT]  = (-mw,3/4*xh);
+_h_[BOTTOM] = (-mw,0);
+_h_[MID]   = (0,xh);
 _h_[RIGHT] = _h_[LEFT] xscaled -1;
 _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
-_i_[TOP]    = (0,0.85u);
+_i_[TOP]    = (0,xh);
 _i_[BEGIN]  = (0,0.6u);
 _i_[END]    = (0,0);
 
 % j
-tmp0 := 0.25u;
-_j_[TOP]    = (tmp0, 0.85u);
-_j_[BEGIN]  = (tmp0,0.6u);
-_j_[MID]    = (tmp0,-0.65u+tmp0);
-_j_[BOTTOM] = (0,-0.65u);
+tmp0 := sw;
+_j_[TOP]    = (sw, xh);
+_j_[BEGIN]  = (sw,0.6u);
+_j_[MID]    = (sw,dsc+sw);
+_j_[BOTTOM] = (0,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
               ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
 
 % k
-_k_[BEGIN]  = (-0.25u,1.35u);
-_k_[END]    = (-0.25u,0);
-_k_[MID]    = (-0.25u,0.425u);
-_k_[TOP]    = (0.25u,0.85u);
-_k_[BOTTOM] = (0.25u,0);
+_k_[BEGIN]  = (-sw,asc);
+_k_[END]    = (-sw,0);
+_k_[MID]    = (-sw,xh/2);
+_k_[TOP]    = (sw,xh);
+_k_[BOTTOM] = (sw,0);
 
 % l
-tmp0 := 0.25u;
-_l_[BEGIN]  = (-tmp0,1.35u);
-_l_[MID]    = (-tmp0,tmp0);
+_l_[BEGIN]  = (-sw,asc);
+_l_[MID]    = (-sw,sw);
 _l_[BOTTOM] = (0,0);
 _l_[END]    = _l_[BOTTOM] rotatedaround
               ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
 
 % m
 tmp0 := 0.375;
-tmp1 := 0.85;
-_m_[BEGIN] = (-tmp0*u,tmp1*u);
-_m_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
+_m_[BEGIN] = (-tmp0*u,xh);
+_m_[LEFT]  = (-tmp0*u,3/4*xh);
 _m_[BOTTOM] = (-tmp0*u,0);
-_m_[L_ARC] = (-.5tmp0*u,tmp1*u);
+_m_[L_ARC] = (-.5tmp0*u,xh);
 _m_[JOINT] = (0,0.65u);
 _m_[MID]   = (0,0);
 _m_[R_ARC] = _m_[L_ARC] xscaled -1;
@@ -1573,12 +1582,10 @@ _m_[RIGHT] = _m_[LEFT] xscaled -1;
 _m_[END]   = _m_[BOTTOM] xscaled -1;
 
 % n
-tmp0 := 0.275;
-tmp1 := 0.85;
-_n_[BEGIN] = (-tmp0*u,tmp1*u);
-_n_[LEFT]  = (-tmp0*u,3/4*tmp1*u);
-_n_[BOTTOM] = (-tmp0*u,0);
-_n_[MID]   = (0,tmp1*u);
+_n_[BEGIN] = (-mw,xh);
+_n_[LEFT]  = (-mw,3/4*xh);
+_n_[BOTTOM] = (-mw,0);
+_n_[MID]   = (0,xh);
 _n_[RIGHT] = _n_[LEFT] xscaled -1;
 _n_[END]   = _n_[BOTTOM] xscaled -1;
 
@@ -1589,13 +1596,13 @@ _o_[TOP]    = _c_[TOP];
 _o_[BOTTOM] = _c_[BOTTOM];
 
 % p
-_p_[BEGIN]  = (-0.325u,0.85u);
-_p_[END]    = (-0.325u,-0.65u);
+_p_[BEGIN]  = (-0.325u,xh);
+_p_[END]    = (-0.325u,dsc);
 _p_[U_ARC]  = (-0.325u,0.6u); % [u]pper end of [arc]
 _p_[D_ARC]  = (-0.325u,0.15u);
 _p_[TOP]    = zero[TOP];
 _p_[BOTTOM] = zero[BOTTOM];
-_p_[RIGHT]  = (0.325u,0.425u);
+_p_[RIGHT]  = (0.325u,xh/2);
 
 % q
 _q_[BEGIN]  = _p_[BEGIN] xscaled -1;
@@ -1607,21 +1614,21 @@ _q_[BOTTOM] = zero[BOTTOM];
 _q_[LEFT]   = _p_[RIGHT] xscaled -1;
 
 % r
-_r_[BEGIN]  = (-0.15u,0.85u);
+_r_[BEGIN]  = (-0.15u,xh);
 _r_[BOTTOM] = (-0.15u,0);
 _r_[MID]    = (-0.15u,0.6u);
-_r_[TOP]    = (0,0.85u);
+_r_[TOP]    = (0,xh);
 _r_[END]    = _r_[TOP] rotatedaround
               ((xpart(_r_[TOP]),ypart(_r_[MID])),-45);
 
 % s
-_s_[BEGIN]  = (0.25u,0.6375u);
+_s_[BEGIN]  = (sw,3/4*xh);
 _s_[TOP]    = _o_[TOP];
 _s_[U_ARC]  = _s_[BEGIN] xscaled -1;
 _s_[MID]    = C;
-_s_[D_ARC]  = (0.3u,0.2125u);
+_s_[D_ARC]  = (0.3u,xh/4);
 _s_[BOTTOM] = _o_[BOTTOM];
-_s_[END]    = (-0.3u,0.2125u);
+_s_[END]    = (-0.3u,xh/4);
 
 % t
 _t_[LEFT]   = _f_[LEFT];
@@ -1644,28 +1651,26 @@ _u_[LEFT]   = _n_[RIGHT]  rotatedaround(C,180);
 _u_[END]    = _n_[BOTTOM] rotatedaround(C,180);
 
 % v
-_v_[LEFT] = (-0.275u,0.85u);
+_v_[LEFT] = (-mw,xh);
 _v_[BOTTOM] = (0,0);
 _v_[RIGHT] = _v_[LEFT] xscaled -1;
 
 % w
-tmp0 := 0.375;
-tmp1 := 0.85;
 _w_[BEGIN] = _m_[BEGIN];
 _w_[LEFT]  = (1/2*xpart(_w_[BEGIN]),0);
-_w_[MID]   = (0,0.85u);
+_w_[MID]   = (0,xh);
 _w_[RIGHT] = _w_[LEFT] xscaled -1;
 _w_[END] = _w_[BEGIN] xscaled -1;
 
 % x
-_x_[LEFT]  = (-0.275u,0.85u);
+_x_[LEFT]  = (-mw,xh);
 _x_[RIGHT] = _x_[LEFT] xscaled -1;
-_x_[BEGIN] = (-0.275u,0);
+_x_[BEGIN] = (-mw,0);
 _x_[END]   = _x_[BEGIN] xscaled -1 ;
 
 % y
 _y_[BOTTOM] = _u_[BOTTOM];
-_y_[D_ARC] = (-0.25u,-0.65u);
+_y_[D_ARC] = (-sw,dsc);
 _y_[RIGHT]  = _u_[RIGHT];
 _y_[BEGIN] = _u_[BEGIN];
 _y_[MID] = _u_[MID];
@@ -2958,9 +2963,9 @@ endfig;
 
 % Wir schieben das f in die Mitte und stauchen es
 aux[LEFT]  := C shifted (-0.1u,0); % halbe Breite des f-Strichs: 0.1u
-aux[RIGHT] := C shifted(0.1u,0);
+aux[RIGHT] := C shifted(0.1u,0);   % TODO Strichbreite wurde geändert!
 
-aux[END]   := _f_[END] shifted (0.15u,-0.5u); % 1.35u (f-Höhe)-0.85u (s-Höhe)
+aux[END]   := _f_[END] shifted (0.15u,-0.5u); % asc (f-Höhe) - xh (s-Höhe)
 aux[TOP]   := _f_[TOP] shifted (0.15u,-0.5u);
 aux[MID]   := _f_[MID] shifted (0.15u,-0.5u);
 aux[BEGIN] := _f_[BEGIN] shifted (0.15u,0);
@@ -3160,7 +3165,6 @@ beginfig(start);
    tmppic := currentpicture;
 endfig;
 
-%
 %
 % h -> r
 %
