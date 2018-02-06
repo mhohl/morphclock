@@ -100,6 +100,9 @@ iw := 13/10*sw;
 numeric lw;     % [l]arge [w]idth;
 lw := 3/2*sw;
 
+numeric corr;   % [corr]ection for f/i/j/l/r/t
+corr := mw - sw;
+
 pair C;         % [C]enter of rotation
 C := (0,xh/2);
 
@@ -1532,14 +1535,14 @@ _e_[BOTTOM] = _c_[BOTTOM];
 _e_[END]    = _c_[END];
 
 % f
-_f_[BEGIN]  = (-mw,0);
-_f_[MID]    = (-mw,asc-mw);
-_f_[TOP]    = (0, asc);
+_f_[BEGIN]  = (-mw+corr,0);
+_f_[MID]    = (-mw+corr,asc-mw);
+_f_[TOP]    = (corr, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-mw-0.1u,xh);
-_f_[RIGHT]  = (-mw+0.15u,xh);
+_f_[LEFT]   = (-mw-0.1u+corr,xh);
+_f_[RIGHT]  = (-mw+0.15u+corr,xh);
 
 % g
 _g_[TOP]    = (0,xh);
@@ -1567,19 +1570,19 @@ _h_[RIGHT] = _h_[LEFT] xscaled -1;
 _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
-_i_[TOP]    = (-mw,xh);
-_i_[BEGIN]  = (-mw,0.6u);
-_i_[MID]    = (-mw,mw);
-_i_[BOTTOM] = (0,0);
+_i_[TOP]    = (-mw+corr,xh);
+_i_[BEGIN]  = (-mw+corr,0.6u);
+_i_[MID]    = (-mw+corr,mw);
+_i_[BOTTOM] = (corr,0);
 _i_[END]    = _i_[BOTTOM] rotatedaround
               ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
 
 % j
 tmp0 := sw;
-_j_[TOP]    = (mw, xh);
-_j_[BEGIN]  = (mw,0.6u);
-_j_[MID]    = (mw,dsc+mw);
-_j_[BOTTOM] = (0,dsc);
+_j_[TOP]    = (mw-corr, xh);
+_j_[BEGIN]  = (mw-corr,0.6u);
+_j_[MID]    = (mw-corr,dsc+mw);
+_j_[BOTTOM] = (-corr,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
               ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
 
@@ -1591,9 +1594,9 @@ _k_[TOP]    = (sw,xh);
 _k_[BOTTOM] = (sw,0);
 
 % l
-_l_[BEGIN]  = (-mw,asc);
-_l_[MID]    = (-mw,mw);
-_l_[BOTTOM] = (0,0);
+_l_[BEGIN]  = (-mw+corr,asc);
+_l_[MID]    = (-mw+corr,mw);
+_l_[BOTTOM] = (corr,0);
 _l_[END]    = _l_[BOTTOM] rotatedaround
               ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
 
@@ -1641,10 +1644,10 @@ _q_[BOTTOM] = zero[BOTTOM];
 _q_[LEFT]   = _p_[RIGHT] xscaled -1;
 
 % r
-_r_[BEGIN]  = (-mw,xh);
-_r_[BOTTOM] = (-mw,0);
-_r_[MID]    = (-mw,xh-mw);
-_r_[TOP]    = (0,xh);
+_r_[BEGIN]  = (-mw+corr,xh);
+_r_[BOTTOM] = (-mw+corr,0);
+_r_[MID]    = (-mw+corr,xh-mw);
+_r_[TOP]    = (corr,xh);
 _r_[END]    = _r_[TOP] rotatedaround
               ((xpart(_r_[TOP]),ypart(_r_[MID])),-45);
 
@@ -3433,20 +3436,26 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Wir schieben das f um corr nach links
+aux[BEGIN] := _f_[BEGIN] shifted (-corr,0);
+aux[MID]   := _f_[MID]   shifted (-corr,0);
+aux[TOP]   := _f_[TOP]   shifted (-corr,0);
+aux[END]   := _f_[END]   shifted (-corr,0);
+
 % Der j-Bogen wandert weiter in den f-Bogen hinein
 % der Hilfspunkt aux[JOINT] verbindet j und f
 
-aux[JOINT] := (xpart(_f_[BEGIN]),ypart(_j_[MID]));
+aux[JOINT] := (xpart(_f_[BEGIN])-corr,ypart(_j_[MID]));
 
 tmppath0 := _j_[BEGIN]
             -- _j_[MID]{down}
             .. _j_[BOTTOM]
             .. _j_[END]
-            .. aux[JOINT]
-            -- _f_[BEGIN]
-            -- _f_[MID]{up}
-            .. _f_[TOP]
-            .. _f_[END];
+            .. aux[JOINT]{up}
+            -- aux[BEGIN]
+            -- aux[MID]{up}
+            .. aux[TOP]
+            .. aux[END];
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -3456,9 +3465,9 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw _j_[TOP];
+       draw _j_[TOP] shifted (m*corr/2,0);
 
-       draw subpath (0,5m+4) of tmppath0;
+       draw (subpath (0,5m+3) of tmppath0) shifted (m*corr/2,0);
 
        setbounds currentpicture to boundingpath;
     endfig;
@@ -3472,10 +3481,10 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw m[_j_[TOP],_f_[LEFT]]
-            -- m[_j_[TOP],_f_[RIGHT]];
+       draw m[(_j_[TOP] shifted (corr/2,0)),_f_[LEFT]]
+            -- m[(_j_[TOP] shifted (corr/2,0)),_f_[RIGHT]];
 
-       draw subpath (5m,8) of tmppath0;
+       draw (subpath (5m,8) of tmppath0) shifted ((1+m)*corr/2,0);
 
        setbounds currentpicture to boundingpath;
     endfig;
