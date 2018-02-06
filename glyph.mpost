@@ -17,7 +17,8 @@
 % Als Interpunktionen haben wir nur den ":"
 % und den Übergang : -> :
 %
-% Für die Anzeige des Monats (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)
+% Für die Anzeige des Monats
+% (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)
 % und des Wochentages (mon|tue|wed|thu|fri|sat|sun)
 % sind folgende Übergänge notwendig
 %
@@ -45,6 +46,7 @@
 % - Strich bei 1?
 % - i -> t //  u -> i
 % - l -> g
+% - Welle bei 6 -> 7, Beginn zweite Hälfte
 
 % Versionsnummer:
 string version;
@@ -55,8 +57,6 @@ show("call with '-numbersystem=double' to prevent overflow errors");
 
 outputtemplate := "%j-%c.mps";
 outputformat := "eps";
-
-%warningcheck := 0; % unterdrückt Fehlermeldungen für i > 4096 bei beginfig(i);
 
 numeric f;      % [f]rame index
 numeric start;  % [start] of transition;
@@ -236,6 +236,12 @@ enddef;
 %
 % Part I: Ziffern
 %
+%   ###          ###
+%  #   #        #   #
+%  #   #   ###   ####
+%  #   #           #
+%   ###          ##
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 0
@@ -282,8 +288,8 @@ five[END]   = (-mw,dsc);
 
 % 6
 six[BEGIN]  = (sw,asc);
-six[LEFT]   = zero[LEFT] xscaled 15/11; % 0.275 -> 0.375
-six[RIGHT]  = zero[RIGHT] xscaled 15/11;
+six[LEFT]   = (-iw,xh/2);
+six[RIGHT]  = six[LEFT] xscaled -1;
 six[TOP]    = zero[TOP];
 six[BOTTOM] = zero[BOTTOM];
 
@@ -300,7 +306,7 @@ seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 eight[MID]    = (0,xh);
 eight[L_ARC]  = (-sw,1.1u);
 eight[R_ARC]  = eight[L_ARC] xscaled -1;
-eight[LEFT]   = (-0.4u,0.35u);
+eight[LEFT]   = (-lw,0.35u);
 eight[RIGHT]  = eight[LEFT] xscaled -1;
 eight[BOTTOM] = zero[BOTTOM];
 
@@ -1336,6 +1342,10 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Hilfspunkte für die verkleinerte Schlaufe:
+aux[TOP]    := nine[RIGHT] rotatedaround (C,90);
+aux[BOTTOM] := nine[LEFT]  rotatedaround (C,90);
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -1360,13 +1370,13 @@ for i = start+1 upto start+fpht:
        tmppath0 := nine[RIGHT]{down} .. aux[END];
        aux0 := ((0,-infinity)--(0,infinity)) intersectionpoint tmppath0;
        tmp0 := ypart(aux0);
-       tmp1 := ypart(nine[BOTTOM]);
+       tmp1 := ypart(aux[BOTTOM]);
        aux[MID] := (0,min(tmp0,tmp1));
 
        draw nine[RIGHT]{down}
-            .. nine[BOTTOM]
+            .. m[nine[BOTTOM],aux[BOTTOM]]
             .. nine[LEFT]
-            .. nine[TOP]
+            .. m[nine[TOP],aux[TOP]]
             .. nine[RIGHT]{down}
             .. aux[MID]
             .. aux[END];
@@ -1382,9 +1392,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw zero[TOP]
+       draw m[aux[TOP],zero[TOP]]
             .. m[nine[RIGHT],zero[RIGHT]]
-            .. zero[BOTTOM]
+            .. m[aux[BOTTOM],zero[BOTTOM]]
             .. m[nine[LEFT],zero[LEFT]]
             .. cycle;
        setbounds currentpicture to boundingpath;
@@ -1394,6 +1404,12 @@ endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Part II: Interpunktion
+%
+%
+%
+%    #
+%
+%    #
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1459,6 +1475,12 @@ endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Part III: Buchstaben
+%
+%   ###         #####
+%  #   #           #
+%  #####   ###    #
+%  #   #         #
+%  #   #        #####
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1576,10 +1598,10 @@ _l_[END]    = _l_[BOTTOM] rotatedaround
               ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
 
 % m
-_m_[BEGIN] = (-lw,xh);
-_m_[LEFT]  = (-lw,3/4*xh);
-_m_[BOTTOM] = (-lw,0);
-_m_[L_ARC] = (-lw/2,xh);
+_m_[BEGIN] = (-iw,xh);
+_m_[LEFT]  = (-iw,3/4*xh);
+_m_[BOTTOM] = (-iw,0);
+_m_[L_ARC] = (-iw/2,xh);
 _m_[JOINT] = (0,0.65u);
 _m_[MID]   = (0,0);
 _m_[R_ARC] = _m_[L_ARC] xscaled -1;
@@ -2967,8 +2989,11 @@ beginfig(start);
 endfig;
 
 % Wir schieben das f in die Mitte und stauchen es
-aux[LEFT]  := C shifted (-0.1u,0); % halbe Breite des f-Strichs: 0.1u
-aux[RIGHT] := C shifted(0.1u,0);   % TODO Strichbreite wurde geändert!
+tmp0 := (xpart(_f_[RIGHT])-xpart(_f_[LEFT]))/2;
+% halbe Breite des f-Strichs
+
+aux[LEFT]  := C shifted (-tmp0,0);
+aux[RIGHT] := C shifted(tmp0,0);
 
 aux[END]   := _f_[END] shifted (0.15u,-0.5u); % asc (f-Höhe) - xh (s-Höhe)
 aux[TOP]   := _f_[TOP] shifted (0.15u,-0.5u);
@@ -5941,6 +5966,12 @@ endfig;
 %
 % Part VI: Uhrsymbol im "o"
 %
+%   ###
+%  # # #
+% #  ####
+%  #   #
+%   ###
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 outputtemplate := "%j-clock-%c.mps";
@@ -5949,9 +5980,9 @@ outputtemplate := "%j-clock-%c.mps";
 % mittels modulo-Berechnungen können dann die Punkte passend angesprochen
 % werden:
 aux[0] := _o_[TOP];
-aux[1] := _o_[RIGHT];
+aux[1] := (lw,xh/2);
 aux[2] := _o_[BOTTOM];
-aux[3] := _o_[LEFT];
+aux[3] := aux[1] xscaled -1;
 % Dasselbe gilt für die Winkel:
 phi[0] := 0;
 phi[1] := -90;
