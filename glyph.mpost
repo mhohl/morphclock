@@ -44,7 +44,7 @@
 % - symbolische Längen/Maße
 % - j wiggle
 % - Strich bei 1?
-% - i -> t //  u -> i
+% - u -> i
 % - l -> g
 % - Welle bei 6 -> 7, Beginn zweite Hälfte
 
@@ -1488,9 +1488,9 @@ endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % a
-_a_[BEGIN]  = (-sw,0.6u);
+_a_[BEGIN]  = (-sw,12/17*xh);
 _a_[TOP]    = zero[TOP];
-_a_[R_ARC]  = (mw,0.6u);
+_a_[R_ARC]  = (mw,12/17*xh);
 _a_[JOINT]  = (mw,0.15u);
 _a_[END]    = (iw,0);
 _a_[L_ARC]  = _a_[JOINT] xscaled -1;
@@ -1571,7 +1571,7 @@ _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
 _i_[TOP]    = (-mw+corr,xh);
-_i_[BEGIN]  = (-mw+corr,0.6u);
+_i_[BEGIN]  = (-mw+corr,12/17*xh);
 _i_[MID]    = (-mw+corr,mw);
 _i_[BOTTOM] = (corr,0);
 _i_[END]    = _i_[BOTTOM] rotatedaround
@@ -1580,7 +1580,7 @@ _i_[END]    = _i_[BOTTOM] rotatedaround
 % j
 tmp0 := sw;
 _j_[TOP]    = (mw-corr, xh);
-_j_[BEGIN]  = (mw-corr,0.6u);
+_j_[BEGIN]  = (mw-corr,12/17*xh);
 _j_[MID]    = (mw-corr,dsc+mw);
 _j_[BOTTOM] = (-corr,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
@@ -1595,10 +1595,9 @@ _k_[BOTTOM] = (sw,0);
 
 % l
 _l_[BEGIN]  = (-mw+corr,asc);
-_l_[MID]    = (-mw+corr,mw);
-_l_[BOTTOM] = (corr,0);
-_l_[END]    = _l_[BOTTOM] rotatedaround
-              ((xpart(_l_[BOTTOM]),ypart(_l_[MID])),45);
+_l_[MID]    = _i_[MID];
+_l_[BOTTOM] = _i_[BOTTOM];
+_l_[END]    = _i_[END];
 
 % m
 _m_[BEGIN] = (-iw,xh);
@@ -1628,7 +1627,7 @@ _o_[BOTTOM] = _c_[BOTTOM];
 % p
 _p_[BEGIN]  = (-iw,xh);
 _p_[END]    = (-iw,dsc);
-_p_[U_ARC]  = (-iw,0.6u); % [u]pper end of [arc]
+_p_[U_ARC]  = (-iw,12/17*xh); % [u]pper end of [arc]
 _p_[D_ARC]  = (-iw,0.15u);
 _p_[TOP]    = zero[TOP];
 _p_[BOTTOM] = zero[BOTTOM];
@@ -3282,10 +3281,6 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-aux[MID]    := (0,0.15u);
-aux[BOTTOM] := _t_[BOTTOM] shifted (0.15u,0);
-aux[END]    := _t_[END] shifted (0.15u,0);
-
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -3294,12 +3289,12 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw _i_[TOP];
+       draw m[_i_[TOP],_t_[LEFT]]
+            -- m[_i_[TOP],_t_[RIGHT]];
        draw _i_[BEGIN]
-            -- m[_i_[END],aux[MID]]{down}
-            .. m[_i_[END],aux[BOTTOM]]
-            .. m[_i_[END],aux[END]];
-
+            -- _i_[MID]{down}
+            .. _i_[BOTTOM]
+            .. _i_[END];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3312,12 +3307,11 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw m[_i_[TOP],_t_[LEFT]]
-            -- m[_i_[TOP],_t_[RIGHT]];
+       draw _t_[LEFT] -- _t_[RIGHT];
        draw m[_i_[BEGIN],_t_[BEGIN]]
-            -- m[aux[MID],_t_[MID]]{down}
-            .. m[aux[BOTTOM],_t_[BOTTOM]]
-            .. m[aux[END],_t_[END]];
+            -- _i_[MID]{down}
+            .. _i_[BOTTOM]
+            .. _i_[END];
 
        setbounds currentpicture to boundingpath;
     endfig;
