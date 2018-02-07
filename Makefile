@@ -17,7 +17,7 @@ svg/*.svg: ${TARGET}.mpost
 	bash generate_svg.sh
 
 testglyph.pdf: testglyph.tex ${TARGET}-*.mps
-	lualatex $< > /dev/null
+	while lualatex $< > /dev/null ; grep -q "Rerun to" $(<:.tex=.log) ; do : ; done
 
 morphpaths.js: svg/*.svg
 	bash extract_paths_to_js.sh $^ > $@

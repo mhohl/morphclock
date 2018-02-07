@@ -40,7 +40,7 @@
 
 % TODO:
 %- "3"
-% - b -> r // h -> r, // r -> a
+% - b -> r // r -> a
 % - symbolische Längen/Maße
 % - j wiggle
 % - Strich bei 1?
@@ -3208,11 +3208,11 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-aux[BEGIN]  := (xpart(_r_[BEGIN]),ypart(_h_[BEGIN]));
-aux[LEFT]   := (xpart(_r_[MID]),ypart(_h_[LEFT]));
-aux[RIGHT]  := _r_[TOP] rotatedaround
-              ((xpart(_r_[TOP]),ypart(_r_[MID])),-90);
-aux[END]    := (xpart(aux[RIGHT]),0);
+tmppath0 := _h_[BOTTOM]
+            -- _h_[LEFT]{up}
+            .. _h_[MID]
+            .. _h_[RIGHT]{down}
+            -- _h_[END];
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -3222,17 +3222,18 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw m[_h_[BEGIN],aux[BEGIN]]
-            -- m[_h_[LEFT],aux[LEFT]];
-       draw m[_h_[BOTTOM],_r_[BOTTOM]]
-            -- m[_h_[LEFT],aux[LEFT]]{up}
-            .. _h_[MID]
-            .. m[_h_[RIGHT],aux[RIGHT]]{down}
-            -- m[_h_[END],aux[END]];
+       draw _h_[BEGIN] -- _h_[LEFT];
+       draw subpath (m,4-m) of tmppath0;
 
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+tmppath0 := _r_[MID]{up}
+            .. _r_[TOP]
+            .. _r_[END];
+aux2 := direction 2 of tmppath0;
+phi[END] := angle(aux2);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3242,15 +3243,11 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       tmppath0 := _r_[MID]{up}
-                   .. _r_[TOP]
-                   .. _r_[END]
-                   .. aux[RIGHT]{down}
-                   -- aux[END];
-
-       draw _r_[BOTTOM]
-            -- m[aux[BEGIN],_r_[BEGIN]];
-       draw subpath (0,4-2m) of tmppath0;
+       draw m[_h_[BEGIN],_r_[BEGIN]]
+            -- m[_h_[LEFT],_r_[BOTTOM]];
+       draw m[_h_[LEFT],_r_[MID]]{up}
+            .. m[_h_[MID],_r_[TOP]]
+            .. m[_h_[RIGHT],_r_[END]]{dir m[-90,phi[END]]};
 
        setbounds currentpicture to boundingpath;
     endfig;
