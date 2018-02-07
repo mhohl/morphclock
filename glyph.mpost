@@ -44,7 +44,6 @@
 % - symbolische Längen/Maße
 % - j wiggle
 % - Strich bei 1?
-% - u -> i
 % - l -> g
 % - Welle bei 6 -> 7, Beginn zweite Hälfte
 
@@ -5531,14 +5530,10 @@ endfig;
 aux[BEGIN] := (xpart(_u_[BEGIN]),ypart(_i_[BEGIN]));
 aux[END]   := (xpart(_u_[END]),ypart(_i_[BEGIN]));
 
-% der Querstrich über dem u, der dann zum Punkt
-% schrumpft, ist so lang wie der Strich unten rechts:
-tmp0 := ypart(_u_[BOTTOM])-ypart(_u_[RIGHT]);
-aux[LEFT]  := (-1/2tmp0,ypart(_i_[TOP]));
-aux[RIGHT] := (1/2tmp0,ypart(_i_[TOP]));
+% der i-Punkt ist erst über dem linken u-Strich:
+aux[TOP] := (xpart(_u_[BEGIN]),ypart(_i_[TOP]));
 
-tmppath0 := aux[LEFT]
-            -- aux[RIGHT]
+tmppath0 := aux[TOP]
             -- _u_[END]
             -- aux[END];
 
@@ -5551,8 +5546,9 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        % Der Strich wandert aus dem rechten u-Teil
-       % heraus und um die Ecke, wo er einen Querstrich bildet:
-       draw subpath (2-2m,3-2m) of tmppath0;
+       % heraus und um die Ecke, wo er einen Querstrich bildet
+       % und zum i-Punkt wird:
+       draw subpath (1-m,2-2m) of tmppath0;
 
        % Der rechte Strich verschwindet schneller, daher min(3m,1):
        draw _u_[RIGHT]
@@ -5568,9 +5564,10 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-% Die Punkte _u_[LEFT] und _u_[RIGHT] wandern
-% zum i-Stamm:
-aux[MID] := 1/2[_u_[LEFT],_u_[RIGHT]];
+tmppath0 := _i_[MID]{down}
+            .. _i_[BOTTOM]
+            .. _i_[END];
+phi[END] := angle(direction 2 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -5580,18 +5577,14 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw m[aux[LEFT],_i_[TOP]]
-            .. m[aux[RIGHT],_i_[TOP]];
+       draw m[aux[TOP],_i_[TOP]];
 
-       draw m[aux[BEGIN],_i_[BEGIN]]
-            -- m[_u_[LEFT],aux[MID]]{down}
-            ... _u_[MID]
-            ... m[_u_[RIGHT],aux[MID]]{up}
-            -- m[aux[END],_i_[BEGIN]];
-
-       % Bei engen Kurvenverläufen entstehen Artefakte, die wir
-       % überdecken (müssen)
-       if m > 0.95: draw _i_[BEGIN] -- _i_[END]; fi
+       tmppath0 := m[aux[BEGIN],_i_[BEGIN]]
+                   -- m[_u_[LEFT],_i_[MID]]{down}
+                   .. m[_u_[MID],_i_[BOTTOM]]
+                   .. m[_u_[RIGHT],_i_[END]]{dir m[90,phi[END]]}
+                   .. aux[END];
+       draw subpath (0,4-m) of tmppath0;
 
        setbounds currentpicture to boundingpath;
     endfig;
