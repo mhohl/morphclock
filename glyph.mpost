@@ -40,7 +40,7 @@
 
 % TODO:
 %- "3"
-% - b -> r // r -> a
+% - r -> a
 % - symbolische Längen/Maße
 % - j wiggle
 % - Strich bei 1?
@@ -121,6 +121,7 @@ L_ARC  = 1008; % [l]eft (part of) [arc]
 R_ARC  = 1009; % [r]ight (part of) [arc]
 U_ARC  = 1010; % [u]pright (part of) [arc]
 D_ARC  = 1011; % [d]ownright (part of) [arc]
+INTER  = 1012; % [inter]section point
 
 
 % Arrays für die Koordinaten der Ziffern:
@@ -1188,12 +1189,12 @@ for i = start+1 upto start+fpht:
 
        % der Mittelstrich wächst aus der Mitte der Höhe der Sieben:
        tmp0 := 1/2[ypart(seven[LEFT]),ypart(seven[END])];
-       aux[MID]   := ((-infinity,tmp0)--(infinity,tmp0)) intersectionpoint tmppath1;
-       aux[LEFT]  := aux[MID] - (0.15u,0);
-       aux[RIGHT] := aux[MID] + (0.15u,0);
+       aux[INTER] := ((-infinity,tmp0)--(infinity,tmp0)) intersectionpoint tmppath1;
+       aux[LEFT]  := aux[INTER] - (0.15u,0);
+       aux[RIGHT] := aux[INTER] + (0.15u,0);
 
        draw tmppath1;
-       draw m[aux[MID],aux[LEFT]] -- m[aux[MID],aux[RIGHT]];
+       draw m[aux[INTER],aux[LEFT]] -- m[aux[INTER],aux[RIGHT]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1214,7 +1215,7 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[seven[JOINT],eight[R_ARC]]{up}
             .. tension t .. m[seven[LEFT],eight[L_ARC]];
        draw m[aux[LEFT],eight[L_ARC]]{down}
-            .. tension tt .. m[aux[MID],eight[MID]]
+            .. tension tt .. m[aux[INTER],eight[MID]]
             .. tension tt .. {down}m[aux[RIGHT],eight[RIGHT]];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -1370,8 +1371,8 @@ for i = start+1 upto start+fpht:
        % ragt.
 
        tmppath0 := nine[RIGHT]{down} .. aux[END];
-       aux0 := ((0,-infinity)--(0,infinity)) intersectionpoint tmppath0;
-       tmp0 := ypart(aux0);
+       aux[INTER] := ((0,-infinity)--(0,infinity)) intersectionpoint tmppath0;
+       tmp0 := ypart(aux[INTER]);
        tmp1 := ypart(aux[BOTTOM]);
        aux[MID] := (0,min(tmp0,tmp1));
 
@@ -2234,28 +2235,11 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-% das b wird auf die Breite und Position des r
-% verschoben:
-aux[BEGIN]  := (xpart(_r_[BEGIN]),ypart(_b_[BEGIN]));
-aux[U_ARC]  := (xpart(_r_[BEGIN]),ypart(_b_[U_ARC]));
-aux[D_ARC]  := (xpart(_r_[BEGIN]),ypart(_b_[D_ARC]));
-aux[END]    := (xpart(_r_[BEGIN]),ypart(_b_[END]));
-
-aux[TOP]    := (xpart(_r_[TOP]),ypart(_b_[TOP]));
-aux[BOTTOM] := (xpart(_r_[TOP]),ypart(_b_[BOTTOM]));
-
-tmp0 := xpart(_r_[TOP])-xpart(_r_[BEGIN]);
-aux[RIGHT]  := (xpart(_r_[TOP])+tmp0,ypart(_b_[RIGHT]));
-
-% der Winkel bei U_ARC darf die Senkrechte nicht
-% überschreiten:
-tmppath0 := _b_[U_ARC]
-            .. _b_[TOP]
-            .. _b_[RIGHT]
-            .. _b_[BOTTOM]
-            .. _b_[D_ARC];
-aux0 := direction 0 of tmppath0;
-phi[U_ARC] := angle(aux0);
+% Der b-Strich wird von oben her eingekürzt:
+aux[BEGIN] := 1/3[_b_[BEGIN],_b_[END]];
+% Der obere Teil des b-Bogens wandert zum
+% (gedrehten) r-Zenit:
+aux[TOP] := _r_[MID] rotatedaround (C,-90);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -2265,21 +2249,52 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw m[_b_[BEGIN],aux[BEGIN]]
-            -- m[_b_[END],aux[END]];
-       draw m[_b_[U_ARC],aux[U_ARC]]{dir m[phi[U_ARC],90]}
-            .. m[_b_[TOP],aux[TOP]]
-            .. m[_b_[RIGHT],aux[RIGHT]]
-            .. m[_b_[BOTTOM],aux[BOTTOM]]
-            .. m[_b_[D_ARC],aux[D_ARC]];
+       tmppath0 := m[_b_[BEGIN],aux[BEGIN]]
+                   -- _b_[END];
+       tmppath1 := _b_[U_ARC]
+                   .. m[_b_[TOP],aux[TOP]]
+                   .. _b_[RIGHT]
+                   .. _b_[BOTTOM]
+                   .. _b_[D_ARC];
+
+       draw tmppath0 rotatedaround (C,90m);
+       draw tmppath1 rotatedaround (C,90m);
 
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
-tmppath0 := _r_[MID]{up} .. _r_[TOP] .. _r_[END];
-aux2 := direction 2 of tmppath0;
-phi[END] := angle(aux2);
+% Der b-Strich liegt nun waagrecht:
+aux[LEFT]  := aux[BEGIN] rotatedaround (C,90);
+aux[RIGHT] := _b_[END]   rotatedaround (C,90);
+
+% Er rotiert um den Schnittpunkt mit dem r-Strich:
+aux[INTER]  := (aux[LEFT] -- aux[RIGHT]) 
+               intersectionpoint (_r_[BEGIN] -- _r_[BOTTOM]);
+aux[BEGIN]  := _r_[BEGIN]  rotatedaround (aux[INTER],-90);
+aux[BOTTOM] := _r_[BOTTOM] rotatedaround (aux[INTER],-90);
+
+% der rotierte b-Bogen:
+aux[U_ARC] := _b_[U_ARC]  rotatedaround (C,90);
+% der zweite Punkt liegt bereits auf _r_[MID]
+aux[TOP]   := _b_[RIGHT]  rotatedaround (C,90);
+aux[R_ARC] := _b_[BOTTOM] rotatedaround (C,90);
+aux[D_ARC] := _b_[D_ARC]  rotatedaround (C,90);
+
+% der Endwinkel am r:
+tmppath0 := _r_[MID]{up}
+            .. _r_[TOP]
+            .. _r_[END];
+phi[END] := angle(direction 2 of tmppath0);
+% die aktuelle Winkel an den Punkten
+% _r_[MID] und aux[R_ARC]:
+tmppath1 := aux[U_ARC]
+            .. _r_[MID]
+            .. aux[TOP]
+            .. aux[R_ARC]
+            .. aux[D_ARC];
+phi[MID]   := angle(direction 1 of tmppath1);
+phi[R_ARC] := angle(direction 3 of tmppath1);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -2289,15 +2304,17 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw m[aux[BEGIN],_r_[BEGIN]]
-            -- m[aux[END],_r_[BOTTOM]];
-       tmppath1 := m[aux[U_ARC],_r_[MID]]{up}
-                   .. m[aux[TOP],_r_[TOP]]
-                   .. m[aux[RIGHT],_r_[END]]{dir max(2m-1,0)[-90,phi[END]]}
-                   .. aux[BOTTOM]
-                   ..aux[D_ARC];
-       draw subpath (0,4-2m) of tmppath1;
+       tmppath0 := m[aux[LEFT],aux[BOTTOM]]
+                   -- m[aux[RIGHT],aux[BEGIN]];
 
+       tmppath1 := aux[U_ARC]
+                   .. _r_[MID]{dir m[phi[MID],90]}
+                   .. m[aux[TOP],_r_[TOP]]
+                   .. m[aux[R_ARC],_r_[END]]{dir m[phi[R_ARC],phi[END]]}
+                   .. aux[D_ARC];
+
+       draw tmppath0 rotatedaround (aux[INTER],90m);
+       draw subpath (m,4-m) of tmppath1;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
