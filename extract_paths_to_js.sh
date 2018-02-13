@@ -4,7 +4,7 @@ first=true
 
 version=$( grep Version glyph.log | sed "s/.*\"Version:[ ]*\(.*\)\".*/\1/" )
 
-sortedargs=$( echo $@ | sort )
+LC_ALL=C IFS=" " ; sortedargs=$( echo $@ | sort ) ; unset IFS
 echo "morphpath = {"
 echo "   version: '$version',"
 for f in $sortedargs; do
