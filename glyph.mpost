@@ -589,10 +589,9 @@ for i = start+1 upto start+fpht:
        t := 2-m;
 
        tmppath0 := two[BEGIN] .. two[TOP] .. two[R_ARC];
-       aux0     := direction 0 of tmppath0;
-       phi1     := m[angle(aux0),90];
+       phi[BEGIN] := angle(direction 0 of tmppath0);
 
-       draw m[two[BEGIN],zero[LEFT]]{dir phi1}
+       draw m[two[BEGIN],zero[LEFT]]{dir m[phi[BEGIN],90]}
             .. m[two[TOP],zero[TOP]]
             .. m[two[R_ARC],zero[RIGHT]]
             .. tension t .. m[two[JOINT],zero[BOTTOM]];
@@ -607,7 +606,7 @@ tmppath0 := zero[LEFT]{up}
                   .. zero[TOP]
                   .. zero[RIGHT]
                   .. zero[BOTTOM];
-aux3 := direction 3 of tmppath0;
+phi[BOTTOM] := angle(direction 3 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -617,19 +616,16 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       phi1 := m[angle(aux3),-180];
-
        tmppath0 := zero[BOTTOM]{left} .. m[two[JOINT],zero[LEFT]];
-       aux1     := direction 1 of tmppath0;
-       phi2     := max(angle(aux1),90);
+       phi[JOINT] := angle(direction 1 of tmppath0);
 
        draw zero[LEFT]{up}
             .. zero[TOP]
             .. zero[RIGHT]
-            .. zero[BOTTOM]{dir phi1};
+            .. zero[BOTTOM]{dir m[phi[BOTTOM],-180]};
        draw m[two[END],zero[BOTTOM]]
             -- zero[BOTTOM]{left}
-            .. m[two[JOINT],zero[LEFT]]{dir phi2};
+            .. m[two[JOINT],zero[LEFT]]{dir max(phi[JOINT],90)};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -735,14 +731,13 @@ for i = start+1 upto start+fpht:
        % Der "Austrittswinkel" des unteren Bogens an der "Spitze"
        % wird ermittelt und wandert langsam gegen 0.
        tmppath0 := three[JOINT] .. three[D_ARC] .. three[END];
-       aux0 := direction 0 of tmppath0;
-       phi1 := (1-m)*angle(aux0);
+       phi[JOINT] := angle(direction 0 of tmppath0);
 
        draw m[three[BEGIN],four[LEFT]]
             .. tension t .. m[three[TOP],four[TOP]]
             .. tension t .. m[three[U_ARC],four[MID]]
             .. tension t .. three[JOINT]
-          & three[JOINT]{dir phi1}
+          & three[JOINT]{dir (1-m)*phi[JOINT]}
             .. three[D_ARC]
             .. three[END];
        setbounds currentpicture to boundingpath;
@@ -793,10 +788,8 @@ for i = start+1 upto start+fpht:
                    .. three[TOP]
                    .. three[U_ARC]
                    .. three[JOINT];
-       aux0 := direction 0 of tmppath0;
-       phi1 := m[angle(aux0),90];
-       aux3 := direction 3 of tmppath0;
-       phi2 := m[angle(aux3),-180];
+       phi[BEGIN] := angle(direction 0 of tmppath0);
+       phi[JOINT] := angle(direction 3 of tmppath0);
 
        % Der untere Bogen soll zu einem senkrecht nach unten geklappten
        % Viertelsegment der Null werden:
@@ -808,10 +801,10 @@ for i = start+1 upto start+fpht:
        aux[D_ARC] := (point 0.5 of tmppath1) rotatedaround (zero[BOTTOM],phi0);
        aux[END]   := zero[LEFT] rotatedaround (zero[BOTTOM],phi0);
 
-       draw m[three[BEGIN],zero[LEFT]]{dir phi1}
+       draw m[three[BEGIN],zero[LEFT]]{dir m[phi[BEGIN],90]}
             .. m[three[TOP],zero[TOP]]
             .. m[three[U_ARC],zero[RIGHT]]
-            .. aux[JOINT]{dir phi2}
+            .. aux[JOINT]{dir m[phi[JOINT],-180]}
           & aux[JOINT]
             .. m[three[D_ARC],aux[D_ARC]]
             .. m[three[END],aux[END]];
@@ -901,8 +894,7 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. tension t .. m[four[MID],five[U_ARC]]
                    .. tension 1 .. m[four[MID],five[R_ARC]]
                    .. tension t .. m[four[BOTTOM],five[END]];
-       aux4 := direction 4 of tmppath0;
-       phi1 := angle(aux4); if phi1 > 0 : phi1 := -180; fi
+       phi1 := angle(direction 4 of tmppath0); if phi1 > 0 : phi1 := -180; fi
 
        draw five[BEGIN]
             -- m[four[TOP],five[LEFT]]
@@ -1028,8 +1020,7 @@ for i = start+1 upto start+fpht-1:
                    .. {left}m[five[END],zero[BOTTOM]]
                    .. m[five[END],zero[LEFT]]{up};
 
-       aux0 := direction 0 of tmppath0;
-       phi1 := min(angle(aux0),90);
+       phi1 := min(angle(direction 0 of tmppath0),90);
 
        draw m[five[BEGIN],five[LEFT]]
             -- five[LEFT]
@@ -1668,7 +1659,7 @@ _t_[MID]    = _l_[MID];
 _t_[BOTTOM] = _l_[BOTTOM];
 _t_[END]    = _l_[END];
 
-_t_[JOINT]  = (_t_[LEFT] -- _t_[RIGHT]) intersectionpoint
+_t_[INTER]  = (_t_[LEFT] -- _t_[RIGHT]) intersectionpoint
               (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt Querstrich/Stamm
 
 % u
@@ -1725,8 +1716,7 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux2 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux2);
+phi[R_ARC] := angle(direction 2 of tmppath1);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
@@ -1759,8 +1749,7 @@ beginfig(start);
 endfig;
 
 % weitere Winkel
-aux0 := direction 0 of tmppath1;
-phi[BEGIN] := angle(aux0);
+phi[BEGIN] := angle(direction 0 of tmppath1);
 
 tmppath3 := _a_[TOP]
             .. _a_[R_ARC]
@@ -1770,10 +1759,9 @@ tmppath3 := _a_[TOP]
             .. _a_[BEGIN]
             .. cycle;
 
-aux5 := direction 5 of tmppath3;
 % Wir nennen den Winkel an _a_[BEGIN]
 % phi[U_ARC], weil phi[BEGIN] schon vergeben ist;
-phi[U_ARC] := angle(aux5);
+phi[U_ARC] := angle(direction 5 of tmppath3);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -1877,12 +1865,9 @@ tmppath0 := _a_[R_ARC]{dir phi[R_ARC]}
             .._a_[L_ARC]
             .. _a_[BOTTOM]
             .. _a_[JOINT];
-aux1 := direction 1 of tmppath0;
-phi[MID] := angle(aux1);
-aux3 := direction 3 of tmppath0;
-phi[BOTTOM] := angle(aux3);
-aux4 := direction 4 of tmppath0;
-phi[JOINT] := angle(aux4);
+phi[MID]    := angle(direction 1 of tmppath0);
+phi[BOTTOM] := angle(direction 3 of tmppath0);
+phi[JOINT]  := angle(direction 4 of tmppath0);
 % Wir rotieren das m:
 aux[BEGIN]  := _m_[BEGIN]  rotatedaround (C,90);
 aux[BOTTOM] := _m_[BOTTOM] rotatedaround (C,90);
@@ -2001,8 +1986,7 @@ tmppath0 := _p_[D_ARC]
             .. _p_[RIGHT]
             .. _p_[TOP]
             .. _p_[U_ARC];
-aux0 := direction 0 of tmppath0;
-phi[D_ARC] := angle(aux0);
+phi[D_ARC] := angle(direction 0 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -2054,8 +2038,7 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux0);
+phi[R_ARC] := angle(direction 2 of tmppath1);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
@@ -2078,11 +2061,9 @@ for i = start+1 upto start+fpht:
 endfor
 
 % der Winkel am a-"Bauch":
-aux1 := direction 1 of tmppath2;
-phi[L_ARC] := angle(aux1);
+phi[L_ARC] := angle(direction 1 of tmppath2);
 % der Winkel am "Joint":
-aux2 := direction 3 of tmppath2;
-phi[JOINT] := angle(aux2);
+phi[JOINT] := angle(direction 3 of tmppath2);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -2136,8 +2117,7 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux0);
+phi[R_ARC] := angle(direction 2 of tmppath1);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
@@ -2172,14 +2152,11 @@ for i = start+1 upto start+fpht:
 endfor
 
 % der Winkel am Ende des verkürzten a-Bauches:
-aux1 := direction 1 of tmppath3;
-phi[MID] := angle(aux1);
+phi[MID]   := angle(direction 1 of tmppath3);
 % Der Winkel am a-Bauch
-aux2 := direction 2 of tmppath3;
-phi[L_ARC] := angle(aux2);
+phi[L_ARC] := angle(direction 2 of tmppath3);
 % der Winkel am "Joint":
-aux4 := direction 4 of tmppath3;
-phi[JOINT] := angle(aux4);
+phi[JOINT] := angle(direction 4 of tmppath3);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -2569,10 +2546,8 @@ tmppath0 := _d_[U_ARC]
             .. _d_[LEFT]
             .. _d_[BOTTOM]
             .. _d_[D_ARC];
-aux1 := direction 1 of tmppath0;
-phi[TOP] := angle(aux1);
-aux3 := direction 3 of tmppath0;
-phi[BOTTOM] := angle(aux3);
+phi[TOP]    := angle(direction 1 of tmppath0);
+phi[BOTTOM] := angle(direction 3 of tmppath0);
 
 % Hilfspunkte gedrehtes u:
 aux[BEGIN] := _u_[BEGIN] rotatedaround (C,-90);
@@ -2690,19 +2665,15 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux2 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux2);
-aux4 := direction 4 of tmppath1;
-phi[END] := angle(aux4);
+phi[R_ARC] := angle(direction 2 of tmppath1);
+phi[END]   := angle(direction 4 of tmppath1);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
             .. _a_[BOTTOM]
             .. _a_[JOINT];
-aux1 := direction 1 of tmppath2;
-phi[L_ARC] := angle(aux1);
-aux3 := direction 3 of tmppath2;
-phi[JOINT] := angle(aux3);
+phi[L_ARC] := angle(direction 1 of tmppath2);
+phi[JOINT] := angle(direction 3 of tmppath2);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3247,8 +3218,7 @@ endfor
 tmppath0 := _r_[MID]{up}
             .. _r_[TOP]
             .. _r_[END];
-aux2 := direction 2 of tmppath0;
-phi[END] := angle(aux2);
+phi[END] := angle(direction 2 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3367,8 +3337,7 @@ endfig;
 tmppath0 := _j_[MID]{down}
             .. _j_[BOTTOM]
             .. _j_[END];
-aux2 := direction 2 of tmppath0;
-phi[END] := angle(aux2);
+phi[END] := angle(direction 2 of tmppath0);
 
 aux[MID] := 1/2[_j_[BEGIN],_j_[MID]];
 
@@ -3399,15 +3368,13 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux0);
+phi[R_ARC] := angle(direction 2 of tmppath1);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
             .. _a_[BOTTOM]
             .. _a_[JOINT];
-aux3 := direction 3 of tmppath2;
-phi[JOINT] := 180+angle(aux3);
+phi[JOINT] := 180+angle(direction 3 of tmppath2);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3617,8 +3584,7 @@ tmppath2 := aux[TOP]{right}
             .. aux[RIGHT]
             .. {dir 240}aux[JOINT];
 aux[MID] := point 3/2 of tmppath2;
-aux32 := direction 3/2 of tmppath2;
-phi[MID] := angle(aux32);
+phi[MID] := angle(direction 3/2 of tmppath2);
 % Darüberhinaus müssen im l-Bogen Hilfpunkte gesetzt werden:
 tmppath3 := _l_[MID]{down}
              .. _l_[BOTTOM]
@@ -3726,18 +3692,15 @@ tmppath2 := _a_[BEGIN]
             .. _a_[R_ARC]
            --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 0 of tmppath2;
-phi[BEGIN] := angle(aux0);
-aux2 := direction 2 of tmppath2;
-phi[R_ARC] := angle(aux2);
+phi[BEGIN] := angle(direction 0 of tmppath2);
+phi[R_ARC] := angle(direction 2 of tmppath2);
+
 tmppath3 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
             .. _a_[BOTTOM]
             .. _a_[JOINT];
-aux1 := direction 1 of tmppath3;
-phi[L_ARC] := angle(aux1);
-aux2 := direction 2 of tmppath3;
-phi[BOTTOM] := angle(aux2); show(phi[R_ARC]);
+phi[L_ARC] := angle(direction 1 of tmppath3);
+phi[BOTTOM] := angle(direction 2 of tmppath3);
 % Hilfspunkte:
 aux[TOP]   := 2[_m_[LEFT],_m_[L_ARC]];
 aux[JOINT] := 2/3[_m_[RIGHT],_m_[END]];
@@ -3934,8 +3897,8 @@ aux[MID]    := _m_[MID] rotatedaround (C,90);
 % obenren Bogen "ARC" resp. das Teilstück zwischen
 % t-Strich und t-Spitze einen unteren "D" und
 % einen oberen "U" Hilfspunkt;
-aux[D_ARC] := 1/3[_t_[JOINT],_t_[BEGIN]];
-aux[U_ARC] := 2/3[_t_[JOINT],_t_[BEGIN]];
+aux[D_ARC] := 1/3[_t_[INTER],_t_[BEGIN]];
+aux[U_ARC] := 2/3[_t_[INTER],_t_[BEGIN]];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3948,8 +3911,8 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[aux[BOTTOM],_t_[END]]
             .. m[aux[LEFT],_t_[BOTTOM]]{left}
             .. m[aux[L_ARC],_t_[MID]]{up}
-            .. m[aux[JOINT],_t_[JOINT]]{dir m[0,90]}
-            &  m[aux[JOINT],_t_[JOINT]]{dir m[180,90]}
+            .. m[aux[JOINT],_t_[INTER]]{dir m[0,90]}
+            &  m[aux[JOINT],_t_[INTER]]{dir m[180,90]}
             .. m[aux[R_ARC],aux[D_ARC]]
             .. m[aux[RIGHT],aux[U_ARC]]{dir m[0,90]}
             .. m[aux[END],_t_[BEGIN]];
@@ -4004,10 +3967,8 @@ tmppath0 := aux[BOTTOM]
             .. aux[MID]
             .. aux[RIGHT]
             .. aux[END];
-aux1 := direction 1 of tmppath0;
-phi[LEFT] := angle(aux1);
-aux3 := direction 3 of tmppath0;
-phi[RIGHT] := angle(aux3);
+phi[LEFT] := angle(direction 1 of tmppath0);
+phi[RIGHT] := angle(direction 3 of tmppath0);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -4098,10 +4059,9 @@ tmppath2 := _d_[U_ARC]
             .. _d_[LEFT]
             .. _d_[BOTTOM]
             .. _d_[D_ARC];
-aux1 := direction 1 of tmppath2;
-phi[TOP] := angle(aux1);
-aux3 := direction 3 of tmppath2;
-phi[BOTTOM] := angle(aux3);
+
+phi[TOP]    := angle(direction 1 of tmppath2);
+phi[BOTTOM] := angle(direction 3 of tmppath2);
 
 % das n ist gedreht und wird dann zum d-Bogen:
 aux[U_ARC]  := _n_[END]    rotatedaround (C,90);
@@ -4428,10 +4388,9 @@ tmppath0 := _n_[LEFT]{up}
             .. aux[U_ARC]
             .. _n_[MID]
             .. _n_[RIGHT]{down};
-aux1 := direction 1 of tmppath0;
-phi[BEGIN] := angle(aux1);
-aux2 := direction 2 of tmppath0;
-phi[U_ARC] := angle(aux2);
+
+phi[BEGIN] := angle(direction 1 of tmppath0);
+phi[U_ARC] := angle(direction 2 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -4498,14 +4457,11 @@ aux[LEFT]  := aux[RIGHT] xscaled -1;
 aux[R_ARC] := point 0.5 of tmppath0;
 aux[L_ARC] := aux[R_ARC] xscaled -1;
 
-aux0 := direction 1 of tmppath0;
-phi[END]   := angle(aux0);
+phi[END]   := angle(direction 1 of tmppath0);
 phi[BEGIN] := -phi[END];
-aux1 := direction 1.5 of tmppath0;
-phi[RIGHT] := angle(aux1);
+phi[RIGHT] := angle(direction 1.5 of tmppath0);
 phi[LEFT]  := -phi[RIGHT];
-aux2 := direction 0.5 of tmppath0;
-phi[R_ARC] := angle(aux2);
+phi[R_ARC] := angle(direction 0.5 of tmppath0);
 phi[L_ARC] := -phi[R_ARC];
 
 for i = start+fpht+1 upto start+2fpht-1:
@@ -4571,8 +4527,8 @@ tmppath0 := _p_[D_ARC]
             .. _p_[RIGHT]
             .. _p_[TOP]
             .. _p_[U_ARC];
-aux0 := direction 0 of tmppath0;
-phi[D_ARC] := angle(aux0);
+
+phi[D_ARC] := angle(direction 0 of tmppath0);
 
 % der Winkel im a-Bogen
 tmppath1 := _a_[BEGIN]
@@ -4580,8 +4536,8 @@ tmppath1 := _a_[BEGIN]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux0);
+
+phi[R_ARC] := angle(direction 2 of tmppath1);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -4776,17 +4732,14 @@ endfig;
 tmppath0 := _r_[MID]{up}
             .. _r_[TOP]
             .. _r_[END];
-aux2 := direction 2 of tmppath0;
-phi[END] := angle(aux2);
+phi[END] := angle(direction 2 of tmppath0);
 tmppath1 := _a_[BEGIN]
             ..  _a_[TOP]
             ..  _a_[R_ARC]
             --- _a_[JOINT]
             .. _a_[END];
-aux0 := direction 0 of tmppath1;
-phi[BEGIN] := angle(aux0);
-aux2 := direction 2 of tmppath1;
-phi[R_ARC] := angle(aux2);
+phi[BEGIN] := angle(direction 0 of tmppath1);
+phi[R_ARC] := angle(direction 2 of tmppath1);
 
 tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[L_ARC]
@@ -4830,8 +4783,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        % so wird allerdings verhindert, dass tmppath1 zu "weich"
        % verläuft und rechts neben den Linienabschnitt "---"
        % herausragt
-       aux4 := direction 4 of tmppath0;
-       phi[JOINT] := angle(aux4);
+       phi[JOINT] := angle(direction 4 of tmppath0);
 
        tmppath1 := _r_[BOTTOM]
                    .. m[_r_[MID],_a_[BEGIN]]{dir m[90,phi[BEGIN]]}
@@ -5011,8 +4963,7 @@ tmppath0 := aux[BOTTOM]{right}
             .. aux[R_ARC]{right}
             .. aux[RIGHT]{down}
             .. aux[END]{left};
-aux0 := direction 1 of tmppath0;
-phi[JOINT] := angle(aux0);
+phi[JOINT] := angle(direction 1 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -5754,10 +5705,8 @@ aux[BOTTOM] := 1/2[_c_[LEFT],_c_[END]];
 tmppath0 := _c_[BEGIN]
             -- _c_[LEFT]
             -- _c_[END];
-aux0 := direction 0 of tmppath0;
-phi[U_ARC] := angle(aux0);
-aux2 := direction 2 of tmppath0;
-phi[D_ARC] := angle(aux2);
+phi[U_ARC] := angle(direction 0 of tmppath0);
+phi[D_ARC] := angle(direction 2 of tmppath0);
 
 
 for i = start+fpht+1 upto start+2fpht-1:
