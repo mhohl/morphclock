@@ -39,17 +39,13 @@
 % abgelegt.
 
 % TODO:
-%- "3"
-% - r -> a
-% - symbolische Längen/Maße
-% - j wiggle
-% - Strich bei 1?
-% - l -> g
-% - Welle bei 6 -> 7, Beginn zweite Hälfte
+%- "2", "3", "8"
+% Übergänge: 2 -> 3, 3 -> 4, 3 -> 0, 7 -> 8, 8 -> 9, 2 -> 1,
+%            f -> s, l -> g, o -> u
 
 % Versionsnummer:
 string version;
-version := "Version: 1.01";
+version := "Version: 1.2";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -82,21 +78,24 @@ numeric fpht;   % [f]rames [p]er [h]alf [t]ransition
 fpht := 50;
 
 numeric asc;    % [asc]ender
-asc := 1.35u;
+asc := 1.2u;
 
-numeric dsc;    % [d]e[sc]ender;
-dsc := -0.65u;
+numeric dsc;    % [d]e[sc]ender
+dsc := -0.5u;
 
 numeric xh;     % [x]-[h]eight
 xh := 0.85u;
 
-numeric sw;     % [s]mall [w]idth;
+numeric dy;     % [d]elta [y]
+dy := 0.15u;
+
+numeric sw;     % [s]mall [w]idth
 sw := 0.25u;
-numeric mw;     % [m]edium [w]idth;
+numeric mw;     % [m]edium [w]idth
 mw := 11/10*sw;
-numeric iw;     % [i]ntermediate [w]idth;
+numeric iw;     % [i]ntermediate [w]idth
 iw := 13/10*sw;
-numeric lw;     % [l]arge [w]idth;
+numeric lw;     % [l]arge [w]idth
 lw := 3/2*sw;
 
 numeric corr;   % [corr]ection for f/i/j/l/r/t
@@ -254,22 +253,24 @@ zero[LEFT]   = (-mw,xh/2);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
 % 1
-one[BEGIN]  = (-sw,0.55u);
-one[TOP]    = zero[TOP];
-one[BOTTOM] = zero[BOTTOM];
+one[BEGIN]  = (-sw,xh/2);
+one[TOP]    = (sw,xh);
+one[BOTTOM] = (sw,0);
+% Hilfspunkt für Übergänge
+one[MID]    = 1/2[one[TOP],one[BOTTOM]];
 
 % 2
 two[BEGIN] = one[BEGIN];
-two[TOP]   = one[TOP];
+two[TOP]   = zero[TOP];
 two[R_ARC] = (0.225u,0.55u);
 two[JOINT] = (-sw,0);
 two[END]   = (sw,0);
 
 % 3
-three[BEGIN]  = (-sw,0.65u);
+three[BEGIN]  = (-sw,xh-dy);
 three[TOP]    = two[TOP];
 three[U_ARC]  = (sw,0.5u);
-three[JOINT]  = (-0.15u,0);
+three[JOINT]  = (-0.15u,dy);
 three[D_ARC]  = (0.3u,-0.5u);
 three[BOTTOM] = (0,dsc); % TODO: verwende diesen Punkt!
 three[END]    = three[D_ARC] xscaled -1;
@@ -277,23 +278,26 @@ three[END]    = three[D_ARC] xscaled -1;
 % 4
 four[LEFT]   = (-sw,0);
 four[TOP]    = (sw,xh);
-four[MID]    = four[LEFT] xscaled -1;
 four[BOTTOM] = (sw,dsc);
-four[RIGHT]  = (lw,0);
+four[RIGHT]  = (lw,dy);
+
+four[INTER]  = (four[LEFT] -- four [RIGHT])
+               intersectionpoint
+               (four[TOP] -- four[BOTTOM]);
 
 % 5
 five[BEGIN] = four[TOP];
 five[LEFT]  = five[BEGIN] xscaled -1;
-five[JOINT] = four[LEFT];
-five[U_ARC] = (0,0.1u);
-five[R_ARC] = (0.3u,-xh/2);
+five[JOINT] = (-sw,dy);
+five[U_ARC] = (0,2dy);
+five[R_ARC] = (mw,-dy);
 five[END]   = (-mw,dsc);
 
 % 6
 six[BEGIN]  = (sw,asc);
-six[LEFT]   = (-iw,xh/2);
+six[LEFT]   = (-iw,(xh-dy)/2);
 six[RIGHT]  = six[LEFT] xscaled -1;
-six[TOP]    = zero[TOP];
+six[TOP]    = (0,xh-dy);
 six[BOTTOM] = zero[BOTTOM];
 
 % 7
@@ -306,7 +310,8 @@ seven[END]   = (0,dsc);
 seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
 % 8
-eight[MID]    = (0,xh);
+eight[TOP]    = (0,asc); % TODO: verwende diesen Punkt!
+eight[MID]    = (0,xh-dy);
 eight[L_ARC]  = (-sw,1.1u);
 eight[R_ARC]  = eight[L_ARC] xscaled -1;
 eight[LEFT]   = (-lw,0.35u);
@@ -314,10 +319,10 @@ eight[RIGHT]  = eight[LEFT] xscaled -1;
 eight[BOTTOM] = zero[BOTTOM];
 
 % 9
-nine[TOP]    = six[TOP];
-nine[LEFT]   = six[LEFT];
-nine[RIGHT]  = six[RIGHT];
-nine[BOTTOM] = six[BOTTOM];
+nine[TOP]    = zero[TOP];
+nine[LEFT]   = (-iw,(xh+dy)/2);
+nine[RIGHT]  = nine[LEFT] xscaled -1;
+nine[BOTTOM] = (0,dy);
 nine[END]    = (-sw,dsc);
 
 %
@@ -361,10 +366,10 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        if m < 1:
-          draw zero[TOP]
-               ... (m/2)[zero[RIGHT],zero[LEFT]]
-               ... zero[BOTTOM]
-             ... (m/2)[zero[LEFT],zero[RIGHT]]
+          draw m[zero[TOP],one[TOP]]
+               ... m[zero[RIGHT],one[MID]]
+               ... m[zero[BOTTOM],one[BOTTOM]]
+             ... m[zero[LEFT],one[MID]]
              ... cycle;
        else:
           % für m = 1 entstünden seltsame Schlaufen
@@ -470,10 +475,10 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       tmppath1 := C -- one [TOP] -- one[BEGIN];
+       tmppath1 := one[MID] -- one [TOP] -- one[BEGIN];
 
-       draw subpath (0,2*(1-m)) of tmppath1;
-       draw C -- m[one[BOTTOM],C];
+       draw subpath (0,2-2m) of tmppath1;
+       draw one[MID] -- m[one[BOTTOM],one[MID]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -486,16 +491,16 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
 
        % Der horizontale Abstand zwischen dem linken und rechten Rand:
-       tmp0 := xpart(m[C,zero[RIGHT]])-xpart(m[C,zero[LEFT]]);
+       tmp0 := xpart(m[one[MID],zero[RIGHT]])-xpart(m[one[MID],zero[LEFT]]);
 
-       draw m[C,zero[TOP]]
-            .. m[C,zero[RIGHT]]
-            .. m[C,zero[BOTTOM]]
-            .. m[C,zero[LEFT]]
+       draw m[one[MID],zero[TOP]]
+            .. m[one[MID],zero[RIGHT]]
+            .. m[one[MID],zero[BOTTOM]]
+            .. m[one[MID],zero[LEFT]]
             .. cycle;
        % Bei engen Schlaufen gibt es Artefakte, daher setzen wir
        % einen Punkt in die Mitte, der diese überdeckt:
-       if tmp0 < 0.1u : draw C; fi
+       if tmp0 < 0.1u : draw one[MID]; fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -735,7 +740,7 @@ for i = start+1 upto start+fpht:
 
        draw m[three[BEGIN],four[LEFT]]
             .. tension t .. m[three[TOP],four[TOP]]
-            .. tension t .. m[three[U_ARC],four[MID]]
+            .. tension t .. m[three[U_ARC],four[INTER]]
             .. tension t .. three[JOINT]
           & three[JOINT]{dir (1-m)*phi[JOINT]}
             .. three[D_ARC]
@@ -755,12 +760,12 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw four[LEFT]
             -- four[TOP]
-            -- four[MID]
+            -- four[INTER]
             -- m[three[JOINT],four[LEFT]]{right}
-            .. tension t .. m[three[D_ARC],four[MID]]
+            .. tension t .. m[three[D_ARC],four[INTER]]
             .. tension t .. m[three[END],four[BOTTOM]];
-       draw four[MID]
-            -- m[four[MID],four[RIGHT]];
+       draw four[INTER]
+            -- m[four[INTER],four[RIGHT]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -871,8 +876,8 @@ for i = start+1 upto start+fpht:
 
        draw four[TOP]
             -- four[LEFT]
-            -- m[four[RIGHT],four[MID]];
-       draw m[four[TOP],four[MID]]
+            -- m[four[RIGHT],four[INTER]];
+       draw m[four[TOP],four[INTER]]
             -- four[BOTTOM];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -891,16 +896,16 @@ for i = start+fpht+1 upto start+2fpht-1:
        % und nicht nach rechts unten zeigen. Weil hier angle(...)
        % einen Vorzeichenwechsel hat, muss eine if-Anweisung her.
        tmppath0 := five[JOINT]
-                   .. tension t .. m[four[MID],five[U_ARC]]
-                   .. tension 1 .. m[four[MID],five[R_ARC]]
+                   .. tension t .. m[four[INTER],five[U_ARC]]
+                   .. tension 1 .. m[four[INTER],five[R_ARC]]
                    .. tension t .. m[four[BOTTOM],five[END]];
        phi1 := angle(direction 4 of tmppath0); if phi1 > 0 : phi1 := -180; fi
 
        draw five[BEGIN]
             -- m[four[TOP],five[LEFT]]
             -- five[JOINT]
-            .. tension t .. m[four[MID],five[U_ARC]]
-            .. tension 1 .. m[four[MID],five[R_ARC]]
+            .. tension t .. m[four[INTER],five[U_ARC]]
+            .. tension 1 .. m[four[INTER],five[R_ARC]]
             .. tension t .. {dir phi1}m[four[BOTTOM],five[END]];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -1041,7 +1046,6 @@ for i = start+fpht upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 1/(m+0.001); % m kann Null werden
 
        draw zero[LEFT]{up}
             .. zero[TOP]
@@ -1336,10 +1340,6 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-% Hilfspunkte für die verkleinerte Schlaufe:
-aux[TOP]    := nine[RIGHT] rotatedaround (C,90);
-aux[BOTTOM] := nine[LEFT]  rotatedaround (C,90);
-
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -1368,9 +1368,9 @@ for i = start+1 upto start+fpht:
        aux[MID] := (0,min(tmp0,tmp1));
 
        draw nine[RIGHT]{down}
-            .. m[nine[BOTTOM],aux[BOTTOM]]
+            .. nine[BOTTOM]
             .. nine[LEFT]
-            .. m[nine[TOP],aux[TOP]]
+            .. nine[TOP]
             .. nine[RIGHT]{down}
             .. aux[MID]
             .. aux[END];
@@ -1386,9 +1386,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw m[aux[TOP],zero[TOP]]
+       draw m[nine[TOP],zero[TOP]]
             .. m[nine[RIGHT],zero[RIGHT]]
-            .. m[aux[BOTTOM],zero[BOTTOM]]
+            .. m[nine[BOTTOM],zero[BOTTOM]]
             .. m[nine[LEFT],zero[LEFT]]
             .. cycle;
        setbounds currentpicture to boundingpath;
@@ -1488,8 +1488,8 @@ _a_[L_ARC]  = _a_[JOINT] xscaled -1;
 _a_[BOTTOM] = zero[BOTTOM];
 
 % b
-_b_[BEGIN]  = _p_[BEGIN] shifted (0,0.5u);
-_b_[END]    = _p_[END] shifted (0,0.65u);
+_b_[BEGIN]  = (xpart(_p_[BEGIN]),asc);
+_b_[END]    = (xpart(_p_[END]),0);
 _b_[U_ARC]  = _p_[U_ARC];
 _b_[D_ARC]  = _p_[D_ARC];
 _b_[TOP]    = _p_[TOP];
@@ -1497,10 +1497,10 @@ _b_[BOTTOM] = _p_[BOTTOM];
 _b_[RIGHT]  = _p_[RIGHT];
 
 % c
-_c_[LEFT]   = six[LEFT];
-_c_[RIGHT]  = six[RIGHT];
-_c_[TOP]    = six[TOP];
-_c_[BOTTOM] = six[BOTTOM];
+_c_[LEFT]   = (-iw,xh/2);
+_c_[RIGHT]  = _c_[LEFT] xscaled -1;
+_c_[TOP]    = zero[TOP];
+_c_[BOTTOM] = zero[BOTTOM];
 % Schnittpunkt zwischen o-Bogen und einer Halbgeraden
 _c_[BEGIN] = (_c_[RIGHT]{up} .. _c_[TOP]{left})
              intersectionpoint
@@ -1532,8 +1532,8 @@ _f_[TOP]    = (corr, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-mw-0.1u+corr,xh);
-_f_[RIGHT]  = (-mw+0.15u+corr,xh);
+_f_[LEFT]   = (-mw-0.1u+corr,xh-dy);
+_f_[RIGHT]  = (-mw+0.15u+corr,xh-dy);
 
 % g
 _g_[TOP]    = (0,xh);
@@ -1549,7 +1549,7 @@ _g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
 _g_[U_ARC]  = (-0.15u,-0.1u);
 _g_[L_ARC]  = (-lw,-sw);
 _g_[R_ARC]  = (lw,-sw);
-_g_[D_ARC]  = (0,-0.55u);
+_g_[D_ARC]  = (0,dsc);
 _g_[END]    = (0.15u,-0.1u);
 
 % h
@@ -1569,7 +1569,6 @@ _i_[END]    = _i_[BOTTOM] rotatedaround
               ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
 
 % j
-tmp0 := sw;
 _j_[TOP]    = (mw-corr, xh);
 _j_[BEGIN]  = (mw-corr,12/17*xh);
 _j_[MID]    = (mw-corr,dsc+mw);
@@ -3483,13 +3482,14 @@ for i = start+1 upto start+2fpht-1:
        m := f;
 
        aux[BOTTOM] := _j_[BOTTOM] yshifted (wiggle(xpart(_j_[BOTTOM])/u,f)*u);
+       aux[BEGIN]  := _j_[BEGIN]  yshifted (wiggle(xpart(_j_[BEGIN] )/u,f)*u);
        aux[TOP]    := _j_[TOP]    yshifted (wiggle(xpart(_j_[TOP]   )/u,f)*u);
        aux[MID]    := _j_[MID]    yshifted (wiggle(xpart(_j_[MID]   )/u,f)*u);
        aux[END]    := _j_[END]    yshifted (wiggle(xpart(_j_[END]   )/u,f)*u);
 
        draw aux[TOP];
-       draw _j_[BEGIN]
-            -- aux[MID]
+       draw aux[BEGIN]
+            -- aux[MID]{down}
             .. aux[BOTTOM]
             .. aux[END];
        setbounds currentpicture to boundingpath;
