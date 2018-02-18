@@ -39,8 +39,8 @@
 % abgelegt.
 
 % TODO:
-%- "2", "3"
-% Übergänge: 2 -> 3, 3 -> 4, 3 -> 0, 7 -> 8, 2 -> 1,
+%- 3"
+% Übergänge: 3 -> 4, 3 -> 0, 7 -> 8, 2 -> 1,
 %            f -> s, l -> g, o -> u
 
 % Versionsnummer:
@@ -741,8 +741,8 @@ for i = start+1 upto start+fpht:
        draw m[three[BEGIN],four[LEFT]]
             .. tension t .. m[three[TOP],four[TOP]]
             .. tension t .. m[three[U_ARC],four[INTER]]
-            .. tension t .. three[JOINT]
-          & three[JOINT]{dir (1-m)*phi[JOINT]}
+            .. tension t .. m[three[JOINT],four[LEFT]]
+          & m[three[JOINT],four[LEFT]]{dir (1-m)*phi[JOINT]}
             .. three[D_ARC]
             .. three[END];
        setbounds currentpicture to boundingpath;
@@ -761,7 +761,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw four[LEFT]
             -- four[TOP]
             -- four[INTER]
-            -- m[three[JOINT],four[LEFT]]{right}
+            -- four[LEFT]{right}
             .. tension t .. m[three[D_ARC],four[INTER]]
             .. tension t .. m[three[END],four[BOTTOM]];
        draw four[INTER]
@@ -892,21 +892,12 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
        t := max(5(1-m),1);
 
-       % Der Pfad soll bei five[END] maximal waagrecht werden
-       % und nicht nach rechts unten zeigen. Weil hier angle(...)
-       % einen Vorzeichenwechsel hat, muss eine if-Anweisung her.
-       tmppath0 := five[JOINT]
-                   .. tension t .. m[four[INTER],five[U_ARC]]
-                   .. tension 1 .. m[four[INTER],five[R_ARC]]
-                   .. tension t .. m[four[BOTTOM],five[END]];
-       phi1 := angle(direction 4 of tmppath0); if phi1 > 0 : phi1 := -180; fi
-
        draw five[BEGIN]
             -- m[four[TOP],five[LEFT]]
-            -- five[JOINT]
+            -- m[four[LEFT],five[JOINT]]
             .. tension t .. m[four[INTER],five[U_ARC]]
             .. tension 1 .. m[four[INTER],five[R_ARC]]
-            .. tension t .. {dir phi1}m[four[BOTTOM],five[END]];
+            .. tension t .. m[four[BOTTOM],five[END]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
