@@ -39,8 +39,8 @@
 % abgelegt.
 
 % TODO:
-%- "2", "3", "8"
-% Übergänge: 2 -> 3, 3 -> 4, 3 -> 0, 7 -> 8, 8 -> 9, 2 -> 1,
+%- "2", "3"
+% Übergänge: 2 -> 3, 3 -> 4, 3 -> 0, 7 -> 8, 2 -> 1,
 %            f -> s, l -> g, o -> u
 
 % Versionsnummer:
@@ -312,9 +312,9 @@ seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 % 8
 eight[TOP]    = (0,asc); % TODO: verwende diesen Punkt!
 eight[MID]    = (0,xh-dy);
-eight[L_ARC]  = (-sw,1.1u);
+eight[L_ARC]  = (-sw,(asc+xh-dy)/2);
 eight[R_ARC]  = eight[L_ARC] xscaled -1;
-eight[LEFT]   = (-lw,0.35u);
+eight[LEFT]   = (-lw,(xh-dy)/2);
 eight[RIGHT]  = eight[LEFT] xscaled -1;
 eight[BOTTOM] = zero[BOTTOM];
 
@@ -1194,6 +1194,13 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
+% der Hilfspunkt aux[MID] liegt genau zwischen seven[LEFT] und seven[JOINT]
+% und wird zu eight[TOP]:
+aux[MID] := 1/2[seven[LEFT],seven[JOINT]];
+
+% TODO: Hier nicht mit tensions, sondern mit Winkeln arbeiten:
+% seven JOINT!
+
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
@@ -1208,6 +1215,7 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[seven[MID],eight[LEFT]]
             .. m[seven[MID],eight[MID]]
             .. m[seven[JOINT],eight[R_ARC]]{up}
+            .. tension t .. m[aux[MID],eight[TOP]]
             .. tension t .. m[seven[LEFT],eight[L_ARC]];
        draw m[aux[LEFT],eight[L_ARC]]{down}
             .. tension tt .. m[aux[INTER],eight[MID]]
@@ -1226,7 +1234,8 @@ beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw eight[R_ARC]
+   draw eight[TOP]
+        .. eight[R_ARC]
         .. eight[MID]
         .. eight[LEFT]
         .. eight[BOTTOM]
@@ -1276,6 +1285,7 @@ for i = start+1 upto start+fpht:
                    .. m[eight[MID],aux[MID]]
                    if i < start+fpht:
                       .. m[eight[L_ARC],aux[MID]]
+                      .. m[eight[TOP],aux[MID]]
                       .. m[eight[R_ARC],aux[MID]]
                       .. m[eight[MID],aux[MID]]
                    fi
