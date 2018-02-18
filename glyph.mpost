@@ -260,9 +260,9 @@ one[BOTTOM] = (sw,0);
 one[MID]    = 1/2[one[TOP],one[BOTTOM]];
 
 % 2
-two[BEGIN] = one[BEGIN];
+two[BEGIN] = (-sw,3/4*xh);
 two[TOP]   = zero[TOP];
-two[R_ARC] = (0.225u,0.55u);
+two[R_ARC] = (sw,2/3*xh);
 two[JOINT] = (-sw,0);
 two[END]   = (sw,0);
 
@@ -428,7 +428,7 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw one[BEGIN]
+       draw m[one[BEGIN],two[BEGIN]]
             -- m[one[TOP],two[R_ARC]]
             -- m[one[BOTTOM],two[JOINT]];
        setbounds currentpicture to boundingpath;
