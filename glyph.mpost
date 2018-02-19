@@ -57,7 +57,6 @@ numeric f;      % [f]rame index
 numeric start;  % [start] of transition;
 numeric m;      % [m]orph factor
 numeric t;      % [t]ension
-numeric tt;     % ano[t]her [t]ension ;-)
 numeric phi[];  % rotation angle [phi]
 numeric q;      % [q]adratic factor
 path tmppath[]; % [t]e[mp]orary [path]
@@ -2916,8 +2915,10 @@ endfig;
 % dann zu _m_[JOINT] wird:
 aux[JOINT] := (xpart(_m_[JOINT]),ypart(_m_[L_ARC]));
 % Der f-Strich wandert nach unten:
-aux[LEFT]  := (xpart(_f_[LEFT]),ypart(_m_[JOINT])) shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
-aux[RIGHT] := (xpart(_f_[RIGHT]),ypart(_m_[JOINT])) shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
+aux[LEFT]  := (xpart(_f_[LEFT]),ypart(_m_[JOINT]))
+              shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
+aux[RIGHT] := (xpart(_f_[RIGHT]),ypart(_m_[JOINT]))
+              shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
 aux[MID] := 1/2[aux[LEFT],aux[RIGHT]];
 
 for i = start+1 upto start+fpht:
@@ -2984,13 +2985,14 @@ endfig;
 tmp0 := (xpart(_f_[RIGHT])-xpart(_f_[LEFT]))/2;
 % halbe Breite des f-Strichs
 
-aux[LEFT]  := C shifted (-tmp0,0);
-aux[RIGHT] := C shifted(tmp0,0);
+aux[LEFT]  := _s_[MID] shifted (-tmp0,0);
+aux[RIGHT] := _s_[MID] shifted(tmp0,0);
 
-aux[END]   := _f_[END] shifted (0.15u,-0.5u); % asc (f-Höhe) - xh (s-Höhe)
-aux[TOP]   := _f_[TOP] shifted (0.15u,-0.5u);
-aux[MID]   := _f_[MID] shifted (0.15u,-0.5u);
-aux[BEGIN] := _f_[BEGIN] shifted (0.15u,0);
+tmp1 := xpart(_f_[MID]);
+aux[END]   := _f_[END] shifted (-tmp1,-(asc-xh));
+aux[TOP]   := _f_[TOP] shifted (-tmp1,-(asc-xh));
+aux[MID]   := _f_[MID] shifted (-tmp1,-(asc-xh));
+aux[BEGIN] := _f_[BEGIN] shifted (-tmp1,0);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -3012,7 +3014,8 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-aux[D_ARC] := 1/2[_s_[MID],_s_[BOTTOM]];
+aux[D_ARC] := 1/2[aux[MID],aux[BEGIN]];
+aux[BOTTOM] := 2/3[aux[MID],aux[BEGIN]];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3024,18 +3027,15 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        t := 1/sqrt(m);
 
-       draw m[aux[LEFT],C]
-            -- m[aux[RIGHT],C];
+       draw m[aux[LEFT],_s_[MID]]
+            -- m[aux[RIGHT],_s_[MID]];
 
        draw m[aux[END],_s_[BEGIN]]{dir (m*m)[phi[BEGIN],90]}
             .. m[aux[TOP],_s_[TOP]]
             .. (m*m)[aux[MID],_s_[U_ARC]]{down}
-            %.. tension t
             .. _s_[MID]
-            %.. tension t
             .. (m*m)[aux[D_ARC],_s_[D_ARC]]{down}
-            .. tension t
-            .. _s_[BOTTOM]
+            .. m[aux[BOTTOM],_s_[BOTTOM]]
             .. (1*m)[aux[BEGIN],_s_[END]]{up};
 
        setbounds currentpicture to boundingpath;
