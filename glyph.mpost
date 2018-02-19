@@ -40,12 +40,12 @@
 
 % TODO:
 %- 3"
-% Übergänge: 3 -> 4, 3 -> 0, 7 -> 8, 2 -> 1,
+% Übergänge: 3 -> 4, 3 -> 0, 2 -> 1,
 %            f -> s, l -> g, o -> u
 
 % Versionsnummer:
 string version;
-version := "Version: 1.2";
+version := "Version: 1.21";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -58,7 +58,7 @@ numeric start;  % [start] of transition;
 numeric m;      % [m]orph factor
 numeric t;      % [t]ension
 numeric tt;     % ano[t]her [t]ension ;-)
-numeric phi[];  % rotation angle [phi1]
+numeric phi[];  % rotation angle [phi]
 numeric q;      % [q]adratic factor
 path tmppath[]; % [t]e[mp]orary [path]
 numeric tmp[];  % [t]e[mp]orary variable
@@ -310,7 +310,7 @@ seven[END]   = (0,dsc);
 seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
 
 % 8
-eight[TOP]    = (0,asc); % TODO: verwende diesen Punkt!
+eight[TOP]    = (0,asc);
 eight[MID]    = (0,xh-dy);
 eight[L_ARC]  = (-sw,(asc+xh-dy)/2);
 eight[R_ARC]  = eight[L_ARC] xscaled -1;
@@ -1185,12 +1185,16 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-% der Hilfspunkt aux[MID] liegt genau zwischen seven[LEFT] und seven[JOINT]
-% und wird zu eight[TOP]:
-aux[MID] := 1/2[seven[LEFT],seven[JOINT]];
 
-% TODO: Hier nicht mit tensions, sondern mit Winkeln arbeiten:
-% seven JOINT!
+% aux[BOTTOM] wandert zu eight[BOTTOM]; 
+% weil aux[LEFT] schon belegt ist, nennen wir den
+% zweiten Hilfspunkt aux[MID];
+tmppath0 := seven[JOINT]{down}
+            .. seven[MID]
+            .. seven[END];
+aux[BOTTOM] := point 1.75 of tmppath0;
+aux[MID]    := point 1.5  of tmppath0;
+phi[END]    := 180+angle(direction 2 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -1199,18 +1203,17 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 1/f;
-       tt := max(t/2,1);
-
-       draw m[seven[END],eight[RIGHT]]
-            .. m[seven[MID],eight[LEFT]]
+       
+       draw m[seven[END],eight[RIGHT]]{dir m[phi[END],270]}
+            .. m[aux[BOTTOM],eight[BOTTOM]]
+            .. m[aux[MID],eight[LEFT]]
             .. m[seven[MID],eight[MID]]
-            .. m[seven[JOINT],eight[R_ARC]]{up}
-            .. tension t .. m[aux[MID],eight[TOP]]
-            .. tension t .. m[seven[LEFT],eight[L_ARC]];
-       draw m[aux[LEFT],eight[L_ARC]]{down}
-            .. tension tt .. m[aux[INTER],eight[MID]]
-            .. tension tt .. {down}m[aux[RIGHT],eight[RIGHT]];
+            .. {up}m[seven[JOINT],eight[R_ARC]]{dir m[180,90]}
+            .. m[seven[TOP],eight[TOP]]{left}
+            .. m[seven[LEFT],eight[L_ARC]]{dir m[180,270]};
+       draw m[aux[LEFT],eight[L_ARC]]{dir m[0,-90]}
+            .. m[aux[INTER],eight[MID]]
+            .. m[aux[RIGHT],eight[RIGHT]]{dir m[0,-90]};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
