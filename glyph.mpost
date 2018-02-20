@@ -41,11 +41,11 @@
 % TODO:
 %- 3"
 % Übergänge: 3 -> 4, 3 -> 0, 2 -> 1,
-%            f -> s, l -> g, o -> u
+%            l -> g, o -> u
 
 % Versionsnummer:
 string version;
-version := "Version: 1.21";
+version := "Version: 1.22";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -1535,16 +1535,14 @@ _f_[TOP]    = (corr, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-mw-0.1u+corr,xh-dy);
+_f_[LEFT]   = (-mw-0.10u+corr,xh-dy);
 _f_[RIGHT]  = (-mw+0.15u+corr,xh-dy);
 
 % g
 _g_[TOP]    = (0,xh);
-_g_[LEFT]   = (-iw,0.5u);
-% 0.15u höher als Nulllinie, daher ist die Mitte bei
-% 0.15u+1/2(xh-0.15u) = 0.5u
-_g_[RIGHT]  = (iw,0.5u);
-_g_[BOTTOM] = (0,0.15u);
+_g_[LEFT]   = (-iw,1/2*(xh+dy));
+_g_[RIGHT]  = _g_[LEFT] xscaled -1;
+_g_[BOTTOM] = (0,dy);
 
 _g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
 
@@ -2886,7 +2884,7 @@ tmppath0 :=  _f_[BEGIN]
              .. _f_[TOP]
              .. _f_[END];
 % Wir brauchen den Winkel an der Spitze für den Übergang f -> s
-phi[BEGIN] := angle(direction 0 of tmppath0);
+phi[END] := 180+angle(direction 3 of tmppath0);
 
 start := standalone("f");
 
@@ -2986,7 +2984,7 @@ tmp0 := (xpart(_f_[RIGHT])-xpart(_f_[LEFT]))/2;
 % halbe Breite des f-Strichs
 
 aux[LEFT]  := _s_[MID] shifted (-tmp0,0);
-aux[RIGHT] := _s_[MID] shifted(tmp0,0);
+aux[RIGHT] := _s_[MID] shifted (tmp0,0);
 
 tmp1 := xpart(_f_[MID]);
 aux[END]   := _f_[END] shifted (-tmp1,-(asc-xh));
@@ -3014,7 +3012,10 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-aux[D_ARC] := 1/2[aux[MID],aux[BEGIN]];
+% Zwei Hilfspunkte im unteren Stamm, die den
+% Bogen ausbilden. aux[BOTTOM] wandert zeitverzögert
+% nach unten:
+aux[D_ARC]  := 1/3[aux[MID],aux[BEGIN]];
 aux[BOTTOM] := 2/3[aux[MID],aux[BEGIN]];
 
 for i = start+fpht+1 upto start+2fpht-1:
@@ -3025,19 +3026,16 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       t := 1/sqrt(m);
-
        draw m[aux[LEFT],_s_[MID]]
             -- m[aux[RIGHT],_s_[MID]];
 
-       draw m[aux[END],_s_[BEGIN]]{dir (m*m)[phi[BEGIN],90]}
+       draw m[aux[END],_s_[BEGIN]]{dir m[phi[END],90]}
             .. m[aux[TOP],_s_[TOP]]
-            .. (m*m)[aux[MID],_s_[U_ARC]]{down}
+            .. max(2m-1,0)[aux[MID],_s_[U_ARC]]{down} % oder m*m
             .. _s_[MID]
-            .. (m*m)[aux[D_ARC],_s_[D_ARC]]{down}
-            .. m[aux[BOTTOM],_s_[BOTTOM]]
-            .. (1*m)[aux[BEGIN],_s_[END]]{up};
-
+            .. max(2m-1,0)[aux[D_ARC],_s_[D_ARC]]{down} % oder m*m
+            .. max(2m-1,0)[aux[BOTTOM],_s_[BOTTOM]]
+            .. m[aux[BEGIN],_s_[END]]{dir m[270,90]};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
