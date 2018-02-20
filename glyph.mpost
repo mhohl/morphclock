@@ -39,13 +39,12 @@
 % abgelegt.
 
 % TODO:
-%- 3"
 % Übergänge: 3 -> 4, 3 -> 0, 2 -> 1,
 %            l -> g, o -> u
 
 % Versionsnummer:
 string version;
-version := "Version: 1.22";
+version := "Version: 1.23";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -268,11 +267,11 @@ two[END]   = (sw,0);
 % 3
 three[BEGIN]  = (-sw,xh-dy);
 three[TOP]    = two[TOP];
-three[U_ARC]  = (sw,0.5u);
+three[U_ARC]  = (sw,2/3*xh);
 three[JOINT]  = (-0.15u,dy);
-three[D_ARC]  = (0.3u,-0.5u);
-three[BOTTOM] = (0,dsc); % TODO: verwende diesen Punkt!
-three[END]    = three[D_ARC] xscaled -1;
+three[D_ARC]  = (iw,1/2*dsc);
+three[BOTTOM] = (0,dsc);
+three[END]    = (-iw,2/3*dsc);
 
 % 4
 four[LEFT]   = (-sw,0);
@@ -510,14 +509,20 @@ endfor
 
 start := standalone("2");
 
+tmppath0 := two[BEGIN]
+            .. two[TOP]
+            .. two[R_ARC]
+            .. tension 2 .. two[JOINT];
+phi[JOINT] := angle(direction 3 of tmppath0);
+
 beginfig(start);
    draw_grid(u);
    pickup pc;
 
    draw two[BEGIN]
-        .. two[TOP]
-        .. two[R_ARC]
-        .. tension 2 .. two[JOINT]
+            .. two[TOP]
+            .. two[R_ARC]
+            .. tension 2 .. two[JOINT]
       & two[JOINT] -- two[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -540,14 +545,13 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
-       phi1 := -90m;
 
        draw two[BEGIN]
             .. two[TOP]
             .. two[R_ARC]
             .. tension 2 .. two[JOINT]
           & two[JOINT]
-            -- two[END] rotatedaround (two[JOINT],phi1);
+            -- two[END] rotatedaround (two[JOINT],-90m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -562,13 +566,16 @@ for i = start+fpht+1 upto start+2fpht-1:
        t := 1/m;
 
        aux[END] := two[END] rotatedaround (two[JOINT],-90);
+       aux[BOTTOM] := 2/3[two[JOINT],aux[END]];
+       aux[D_ARC]  := 1/3[two[JOINT],aux[END]]; 
 
        draw m[two[BEGIN],three[BEGIN]]
-            .. three[TOP]
+            .. m[two[TOP],three[TOP]]
             .. m[two[R_ARC],three[U_ARC]]
-            .. tension (2-m) .. m[two[JOINT],three[JOINT]]
-          & m[two[JOINT],three[JOINT]]
-            .. m[two[JOINT],three[D_ARC]]
+            .. tension (2-m) .. m[two[JOINT],three[JOINT]]{dir m[phi[JOINT],-180]}
+          & m[two[JOINT],three[JOINT]]{dir m[-90,0]}
+            .. m[aux[D_ARC],three[D_ARC]]
+            .. m[aux[BOTTOM],three[BOTTOM]]
             .. m[aux[END],three[END]];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -705,9 +712,10 @@ beginfig(start);
    draw three[BEGIN]
         .. three[TOP]
         .. three[U_ARC]
-        .. three[JOINT]
-      & three[JOINT]
+        .. three[JOINT]{left}
+      & three[JOINT]{right}
         .. three[D_ARC]
+        .. three[BOTTOM]
         .. three[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
