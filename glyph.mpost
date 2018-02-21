@@ -39,12 +39,11 @@
 % abgelegt.
 
 % TODO:
-% Übergänge: 3 -> 4, 2 -> 1,
-%            l -> g
+% Übergänge: 2 -> 1, l -> g
 
 % Versionsnummer:
 string version;
-version := "Version: 1.25";
+version := "Version: 1.26";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -563,7 +562,6 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 1/m;
 
        aux[END] := two[END] rotatedaround (two[JOINT],-90);
        aux[BOTTOM] := 2/3[two[JOINT],aux[END]];
@@ -597,7 +595,6 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
-       t := 2-m;
 
        tmppath0 := two[BEGIN] .. two[TOP] .. two[R_ARC];
        phi[BEGIN] := angle(direction 0 of tmppath0);
@@ -605,7 +602,7 @@ for i = start+1 upto start+fpht:
        draw m[two[BEGIN],zero[LEFT]]{dir m[phi[BEGIN],90]}
             .. m[two[TOP],zero[TOP]]
             .. m[two[R_ARC],zero[RIGHT]]
-            .. tension t .. m[two[JOINT],zero[BOTTOM]];
+            .. tension (2-m) .. m[two[JOINT],zero[BOTTOM]];
        draw two[JOINT] -- two[END];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -731,6 +728,19 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% die Ansgangswinkel im oberen Bogen der 3:
+tmppath0 := three[BEGIN]
+            .. three[TOP]
+            .. three[U_ARC]
+            .. three[JOINT]{left};
+phi[BEGIN] := angle(direction 0 of tmppath0);
+phi[TOP]   := angle(direction 1 of tmppath0);
+phi[U_ARC] := angle(direction 2 of tmppath0);
+% die Zielwinkel in der 4:
+phi[LEFT]  := angle(four[TOP]-four[LEFT]);
+phi[INTER] := angle(four[INTER]-four[LEFT]);
+
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -738,23 +748,32 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
-       t := max(15f*f,1);
-
-       % Der "Austrittswinkel" des unteren Bogens an der "Spitze"
-       % wird ermittelt und wandert langsam gegen 0.
-       tmppath0 := three[JOINT] .. three[D_ARC] .. three[END];
-       phi[JOINT] := angle(direction 0 of tmppath0);
 
        draw m[three[BEGIN],four[LEFT]]
-            .. tension t .. m[three[TOP],four[TOP]]
-            .. tension t .. m[three[U_ARC],four[INTER]]
-            .. tension t .. m[three[JOINT],four[LEFT]]
-          & m[three[JOINT],four[LEFT]]{dir (1-m)*phi[JOINT]}
+            {dir m[phi[BEGIN],phi[LEFT]]}
+            .. {dir m[phi[TOP],phi[LEFT]]}
+               m[three[TOP],four[TOP]]
+               {dir m[phi[TOP],-90]}
+            .. {dir m[phi[U_ARC],-90]}
+               m[three[U_ARC],four[INTER]]
+               {dir m[phi[U_ARC],phi[INTER]-180]}
+            .. {dir m[180,phi[INTER]+180]}
+               m[three[JOINT],four[LEFT]]
+          & m[three[JOINT],four[LEFT]]{right}
             .. three[D_ARC]
+            .. three[BOTTOM]
             .. three[END];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% Winkel am verbliebenen unteren Bogen:
+tmppath0 := four[LEFT]{right}
+            .. three[D_ARC]
+            .. three[BOTTOM]
+            .. three[END];
+phi[D_ARC]  := angle(direction 1 of tmppath0);
+phi[BOTTOM] := angle(direction 2 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -763,14 +782,24 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := max(15*f*f*f,1);
+
+       tmppath0 := four[LEFT]{dir m[0,phi[INTER]]}
+                   .. {dir m[phi[D_ARC],phi[INTER]]}
+                      m[three[D_ARC],four[INTER]]
+                      {dir m[phi[D_ARC],-90]}
+                   .. m[three[BOTTOM],four[BOTTOM]]
+                      {dir m[phi[BOTTOM],270]}
+                   .. m[three[END],three[BOTTOM]];
+                   % wir ziehen den Endpunkt zum tiefsten Punkt,
+                   % um einen schöneren Bogen zu erhalten.
 
        draw four[LEFT]
             -- four[TOP]
             -- four[INTER]
-            -- four[LEFT]{right}
-            .. tension t .. m[three[D_ARC],four[INTER]]
-            .. tension t .. m[three[END],four[BOTTOM]];
+            -- cycle;
+
+       draw subpath (0,3-m) of tmppath0;
+
        draw four[INTER]
             -- m[four[INTER],four[RIGHT]];
        setbounds currentpicture to boundingpath;
@@ -4557,24 +4586,20 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
-       phi0 := 180m;
-
-       % nach einer Vierteldrehung hat der p-Strich bereits die
-       % gewünschte Länge:
-       tmp1 := min(2m,1);
 
        aux[END] := (xpart(_p_[END]),0);
-
+       % nach einer Vierteldrehung hat der p-Strich bereits die
+       % gewünschte Länge:
        tmppath1 := _p_[BEGIN]
-                   -- tmp1[_p_[END],aux[END]];
+                   -- min(2m,1)[_p_[END],aux[END]];
        tmppath2 := _p_[U_ARC]
                    .. _p_[TOP]
                    .. _p_[RIGHT]
                    .. _p_[BOTTOM]
                    .. _p_[D_ARC];
 
-       draw tmppath1 rotatedaround (C,phi0);
-       draw tmppath2 rotatedaround (C,phi0);
+       draw tmppath1 rotatedaround (C,180m);
+       draw tmppath2 rotatedaround (C,180m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
