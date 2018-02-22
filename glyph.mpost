@@ -5190,7 +5190,7 @@ for i = start+1 upto start+fpht:
 
        % Der Querstrich wandert nach links, um den Kreis vorbeizulassen:
 
-       tmp1 := max(2m-1,0)*(xpart(_t_[LEFT])-xpart(_t_[MID]));
+       tmp1 := m*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
        draw tmppath1 shifted (tmp1,0);
 
        setbounds currentpicture to boundingpath;
@@ -5222,9 +5222,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmp0 := min(2m,1)[ypart(_t_[LEFT]),ypart(_f_[MID])]-ypart(_t_[MID]);
        draw (subpath (0,5-3*max(2m-1,0)) of tmppath0) shifted (0,tmp0);
 
-       % Der Querstrich wandert wieder zurück:
-
-       tmp1 := min(2(1-m),1)*(xpart(_t_[LEFT])-xpart(_t_[MID]));
+       % Der Querstrich wandert wieder zurück, aber erst in der zweiten Hälfte
+       % des Übergangs:
+       tmp1 := min(2(1-m),1)*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
        draw tmppath1 shifted (tmp1,0);
 
        setbounds currentpicture to boundingpath;
