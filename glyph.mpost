@@ -39,11 +39,12 @@
 % abgelegt.
 
 % TODO:
-% Übergänge: 2 -> 1, l -> g
+% Übergänge: l -> g
+% tensions durch Winkel ersetzen
 
 % Versionsnummer:
 string version;
-version := "Version: 1.26";
+version := "Version: 1.27";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -118,6 +119,7 @@ R_ARC  = 1009; % [r]ight (part of) [arc]
 U_ARC  = 1010; % [u]pright (part of) [arc]
 D_ARC  = 1011; % [d]ownright (part of) [arc]
 INTER  = 1012; % [inter]section point
+TEMP   = 1013; % [temp]orary point
 
 
 % Arrays für die Koordinaten der Ziffern:
@@ -565,7 +567,7 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        aux[END] := two[END] rotatedaround (two[JOINT],-90);
        aux[BOTTOM] := 2/3[two[JOINT],aux[END]];
-       aux[D_ARC]  := 1/3[two[JOINT],aux[END]]; 
+       aux[D_ARC]  := 1/3[two[JOINT],aux[END]];
 
        draw m[two[BEGIN],three[BEGIN]]
             .. m[two[TOP],three[TOP]]
@@ -648,6 +650,12 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+tmppath0 := two[BEGIN]
+            .. two[TOP]
+            .. two[R_ARC]
+            .. tension 2 .. two[JOINT]
+          & two[JOINT] -- two[END];
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -655,27 +663,20 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
-       t := 10*m*m+1;
 
-       %aux[TOP] entspricht dem Startpunkt der Eins, heruntergeklappt
-       % an den Mittelstrich:
-       aux[TOP]    := one[TOP] shifted (0,-length(one[BEGIN]-one[TOP]));
-       % two[R_ARC] und two[JOINT|END] wandern waagrecht zum Mittelstrich:
-       aux[MID]    := (xpart(one[TOP]),ypart(two[R_ARC]));
-       aux[BOTTOM] := (xpart(one[TOP]),ypart(two[END]));
-
-       if m < 1:
-          draw m[two[BEGIN],aux[TOP]]
-               .. tension t .. two[TOP]
-               .. tension t .. m[two[R_ARC],aux[MID]]
-               .. tension (t+1) .. m[two[JOINT],aux[BOTTOM]]
-               -- m[two[END],aux[BOTTOM]];
-       else:
-          draw one[TOP] -- one[BOTTOM];
-       fi
+       draw tmppath0 rotatedaround (C,180m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% Die rotierte Zwei wird auf Hilfspunkte verteilt:
+aux[BEGIN]  := two[END]   rotatedaround (C,180);
+aux[TOP]    := two[JOINT] rotatedaround (C,180);
+aux[MID]    := two[R_ARC] rotatedaround (C,180);
+aux[BOTTOM] := two[BEGIN] rotatedaround (C,180);
+% zusätzlich:
+aux[TEMP]   := two[TOP]   rotatedaround (C,180);
+one[TEMP]   := 1/2[one[MID],one[BOTTOM]];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -685,12 +686,12 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       phi0 := -90-angle(one[BEGIN]-one[TOP]);
-       phi1 := (1-m)*phi0;
-
-       draw one[BEGIN] rotatedaround (one[TOP],phi1)
-            -- one[TOP]
-            -- one[BOTTOM];
+       draw m[aux[BEGIN],one[BEGIN]]
+            -- m[aux[TOP],one[TOP]]
+          & m[aux[TOP],one[TOP]]
+            .. tension (2-m) .. m[aux[MID],one[MID]]
+            .. m[aux[TEMP],one[TEMP]]
+            .. m[aux[BOTTOM],one[BOTTOM]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
