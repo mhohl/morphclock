@@ -43,7 +43,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.27";
+version := "Version: 1.28";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -123,7 +123,8 @@ DIR_A  = 1014; % [dir]ection vector [a]
 DIR_B  = 1015; % [dir]ection vector [b]
 CENTER = 1016;
 % spezielle Indizes:
-G_LOOP = 2000;
+G_LOOP   = 2000;
+TWO_HOOK = 2001;
 
 
 
@@ -515,20 +516,17 @@ endfor
 
 start := standalone("2");
 
-tmppath0 := two[BEGIN]
-            .. two[TOP]
-            .. two[R_ARC]
-            .. tension 2 .. two[JOINT];
-phi[JOINT] := angle(direction 3 of tmppath0);
+tmppath[TWO_HOOK] := two[BEGIN]
+                     .. two[TOP]
+                     .. two[R_ARC]
+                     .. tension 2 .. two[JOINT];
+phi[JOINT] := angle(direction 3 of tmppath[TWO_HOOK]);
 
 beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw two[BEGIN]
-            .. two[TOP]
-            .. two[R_ARC]
-            .. tension 2 .. two[JOINT]
+   draw tmppath[TWO_HOOK]
       & two[JOINT] -- two[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -552,10 +550,7 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw two[BEGIN]
-            .. two[TOP]
-            .. two[R_ARC]
-            .. tension 2 .. two[JOINT]
+       draw tmppath[TWO_HOOK]
           & two[JOINT]
             -- two[END] rotatedaround (two[JOINT],-90m);
        setbounds currentpicture to boundingpath;
@@ -603,8 +598,7 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       tmppath0 := two[BEGIN] .. two[TOP] .. two[R_ARC];
-       phi[BEGIN] := angle(direction 0 of tmppath0);
+       phi[BEGIN] := angle(direction 0 of tmppath[TWO_HOOK]);
 
        draw m[two[BEGIN],zero[LEFT]]{dir m[phi[BEGIN],90]}
             .. m[two[TOP],zero[TOP]]
@@ -655,11 +649,8 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-tmppath0 := two[BEGIN]
-            .. two[TOP]
-            .. two[R_ARC]
-            .. tension 2 .. two[JOINT]
-          & two[JOINT] -- two[END];
+tmppath0 := tmppath[TWO_HOOK]
+            & two[JOINT] -- two[END];
 
 for i = start+1 upto start+fpht:
     beginfig(i);
