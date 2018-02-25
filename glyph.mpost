@@ -1130,24 +1130,39 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
        q := 2m*m-2*m+1;
          % Parabelabschnitt y = 1 .. 1/2 .. 1 für x = 0 .. 0.5 .. 1;
-       phi1 := 180m;
 
-       aux[MID]   := six[LEFT]   rotatedaround (C,phi1);
-       aux[END]   := (six[BEGIN] yscaled q) rotatedaround (C,phi1);
-       aux[TOP]   := six[RIGHT]  rotatedaround (C,phi1/2);
-       aux[LEFT]  := six[TOP]    rotatedaround (C,phi1/4);
-       aux[JOINT] := six[BOTTOM] rotatedaround (C,3phi1/4);
+       aux[MID]   := six[LEFT]              rotatedaround (C,180m);
+       aux[END]   := (six[BEGIN] yscaled q) rotatedaround (C,180m);
+       aux[TOP]   := six[RIGHT]             rotatedaround (C, 90m);
+       aux[LEFT]  := six[TOP]               rotatedaround (C, 45m);
+       aux[JOINT] := six[BOTTOM]            rotatedaround (C,135m);
        aux[BEGIN] := six[LEFT] shifted (0.125m*u,0.075m*u);
 
        draw aux[BEGIN]
             ... aux[LEFT]
             ... aux[TOP]
             ... aux[JOINT]
-            .. aux[MID]{dir (phi1+90)}
+            .. aux[MID]{dir m[90,270]}
             .. aux[END];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% Die Ausgangswinkel werden bestimmt:
+tmppath0 := aux[BEGIN]
+            ... aux[LEFT]
+            ... aux[TOP]
+            ... aux[JOINT]
+            .. aux[MID]{down}
+            .. aux[END];
+phi[LEFT]  := angle(direction 1 of tmppath0);
+phi[TOP]   := angle(direction 2 of tmppath0);
+phi[JOINT] := angle(direction 3 of tmppath0);
+% Ein Endwinkel ist notwendig:
+tmppath1 :=seven[JOINT]{down}
+           .. seven[MID]
+           .. seven[END];
+phi[MID] := angle(direction 1 of tmppath1); show (phi[MID]);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -1158,16 +1173,15 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
        t := max(30m*m,1);
 
-       % Der Tangentenwinkel an JOINT beträgt
-       % näherungsweise -45° und soll zu -90°=down wandern
-       % TODO: korrekt berechnen!
-       phi1 := -45(m+1);
-
        draw m[aux[BEGIN],seven[BEGIN]]
-            .. tension t .. m[aux[LEFT],seven[LEFT]]
-            .. tension t .. m[aux[TOP],seven[TOP]]{right}
-            .. tension t .. m[aux[JOINT],seven[JOINT]]{dir phi1}
-            .. m[aux[MID],seven[MID]]
+            .. {dir m[phi[LEFT],90]}
+               m[aux[LEFT],seven[LEFT]]
+               {dir m[phi[LEFT],0]}
+            .. m[aux[TOP],seven[TOP]]{dir m[phi[TOP],0]}
+            .. {dir m[phi[JOINT],0]}
+               m[aux[JOINT],seven[JOINT]]
+               {dir m[phi[JOINT],-90]}
+            .. m[aux[MID],seven[MID]]{dir min(2m,1)[-90,phi[MID]]}
             .. m[aux[END],seven[END]];
        setbounds currentpicture to boundingpath;
     endfig;
