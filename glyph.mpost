@@ -39,7 +39,6 @@
 % abgelegt.
 
 % TODO:
-% Übergänge: l -> g
 % tensions durch Winkel ersetzen
 
 % Versionsnummer:
@@ -120,6 +119,12 @@ U_ARC  = 1010; % [u]pright (part of) [arc]
 D_ARC  = 1011; % [d]ownright (part of) [arc]
 INTER  = 1012; % [inter]section point
 TEMP   = 1013; % [temp]orary point
+DIR_A  = 1014; % [dir]ection vector [a]
+DIR_B  = 1015; % [dir]ection vector [b]
+CENTER = 1016;
+% spezielle Indizes:
+G_LOOP = 2000;
+
 
 
 % Arrays für die Koordinaten der Ziffern:
@@ -1585,12 +1590,26 @@ _g_[BOTTOM] = (0,dy);
 
 _g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
 
-% _g_[JOINT] wird später definiert
 _g_[U_ARC]  = (-0.15u,-0.1u);
 _g_[L_ARC]  = (-lw,-sw);
 _g_[R_ARC]  = (lw,-sw);
 _g_[D_ARC]  = (0,dsc);
 _g_[END]    = (0.15u,-0.1u);
+
+% Wir berechnen den Schnittpunkt der geschlossenen oberen Schlaufe
+% mit einer Halbgeraden im Zentrum dieser Schlaufe unter einem
+% Winkel von 135°:
+tmppath[G_LOOP] := _g_[TOP]
+                   .. _g_[LEFT]
+                   .. _g_[BOTTOM]
+                   .. _g_[RIGHT]
+                   .. cycle;
+_g_[CENTER] := (0,1/2[ypart(_g_[TOP]),ypart(_g_[BOTTOM])]);
+tmppath1    := (_g_[CENTER] -- (0,infinity)) rotatedaround (_g_[CENTER],135);
+_g_[JOINT]  := tmppath[G_LOOP] intersectionpoint tmppath1;
+% Der Richtungsvektor in diesem Punkt:
+tmp[JOINT]  := xpart(tmppath[G_LOOP] intersectiontimes tmppath1);
+_g_[DIR_A]  := direction tmp[JOINT] of tmppath[G_LOOP];
 
 % h
 _h_[BEGIN] = (-mw,asc);
@@ -3092,21 +3111,9 @@ beginfig(start);
 
    draw _g_[BEGIN] -- _g_[TOP];
 
-   tmppath0 := _g_[TOP]
-               .. _g_[LEFT]
-               .. _g_[BOTTOM]
-               .. _g_[RIGHT]
-               .. cycle;
-   aux[MID] := (0,0.5[ypart(_g_[TOP]),ypart(_g_[BOTTOM])]);
-   tmppath1 := (aux[MID] -- (0,infinity)) rotatedaround (aux[MID],135);
+   draw tmppath[G_LOOP];
 
-   _g_[JOINT] := tmppath0 intersectionpoint tmppath1;
-   (tmp[JOINT], whatever) = tmppath0 intersectiontimes tmppath1;
-   phi[JOINT] := angle(direction tmp[JOINT] of tmppath0);
-
-   draw tmppath0;
-
-   draw _g_[JOINT]{dir phi[JOINT]}
+   draw _g_[JOINT]{_g_[DIR_A]}
         .. _g_[U_ARC]
         .. _g_[L_ARC]
         .. _g_[D_ARC]
@@ -3143,17 +3150,18 @@ for i = start+1 upto start+fpht:
 
        draw _g_[BEGIN] -- _g_[TOP];
 
-       % Der Schnittpunkt _g_[JOINT] wandert an der Rundung entlang Richtung _g_[LEFT]
+       % Der Schnittpunkt aux[JOINT] wandert an der Rundung entlang Richtung _g_[LEFT]
        % und ist am Ende deckungsgleich:
-       tmppath1 := (aux[MID] -- (0,infinity)) rotatedaround (aux[MID],m[135,90]);
+       tmppath1 := (_g_[CENTER] -- (0,infinity))
+                   rotatedaround (_g_[CENTER],m[135,90]);
 
-       _g_[JOINT] := tmppath0 intersectionpoint tmppath1;
-       tmp[JOINT] := xpart(tmppath0 intersectiontimes tmppath1);
-       phi[JOINT] := angle(direction tmp[JOINT] of tmppath0);
+       aux[JOINT] := tmppath[G_LOOP] intersectionpoint tmppath1;
+       tmp[JOINT] := xpart(tmppath[G_LOOP] intersectiontimes tmppath1);
+       phi[JOINT] := angle(direction tmp[JOINT] of tmppath[G_LOOP]);
 
-       draw tmppath0;
+       draw tmppath[G_LOOP];
 
-       draw _g_[JOINT]{dir phi[JOINT]}
+       draw aux[JOINT]{dir phi[JOINT]}
             .. m[_g_[U_ARC],aux[U_ARC]]
             .. m[_g_[L_ARC],aux[L_ARC]]
             .. _g_[D_ARC]
@@ -3584,11 +3592,11 @@ beginfig(start);
 endfig;
 
 % Hilfspunkte:
-tmp0 := xpart(_l_[BOTTOM])-xpart(_l_[MID]);
+tmp0       := xpart(_l_[BOTTOM])-xpart(_l_[MID]);
 aux[LEFT]  := _l_[BEGIN] shifted (0,-2tmp0);
 aux[TOP]   := _l_[BEGIN] shifted (3/4*tmp0,0);
-aux[RIGHT] := _l_[BEGIN] shifted (3/2*tmp0,-2tmp0);
-aux[JOINT] := 1/3[_l_[MID],_l_[BEGIN]];
+aux[RIGHT] := _l_[BEGIN] shifted (xpart(_l_[END]),-2tmp0);
+aux[JOINT] := 1/4[_l_[MID],_l_[BEGIN]];
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -3610,29 +3618,21 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-% Wir wiederholen die Berechnung von phi[JOINT]
-% am Punkt _g_[JOINT]:
-tmppath0 := _g_[TOP]
-            .. _g_[LEFT]
-            .. _g_[BOTTOM]
-            .. _g_[RIGHT]
-            .. cycle;
-
-phi[JOINT] := angle(direction tmp[JOINT] of tmppath0);
+phi[JOINT] := angle(_g_[DIR_A]);
 
 % Wir brauchen einen zusätzlichen Hilfspunkt zwischen
 % aux[RIGHT] und aux[JOINT]:
-tmppath2 := aux[TOP]{right}
+tmppath0 := aux[TOP]{right}
             .. aux[RIGHT]
             .. {dir 240}aux[JOINT];
-aux[MID] := point 3/2 of tmppath2;
-phi[MID] := angle(direction 3/2 of tmppath2);
+aux[MID] := point 3/2 of tmppath0;
+phi[MID] := angle(direction 3/2 of tmppath0);
 % Darüberhinaus müssen im l-Bogen Hilfpunkte gesetzt werden:
-tmppath3 := _l_[MID]{down}
+tmppath1 := _l_[MID]{down}
              .. _l_[BOTTOM]
              .. _l_[END];
-aux[L_ARC] := point 1/2 of tmppath3;
-aux[R_ARC] := point 3/2 of tmppath3;
+aux[L_ARC] := point 1/2 of tmppath1;
+aux[R_ARC] := point 3/2 of tmppath1;
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3643,19 +3643,21 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
 
        % aus der l-Schlaufe wird der g-Kreis:
-       draw m[aux[JOINT],_g_[JOINT]]{dir m[90,180+phi[JOINT]]}
-            .. m[aux[LEFT],_g_[LEFT]]
+       draw m[aux[LEFT],_g_[LEFT]]
             .. m[aux[TOP],_g_[TOP]]{right}
             .. m[aux[RIGHT],_g_[RIGHT]]
             .. m[aux[MID],_g_[BOTTOM]]{dir m[phi[MID],-180]}
+            .. {dir m[240,180+phi[JOINT]]}
+               m[aux[JOINT],_g_[JOINT]]
+               {dir m[90,180+phi[JOINT]]}
             .. cycle;
        % der kleine Strich wächst aus aux[TOP] und bleibt
        % immer waagrecht
        aux[BEGIN] := m[aux[TOP],_g_[TOP]];
-       tmppath4 := aux[BEGIN]
+       tmppath2 := aux[BEGIN]
                    -- (xpart(_g_[BEGIN]),ypart(aux[BEGIN]));
-       draw subpath (0,m) of tmppath4;
-       % Die Schlaufe:
+       draw subpath (0,m) of tmppath2;
+       % Die g-Schlaufe:
        draw m[aux[JOINT],_g_[JOINT]]{dir m[-90,phi[JOINT]]}
             .. m[_l_[MID],_g_[U_ARC]]
             .. m[aux[L_ARC],_g_[L_ARC]]
