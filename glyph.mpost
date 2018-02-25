@@ -1010,7 +1010,7 @@ for i = start+fpht upto start+2fpht-1:
        t := 1/(m+0.001); % m kann Null werden
 
        % wir ermitteln den Punkt, der auf 2/3 des abschließenden Bogens liegt;
-       % aux[MID] wandert von der linken Ecke der nach oben geschobenen "5"
+       % aux[TEMP] wandert von der linken Ecke der nach oben geschobenen "5"
        % zum Zielpunkt.
        % Weil er dann auf dem Bogen liegt, kann er bei der "6" einfach
        % weggelassen weden.
@@ -1018,14 +1018,14 @@ for i = start+fpht upto start+2fpht-1:
        tmppath0   := six[LEFT]{up} .. six[BEGIN];
        aux[END]   := point 2/3 of tmppath0;
        aux[BEGIN] := (xpart(five[LEFT]),ypart(six[BEGIN]));
-       aux[MID]   := m[aux[BEGIN],aux[END]];
+       aux[TEMP]   := m[aux[BEGIN],aux[END]];
 
        draw six[LEFT]{up}
             .. six[TOP]
             .. six[RIGHT]
             .. six[BOTTOM]
             .. six[LEFT]{up}
-            .. tension t .. aux[MID]
+            .. tension t .. aux[TEMP]
             .. tension t .. six[BEGIN];
        setbounds currentpicture to boundingpath;
     endfig;
@@ -4660,11 +4660,11 @@ for i = start+fpht+1 upto start+2fpht-1:
        % kürzen wir den "Bauch"-Pfad
        % [durch die Verwendung von "-numbersystem=double" ist die
        % Berechnung der intersectiontime z.T. fehlerhaft; die erste
-       % Koordinate scheint korrekt zu sein, die zweite falsch.
-       aux0 := tmppath2 intersectiontimes tmppath1;
+       % Koordinate scheint korrekt zu sein, die zweite falsch]
+       aux[INTER] := tmppath2 intersectiontimes tmppath1;
 
        draw tmppath1;
-       draw subpath (xpart(aux0),4) of tmppath2;
+       draw subpath (xpart(aux[INTER]),4) of tmppath2;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4680,9 +4680,10 @@ beginfig(start);
 endfig;
 
 % Der Beginn des t-Bogens
-aux[MID]    := _p_[END] shifted (0,0.15u);
-aux[BOTTOM] := _p_[END] shifted (0.15u,0);
-aux[END]    := aux[BOTTOM] rotatedabout ((xpart(aux[BOTTOM]),ypart(aux[MID])),45);
+aux[MID]    := _p_[END] shifted (0,mw);
+aux[BOTTOM] := _p_[END] shifted (mw,0);
+aux[END]    := aux[BOTTOM]
+               rotatedabout ((xpart(aux[BOTTOM]),ypart(aux[MID])),45);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -4692,7 +4693,7 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       % Der Bogen bildet sich zuerst nur bis zur Vierteldrehung aus
+       % Der Bogen bildet sich zuerst nur bis zur Vierteldrehung aus:
        draw _p_[BEGIN]
        -- aux[MID]{down}
        .. m[_p_[END],aux[BOTTOM]];
@@ -4726,7 +4727,7 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. _p_[BOTTOM]
                    .. _p_[D_ARC];
 
-       draw subpath (0,2+m) of tmppath0;
+       draw subpath (0,2+m)  of tmppath0;
        draw subpath (0,4-3m) of tmppath1;
 
        setbounds currentpicture to boundingpath;
