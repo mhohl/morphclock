@@ -917,6 +917,14 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
+% Einige Winkel:
+tmppath0 := five[JOINT]
+            .. five[U_ARC]
+            .. five[R_ARC]
+            .. {left}five[END];
+phi[U_ARC] := angle(direction 1 of tmppath0);
+phi[INTER] := angle(four[INTER]-four[LEFT]);
+
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
@@ -924,14 +932,13 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := max(5(1-m),1);
 
        draw five[BEGIN]
             -- m[four[TOP],five[LEFT]]
             -- m[four[LEFT],five[JOINT]]
-            .. tension t .. m[four[INTER],five[U_ARC]]
-            .. tension 1 .. m[four[INTER],five[R_ARC]]
-            .. tension t .. m[four[BOTTOM],five[END]];
+            .. m[four[INTER],five[U_ARC]]{dir m[phi[INTER],phi[U_ARC]]}
+            .. m[four[INTER],five[R_ARC]]
+            .. m[four[BOTTOM],five[END]]{dir m[-90,-180]};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
