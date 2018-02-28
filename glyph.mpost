@@ -40,7 +40,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.29";
+version := "Version: 1.3";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -1129,9 +1129,9 @@ for i = start+1 upto start+fpht:
        aux[TOP]   := six[RIGHT]             rotatedaround (C, 90m);
        aux[LEFT]  := six[TOP]               rotatedaround (C, 45m);
        aux[JOINT] := six[BOTTOM]            rotatedaround (C,135m);
-       aux[BEGIN] := six[LEFT] shifted (0.125m*u,0.075m*u); % TODO: warum?
+       aux[BEGIN] := (-sw,xh/2);
 
-       draw aux[BEGIN]
+       draw m[six[LEFT],aux[BEGIN]]
             ... aux[LEFT]
             ... aux[TOP]
             ... aux[JOINT]
