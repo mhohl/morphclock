@@ -38,12 +38,9 @@
 % n := hour*60+min (also n = 0 ... 719)
 % abgelegt.
 
-% TODO:
-% tensions durch Winkel ersetzen
-
 % Versionsnummer:
 string version;
-version := "Version: 1.28";
+version := "Version: 1.29";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -119,8 +116,8 @@ U_ARC  = 1010; % [u]pright (part of) [arc]
 D_ARC  = 1011; % [d]ownright (part of) [arc]
 INTER  = 1012; % [inter]section point
 TEMP   = 1013; % [temp]orary point
-DIR_A  = 1014; % [dir]ection vector [a]
-DIR_B  = 1015; % [dir]ection vector [b]
+DIR    = 1014; % [dir]ection vector
+DIFF   = 1015;
 CENTER = 1016;
 % spezielle Indizes:
 A_LOOP   = 2000;
@@ -815,6 +812,18 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Übergang oberer Bogen Drei zur Dreiviertel-Null
+tmppath0 := three[BEGIN]
+            .. three[TOP]
+            .. three[U_ARC]
+            .. three[JOINT]{left};
+phi[BEGIN] := angle(direction 0 of tmppath0);
+
+% Der untere Bogen soll zu einem senkrecht nach unten geklappten
+% Viertelsegment der Null werden:
+tmppath1  := zero[BOTTOM]{left} .. zero[LEFT]{up};
+phi[TEMP] := 270-angle(zero[LEFT]-zero[BOTTOM]);
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -823,23 +832,10 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       % Übergang oberer Bogen Drei zur Dreiviertel-Null
-       tmppath0 := three[BEGIN]
-                   .. three[TOP]
-                   .. three[U_ARC]
-                   .. three[JOINT]{left};
-       phi[BEGIN] := angle(direction 0 of tmppath0);
-
-       % Der untere Bogen soll zu einem senkrecht nach unten geklappten
-       % Viertelsegment der Null werden:
-
-       tmppath1 := zero[BOTTOM]{left} .. zero[LEFT]{up};
-       phi0     := 270-angle(zero[LEFT]-zero[BOTTOM]);
-
        aux[JOINT]  := m[three[JOINT],zero[BOTTOM]];
-       aux[BOTTOM] := (point 2/3 of tmppath1) rotatedaround (zero[BOTTOM],phi0);
-       aux[D_ARC]  := (point 1/3 of tmppath1) rotatedaround (zero[BOTTOM],phi0);
-       aux[END]    := zero[LEFT] rotatedaround (zero[BOTTOM],phi0);
+       aux[BOTTOM] := (point 2/3 of tmppath1) rotatedaround (zero[BOTTOM],phi[TEMP]);
+       aux[D_ARC]  := (point 1/3 of tmppath1) rotatedaround (zero[BOTTOM],phi[TEMP]);
+       aux[END]    := zero[LEFT]              rotatedaround (zero[BOTTOM],phi[TEMP]);
 
        draw m[three[BEGIN],zero[LEFT]]{dir m[phi[BEGIN],90]}
             .. m[three[TOP],zero[TOP]]
@@ -861,18 +857,15 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       phi1 := (1-m)*phi0;
-
        draw zero[LEFT]{up}
             .. zero[TOP]
             .. zero[RIGHT]
             .. zero[BOTTOM]{left}
             % Der Viertelbogen klappt nach oben:
-          & tmppath1 rotatedaround (zero[BOTTOM],phi1);
+          & tmppath1 rotatedaround (zero[BOTTOM],(1-m)*phi[TEMP]);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 %
 % 4 -> ()
@@ -1136,7 +1129,7 @@ for i = start+1 upto start+fpht:
        aux[TOP]   := six[RIGHT]             rotatedaround (C, 90m);
        aux[LEFT]  := six[TOP]               rotatedaround (C, 45m);
        aux[JOINT] := six[BOTTOM]            rotatedaround (C,135m);
-       aux[BEGIN] := six[LEFT] shifted (0.125m*u,0.075m*u);
+       aux[BEGIN] := six[LEFT] shifted (0.125m*u,0.075m*u); % TODO: warum?
 
        draw aux[BEGIN]
             ... aux[LEFT]
@@ -1604,11 +1597,11 @@ _g_[BOTTOM] = (0,dy);
 
 _g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
 
-_g_[U_ARC]  = (-0.15u,-0.1u);
+_g_[U_ARC]  = (-dy,-2/3*dy);
 _g_[L_ARC]  = (-lw,-sw);
 _g_[R_ARC]  = (lw,-sw);
 _g_[D_ARC]  = (0,dsc);
-_g_[END]    = (0.15u,-0.1u);
+_g_[END]    = (dy,-2/3*dy);
 
 % Wir berechnen den Schnittpunkt der geschlossenen oberen Schlaufe
 % mit einer Halbgeraden im Zentrum dieser Schlaufe unter einem
@@ -1623,7 +1616,7 @@ tmppath1    := (_g_[CENTER] -- (0,infinity)) rotatedaround (_g_[CENTER],135);
 _g_[JOINT]  := tmppath[G_LOOP] intersectionpoint tmppath1;
 % Der Richtungsvektor in diesem Punkt:
 tmp[JOINT]  := xpart(tmppath[G_LOOP] intersectiontimes tmppath1);
-_g_[DIR_A]  := direction tmp[JOINT] of tmppath[G_LOOP];
+_g_[DIR]    := direction tmp[JOINT] of tmppath[G_LOOP];
 
 % h
 _h_[BEGIN] = (-mw,asc);
@@ -1667,7 +1660,7 @@ _m_[BEGIN] = (-iw,xh);
 _m_[LEFT]  = (-iw,3/4*xh);
 _m_[BOTTOM] = (-iw,0);
 _m_[L_ARC] = (-iw/2,xh);
-_m_[JOINT] = (0,0.65u);
+_m_[JOINT] = (0,13/17*xh);
 _m_[MID]   = (0,0);
 _m_[R_ARC] = _m_[L_ARC] xscaled -1;
 _m_[RIGHT] = _m_[LEFT] xscaled -1;
@@ -1698,7 +1691,7 @@ _p_[RIGHT]  = (iw,xh/2);
 
 % q
 _q_[BEGIN]  = _p_[BEGIN] xscaled -1;
-_q_[END]    = _p_[END] xscaled -1;
+_q_[END]    = _p_[END]   xscaled -1;
 _q_[U_ARC]  = _p_[U_ARC] xscaled -1;
 _q_[D_ARC]  = _p_[D_ARC] xscaled -1;
 _q_[TOP]    = zero[TOP];
@@ -1718,9 +1711,9 @@ _s_[BEGIN]  = (sw,3/4*xh);
 _s_[TOP]    = _o_[TOP];
 _s_[U_ARC]  = _s_[BEGIN] xscaled -1;
 _s_[MID]    = C;
-_s_[D_ARC]  = (0.3u,xh/4);
+_s_[D_ARC]  = (1/2(mw+iw),xh/4);
 _s_[BOTTOM] = _o_[BOTTOM];
-_s_[END]    = (-0.3u,xh/4);
+_s_[END]    = _s_[D_ARC] xscaled -1;
 
 % t
 _t_[LEFT]   = _f_[LEFT];
@@ -1788,16 +1781,13 @@ tmppath[A_SWEEP] := _a_[BEGIN]
                     ..  _a_[R_ARC]
                     --- _a_[JOINT]
                     .. _a_[END];
-_a_[DIR_A] := direction 2 of tmppath[A_SWEEP];
+_a_[DIR] := direction 2 of tmppath[A_SWEEP];
 phi[R_ARC] := angle(direction 2 of tmppath[A_SWEEP]);
 
-tmppath[A_LOOP] := _a_[R_ARC]{_a_[DIR_A]}
+tmppath[A_LOOP] := _a_[R_ARC]{_a_[DIR]}
                    .. _a_[L_ARC]
                    .. _a_[BOTTOM]
                    .. _a_[JOINT];
-% Der Schnittpunkt von a-"Bauch" und y-Achse wird
-% beim Übergang p -> a benötigt:
-_a_[MID] := tmppath[A_LOOP] intersectionpoint ((0,0.01u)--(0,infinity));
 
 start := standalone("a");
 
@@ -1932,9 +1922,12 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Der Schnittpunkt von a-"Bauch" und y-Achse:
+_a_[INTER] := tmppath[A_LOOP] intersectionpoint ((0,0.01u)--(0,infinity));
+
 % Winkel:
-tmppath0 := _a_[R_ARC]{_a_[DIR_A]}
-            .. _a_[MID]
+tmppath0 := _a_[R_ARC]{_a_[DIR]}
+            .. _a_[INTER]
             .._a_[L_ARC]
             .. _a_[BOTTOM]
             .. _a_[JOINT];
@@ -1973,7 +1966,7 @@ for i = start+1 upto start+fpht:
        draw subpath (0,5-m) of tmppath1;
 
        draw m[_a_[R_ARC],aux[MID]]{dir m[phi[R_ARC],-180]}
-            .. m[_a_[MID],aux[JOINT]]{dir m[phi[MID],-180]}
+            .. m[_a_[INTER],aux[JOINT]]{dir m[phi[MID],-180]}
             .. m[_a_[L_ARC],aux[L_ARC]]
             .. m[_a_[BOTTOM],aux[LEFT]]{dir m[phi[BOTTOM],0]}
             .. m[_a_[JOINT],aux[BOTTOM]]{dir m[phi[JOINT],0]};
@@ -2146,7 +2139,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        % Der komplette Pfad, bestehend aus dem Rest von a und einem vollständigen s:
        tmppath4 := m[_a_[BEGIN],_s_[U_ARC]]
                    .. _a_[TOP]
-                   .. _a_[R_ARC]{_a_[DIR_A]}
+                   .. _a_[R_ARC]{_a_[DIR]}
                    .. m[_a_[L_ARC],_s_[END]]{dir m[phi[L_ARC],-90]}
                       % Übergang vom ursprünglichen Winkel zu -90 = down
                    .. _a_[BOTTOM]
@@ -3099,7 +3092,7 @@ beginfig(start);
 
    draw tmppath[G_LOOP];
 
-   draw _g_[JOINT]{_g_[DIR_A]}
+   draw _g_[JOINT]{_g_[DIR]}
         .. _g_[U_ARC]
         .. _g_[L_ARC]
         .. _g_[D_ARC]
@@ -3604,7 +3597,7 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-phi[JOINT] := angle(_g_[DIR_A]);
+phi[JOINT] := angle(_g_[DIR]);
 
 % Wir brauchen einen zusätzlichen Hilfspunkt zwischen
 % aux[RIGHT] und aux[JOINT]:
@@ -4560,14 +4553,7 @@ tmppath0 := _p_[D_ARC]
 
 phi[D_ARC] := angle(direction 0 of tmppath0);
 
-% der Winkel im a-Bogen
-tmppath1 := _a_[BEGIN]
-            ..  _a_[TOP]
-            ..  _a_[R_ARC]
-            --- _a_[JOINT]
-            .. _a_[END];
-
-phi[R_ARC] := angle(direction 2 of tmppath1);
+phi[R_ARC] := angle(_a_[DIR]);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -4609,29 +4595,28 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
-       t := 10m+1;
 
        % phi[D_ARC] ist der Winkel am unteren Bogenansatz des P
        % und muss daher um 180° gedreht werden;
-       % phi[R_ARC] ist der Winkel am Ansatzpunkt vom "a" (s.o.)
+       % phi[R_ARC] ist der Winkel am Ansatzpunkt vom "a":
        phi0 := m[phi[D_ARC]-180,phi[R_ARC]];
 
        % der gedrehte und verkürzte p-"Stamm" wird zum oberen Bogen:
        tmppath1 := m[aux[JOINT],_a_[END]]
-                   .. m[aux[JOINT],_a_[JOINT]]{up} % up/tension/up entspricht ---
-                   .. tension t .. m[aux[R_ARC],_a_[R_ARC]]{up}
+                   .. m[aux[JOINT],_a_[JOINT]]{dir m[90,180+phi[R_ARC]]}
+                   .. m[aux[R_ARC],_a_[R_ARC]]{dir m[90,180+phi[R_ARC]]}
                    .. m[aux[MID],_a_[TOP]]
                    .. m[aux[BEGIN],_a_[BEGIN]];
 
        % der gedrehte p-Bogen wird zum a-"Bauch":
        tmppath2 := m[aux[MID],_a_[R_ARC]]{dir phi0}
-                   .. m[aux[TOP],_a_[MID]]
+                   .. m[aux[TOP],_a_[INTER]]
                    .. m[aux[L_ARC],_a_[L_ARC]]
                    .. m[aux[BOTTOM],_a_[BOTTOM]]
                    .. m[aux[R_ARC],_a_[JOINT]];
 
-       % die beiden Pfade überschneiden sich am Anfang sichtbar, daher
-       % kürzen wir den "Bauch"-Pfad
+       % die beiden Pfade überschneiden sich am Anfang sichtbar,
+       % daher kürzen wir den "Bauch"-Pfad
        % [durch die Verwendung von "-numbersystem=double" ist die
        % Berechnung der intersectiontime z.T. fehlerhaft; die erste
        % Koordinate scheint korrekt zu sein, die zweite falsch]
