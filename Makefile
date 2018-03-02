@@ -20,7 +20,10 @@ testglyph.pdf: testglyph.tex ${TARGET}-*.mps
 	while lualatex $< > /dev/null ; grep -q "Rerun to" $(<:.tex=.log) ; do : ; done
 
 morphpaths.js: svg/*.svg
-	bash extract_paths_to_js.sh $^ > $@
+	node extract_paths.js > $@
+# hier wurde vorher
+# bash extract_paths_to_js.sh $^ > $@
+# aufgerufen
 
 morphclock.min.js: morphpaths.js morphclock.js
 	uglifyjs $^ > $@
