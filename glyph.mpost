@@ -1155,7 +1155,7 @@ phi[JOINT] := angle(direction 3 of tmppath0);
 tmppath1 :=seven[JOINT]{down}
            .. seven[MID]
            .. seven[END];
-phi[MID] := angle(direction 1 of tmppath1); show (phi[MID]);
+phi[MID] := angle(direction 1 of tmppath1);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
