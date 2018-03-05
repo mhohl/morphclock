@@ -12,9 +12,10 @@
 % Als Ziffernübergänge benötigen wir
 % 0 -> 1, 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5,
 % 5 -> 6, 6 -> 7, 7 -> 8, 8 -> 9, 9 -> 0 sowie
-% 1 -> 0, 2 -> 0, 2 -> 1, 3 -> 0, 5 -> 0
+% 1 -> 0, 1 -> 1, 2 -> 0, 2 -> 1, 3 -> 0,
+% 5 -> 0, 8 -> 1, 9 -> 1 und ggf. 6 -> 0
 %
-% Als Interpunktionen haben wir nur den ":"
+% Als Interpunktionen haben wir ":", ",", ".", "-", "/"
 % und den Übergang : -> :
 %
 % Für die Anzeige des Monats
@@ -37,6 +38,11 @@
 % Das Uhr-O schließlich ist unter clock-n
 % n := hour*60+min (also n = 0 ... 719)
 % abgelegt.
+
+% TODO:
+% 8 -> 1, 9 -> 1, 1 -> 1,
+% Interpunktionen
+% 6 -> 0 ?
 
 % Versionsnummer:
 string version;
