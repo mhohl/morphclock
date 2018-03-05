@@ -137,9 +137,9 @@ TWO_HOOK = 2003;
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
 
-% Array für den Doppelpunkt:
+% Array für die Interpunktionen:
 
-pair colon[];
+pair comma[], dash[], dot[], slash[], colon[];
 
 % Arrays für die Buchstaben:
 pair _a_[], _b_[], _c_[], _d_[],
@@ -1508,26 +1508,49 @@ endfor
 %
 % Part II: Interpunktion
 %
-%
-%
-%    #
-%
-%    #
+%                  #
+%                 #
+%    #   ####    #
+%               #
+%    #         #
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% ":"
-colon[TOP]    := (0,0.7u);
-colon[BOTTOM] := (0,0.15u);
+% "."
+dot[CENTER] := (-sw/2,corr);
 
-aux[TOP] := (0,0.475u);
-aux[BOTTOM] := (0,lw);
+% ":"
+colon[TOP]    := (0,xh-dy);
+colon[BOTTOM] := (0,dy);
+
+
 
 %
 %%%%%%%%%%%% Interpunktion/Übergänge
 %
 
+%
+% "." -> ()
+%
+
+start := standalone(".");
+
+beginfig(start);
+
+draw_grid(u);
+   pickup pc;
+
+   draw dot[CENTER];
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+
+%
+% ":" -> ()
+%
+
 start := standalone(":");
+
 beginfig(start);
    draw_grid(u);
    pickup pc;
@@ -1538,15 +1561,19 @@ beginfig(start);
    tmppic := currentpicture;
 endfig;
 
+%
+% ":" -> ":"
+%
 
 start := transition(":",":");
+
 beginfig(start);
    draw tmppic;
 endfig;
 
-%
-% ":" -> ":"
-%
+aux[TOP]    := (0,(xh+pendia)/2);
+aux[BOTTOM] := (0,(xh-pendia)/2);
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
