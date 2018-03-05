@@ -421,6 +421,55 @@ beginfig(start);
 endfig;
 
 %
+% 1 -> 1
+%
+
+start := transition("1","1");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+aux[BEGIN] := one[BOTTOM] shifted -(one[BEGIN]-one[TOP]);
+tmppath0 := one[BEGIN]
+            -- one[TOP]
+            -- one[BOTTOM]
+            -- aux[BEGIN];
+
+tmppath[LEFT]  := ((0,0) -- (0,infinity)) shifted (-sw,0);
+tmppath[RIGHT] := ((0,0) -- (0,infinity)) shifted  (sw,0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath1 := tmppath0 shifted (-2sw*m,0);
+
+       draw tmppath1 cutbefore tmppath[LEFT] cutafter tmppath[RIGHT];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath1 := tmppath0 shifted (-2sw*(1-m),0);
+
+       draw tmppath1 cutbefore tmppath[LEFT] cutafter tmppath[RIGHT];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 1 -> 2
 %
 
