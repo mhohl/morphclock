@@ -137,6 +137,9 @@ TWO_HOOK = 2003;
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
 
+% spezielle Arrays für die doppelte Zwei:
+pair twoA[], twoB[];
+
 % Array für die Interpunktionen:
 
 pair comma[], dash[], dot[], slash[], colon[];
@@ -421,55 +424,6 @@ beginfig(start);
 endfig;
 
 %
-% 1 -> 1
-%
-
-start := transition("1","1");
-
-beginfig(start);
-   draw tmppic;
-endfig;
-
-aux[BEGIN] := one[BOTTOM] shifted -(one[BEGIN]-one[TOP]);
-tmppath0 := one[BEGIN]
-            -- one[TOP]
-            -- one[BOTTOM]
-            -- aux[BEGIN];
-
-tmppath[LEFT]  := ((0,0) -- (0,infinity)) shifted (-sw,0);
-tmppath[RIGHT] := ((0,0) -- (0,infinity)) shifted  (sw,0);
-
-for i = start+1 upto start+fpht:
-    beginfig(i);
-       draw_grid(u);
-       pickup pc;
-
-       f := (i-start)/fpht;
-       m := retarded(f);
-
-       tmppath1 := tmppath0 shifted (-2sw*m,0);
-
-       draw tmppath1 cutbefore tmppath[LEFT] cutafter tmppath[RIGHT];
-       setbounds currentpicture to boundingpath;
-    endfig;
-endfor
-
-for i = start+fpht+1 upto start+2fpht-1:
-    beginfig(i);
-       draw_grid(u);
-       pickup pc;
-
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
-
-       tmppath1 := tmppath0 shifted (-2sw*(1-m),0);
-
-       draw tmppath1 cutbefore tmppath[LEFT] cutafter tmppath[RIGHT];
-       setbounds currentpicture to boundingpath;
-    endfig;
-endfor
-
-%
 % 1 -> 2
 %
 
@@ -560,6 +514,91 @@ for i = start+fpht+1 upto start+2fpht-1:
        % Bei engen Schlaufen gibt es Artefakte, daher setzen wir
        % einen Punkt in die Mitte, der diese überdeckt:
        if tmp0 < 0.1u : draw one[MID]; fi
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 1 -> 1
+%
+
+start := transition("1","1");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+aux[BEGIN] := one[BOTTOM] shifted -(one[BEGIN]-one[TOP]);
+tmppath0 := one[BEGIN]
+            -- one[TOP]
+            -- one[BOTTOM]
+            -- aux[BEGIN];
+
+tmppath[LEFT]  := ((0,0) -- (0,infinity)) shifted (-sw,0);
+tmppath[RIGHT] := ((0,0) -- (0,infinity)) shifted  (sw,0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath1 := tmppath0 shifted (-2sw*m,0);
+
+       draw tmppath1 cutbefore tmppath[LEFT] cutafter tmppath[RIGHT];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath1 := tmppath0 shifted (-2sw*(1-m),0);
+
+       draw tmppath1 cutbefore tmppath[LEFT] cutafter tmppath[RIGHT];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 1 -> 3
+%
+
+start := transition("1","3");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       TODO(u);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1236,6 +1275,39 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% 6 -> 0
+%
+
+start := transition("6","0");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 7 -> ()
 %
 
@@ -1420,6 +1492,39 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% 8 -> 1
+%
+
+start := transition("8","1");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 9 -> ()
 %
 
@@ -1500,6 +1605,39 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[nine[BOTTOM],zero[BOTTOM]]
             .. m[nine[LEFT],zero[LEFT]]
             .. cycle;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 9 -> 1
+%
+
+start := transition("9","1");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       TODO(u);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
