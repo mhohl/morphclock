@@ -40,13 +40,13 @@
 % abgelegt.
 
 % TODO:
-% 8 -> 1, 9 -> 1, 1 -> 3
-% 6 -> 0 ?
-% 2a/2b ?
+% 9 -> 1, 1 -> 3
+% 6 -> 0
+% 2a/2b
 
 % Versionsnummer:
 string version;
-version := "Version: 1.32";
+version := "Version: 1.33";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -1428,6 +1428,16 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Die Acht kippt um 90° nach rechts,
+% aus eight[MID] wird nine[RIGHT] etc.
+% Um zu skalieren, drehen wir daher
+% nine[RIGHT|LEFT|TOP|BOTTOM] um 90° nach links:
+
+aux[MID]    := nine[RIGHT]  rotatedaround (C,90);
+aux[BOTTOM] := nine[LEFT]   rotatedaround (C,90);
+aux[LEFT]   := nine[TOP]    rotatedaround (C,90);
+aux[RIGHT]  := nine[BOTTOM] rotatedaround (C,90);
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -1435,17 +1445,6 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
-       phi1 := -90m*m;
-
-       % Die Acht kippt um 90° nach rechts,
-       % aus eight[MID] wird nine[RIGHT] etc.
-       % Um zu skalieren, drehen wir daher
-       % nine[RIGHT|LEFT|TOP|BOTTOM] um 90° nach links:
-
-       aux[MID]    := nine[RIGHT]  rotatedaround (C,90);
-       aux[BOTTOM] := nine[LEFT]   rotatedaround (C,90);
-       aux[LEFT]   := nine[TOP]    rotatedaround (C,90);
-       aux[RIGHT]  := nine[BOTTOM] rotatedaround (C,90);
 
        % Wir ändern die Punktreihenfolge, um bei i=830
        % eine geschlossene Schleife zu bekommen:
@@ -1462,7 +1461,7 @@ for i = start+1 upto start+fpht:
                    fi
                    .. cycle;
 
-       draw tmppath1 rotatedaround (C,phi1);
+       draw tmppath1 rotatedaround (C,-90m*m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1501,12 +1500,31 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% die Schlaufen werden schmäler:
+aux[U_ARC] := 1/2[eight[L_ARC],eight[R_ARC]];
+aux[D_ARC] := 1/2[eight[LEFT],eight[RIGHT]];
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       TODO(u);
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw eight[MID]
+            .. m[eight[LEFT],aux[D_ARC]]
+            .. {dir max(2m-1,0)[0,-90]}
+               eight[BOTTOM]
+               {dir max(2m-1,0)[0,90]}
+            .. m[eight[RIGHT],aux[D_ARC]]
+            .. eight[MID]
+            .. m[eight[L_ARC],aux[U_ARC]]
+            .. {dir max(2m-1,0)[0,90]}
+               eight[TOP]
+               {dir max(2m-1,0)[0,-90]}
+            .. m[eight[R_ARC],aux[U_ARC]]
+            ..cycle;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1519,7 +1537,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       TODO(u);
+       draw m[eight[TOP],one[BEGIN]]
+            -- m[eight[MID],one[TOP]]
+            -- m[eight[BOTTOM],one[BOTTOM]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1646,11 +1666,11 @@ endfor
 %
 % Part II: Interpunktion
 %
-%                  #
-%                 #
-%    #   ####    #
-%               #
-%    #         #
+%  #  #   #  #####  #####  ####   ####   #   #  #   #  #   #  #####
+%  #  ##  #    #    #      #   #  #   #  #   #  ##  #  #  #     #
+%  #  # # #    #    ###    ####   ####   #   #  # # #  ###      #
+%  #  #  ##    #    #      #  #   #      #   #  #  ##  #  #     #
+%  #  #   #    #    #####  #   #  #       ###   #   #  #   #    #    #
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
