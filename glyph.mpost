@@ -40,13 +40,13 @@
 % abgelegt.
 
 % TODO:
-% 8 -> 1, 9 -> 1, 1 -> 1,
-% Interpunktionen
+% 8 -> 1, 9 -> 1, 1 -> 3
 % 6 -> 0 ?
+% 2a/2b ?
 
 % Versionsnummer:
 string version;
-version := "Version: 1.3";
+version := "Version: 1.32";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -1516,12 +1516,24 @@ endfor
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% ","
+comma[TOP]    = (-sw/2,corr);
+comma[BOTTOM] = (-sw,-dy);
+
+% "-"
+dash[LEFT]  = (-sw,xh/2);
+dash[RIGHT] = dash[LEFT] xscaled -1;
+
 % "."
-dot[CENTER] := (-sw/2,corr);
+dot[CENTER] = comma[TOP];
+
+% "/"
+slash[BEGIN] = (-sw,dsc/2);
+slash[END]   = (sw,(asc+xh)/2);
 
 % ":"
-colon[TOP]    := (0,xh-dy);
-colon[BOTTOM] := (0,dy);
+colon[TOP]    = (0,xh-dy);
+colon[BOTTOM] = (0,dy);
 
 
 
@@ -1530,23 +1542,72 @@ colon[BOTTOM] := (0,dy);
 %
 
 %
-% "." -> ()
+% , -> ()
 %
 
-start := standalone(".");
+start := standalone(",");
 
 beginfig(start);
-
-draw_grid(u);
+   draw_grid(u);
    pickup pc;
 
-   draw dot[CENTER];
+   draw comma[TOP]{down}
+        .. comma[BOTTOM];
+
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
 
 %
-% ":" -> ()
+% - -> ()
+%
+
+start := standalone("-");
+
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw dash[LEFT] -- dash[RIGHT];
+
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+
+%
+% . -> ()
+%
+
+start := standalone(".");
+
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw dot[CENTER];
+
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+
+%
+% / -> ()
+%
+
+start := standalone("/");
+
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   draw slash[BEGIN] -- slash[END];
+
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
+
+%
+% : -> ()
 %
 
 start := standalone(":");

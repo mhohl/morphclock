@@ -45,7 +45,9 @@ svgFileList.forEach(file => {
   const nodes = select("//x:path/@d", doc);
   const result = [];
   nodes.forEach(node => result.push(node.value));
-  data[file.slice(0,-4)] = result;
+  var key = file.slice(0,-4); // strip ".svg"
+  if ( key == "slash" ) key = "/";
+  data[key] = result;
 });
 
 console.log("morphpath =", data, ";");

@@ -24,6 +24,9 @@ function format_name {
    elif [ $i -lt 100 ]; then
       to=$( chr $(( i + 32 )) )
       target="${to}"
+      if [[ $target == / ]]; then
+         target="slash"
+      fi
    else
       from=$( chr $(( i / 10000 + 32 )) )
       i=$(( i % 10000 ))
@@ -39,12 +42,12 @@ cat $SOURCE | sed "s/\(outputtemplate[ ]*:=[ ]*\)\(.*\).mps\(.*\)/\1\2.svg\3/;
                        s/\(outputformat[ ]*:=[ ]*\"\)eps\(.*\)/\1svg\2/;
                        s/\(draft[ ]*:=[ ]*\).*;/\1 0;/" > $SVGDIR/$SOURCE
 cd $SVGDIR
-rm -rf *.svg
+rm -f ./*.svg
 mpost $OPTS $SOURCE > /dev/null
 rm $SOURCE
 for f in *.svg; do
     i=$( echo "${f%.svg}" | sed "s/${NAME}-//" )
-    mv ${NAME}-$i.svg $(format_name $i).svg
+    mv -- "${NAME}-$i.svg" "$(format_name $i).svg"
 done
 cd ..
 
