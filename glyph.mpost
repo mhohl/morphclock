@@ -13,7 +13,7 @@
 % 0 -> 1, 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5,
 % 5 -> 6, 6 -> 7, 7 -> 8, 8 -> 9, 9 -> 0 sowie
 % 1 -> 0, 1 -> 1, 2 -> 0, 2 -> 1, 3 -> 0,
-% 5 -> 0, 8 -> 1, 9 -> 1 und ggf. 6 -> 0
+% 5 -> 0, 6 -> 0, 8 -> 1, 9 -> 1
 %
 % Als Interpunktionen haben wir ":", ",", ".", "-", "/"
 % und den Übergang : -> :
@@ -40,13 +40,13 @@
 % abgelegt.
 
 % TODO:
-% 9 -> 1, 1 -> 3
+% 1 -> 3
 % 6 -> 0
-% 2a/2b
+% 2a -> 2b -> 3
 
 % Versionsnummer:
 string version;
-version := "Version: 1.33";
+version := "Version: 1.34";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -1639,15 +1639,40 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+aux[END] := (xpart(nine[RIGHT]),ypart(nine[END]));
+% Verschiebung: wir schieben die Neun so, dass sie rechts und oben
+% mit der oberen Spitze konform liegt:
+aux[DIFF] := (xpart(one[TOP])-xpart(nine[RIGHT]),
+              ypart(one[TOP])-ypart(nine[TOP]));
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
        pickup pc;
 
-       TODO(u);
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath0 := nine[RIGHT]{down}
+                   .. nine[BOTTOM]
+                   .. nine[LEFT]
+                   .. nine[TOP]
+                   .. nine[RIGHT]{down}
+                   .. m[nine[END],aux[END]];
+       draw tmppath0 shifted m[(0,0),aux[DIFF]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% die verschobene Neun:
+aux[RIGHT]  := nine[RIGHT]  shifted aux[DIFF];
+aux[BOTTOM] := nine[BOTTOM] shifted aux[DIFF];
+aux[LEFT]   := nine[LEFT]   shifted aux[DIFF];
+aux[TOP]    := nine[TOP]    shifted aux[DIFF];
+aux[END]    := aux[END]     shifted aux[DIFF];
+
+% der Winkel der Eins:
+phi[TOP]    := angle(one[TOP]-aux[BEGIN]);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -1657,7 +1682,15 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       TODO(u);
+       tmppath0 := aux[RIGHT]{down}
+                   .. aux[BOTTOM]
+                   .. m[aux[LEFT],one[BEGIN]]{dir m[90,phi[TOP]]}
+                   .. {dir max(2m-1,0)[0,phi[TOP]]}
+                      m[aux[TOP],one[TOP]]
+                      {dir max(2m-1,0)[0,-90]}
+                   .. aux[RIGHT]{down}
+                   .. m[aux[END],one[BOTTOM]];
+       draw subpath (2m,5) of tmppath0;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
