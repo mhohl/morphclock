@@ -1802,7 +1802,7 @@ for i = start+1 upto start+fpht:
 
        draw tmppath[TWO_HOOK]
           & two[JOINT] -- twoA[MID];
-       draw twoA[BEGIN]
+       draw m[twoA[BEGIN],twoB[BOTTOM]]
             -- twoA[TOP]
             -- m[twoA[TOP],twoB[U_ARC]]
             -- twoA[END];
