@@ -43,11 +43,11 @@
 % TODO:
 % 1 -> 3
 % 6 -> 0
-% 2a -> 2b -> 3
+% 2a -> 2b
 
 % Versionsnummer:
 string version;
-version := "Version: 1.35";
+version := "Version: 1.36";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -732,7 +732,8 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[two[BEGIN],three[BEGIN]]
             .. m[two[TOP],three[TOP]]
             .. m[two[R_ARC],three[U_ARC]]
-            .. tension (2-m) .. m[two[JOINT],three[JOINT]]{dir m[phi[JOINT],-180]}
+            .. tension (2-m)
+            .. m[two[JOINT],three[JOINT]]{dir m[phi[JOINT],-180]}
           & m[two[JOINT],three[JOINT]]{dir m[-90,0]}
             .. m[aux[D_ARC],three[D_ARC]]
             .. m[aux[BOTTOM],three[BOTTOM]]
@@ -1879,6 +1880,18 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
+% Der Übergang des 2-Bogens zum oberen 3-Bogen
+% läuft analog zum Übergang 2 -> 3, wir brauchen
+% daher nochmal den Winkel an der Spitze:
+phi[JOINT] := angle(direction 3 of tmppath[TWO_HOOK]);
+
+% Ein Hilfspunkt im unteren B-Bogen, der zu
+% three[BOTTOM] wandert:
+tmppath0 := twoB[MID]
+            .. twoB[D_ARC]
+            .. twoB[BOTTOM];
+aux[BOTTOM] := point 1.5 of tmppath0;
+phi[MID]    := angle(direction 0 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -1888,10 +1901,24 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       TODO(u);
+       aux[END] := m[twoB[BOTTOM],three[END]];
+       draw m[two[BEGIN],three[BEGIN]]
+            .. m[two[TOP],three[TOP]]
+            .. m[two[R_ARC],three[U_ARC]]
+            .. tension (2-m)
+            .. m[two[JOINT],three[JOINT]]{dir m[phi[JOINT],-180]};
+       draw m[two[JOINT],three[JOINT]]
+            -- m[twoB[MID],three[JOINT]];
+       draw m[twoB[MID],three[JOINT]]{dir m[phi[MID],0]}
+            .. m[twoB[D_ARC],three[D_ARC]]
+            .. m[aux[BOTTOM],three[BOTTOM]]
+            .. aux[END];
+       draw m[twoB[TOP],aux[END]]
+            -- aux[END];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Part II: Interpunktion
