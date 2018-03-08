@@ -13,7 +13,8 @@
 % 0 -> 1, 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5,
 % 5 -> 6, 6 -> 7, 7 -> 8, 8 -> 9, 9 -> 0 sowie
 % 1 -> 0, 1 -> 1, 2 -> 0, 2 -> 1, 3 -> 0,
-% 5 -> 0, 6 -> 0, 8 -> 1, 9 -> 1
+% 5 -> 0, 6 -> 0, 8 -> 1, 9 -> 1, 1 -> 2a,
+% 2a -> 2b, 2b -> 3
 %
 % Als Interpunktionen haben wir ":", ",", ".", "-", "/"
 % und den Übergang : -> :
@@ -42,11 +43,11 @@
 % TODO:
 % 1 -> 3
 % 6 -> 0
-% 1 -> 2a -> 2b -> 3
+% 2a -> 2b -> 3
 
 % Versionsnummer:
 string version;
-version := "Version: 1.34";
+version := "Version: 1.35";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -614,6 +615,57 @@ for i = start+fpht+1 upto start+2fpht-1:
        m := advanced(f);
 
        TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 1 -> 2a
+%
+
+start := transition("1","A");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[one[BEGIN],two[JOINT]]
+            -- one[TOP]
+            -- one[BOTTOM];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[R_ARC] := ((0,ypart(two[R_ARC])) -- (infinity,ypart(two[R_ARC])))
+              intersectionpoint
+              (one[TOP] -- two[JOINT]);
+aux[TOP]   := 1/2[one[TOP],aux[R_ARC]];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw min(2m,1)[one[TOP],two[BEGIN]]
+            .. m[aux[TOP],two[TOP]]
+            .. m[aux[R_ARC],two[R_ARC]]
+            .. tension 2
+            .. two[JOINT];
+       draw two[JOINT] -- m[two[JOINT],twoA[MID]];
+       draw m[one[TOP],twoA[END]]
+            -- m[one[MID],twoA[TOP]]
+            -- m[one[BOTTOM],twoA[BEGIN]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1730,6 +1782,49 @@ beginfig(start);
 endfig;
 
 %
+% 2a -> 2b
+%
+
+start := transition("A","B");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw tmppath[TWO_HOOK]
+          & two[JOINT] -- twoA[MID];
+       draw twoA[BEGIN]
+            -- twoA[TOP]
+            -- m[twoA[TOP],twoB[U_ARC]]
+            -- twoA[END];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 2b -> ()
 %
 
@@ -1744,7 +1839,7 @@ beginfig(start);
    draw twoB[TOP]
         .. twoB[U_ARC]
         .. twoB[MID];
-   draw twoB[MID]{right}
+   draw twoB[MID]
         .. twoB[D_ARC]
         .. twoB[BOTTOM];
    draw twoB[TOP] -- twoB[BOTTOM];
@@ -1752,6 +1847,51 @@ beginfig(start);
    tmppic := currentpicture;
 endfig;
 
+%
+% 2b -> 3
+%
+
+start := transition("B","3");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath0 := twoB[TOP]
+                   .. twoB[U_ARC]
+                   .. twoB[MID];
+       draw tmppath[TWO_HOOK]
+          & two[JOINT] -- twoB[MID];
+       draw subpath (2m,2) of tmppath0;
+       draw twoB[MID]
+            .. twoB[D_ARC]
+            .. twoB[BOTTOM];
+       draw twoB[TOP] -- twoB[BOTTOM];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       TODO(u);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Part II: Interpunktion
