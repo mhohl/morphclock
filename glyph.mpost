@@ -42,11 +42,10 @@
 
 % TODO:
 % 1 -> 3
-% 2a -> 2b
 
 % Versionsnummer:
 string version;
-version := "Version: 1.37";
+version := "Version: 1.38";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -1810,6 +1809,11 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Hilfspunkte: aux[MID] ist der Schnittpunkt vom
+% verlängerten 2-"Fuß" zum senkrechten rechten A-Strich,
+% aux[END] das Ende des rechten A-Strichs:
+aux[MID] := (xpart(twoB[U_ARC]),ypart(two[JOINT]));
+aux[END] := (xpart(twoB[U_ARC]),ypart(twoB[BOTTOM]));
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -1822,13 +1826,14 @@ for i = start+1 upto start+fpht:
        draw tmppath[TWO_HOOK]
           & two[JOINT] -- twoA[MID];
        draw m[twoA[BEGIN],twoB[BOTTOM]]
-            -- twoA[TOP]
+            -- m[twoA[TOP],twoB[TOP]]
             -- m[twoA[TOP],twoB[U_ARC]]
-            -- twoA[END];
+            -- m[twoA[END],aux[END]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
+aux[D_ARC] := 2/3[twoB[U_ARC],aux[END]];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -1837,8 +1842,18 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        f := (i-start-fpht)/fpht;
        m := advanced(f);
+       t := 1/m;
 
-       TODO(u);
+       draw tmppath[TWO_HOOK]
+          & two[JOINT]
+            -- m[aux[MID],twoB[MID]];
+       draw twoB[TOP] -- twoB[BOTTOM];
+       draw twoB[TOP]
+            .. tension t .. twoB[U_ARC]
+            .. tension t .. m[aux[MID],twoB[MID]];
+       draw m[aux[MID],twoB[MID]]
+            .. m[aux[D_ARC],twoB[D_ARC]]
+            .. m[aux[END],twoB[BOTTOM]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor

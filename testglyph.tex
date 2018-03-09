@@ -16,13 +16,18 @@
     tex.print("\\IfFileExists{glyph-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps} }{}")
   }}
 }
+\def\letterA{A}\def\letterB{B}
 \newcommand{\showtransition}[2]{%
-  \subsection{Übergang #1…#2}
+  \def\from{#1}\def\to{#2}
+  \ifx\from\letterA\def\from{2a}\fi
+  \ifx\from\letterB\def\from{2b}\fi
+  \ifx\to\letterA\def\to{2a}\fi
+  \ifx\to\letterB\def\to{2b}\fi
+  \subsection{Übergang \from…\to}
   \directlua{\unexpanded{
     from = string.byte(tostring("#1"))-32
     to = string.byte(tostring("#2"))-32
     res = from * 10000 + to * 100
-    % print ("Hallo" , from, to )
     for index = res,res+99 do
          if math.fmod(index+1,10) == 0 then
             maybenewline="\\newline"
