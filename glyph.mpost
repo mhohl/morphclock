@@ -40,12 +40,9 @@
 % n := hour*60+min (also n = 0 ... 719)
 % abgelegt.
 
-% TODO:
-% 1 -> 3
-
 % Versionsnummer:
 string version;
-version := "Version: 1.38";
+version := "Version: 1.4";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -125,10 +122,12 @@ DIR    = 1014; % [dir]ection vector
 DIFF   = 1015;
 CENTER = 1016;
 % spezielle Indizes:
-A_LOOP   = 2000;
-A_SWEEP  = 2001;
-G_LOOP   = 2002;
-TWO_HOOK = 2003;
+A_LOOP     = 2000;
+A_SWEEP    = 2001;
+G_LOOP     = 2002;
+TWO_HOOK   = 2003;
+THREE_UARC = 2004;
+THREE_LARC = 2005;
 
 
 
@@ -599,10 +598,33 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       TODO(u);
+       draw m[one[BEGIN],three[BEGIN]]
+            -- m[one[TOP],three[TOP]]
+            -- m[one[BOTTOM],three[BOTTOM]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% Die Bögen der 3:
+tmppath[THREE_UARC] := three[BEGIN]
+                       .. three[TOP]
+                       .. three[U_ARC]
+                       .. three[JOINT]{left};
+tmppath[THREE_LARC] := three[JOINT]{right}
+                       .. three[D_ARC]
+                       .. three[BOTTOM]
+                       .. three[END];
+
+% Die Winkel der 3er-Kurve:
+phi[TOP]    := angle(direction 1 of tmppath[THREE_UARC]);
+phi[BOTTOM] := angle(direction 2 of tmppath[THREE_LARC]);
+% die Winkel an der Spitze der verschobenen Eins:
+phi[BEGIN]  := angle(three[TOP]-three[BEGIN]);
+
+aux[U_ARC]  := (xpart(three[TOP]),ypart(three[U_ARC]));
+aux[JOINT]  := (xpart(three[TOP]),ypart(three[JOINT]));
+aux[D_ARC]  := (xpart(three[TOP]),ypart(three[D_ARC]));
+
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -612,7 +634,17 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       TODO(u);
+       tmppath0 := three[BEGIN]
+                   .. {dir m[phi[BEGIN],phi[TOP]]}
+                      three[TOP]
+                      {dir m[-90,phi[TOP]]}
+                   .. m[aux[U_ARC],three[U_ARC]]
+                   .. m[aux[JOINT],three[JOINT]]{dir m[-90,-180]}
+                 & m[aux[JOINT],three[JOINT]]{dir m[-90,0]}
+                   .. m[aux[D_ARC],three[D_ARC]]
+                   .. three[BOTTOM]{dir m[-90,phi[BOTTOM]]}
+                   .. three[END];
+       draw subpath (0,5+m) of tmppath0;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -862,14 +894,8 @@ beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw three[BEGIN]
-        .. three[TOP]
-        .. three[U_ARC]
-        .. three[JOINT]{left}
-      & three[JOINT]{right}
-        .. three[D_ARC]
-        .. three[BOTTOM]
-        .. three[END];
+   draw tmppath[THREE_UARC]
+      & tmppath[THREE_LARC];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -885,13 +911,9 @@ beginfig(start);
 endfig;
 
 % die Ansgangswinkel im oberen Bogen der 3:
-tmppath0 := three[BEGIN]
-            .. three[TOP]
-            .. three[U_ARC]
-            .. three[JOINT]{left};
-phi[BEGIN] := angle(direction 0 of tmppath0);
-phi[TOP]   := angle(direction 1 of tmppath0);
-phi[U_ARC] := angle(direction 2 of tmppath0);
+phi[BEGIN] := angle(direction 0 of tmppath[THREE_UARC]);
+phi[TOP]   := angle(direction 1 of tmppath[THREE_UARC]);
+phi[U_ARC] := angle(direction 2 of tmppath[THREE_UARC]);
 % die Zielwinkel in der 4:
 phi[LEFT]  := angle(four[TOP]-four[LEFT]);
 phi[INTER] := angle(four[INTER]-four[LEFT]);
@@ -973,11 +995,7 @@ beginfig(start);
 endfig;
 
 % Übergang oberer Bogen Drei zur Dreiviertel-Null
-tmppath0 := three[BEGIN]
-            .. three[TOP]
-            .. three[U_ARC]
-            .. three[JOINT]{left};
-phi[BEGIN] := angle(direction 0 of tmppath0);
+phi[BEGIN] := angle(direction 0 of tmppath[THREE_UARC]);
 
 % Der untere Bogen soll zu einem senkrecht nach unten geklappten
 % Viertelsegment der Null werden:
