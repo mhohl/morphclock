@@ -12,9 +12,9 @@ var time_fomat;    // the chosen time format
 var refresh = 50; // refresh time in msec
 
 var xmlns = "http://www.w3.org/2000/svg";
-var svg_width = morphpath['width'];
-var svg_height = morphpath['height'];
-var svg_strokewidth = morphpath['stroke-width'];
+var svg_width = morphpath.metainfo['width'];
+var svg_height = morphpath.metainfo['height'];
+var svg_strokewidth = morphpath.metainfo['stroke-width'];
 
 /* the time variables */
 var currentTime;

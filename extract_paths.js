@@ -7,9 +7,9 @@ const fs = require('fs');
 
 const xpath = require('xpath');
 const dom = require('xmldom').DOMParser;
-const select = xpath.useNamespaces({"x": "http://www.w3.org/2000/svg"});
+const select = xpath.useNamespaces({"xmlns": "http://www.w3.org/2000/svg"});
 
-const data = {}; var first_entry = true;
+const data = {}; const meta = {}; var count = 0;
 
 // Aus der log-Datei bestimmen wir die Versionsnummer:
 const logfile = fs.readFileSync(svgFolder + "glyph.log",encoding='utf8').split("\n");
@@ -17,7 +17,7 @@ const mesg = logfile.filter(line => (line.indexOf(">>") == 0) &&
                                     (line.indexOf("Version") > -1));
 
 // Die Versionsnummer hat die Form '>> "Version: <version>"'
-data['version'] = mesg[0].split("\"")[1].split(":")[1].toString().trim() || "unknown" ;
+meta.version = mesg[0].split("\"")[1].split(":")[1].toString().trim() || "unknown" ;
 
 // Wir lesen nur svg-Dateien ein:
 function isSVGFile(file) {
@@ -28,21 +28,25 @@ const svgFileList = fs.readdirSync(svgFolder).filter(isSVGFile);
 svgFileList.forEach(file => {
   const content = fs.readFileSync(svgFolder + file,encoding='utf8');
   const doc = new dom().parseFromString(content);
-  if (first_entry) {
+  if (count == 0) {
     /* die Bilddateien haben alle dieselbe Breite und Höhe,
     wir lesen nur die ersten Einträge aus: */
-    const width  = select("//x:svg/@width",doc);
-    const height = select("//x:svg/@height",doc);
-    const style  = select("//x:path/@style",doc);
-    const strokewidth = style[0].value.split(";")
-            .filter(line => line.indexOf("stroke-width") > -1)[0]
-            .split(":")[1].toString().trim();
-    data['width'] = width[0].value;
-    data['height'] = height[0].value;
-    data['stroke-width'] = strokewidth;
-    first_entry = false;
+    const width  = select("//xmlns:svg/@width",doc);
+    const height = select("//xmlns:svg/@height",doc);
+    const style  = select("//xmlns:path/@style",doc);
+    const styles = style[0].value.split(";")
+            .filter(line => line.indexOf("rgb") < 0);
+    styles.forEach(entry => {
+       var e = entry.split(":");
+       var k = e[0].toString().trim();
+       if (k.length > 0) meta[k] = e[1].toString().trim();
+    });
+    meta.width = width[0].value;
+    meta.height = height[0].value;
+    data.metainfo = meta;
   }
-  const nodes = select("//x:path/@d", doc);
+  count++;
+  const nodes = select("//xmlns:path/@d", doc);
   const result = [];
   nodes.forEach(node => result.push(node.value));
   var key = file.slice(0,-4); // strip ".svg"
@@ -50,4 +54,5 @@ svgFileList.forEach(file => {
   data[key] = result;
 });
 
-console.log("morphpath =", data, ";");
+data.metainfo.glyphs = count;
+console.log("var morphpath =", data, ";");
