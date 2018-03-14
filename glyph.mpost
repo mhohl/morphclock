@@ -5827,7 +5827,7 @@ endfig;
 % der t-Strich wächst zu einem um 90° gedrehten
 % u-Strich:
 
-aux[LEFT]  := (xpart(_u_[END])-ypart(1[_u_[BOTTOM],_u_[END]]),ypart(_t_[LEFT]));
+aux[LEFT]  := (xpart(_u_[END])-ypart(_u_[END]),ypart(_t_[LEFT]));
 aux[RIGHT] := (xpart(_u_[END]),ypart(_t_[RIGHT]));
 
 % der Schnittpunkt des t-Striches mit dem t-Stamm:
