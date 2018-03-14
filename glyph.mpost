@@ -5885,10 +5885,12 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. m[_t_[END],aux[TEMP]]
                    .. m[_t_[MID] xscaled -1,_u_[RIGHT]]{up}
                    -- m[aux[MID] xscaled -1,_u_[END]];
-       % rotiere den überdimensionierten t-Strich nach unten:
-       draw (aux[LEFT] -- aux[RIGHT]) rotatedaround (aux[RIGHT],90m);
+       % bewege den überdimensionierten t-Strich in seine Endposition;
+       % der linke Punkt bewegt sich annähernd auf einem Viertelkreis
+       % nach unten, der rechte Punkt nach oben zu seinem Ziel:
+       tmppath2 := aux[LEFT]{down} .. _u_[BOTTOM]{right};
+       draw (point m of tmppath2) -- m[aux[RIGHT],_u_[END]];
        draw subpath (0,3+2m) of tmppath0;
-
 
        setbounds currentpicture to boundingpath;
     endfig;
