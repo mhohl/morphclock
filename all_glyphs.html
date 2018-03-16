@@ -1,0 +1,169 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
+    <title>morphclock: glyphs</title>
+    <style>
+
+    .svg-path {
+      fill: none;
+      stroke: black;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      opacity: inherit;
+    }
+    </style>
+  </head>
+  <body>
+    <script type='text/javascript' language='javascript' src='morphpaths.js'></script>
+    <svg style="position:absolute; width:0; height:0">
+      <defs>
+        <linearGradient id="Gradient-1" x1="0" y1="0" x2="0" y2="100%" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="red" />
+            <stop offset="100%" stop-color="blue" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <h1>morphclock: glyphs</h1>
+    <h2>Die statischen Glyphen</h2>
+        <div id="standalone"></div>
+    <h2>Die Übergänge</h2>
+        <div id="transition"></div>
+    <h2>Die Uhr</h2>
+        <div id="clock"></div>
+    <script type='text/javascript' language='javascript'>
+       var svg_width = morphpath.metainfo.width;
+       var svg_height = morphpath.metainfo.height;
+       var svg_strokewidth = morphpath.metainfo['stroke-width'];
+       var xmlns = "http://www.w3.org/2000/svg";
+
+       var currentTime;
+       var h, m, s, t;
+
+       var Glyph = class Glyph {
+         constructor(index, parent, width) {
+           this.index = index;
+           this.parent = parent;
+           this.width = width;
+
+           this.target = 'z';
+
+           let svg = document.createElementNS (xmlns, "svg");
+           svg.setAttribute('width', width);
+           svg.setAttribute('viewBox', "0 0 " + morphpath.metainfo.width
+                                        + " " + morphpath.metainfo.height);
+           //svg.setAttribute('id', key);
+           parent.appendChild(svg);
+           morphpath[index].forEach(p => {
+             const path = document.createElementNS (xmlns, "path");
+             path.setAttribute ('class', "svg-path");
+             path.setAttribute ('stroke-width', morphpath.metainfo['stroke-width']);
+             path.setAttribute ('d', p);
+             svg.appendChild (path);
+           });
+           this.svg = svg;
+         }
+       }
+       Glyph.prototype.update = function() {
+         let svg = this.svg;
+         while (svg.firstChild) {
+               svg.removeChild(svg.firstChild);
+         }
+         morphpath[this.target].forEach(p => {
+             const path = document.createElementNS (xmlns, "path");
+             path.setAttribute ('class', "svg-path");
+             path.setAttribute ('stroke-width', morphpath.metainfo['stroke-width']);
+             path.setAttribute ('d', p);
+             svg.appendChild (path);
+           });
+           this.svg = svg;
+       }
+       // wir verteilen die Indizes auf drei Bereiche:
+       // standalone, transition und clock
+       const standalone = {};
+       const transition = {};
+       const clock = {};
+       for (let key of Object.keys(morphpath)) {
+           if (key.length == 1)
+              standalone[key] = morphpath[key];
+           else if (key.slice(4) == "clock")
+              clock[key] = morphpath[key];
+           else if (key.slice(2,5) == "-00")
+              transition[key.slice(0,2)] = morphpath[key];
+       }
+
+       // die standalone-Glyphen
+       const skeys = Object.keys(standalone).sort();
+       const sglyphs = [];
+       const sdiv = document.getElementById('standalone');
+       for (let key of skeys) {
+           sglyphs.push (new Glyph(key, sdiv, "9%"));
+       }
+       sglyphs[0].update();
+
+       // die transition-Glyphen
+       var tkeys = Object.keys(transition).sort();
+       const tglyphs = [];
+       const tdiv = document.getElementById('transition');
+       for (let key of tkeys) {
+           var index = key.charAt(0);
+           var target = key.charAt(1);
+           //console.log(index, "-->", target);
+           var svg = document.createElementNS (xmlns, "svg");
+           svg.setAttribute('width', '9%');
+           svg.setAttribute('viewBox', "0 0 " + svg_width + " " + svg_height);
+           svg.setAttribute('id', key);
+           tdiv.appendChild(svg);
+           morphpath[key + "-00"].forEach(p => {
+              const path = document.createElementNS (xmlns, "path");
+              path.setAttribute ('class', "svg-path");
+              path.setAttribute ('stroke-width', svg_strokewidth);
+              path.setAttribute ('d', p);
+              svg.appendChild (path);
+            });
+           tglyphs.push(svg);
+          }
+
+    function renderTime() {
+       currentTime = new Date();
+       s = currentTime.getSeconds();
+       t = currentTime.getMilliseconds();
+
+       var morph ="";
+
+       setTimeout('renderTime()',10);
+
+       tglyphs.forEach(svg => {
+            if (s % 3 == 0) morph = "00";
+            if (s % 3 == 1) morph = quickMorph();
+            if (s % 3 == 2) morph = "99";
+            while (svg.firstChild) {
+                  svg.removeChild(svg.firstChild);
+            }
+            //console.log(svg.id + "-" + morph);
+            morphpath[svg.id + "-" + morph].forEach(p => {
+              const path = document.createElementNS (xmlns, "path");
+              path.setAttribute ('class', "svg-path");
+              path.setAttribute ('stroke-width', svg_strokewidth);
+              path.setAttribute ('d', p);
+              svg.appendChild (path);
+          });
+      });
+    }
+
+    function quickMorph() {
+      return doubleDigit(Math.floor(t/10));
+    }
+
+    function slowMorph(x) {
+      return doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
+    }
+
+    function doubleDigit(x) {
+      return x < 10 ? x = "0" + x : x ;
+    }
+    renderTime();
+    </script>
+
+  </body>
+</html>
