@@ -42,41 +42,60 @@
 
        var Glyph = class Glyph {
          constructor(index, parent, width) {
-           this.index = index;
+           this.index = index; this.previndex = index;
+           this.morph = null;  this.prevmorph = null;
            this.parent = parent;
            this.width = width;
 
-           this.target = 'z';
-
            let svg = document.createElementNS (xmlns, "svg");
-           svg.setAttribute('width', width);
+           svg.setAttribute('width', width + "%");
            svg.setAttribute('viewBox', "0 0 " + morphpath.metainfo.width
                                         + " " + morphpath.metainfo.height);
            //svg.setAttribute('id', key);
            parent.appendChild(svg);
-           morphpath[index].forEach(p => {
-             const path = document.createElementNS (xmlns, "path");
-             path.setAttribute ('class', "svg-path");
-             path.setAttribute ('stroke-width', morphpath.metainfo['stroke-width']);
-             path.setAttribute ('d', p);
-             svg.appendChild (path);
+           morphpath[calcIdx(this.index, this.morph)].forEach(p => {
+             svg.appendChild(makePath(p));
            });
            this.svg = svg;
          }
        }
        Glyph.prototype.update = function() {
-         let svg = this.svg;
-         while (svg.firstChild) {
-               svg.removeChild(svg.firstChild);
+         if (this.index != this.previndex ||
+             this.morph != this.prevmorph) {
+            let svg = this.svg;
+            while (svg.firstChild) {
+                  svg.removeChild(svg.firstChild);
+            }
+            morphpath[calcIdx(this.index, this.morph)].forEach(p => {
+              svg.appendChild(makePath(p));
+            });
+            this.svg = svg;
+            this.previndex = this.index;
+            this.prevmorph = this.morph;
          }
-         morphpath[this.target].forEach(p => {
-             const path = document.createElementNS (xmlns, "path");
-             path.setAttribute ('class', "svg-path");
-             path.setAttribute ('stroke-width', morphpath.metainfo['stroke-width']);
-             path.setAttribute ('d', p);
-             svg.appendChild (path);
-           });
-           this.svg = svg;
+       }
+       var makePath = function (p) {
+            const path = document.createElementNS (xmlns, "path");
+            path.setAttribute ('class', "svg-path");
+            path.setAttribute ('stroke-width', morphpath.metainfo['stroke-width']);
+            path.setAttribute ('d', p);
+            return path;
+       }
+       var calcIdx = function (index, morph) {
+           let result = index;
+           if (morph) {
+               result = result + "-" + morph;
+           }
+           else if (index.length == 2) {
+              // Index zweistellig, kein morph
+              result = result + "-00";
+           }
+           else if (index.length == 5) {
+              // clock ohne morph
+              result = result + "-0";
+           }
+           //console.log("calcIdx", index, morph, "liefert", result);
+           return result;
        }
        // wir verteilen die Indizes auf drei Bereiche:
        // standalone, transition und clock
@@ -97,32 +116,32 @@
        const sglyphs = [];
        const sdiv = document.getElementById('standalone');
        for (let key of skeys) {
-           sglyphs.push (new Glyph(key, sdiv, "9%"));
+           sglyphs.push (new Glyph(key, sdiv, 9));
        }
-       sglyphs[0].update();
+       //sglyphs[0].index = "z";
+       //sglyphs[0].update();
 
        // die transition-Glyphen
        var tkeys = Object.keys(transition).sort();
        const tglyphs = [];
        const tdiv = document.getElementById('transition');
        for (let key of tkeys) {
-           var index = key.charAt(0);
-           var target = key.charAt(1);
-           //console.log(index, "-->", target);
-           var svg = document.createElementNS (xmlns, "svg");
-           svg.setAttribute('width', '9%');
-           svg.setAttribute('viewBox', "0 0 " + svg_width + " " + svg_height);
-           svg.setAttribute('id', key);
-           tdiv.appendChild(svg);
-           morphpath[key + "-00"].forEach(p => {
-              const path = document.createElementNS (xmlns, "path");
-              path.setAttribute ('class', "svg-path");
-              path.setAttribute ('stroke-width', svg_strokewidth);
-              path.setAttribute ('d', p);
-              svg.appendChild (path);
-            });
-           tglyphs.push(svg);
+           var tglyph = new Glyph(key, tdiv, 9);
+           tglyphs.push(tglyph);
           }
+
+      // die Uhr
+      const cglyphs = [];
+      const cdiv = document.getElementById('clock');
+      currentTime = new Date;
+      h = currentTime.getHours();
+      m = currentTime.getMinutes();
+      let clockstart = (h * 60 + m) % 720;
+
+      cglyphs.push(new Glyph('clock', cdiv, 20));
+      cglyphs[0].morph = clockstart;
+      cglyphs[0].update();
+
 
     function renderTime() {
        currentTime = new Date();
@@ -133,22 +152,18 @@
 
        setTimeout('renderTime()',10);
 
-       tglyphs.forEach(svg => {
+       tglyphs.forEach(g => {
             if (s % 3 == 0) morph = "00";
             if (s % 3 == 1) morph = quickMorph();
             if (s % 3 == 2) morph = "99";
-            while (svg.firstChild) {
-                  svg.removeChild(svg.firstChild);
-            }
-            //console.log(svg.id + "-" + morph);
-            morphpath[svg.id + "-" + morph].forEach(p => {
-              const path = document.createElementNS (xmlns, "path");
-              path.setAttribute ('class', "svg-path");
-              path.setAttribute ('stroke-width', svg_strokewidth);
-              path.setAttribute ('d', p);
-              svg.appendChild (path);
-          });
-      });
+            g.morph = morph;
+            g.update();
+        });
+       cglyphs.forEach(g => {
+            morph = ((m * 60 + s) + clockstart) % 720;
+            g.morph = morph;
+            g.update();
+       })
     }
 
     function quickMorph() {
