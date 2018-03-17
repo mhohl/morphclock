@@ -5,7 +5,7 @@
     <title>morphclock: glyphs</title>
     <style>
 
-    .svg-path {
+    .morph-svg-path {
       fill: none;
       stroke: black;
       stroke-linejoin: round;
@@ -25,83 +25,134 @@
       </defs>
     </svg>
     <h1>morphclock: glyphs</h1>
-    <h2>Die statischen Glyphen</h2>
-        <div id="standalone"></div>
-    <h2>Die Übergänge</h2>
-        <div id="transition"></div>
-    <h2>Die Uhr</h2>
-        <div id="clock"></div>
+        <h2>Die statischen Glyphen</h2>
+            <div id="standalone"></div>
+        <h2>Die Übergänge</h2>
+            <div id="transition"></div>
+        <h2>Die Uhr</h2>
+            <div id="clock"></div>
+    <h1>morphclock: Anwendungen</h1>
+        <h2>morphlogo</h2>
+            <div data-type="morphlogo"></div>
+        <h2>morphdate</h2>
+            <div data-type="morphdate" data-format="d/m/y"></div>
+        <h2>morphclock</h2>
+            <div data-type="morphclock" data-format="hhmmss24"></div>
+
     <script type='text/javascript' language='javascript'>
-       var svg_width = morphpath.metainfo.width;
-       var svg_height = morphpath.metainfo.height;
-       var svg_strokewidth = morphpath.metainfo['stroke-width'];
-       var xmlns = "http://www.w3.org/2000/svg";
+       // der svg-namespace
+       const xmlns = "http://www.w3.org/2000/svg";
 
        var currentTime;
        var h, m, s, t;
 
+       /*
+          das Glyph-Objekt:
+          'type' bestimmt die Art des Glyphen (einzelner Buchstabe, Übergang oder Uhr),
+          'parent' den übergeordneten Container (normalerweise ein div),
+          'width' die Breite, sowie optimonal 'xpos' und/oder 'ypos', die – falls gesetzt –
+          eine absolute Positionierung der Glyphen erlauben
+       */
        var Glyph = class Glyph {
-         constructor(index, parent, width) {
-           this.index = index; this.previndex = index;
-           this.morph = null;  this.prevmorph = null;
+         constructor(type, parent, width, xpos, ypos) {
+           this.type  = type; this.prevtype  = type;
+           this.morph = null; this.prevmorph = null;
            this.parent = parent;
            this.width = width;
+           this.xpos = xpos; this.ypos = ypos;
 
            let svg = document.createElementNS (xmlns, "svg");
-           svg.setAttribute('width', width + "%");
+           svg.setAttribute('width', width);
            svg.setAttribute('viewBox', "0 0 " + morphpath.metainfo.width
                                         + " " + morphpath.metainfo.height);
-           //svg.setAttribute('id', key);
+           if (xpos || ypos ) {
+              svg.setAttribute('style', "position: absolute; " +
+                               "top: " + (ypos || "0px") + "; " +
+                               "left: " + (xpos || "0px"));
+           }
            parent.appendChild(svg);
-           morphpath[calcIdx(this.index, this.morph)].forEach(p => {
-             svg.appendChild(makePath(p));
+           morphpath[calcIdx(type, this.morph)].forEach(p => {
+             svg.appendChild(buildPath(p));
            });
            this.svg = svg;
          }
        }
+       /*
+          update() verändert die path-Information nur, wenn dies wirklich
+          notwendig ist
+       */
        Glyph.prototype.update = function() {
-         if (this.index != this.previndex ||
+         if (this.type  != this.prevtype ||
              this.morph != this.prevmorph) {
             let svg = this.svg;
             while (svg.firstChild) {
                   svg.removeChild(svg.firstChild);
             }
-            morphpath[calcIdx(this.index, this.morph)].forEach(p => {
-              svg.appendChild(makePath(p));
+            morphpath[calcIdx(this.type, this.morph)].forEach(p => {
+              svg.appendChild(buildPath(p));
             });
             this.svg = svg;
-            this.previndex = this.index;
+            this.prevtype  = this.type;
             this.prevmorph = this.morph;
          }
        }
-       var makePath = function (p) {
-            const path = document.createElementNS (xmlns, "path");
-            path.setAttribute ('class', "svg-path");
-            path.setAttribute ('stroke-width', morphpath.metainfo['stroke-width']);
-            path.setAttribute ('d', p);
-            return path;
+
+       /*
+          erstelle aus den gespeicherten Pfadinformationen ein
+          <path>-Element
+       */
+       let buildPath = function (p) {
+         const path = document.createElementNS (xmlns, "path");
+         path.setAttribute('class', "morph-svg-path");
+         path.setAttribute('stroke-width',
+                           morphpath.metainfo['stroke-width']);
+         path.setAttribute('stroke-linecap',
+                           morphpath.metainfo['stroke-linecap']);
+         path.setAttribute('stroke-linejoin',
+                           morphpath.metainfo['stroke-linejoin']);
+         path.setAttribute('stroke-miterlimit',
+                           morphpath.metainfo['stroke-miterlimit']);
+         path.setAttribute('fill:',
+                           morphpath.metainfo['fill']);
+         path.setAttribute ('d', p);
+         return path;
        }
-       var calcIdx = function (index, morph) {
-           let result = index;
+       /*
+          Berechne den Index, unter dem das Element 'type'/'morph'
+          zu finden ist;
+          standalone-Glyphen haben ein einzelnes Zeichen als Index;
+          Übergänge haben die Form ft-nn mit
+             f als Startzeichen,
+             t als Zielzeichen und der immer(!)
+             zweistelligen Nummer nn nach dem Bindestrich als
+             Morphfaktor;
+          die Uhr ist unter clock-n indiziert, wobei n = 0...719
+       */
+       var calcIdx = function (type, morph) {
+           let result = type;
            if (morph) {
                result = result + "-" + morph;
            }
-           else if (index.length == 2) {
-              // Index zweistellig, kein morph
+           else if (type.length == 2) {
+              // type zweistellig, kein morph
               result = result + "-00";
            }
-           else if (index.length == 5) {
+           else if (type.length == 5) {
               // clock ohne morph
               result = result + "-0";
            }
-           //console.log("calcIdx", index, morph, "liefert", result);
            return result;
        }
-       // wir verteilen die Indizes auf drei Bereiche:
-       // standalone, transition und clock
+
+       /*
+          Einfache Beispiele:
+          Wir verteilen die gesamten Pfade auf die drei Bereiche
+          standalone, transition und clock:
+       */
        const standalone = {};
        const transition = {};
        const clock = {};
+       const exampleWidth = "12.5%";
        for (let key of Object.keys(morphpath)) {
            if (key.length == 1)
               standalone[key] = morphpath[key];
@@ -116,31 +167,28 @@
        const sglyphs = [];
        const sdiv = document.getElementById('standalone');
        for (let key of skeys) {
-           sglyphs.push (new Glyph(key, sdiv, 9));
+           sglyphs.push (new Glyph(key, sdiv, exampleWidth));
        }
-       //sglyphs[0].index = "z";
-       //sglyphs[0].update();
 
        // die transition-Glyphen
        var tkeys = Object.keys(transition).sort();
        const tglyphs = [];
        const tdiv = document.getElementById('transition');
        for (let key of tkeys) {
-           var tglyph = new Glyph(key, tdiv, 9);
+           var tglyph = new Glyph(key, tdiv, exampleWidth);
            tglyphs.push(tglyph);
           }
 
       // die Uhr
-      const cglyphs = [];
       const cdiv = document.getElementById('clock');
+      const cglyph = new Glyph('clock', cdiv, exampleWidth);
+      // wir stellen die Uhr auf die aktuelle Zeit:
       currentTime = new Date;
       h = currentTime.getHours();
       m = currentTime.getMinutes();
       let clockstart = (h * 60 + m) % 720;
-
-      cglyphs.push(new Glyph('clock', cdiv, 20));
-      cglyphs[0].morph = clockstart;
-      cglyphs[0].update();
+      cglyph.morph = clockstart;
+      cglyph.update();
 
 
     function renderTime() {
@@ -159,11 +207,9 @@
             g.morph = morph;
             g.update();
         });
-       cglyphs.forEach(g => {
-            morph = ((m * 60 + s) + clockstart) % 720;
-            g.morph = morph;
-            g.update();
-       })
+       // die Uhr läuft 60× schneller als gewöhnlich
+       cglyph.morph = ((m * 60 + s) + clockstart) % 720;
+       cglyph.update();
     }
 
     function quickMorph() {
