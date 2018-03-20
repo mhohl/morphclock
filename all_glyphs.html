@@ -50,6 +50,23 @@
        var h, m, s, t;
 
        /*
+          das MorphDisplay-Objekt
+          'type' bestimmt den dargestellten Typ (clock, date, logo),
+          'div' das <div>-Element, das die Glyphen aufnimmt, sowie
+          'glyphs' ein Array der einzelnen Glyph-Objekte
+       */
+
+       var MorphDisplay = class MorphDisplay {
+         constructor(type, div, glyphs) {
+           this.type  = type;
+           this.div = div;
+           this.format = div.getAttribute("data-format") ||
+                         morphDefault.format[type];
+           this.glyphs = glyphs || [];
+         }
+       }
+
+       /*
           das Glyph-Objekt:
           'type' bestimmt die Art des Glyphen (einzelner Buchstabe, Übergang oder Uhr),
           'div' das übergeordnete <div>-Element,
@@ -196,7 +213,7 @@
        /*
           Auswertung der morph-Elemente
        */
-       const morphElements = {}; // Container für *alle* morph...-Objekte
+       const morphElements = []; // Container für *alle* morphDisplay-Objekte
 
        const morphDefault = { // Defaultwerte, falls data-format nicht angegeben ist
           format: {
@@ -220,14 +237,9 @@
            if (datatype == "morphclock" ||
                datatype == "morphdate" ||
                datatype == "morphlogo") {
-              let slot = datatype.slice(5); // morphclock -> clock etc.
+              let type = datatype.slice(5); // morphclock -> clock etc.
 
-              let entry = {
-                  'format': divs[i].getAttribute("data-format") ||
-                            morphDefault.format[slot],
-                  'div': divs[i],
-                  'glyphs': []
-              };
+              let entry = new MorphDisplay(type, divs[i]);
 
               // dummy fill routine
               for (let j = 0; j < 10; j++) {
@@ -235,14 +247,17 @@
               }
 
               // speichere entry im passenden slot
-              morphElements[slot].push(entry);
+              morphElements[type].push(entry);
            }
        }
-       console.log(morphElements);
+       console.log(morphElements); console.log("Test:eins.zwo/drei,vier".replace(/[.,\/:]/g,".").split(""));
+       var d = new Date(); console.log(d.toUTCString());
+       var dd = new Date(2018, 2, 25, 01, 59, 30, 0); console.log(dd.toUTCString());
+       var ddd = new Date(2018, 2, 25, 03, 59, 30, 0); console.log(ddd.toUTCString());
 
        // dummy-Schleife
-       for (let slot in morphElements) {
-           morphElements[slot].forEach(entry => {
+       for (let type in morphElements) {
+           morphElements[type].forEach(entry => {
              let div = entry.div;
              let format = entry.format;
              let glyphs = entry.glyphs;
