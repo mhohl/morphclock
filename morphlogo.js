@@ -10,9 +10,9 @@ var svg_slot = {}; // holds the references to the images
 var refresh = 50; // refresh time in msec
 
 var xmlns = "http://www.w3.org/2000/svg";
-var svg_width = morphpath['width'];
-var svg_height = morphpath['height'];
-var svg_strokewidth = morphpath['stroke-width'];
+var svg_width = morphpath.metainfo.width;
+var svg_height = morphpath.metainfo.height;
+var svg_strokewidth = morphpath.metainfo['stroke-width'];
 
 /* the time variables */
 var currentTime;
@@ -105,7 +105,7 @@ function calcLogoCharWidth() {
      */
     var n_of_chars, n_of_sover, n_of_bover;
     n_of_chars = "morphclock".length;
-    n_of_sover = 2;
+    n_of_sover = 9;
     n_of_bover = 0;
     return 100/(n_of_chars -
                 n_of_sover * small_overlap -
