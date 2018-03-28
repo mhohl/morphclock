@@ -64,31 +64,69 @@
                          morphDefault.format[type];
            this.glyphs = glyphs || [];
          }
+
+         get charWidth() {
+           var n_of_chars, n_of_sover, n_of_bover;
+           if (this.type == "logo") {
+              n_of_chars = "morphclock".length;
+              n_of_sover = n_of_chars - 1;
+              n_of_bover = 0;
+              console.log("calcCharWidth: logo");
+           }
+           else if (this.type == "clock") {
+              n_of_chars = 4;
+              n_of_sover = 2;
+              n_of_bover = 2;
+              console.log("calcCharWidth: clock");
+           }
+           else {
+              n_of_chars = 10;
+              n_of_sover = 2;
+              n_of_bover = 2;
+              console.log("calcCharWidth: date");
+           }
+           return 100/(n_of_chars -
+                  n_of_sover * this.smallOverlap -
+                  n_of_bover * this.bigOverlap) + "%";
+         }
+
+       }
+
+       MorphDisplay.prototype.smallOverlap = 0.2;
+       MorphDisplay.prototype.bigOverlap = 0.4;
+
+       MorphDisplay.prototype.createGlyphs = function() {
+         let width = this.charWidth;
+         if (this.type == "logo") {
+            ['m', 'o', 'r', 'p', 'h', 'c', 'l', 'clock', 'c', 'k'].forEach(g =>
+              this.glyphs.push(new Glyph(g, this.div, width)));
+         }
+         return this;
        }
 
        /*
           das Glyph-Objekt:
           'type' bestimmt die Art des Glyphen (einzelner Buchstabe, Übergang oder Uhr),
           'div' das übergeordnete <div>-Element,
-          'width' die Breite, sowie optimonal 'xpos' und/oder 'ypos', die – falls gesetzt –
-          eine absolute Positionierung der Glyphen erlauben
+          'width' die Breite, sowie optimonal 'xpos', das – falls gesetzt –
+          eine absolute Positionierung der Glyphen erlaubt
        */
        var Glyph = class Glyph {
-         constructor(type, div, width, xpos, ypos) {
+         constructor(type, div, width, xpos) {
            this.type  = type; this.prevtype  = type;
            this.morph = null; this.prevmorph = null;
            this.div = div;
            this.width = width;
-           this.xpos = xpos; this.ypos = ypos;
+           this.xpos = xpos;
 
            let svg = document.createElementNS (xmlns, "svg");
            svg.setAttribute('width', width);
            svg.setAttribute('viewBox', "0 0 " + morphpath.metainfo.width
                                         + " " + morphpath.metainfo.height);
-           if (xpos || ypos ) {
+           if (xpos) {
               svg.setAttribute('style', "position: absolute; " +
-                               "top: " + (ypos || "0px") + "; " +
-                               "left: " + (xpos || "0px"));
+                               "top: " + "0px" + "; " +
+                               "left: " + xpos);
            }
            div.appendChild(svg);
            morphpath[calcIdx(type, this.morph)].forEach(p => {
@@ -239,12 +277,14 @@
                datatype == "morphlogo") {
               let type = datatype.slice(5); // morphclock -> clock etc.
 
-              let entry = new MorphDisplay(type, divs[i]);
+              let entry = new MorphDisplay(type, divs[i]).createGlyphs();
 
-              // dummy fill routine
+              //entry.createGlyphs();
+
+              /* dummy fill routine
               for (let j = 0; j < 10; j++) {
                   entry.glyphs.push(i*j);
-              }
+              }*/
 
               // speichere entry im passenden slot
               morphElements[type].push(entry);
