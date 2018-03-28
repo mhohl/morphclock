@@ -4,7 +4,11 @@
     <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
     <title>morphclock: glyphs</title>
     <style>
-
+    [data-type^=morph] {
+      position: relative;
+      white-space: nowrap;
+      stroke: black;
+    }
     .morph-svg-path {
       fill: none;
       stroke: black;
@@ -58,15 +62,20 @@
 
        var MorphDisplay = class MorphDisplay {
          constructor(type, div, glyphs) {
-           this.type  = type;
+           this.type = type;
            this.div = div;
            this.format = div.getAttribute("data-format") ||
                          morphDefault.format[type];
            this.glyphs = glyphs || [];
+
+           this.smallOverlap = 0.2;
+           this.bigOverlap = 0.4;
          }
 
          get charWidth() {
-           var n_of_chars, n_of_sover, n_of_bover;
+           let n_of_chars = 0; // number of chars
+           let n_of_sover = 0; // number of small overlaps
+           let n_of_bover = 0; // number of big overlaps
            if (this.type == "logo") {
               n_of_chars = "morphclock".length;
               n_of_sover = n_of_chars - 1;
@@ -87,20 +96,44 @@
            }
            return 100/(n_of_chars -
                   n_of_sover * this.smallOverlap -
-                  n_of_bover * this.bigOverlap) + "%";
+                  n_of_bover * this.bigOverlap);
+         }
+
+         get charPos() {
+           let positions = [];
+           let pos = 0;
+           let width = this.charWidth;
+           positions.push(pos);
+           if (this.type == "logo") {
+              for (let i = 1; i < "morphclock".length; i++ ) {
+                  pos += width*(1 - this.smallOverlap);
+                  positions.push(pos);
+              }
+           }
+           return positions;
          }
 
        }
 
-       MorphDisplay.prototype.smallOverlap = 0.2;
-       MorphDisplay.prototype.bigOverlap = 0.4;
+       //MorphDisplay.prototype.smallOverlap = 0.2;
+       //MorphDisplay.prototype.bigOverlap = 0.4;
 
        MorphDisplay.prototype.createGlyphs = function() {
          let width = this.charWidth;
+         let xpos = this.charPos;
+
          if (this.type == "logo") {
             ['m', 'o', 'r', 'p', 'h', 'c', 'l', 'clock', 'c', 'k'].forEach(g =>
-              this.glyphs.push(new Glyph(g, this.div, width)));
+              this.glyphs.push(new Glyph(g, this.div, width + "%", xpos.shift()+"%")));
+
+            this.div.style.height = this.div.children[0].getBoundingClientRect().height;
          }
+         /*
+           the morphclock div's height is set to the height of the first
+           child, i.e. the first svg element
+         */
+         // sollte hier stehen, aber erst, wenn clock und date implementiert sind
+         //this.div.style.height = this.div.children[0].getBoundingClientRect().height || 0;
          return this;
        }
 
