@@ -17,6 +17,7 @@
 % 2a -> 2b, 2b -> 3
 %
 % Als Interpunktionen haben wir ":", ",", ".", "-", "/"
+% sowie "~" als Leerzeichen
 % und den Übergang : -> :
 %
 % Für die Anzeige des Monats
@@ -42,7 +43,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.42";
+version := "Version: 1.43";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -2128,6 +2129,20 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+%
+% ~ -> ()
+%
+
+start := standalone("~");
+
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

@@ -53,6 +53,39 @@
        var currentTime;
        var h, m, s, t;
 
+       const MorphData = {
+             clock: {
+                hhmmss24: {
+                   glyph: [ '20', '30', '::', '50', '90', '::', '50', '90' ],
+                   slot:  [ 'Hx', 'xH', 'Cx', 'Mx', 'xM', 'xC', 'Sx', 'xS' ]
+                },
+                hhmm24: {
+                   glyph: [ '20', '30', '::', '50', '90' ],
+                   slot:  [ 'Hx', 'xH', 'xC', 'Mx', 'xM' ]
+                },
+                hhmmss12: {
+                   glyph: [ '10', '21', '::', '50', '90', '::', '50', '90', '~', 'ap', 'mm' ],
+                   slot:  [ 'hx', 'xh', 'Cx', 'Mx', 'xM', 'xC', 'Sx', 'xS', null, 'Dx', 'xD' ]
+                }
+             },
+             date: {
+                'd/m/y': {
+                   glyph: [],
+                   slot:  []
+                },
+                'd.m.y': {
+                   glyph: [],
+                   slot:  []
+                }
+             },
+             logo: {
+                default: {
+                   glyph: [ 'm', 'o', 'r', 'p', 'h', 'c', 'l', 'clock', 'c', 'k' ],
+                   slot:  [ null, null, null, null, null, null, null, 'clock', null ]
+                }
+             }
+       };
+
        /*
           das MorphDisplay-Objekt
           'type' bestimmt den dargestellten Typ (clock, date, logo),
@@ -69,7 +102,7 @@
            this.glyphs = glyphs || [];
 
            this.smallOverlap = 0.2;
-           this.bigOverlap = 0.4;
+           this.bigOverlap = 2 * this.smallOverlap;
          }
 
          get charWidth() {
@@ -113,21 +146,41 @@
            return positions;
          }
 
+         get showSeconds() {
+             return (this.type == "clock") && (this.format.indexOf("ss") > -1);
+         }
+
+         get showDaytime() {
+             return (this.type == "clock") && (this.format.indexOf("12") > -1);
+         }
        }
 
-       //MorphDisplay.prototype.smallOverlap = 0.2;
-       //MorphDisplay.prototype.bigOverlap = 0.4;
+       MorphDisplay.prototype.calcHeight = function() {
+         let children = this.div.children;
+         if (children.length > 0)
+            return children[0].getBoundingClientRect().height;
+         return 0;
+       }
 
        MorphDisplay.prototype.createGlyphs = function() {
          let width = this.charWidth;
          let xpos = this.charPos;
-
-         if (this.type == "logo") {
-            ['m', 'o', 'r', 'p', 'h', 'c', 'l', 'clock', 'c', 'k'].forEach(g =>
-              this.glyphs.push(new Glyph(g, this.div, width + "%", xpos.shift()+"%")));
-
-            this.div.style.height = this.div.children[0].getBoundingClientRect().height;
+         console.log("Wir sind hier: ",this.type, this.format);
+         let morph = MorphData[this.type][this.format];
+         for (let i = 0; i < morph.glyph.length; i++ ){
+             let newglyph = (new Glyph(morph.glyph[i], this.div, width + "%", xpos.shift()+"%"));
+             newglyph.svg.setAttribute('class', this.type + "-" + this.format + "-" + morph.slot[i]);
+             this.glyphs.push(newglyph);
          }
+         /*
+         MorphData[this.type][this.format].glyph.forEach(g =>
+            this.glyphs.push(new Glyph(g, this.div, width + "%", xpos.shift()+"%")));
+         // wir benennen die Klasse des svg
+         for (let i = 0; i < this.glyphs.length; i++) {
+             this.glyphs[i].svg.className = this.type + "-" + this.format + "-" + MorphData[thid.type]
+         }
+*/
+            this.div.style.height = this.calcHeight();
          /*
            the morphclock div's height is set to the height of the first
            child, i.e. the first svg element
@@ -334,7 +387,7 @@
              let div = entry.div;
              let format = entry.format;
              let glyphs = entry.glyphs;
-             console.log(format, glyphs);
+             console.log(format, glyphs, entry.showSeconds, entry.showDaytime);
            });
        }
 

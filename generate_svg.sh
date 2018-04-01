@@ -18,7 +18,7 @@ function format_name {
    local to
    local index
    local target
-   local i=$1
+   local i="$1"
    if [[ $i == clock* ]]; then
        target="$i"
    elif [ $i -lt 100 ]; then
