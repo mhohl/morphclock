@@ -113,19 +113,28 @@
               n_of_chars = "morphclock".length;
               n_of_sover = n_of_chars - 1;
               n_of_bover = 0;
-              console.log("calcCharWidth: logo");
+              console.log("calcCharWidth: logo", n_of_chars, n_of_sover, n_of_bover);
            }
            else if (this.type == "clock") {
-              n_of_chars = 4;
+              n_of_chars = MorphData.clock[this.format].glyph.length;
               n_of_sover = 2;
               n_of_bover = 2;
-              console.log("calcCharWidth: clock");
+              if (this.showDaytime) {
+                 // n_of_chars += 1; // add the space before 'am/pm'
+                 n_of_sover += 1; // one more small overlap between 'a|p' and 'm'
+                 n_of_bover += 2; // two more big overlaps for the additional space
+              }
+              if (this.showSeconds) {
+                 n_of_sover += 1; // one more small overlap for the seconds
+                 n_of_bover += 2; // two more big overlaps for the ':' before the seconds
+              }
+              console.log("calcCharWidth: clock", this.format, n_of_chars, n_of_sover, n_of_bover);
            }
            else {
               n_of_chars = 10;
               n_of_sover = 2;
               n_of_bover = 2;
-              console.log("calcCharWidth: date");
+              console.log("calcCharWidth: date", this.format, n_of_chars, n_of_sover, n_of_bover);
            }
            return 100/(n_of_chars -
                   n_of_sover * this.smallOverlap -
@@ -165,28 +174,21 @@
        MorphDisplay.prototype.createGlyphs = function() {
          let width = this.charWidth;
          let xpos = this.charPos;
-         console.log("Wir sind hier: ",this.type, this.format);
          let morph = MorphData[this.type][this.format];
+
          for (let i = 0; i < morph.glyph.length; i++ ){
-             let newglyph = (new Glyph(morph.glyph[i], this.div, width + "%", xpos.shift()+"%"));
-             newglyph.svg.setAttribute('class', this.type + "-" + this.format + "-" + morph.slot[i]);
+             let newglyph = new Glyph(morph.glyph[i],
+                                      this.div,
+                                      width + "%",
+                                      xpos.shift()+"%");
+
+             let slot = morph.slot[i] || morph.glyph[i]; // slot[i] ist eventuell null
+             newglyph.svg.setAttribute('class', this.type + "-" + this.format + "-" + slot);
+
              this.glyphs.push(newglyph);
          }
-         /*
-         MorphData[this.type][this.format].glyph.forEach(g =>
-            this.glyphs.push(new Glyph(g, this.div, width + "%", xpos.shift()+"%")));
-         // wir benennen die Klasse des svg
-         for (let i = 0; i < this.glyphs.length; i++) {
-             this.glyphs[i].svg.className = this.type + "-" + this.format + "-" + MorphData[thid.type]
-         }
-*/
-            this.div.style.height = this.calcHeight();
-         /*
-           the morphclock div's height is set to the height of the first
-           child, i.e. the first svg element
-         */
-         // sollte hier stehen, aber erst, wenn clock und date implementiert sind
-         //this.div.style.height = this.div.children[0].getBoundingClientRect().height || 0;
+         // setze die Höhe des parent-div:
+         this.div.style.height = this.calcHeight();
          return this;
        }
 
@@ -297,6 +299,7 @@
        const transition = {};
        const clock = {};
        const exampleWidth = "12.5%";
+
        for (let key of Object.keys(morphpath)) {
            if (key.length == 1)
               standalone[key] = morphpath[key];
@@ -365,14 +368,6 @@
 
               let entry = new MorphDisplay(type, divs[i]).createGlyphs();
 
-              //entry.createGlyphs();
-
-              /* dummy fill routine
-              for (let j = 0; j < 10; j++) {
-                  entry.glyphs.push(i*j);
-              }*/
-
-              // speichere entry im passenden slot
               morphElements[type].push(entry);
            }
        }
