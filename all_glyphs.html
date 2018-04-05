@@ -246,17 +246,14 @@
        */
        let buildPath = function (p) {
          const path = document.createElementNS (xmlns, "path");
+         const attrs = ['stroke-width', 'stroke-linecap',
+                        'stroke-linejoin', 'stroke-miterlimit',
+                        'fill'];
          path.setAttribute('class', "morph-svg-path");
-         path.setAttribute('stroke-width',
-                           morphpath.metainfo['stroke-width']);
-         path.setAttribute('stroke-linecap',
-                           morphpath.metainfo['stroke-linecap']);
-         path.setAttribute('stroke-linejoin',
-                           morphpath.metainfo['stroke-linejoin']);
-         path.setAttribute('stroke-miterlimit',
-                           morphpath.metainfo['stroke-miterlimit']);
-         path.setAttribute('fill:',
-                           morphpath.metainfo['fill']);
+         for (var i = 0, alen = attrs.length; i < alen; i++ ) {
+             let attr=attrs[i];
+             path.setAttribute(attr,morphpath.metainfo[attr]);
+         }
          path.setAttribute ('d', p);
          return path;
        }
