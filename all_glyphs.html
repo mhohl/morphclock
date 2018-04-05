@@ -39,7 +39,7 @@
         <h2>morphlogo</h2>
             <div data-type="morphlogo"></div>
         <h2>morphdate</h2>
-            <div data-type="morphdate" data-format="d/m/y"></div>
+            <div data-type="morphdate" data-format="D/M/Y"></div>
             <div data-type="morphdate"></div> <!-- ohne data-format -> default -->
         <h2>morphclock</h2>
             <div data-type="morphclock" data-format="hhmmss24"></div>
@@ -52,42 +52,125 @@
 
        var currentTime;
        var h, m, s, t;
+       /* MorphData enthält die Struktur der angezeigten Daten/Zeiten;
+          in den Slots steht 'x' als Platzhalter für die unbeteiligte
+          Stelle, und ein Buchstabe für:
+          s Sekunde
+          m Minute
+          h Stunde
+          c Doppelpunkt (colon)
+          d Wechsel am/pm (day time)
+          D Tag
+          M Monat (zweistellig: in Ziffern, dreistellig: Abkürzung)
+          Y Jahr
+          W Wochentag (dreistellig als Abkürzung)
+
+          Unter 'default' sind die Formate angegeben, die ohne explizite
+          Vorgabe angezeigt werden.
+       */
 
        const MorphData = {
              default: {
                 clock: 'hhmmss24',
-                date: 'd.m.y',
-                logo: 'default'
+                date:  'D.M.Y',
+                logo:  'default'
              },
+
              clock: {
-                hhmmss24: {
-                   glyph: [ '20-00', '30-00', '::-00', '50-00', '90-00', '::-00', '50-00', '90-00' ],
-                   slot:  [ 'Hx', 'xH', 'Cx', 'Mx', 'xM', 'xC', 'Sx', 'xS' ]
-                },
-                hhmm24: {
-                   glyph: [ '20-00', '30-00', '::-00', '50-00', '90-00' ],
-                   slot:  [ 'Hx', 'xH', 'xC', 'Mx', 'xM' ]
-                },
-                hhmmss12: {
-                   glyph: [ '10-00', '21-00', '::-00', '50-00', '90-00', '::-00', '50-00', '90-00', '~', 'ap-00', 'mm-00' ],
-                   slot:  [ 'hx', 'xh', 'Cx', 'Mx', 'xM', 'xC', 'Sx', 'xS', null, 'Dx', 'xD' ]
-                }
+                hhmmss24: [
+                   { glyph: '20-00', slot: 'hx' },
+                   { glyph: '30-00', slot: 'xh' },
+                   { glyph: '::-00', slot: 'cx' },
+                   { glyph: '50-00', slot: 'mx' },
+                   { glyph: '90-00', slot: 'xm' },
+                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '50-00', slot: 'sx' },
+                   { glyph: '90-00', slot: 'xs' }
+                ],
+                hhmm24: [
+                   { glyph: '20-00', slot: 'hx' },
+                   { glyph: '30-00', slot: 'xh' },
+                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '50-00', slot: 'mx' },
+                   { glyph: '90-00', slot: 'xm' },
+                ],
+                hhmmss12: [
+                   { glyph: '10-00', slot: 'hx' },
+                   { glyph: '21-00', slot: 'xh' },
+                   { glyph: '::-00', slot: 'cx' },
+                   { glyph: '50-00', slot: 'mx' },
+                   { glyph: '90-00', slot: 'xm' },
+                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '50-00', slot: 'sx' },
+                   { glyph: '90-00', slot: 'xs' },
+                   { glyph: '~',     slot: null },
+                   { glyph: 'ap-00', slot: 'dx' },
+                   { glyph: 'mm-00', slot: 'xd' }
+                ],
+                hhmm12: [
+                   { glyph: '10-00', slot: 'hx' },
+                   { glyph: '21-00', slot: 'xh' },
+                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '50-00', slot: 'mx' },
+                   { glyph: '90-00', slot: 'xm' },
+                   { glyph: '~',     slot: null },
+                   { glyph: 'ap-00', slot: 'dx' },
+                   { glyph: 'mm-00', slot: 'xd' }
+                ],
              },
+
              date: {
-                'd/m/y': {
-                   glyph: [],
-                   slot:  []
-                },
-                'd.m.y': {
-                   glyph: [],
-                   slot:  []
-                }
+                'D/M/Y': [
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' },
+                   { glyph: '/',     slot: null },
+                   { glyph: '10-00', slot: 'Mx' },
+                   { glyph: '21-00', slot: 'xM' },
+                   { glyph: '/',     slot: null },
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                ],
+                'D.M.Y': [
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' },
+                   { glyph: '.',     slot: null },
+                   { glyph: '10-00', slot: 'Mx' },
+                   { glyph: '21-00', slot: 'xM' },
+                   { glyph: '.',     slot: null },
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                ],
+                'D-M-Y': [
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' },
+                   { glyph: '-',     slot: null },
+                   { glyph: '10-00', slot: 'Mx' },
+                   { glyph: '21-00', slot: 'xM' },
+                   { glyph: '-',     slot: null },
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                ],
              },
+
              logo: {
-                default: {
-                   glyph: [ 'm', 'o', 'r', 'p', 'h', 'c', 'l', 'clock-0', 'c', 'k' ],
-                   slot:  [ null, null, null, null, null, null, null, 'clock', null ]
-                }
+                default: [
+                   { glyph: 'm',       slot: null },
+                   { glyph: 'o',       slot: null },
+                   { glyph: 'r',       slot: null },
+                   { glyph: 'p',       slot: null },
+                   { glyph: 'h',       slot: null },
+                   { glyph: 'c',       slot: null },
+                   { glyph: 'l',       slot: null },
+                   { glyph: 'clock-0', slot: 'clock' },
+                   { glyph: 'c',       slot: null },
+                   { glyph: 'k',       slot: null }
+                ]
              }
        };
 
@@ -99,44 +182,41 @@
        */
 
        var MorphDisplay = class MorphDisplay {
-         constructor(type, div, glyphs) {
+         constructor(type, div, glyphs, slots) {
            this.type = type;
            this.div = div;
            this.format = div.getAttribute("data-format") ||
                          MorphData.default[type];
            this.glyphs = glyphs || [];
+           this.slots = slots || [];
 
            this.smallOverlap = 0.2;
            this.bigOverlap = 2 * this.smallOverlap;
          }
 
          get charWidth() {
-           let n_of_chars = 0; // number of chars
+           let n_of_chars = MorphData[this.type][this.format].length; // number of chars
            let n_of_sover = 0; // number of small overlaps
            let n_of_bover = 0; // number of big overlaps
            if (this.type == "logo") {
-              n_of_chars = "morphclock".length;
               n_of_sover = n_of_chars - 1;
               n_of_bover = 0;
               console.log("calcCharWidth: logo", n_of_chars, n_of_sover, n_of_bover);
            }
            else if (this.type == "clock") {
-              n_of_chars = MorphData.clock[this.format].glyph.length;
-              n_of_sover = 2;
-              n_of_bover = 2;
+              n_of_sover = 2; // zwei small overlaps, je einer für Stunden und Minuten
+              n_of_bover = 2; // zwei big overlaps für den ':' vor den Minuten
               if (this.showDaytime) {
-                 // n_of_chars += 1; // add the space before 'am/pm'
-                 n_of_sover += 1; // one more small overlap between 'a|p' and 'm'
-                 n_of_bover += 2; // two more big overlaps for the additional space
+                 n_of_sover += 1; // small overlap zwischen 'a|p' and 'm'
+                 n_of_bover += 2; // zwei big overlaps für das Leerzeichen vor 'am|pm'
               }
               if (this.showSeconds) {
-                 n_of_sover += 1; // one more small overlap for the seconds
-                 n_of_bover += 2; // two more big overlaps for the ':' before the seconds
+                 n_of_sover += 1; // small overlap für die Sekunden
+                 n_of_bover += 2; // zwei big overlaps für den ':' vor den Sekunden
               }
               console.log("calcCharWidth: clock", this.format, n_of_chars, n_of_sover, n_of_bover);
            }
-           else {
-              n_of_chars = 10;
+           else if (this.type == "date" ) { // TODO: korrekte Berechnung
               n_of_sover = 2;
               n_of_bover = 2;
               console.log("calcCharWidth: date", this.format, n_of_chars, n_of_sover, n_of_bover);
@@ -151,8 +231,21 @@
            let pos = 0;
            let width = this.charWidth;
            positions.push(pos);
+           let data = MorphData[this.type][this.format];
            if (this.type == "logo") {
-              for (let i = 1; i < "morphclock".length; i++ ) {
+              for (let i = 1, dlen = data.length; i < dlen; i++ ) {
+                  pos += width*(1 - this.smallOverlap);
+                  positions.push(pos);
+              }
+           }
+           else if (this.type == "clock") { // TODO: korrekte Berechnung
+              for (let i = 1, dlen = data.length; i < dlen; i++ ) {
+                  pos += width*(1 - this.smallOverlap);
+                  positions.push(pos);
+              }
+           }
+           else if (this.type == "date") { // TODO: korrekte Berechnung
+              for (let i = 1, dlen = data.length; i < dlen; i++ ) {
                   pos += width*(1 - this.smallOverlap);
                   positions.push(pos);
               }
@@ -181,21 +274,22 @@
        MorphDisplay.prototype.createGlyphs = function() {
          let width = this.charWidth;
          let xpos = this.charPos;
-         let morph = MorphData[this.type][this.format];
+         let data = MorphData[this.type][this.format];
 
-         for (let i = 0; i < morph.glyph.length; i++ ){
-             let newglyph = new Glyph(morph.glyph[i],
+         for (let i = 0, dlen = data.length; i < dlen; i++ ){
+             let newglyph = new Glyph(data[i].glyph,
                                       this.div,
                                       width + "%",
                                       xpos.shift()+"%");
 
-             let slot = morph.slot[i] || morph.glyph[i];
-             // slot[i] ist null bei ungemorphten Glyphen
+             let slot = data[i].slot || data[i].glyph;
+             // data[i].slot ist null bei ungemorphten Glyphen
              newglyph.svg.setAttribute('class', this.type + "-" +
                                                 this.format + "-" +
                                                 slot);
 
              this.glyphs.push(newglyph);
+             this.slots.push(slot);
          }
          // setze die Höhe des parent-div:
          this.div.style.height = this.height;
@@ -210,7 +304,10 @@
           eine absolute Positionierung der Glyphen erlaubt
 
           '_glyphtype' ist die interne Variable, die den 'type'-Wert hält,
-          während 'type' als getter/setter definiert ist
+          während 'type' als setter definiert ist und 'prefix' den festen
+          Anteil des Glyphtypen inkl. Bindestrich zurückliefert; somit
+          kann der neue Glyph durch glyph.type = glyph.prefix + morph
+          leicht geändert werden.
        */
        var Glyph = class Glyph {
          constructor(_glyphtype, div, width, xpos) {
@@ -235,8 +332,14 @@
            this.svg = svg;
          }
 
-         get type() {
-             return this._glyphtype;
+         get prefix() {
+             // der Teil des Glyphnamen ohne Morphanteil,
+             //  z.B. 'am-00' -> 'am-'
+             let idx = this._glyphtype.indexOf('-');
+             if (idx > -1 ) {
+                return this._glyphtype.slice(0,idx+1);
+             }
+             return this._glyphtype; // kein Morphanteil
          }
 
          set type(t) {
@@ -265,14 +368,14 @@
                         'stroke-linejoin', 'stroke-miterlimit',
                         'fill'];
          path.setAttribute('class', "morph-svg-path");
-         for (var i = 0, alen = attrs.length; i < alen; i++ ) {
+         for (let i = 0, alen = attrs.length; i < alen; i++ ) {
              let attr=attrs[i];
              path.setAttribute(attr,morphpath.metainfo[attr]);
          }
          path.setAttribute ('d', p);
          return path;
        }
-
+       //*************************************************************************************************
        /*
           Einfache Beispiele:
           Wir verteilen die gesamten Pfade auf die drei Bereiche
@@ -320,8 +423,8 @@
        let clockstart = (h * 60 + m) % 720;
        let startmin = m;
        let startsec = s;
-       cglyph.type = cglyph.type.slice(0,6) + clockstart;
-
+       cglyph.type = cglyph.prefix + clockstart;
+       //**************************************************************************************************
        /*
           Auswertung der morph-Elemente
        */
@@ -358,7 +461,8 @@
              let div = entry.div;
              let format = entry.format;
              let glyphs = entry.glyphs;
-             console.log(format, glyphs, entry.showSeconds, entry.showDaytime);
+             let slots = entry.slots;
+             console.log(format, glyphs, slots, entry.showSeconds, entry.showDaytime);
            });
        }
 
@@ -376,12 +480,12 @@
            if (s % 3 == 0) morph = "00";
            if (s % 3 == 1) morph = quickMorph();
            if (s % 3 == 2) morph = "99";
-           g.type = g.type.slice(0,3) + morph;
+           g.type = g.prefix + morph;
          });
          // die Uhr läuft 60× schneller als gewöhnlich
          let offset = ((m-startmin) * 60 + (s-startsec));
          morph = (offset + clockstart ) % 720;
-         cglyph.type = cglyph.type.slice(0,6) + morph;
+         cglyph.type = cglyph.prefix + morph;
        }
 
       function quickMorph() {
