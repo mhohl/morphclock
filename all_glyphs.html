@@ -194,14 +194,17 @@
 
        /*
           das Glyph-Objekt:
-          'type' bestimmt die Art des Glyphen (einzelner Buchstabe, Übergang oder Uhr),
+          'type' bestimmt die Art des Glyphen,
           'div' das übergeordnete <div>-Element,
           'width' die Breite, sowie optimonal 'xpos', das – falls gesetzt –
           eine absolute Positionierung der Glyphen erlaubt
+
+          '_glyphtype' ist die interne Variable, die den 'type'-Wert hält,
+          während 'type' als getter/setter definiert ist
        */
        var Glyph = class Glyph {
-         constructor(type, div, width, xpos) {
-           this.type = type; this.prevtype = type;
+         constructor(_glyphtype, div, width, xpos) {
+           this._glyphtype = _glyphtype;
            this.div = div;
            this.width = width;
            this.xpos = xpos;
@@ -216,27 +219,29 @@
                                "left: " + xpos);
            }
            div.appendChild(svg);
-           morphpath[type].forEach(p => {
+           morphpath[_glyphtype].forEach(p => {
              svg.appendChild(buildPath(p));
            });
            this.svg = svg;
          }
-       }
-       /*
-          update() verändert die path-Information nur, wenn dies wirklich
-          notwendig ist
-       */
-       Glyph.prototype.update = function() {
-         if (this.type  != this.prevtype) {
-            let svg = this.svg;
-            while (svg.firstChild) {
-                  svg.removeChild(svg.firstChild);
+
+         get type() {
+             return this._glyphtype;
+         }
+
+         set type(_t) {
+             // wir ändern die Pfadinformation nur wenn nötig!
+             if (_t != this._glyphtype) {
+                let svg = this.svg;
+                while (svg.firstChild) {
+                      svg.removeChild(svg.firstChild);
+                }
+                morphpath[_t].forEach(p => {
+                   svg.appendChild(buildPath(p));
+                });
+                this.svg = svg;
+                this._glyphtype  = _t;
             }
-            morphpath[this.type].forEach(p => {
-              svg.appendChild(buildPath(p));
-            });
-            this.svg = svg;
-            this.prevtype  = this.type;
          }
        }
 
@@ -306,7 +311,6 @@
        let startmin = m;
        let startsec = s;
        cglyph.type = cglyph.type.slice(0,6) + clockstart;
-       cglyph.update();
 
        /*
           Auswertung der morph-Elemente
@@ -372,13 +376,11 @@
            if (s % 3 == 1) morph = quickMorph();
            if (s % 3 == 2) morph = "99";
            g.type = g.type.slice(0,3) + morph;
-           g.update();
          });
          // die Uhr läuft 60× schneller als gewöhnlich
          let offset = ((m-startmin) * 60 + (s-startsec));
          morph = (offset + clockstart ) % 720;
          cglyph.type = cglyph.type.slice(0,6) + morph;
-         cglyph.update();
        }
 
       function quickMorph() {
