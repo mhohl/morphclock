@@ -54,6 +54,11 @@
        var h, m, s, t;
 
        const MorphData = {
+             default: {
+                clock: 'hhmmss24',
+                date: 'd.m.y',
+                logo: 'default'
+             },
              clock: {
                 hhmmss24: {
                    glyph: [ '20-00', '30-00', '::-00', '50-00', '90-00', '::-00', '50-00', '90-00' ],
@@ -98,7 +103,7 @@
            this.type = type;
            this.div = div;
            this.format = div.getAttribute("data-format") ||
-                         morphDefault.format[type];
+                         MorphData.default[type];
            this.glyphs = glyphs || [];
 
            this.smallOverlap = 0.2;
@@ -155,20 +160,22 @@
            return positions;
          }
 
+         get height() {
+             let children = this.div.children;
+             if (children.length > 0)
+                return children[0].getBoundingClientRect().height;
+             return 0;
+         }
+
          get showSeconds() {
-             return (this.type == "clock") && (this.format.indexOf("ss") > -1);
+             return (this.type == "clock") &&
+                    (this.format.indexOf("ss") > -1);
          }
 
          get showDaytime() {
-             return (this.type == "clock") && (this.format.indexOf("12") > -1);
+             return (this.type == "clock") &&
+                    (this.format.indexOf("12") > -1);
          }
-       }
-
-       MorphDisplay.prototype.calcHeight = function() {
-         let children = this.div.children;
-         if (children.length > 0)
-            return children[0].getBoundingClientRect().height;
-         return 0;
        }
 
        MorphDisplay.prototype.createGlyphs = function() {
@@ -182,13 +189,16 @@
                                       width + "%",
                                       xpos.shift()+"%");
 
-             let slot = morph.slot[i] || morph.glyph[i]; // slot[i] ist eventuell null
-             newglyph.svg.setAttribute('class', this.type + "-" + this.format + "-" + slot);
+             let slot = morph.slot[i] || morph.glyph[i];
+             // slot[i] ist null bei ungemorphten Glyphen
+             newglyph.svg.setAttribute('class', this.type + "-" +
+                                                this.format + "-" +
+                                                slot);
 
              this.glyphs.push(newglyph);
          }
          // setze die Höhe des parent-div:
-         this.div.style.height = this.calcHeight();
+         this.div.style.height = this.height;
          return this;
        }
 
@@ -229,18 +239,18 @@
              return this._glyphtype;
          }
 
-         set type(_t) {
+         set type(t) {
              // wir ändern die Pfadinformation nur wenn nötig!
-             if (_t != this._glyphtype) {
+             if (t != this._glyphtype) {
                 let svg = this.svg;
                 while (svg.firstChild) {
                       svg.removeChild(svg.firstChild);
                 }
-                morphpath[_t].forEach(p => {
+                morphpath[t].forEach(p => {
                    svg.appendChild(buildPath(p));
                 });
                 this.svg = svg;
-                this._glyphtype  = _t;
+                this._glyphtype  = t;
             }
          }
        }
@@ -307,7 +317,7 @@
        h = currentTime.getHours();
        m = currentTime.getMinutes();
        s = currentTime.getSeconds();
-       let clockstart = (h * 60 + m) % 720; console.log("Clockstart:", h, m, clockstart);
+       let clockstart = (h * 60 + m) % 720;
        let startmin = m;
        let startsec = s;
        cglyph.type = cglyph.type.slice(0,6) + clockstart;
@@ -316,14 +326,6 @@
           Auswertung der morph-Elemente
        */
        const morphElements = []; // Container für *alle* morphDisplay-Objekte
-
-       const morphDefault = { // Defaultwerte, falls data-format nicht angegeben ist
-          format: {
-            clock: "hhmmss12",
-            date: "d.m.y",
-            logo: "default",
-          }
-       }
 
        morphElements.clock = [];
        morphElements.date = [];
@@ -341,9 +343,7 @@
                datatype == "morphlogo") {
               let type = datatype.slice(5); // morphclock -> clock etc.
 
-              let entry = new MorphDisplay(type, divs[i]).createGlyphs();
-
-              morphElements[type].push(entry);
+              morphElements[type].push(new MorphDisplay(type, divs[i]).createGlyphs());
            }
        }
        /*
@@ -364,6 +364,7 @@
 
        function renderTime() {
          currentTime = new Date();
+         m = currentTime.getMinutes();
          s = currentTime.getSeconds();
          t = currentTime.getMilliseconds();
 
