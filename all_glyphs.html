@@ -303,14 +303,24 @@
              return 0;
          }
 
+         get showDaytime() {
+             return (this.type == "clock") &&
+                    (this.format.indexOf("12") > -1);
+         }
+
          get showSeconds() {
              return (this.type == "clock") &&
                     (this.format.indexOf("ss") > -1);
          }
 
-         get showDaytime() {
-             return (this.type == "clock") &&
-                    (this.format.indexOf("12") > -1);
+         get showMonth() {
+             return (this.type == "date") &&
+                    (this.slots.some(x => x == 'xMx'));
+         }
+
+         get showWeekday() {
+             return (this.type == "date") &&
+                    (this.slots.some(x => x == 'xWx'));
          }
        }
 
@@ -505,7 +515,7 @@
              let format = entry.format;
              let glyphs = entry.glyphs;
              let slots = entry.slots;
-             console.log(format, glyphs, slots, entry.showSeconds, entry.showDaytime);
+             console.log(format, glyphs, slots, entry.showSeconds, entry.showDaytime, entry.showWeekday, entry.showMonth);
            });
        }
 
