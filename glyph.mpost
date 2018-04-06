@@ -43,7 +43,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.43";
+version := "Version: 1.45";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -2251,16 +2251,16 @@ _h_[RIGHT] = _h_[LEFT] xscaled -1;
 _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
-_i_[TOP]    = (-mw+corr,xh);
-_i_[BEGIN]  = (-mw+corr,12/17*xh);
+_i_[TOP]    = (-mw+corr,2/3[xh,asc]);
+_i_[BEGIN]  = (-mw+corr,xh);
 _i_[MID]    = (-mw+corr,mw);
 _i_[BOTTOM] = (corr,0);
 _i_[END]    = _i_[BOTTOM] rotatedaround
               ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
 
 % j
-_j_[TOP]    = (mw-corr, xh);
-_j_[BEGIN]  = (mw-corr,12/17*xh);
+_j_[TOP]    = _i_[TOP] xscaled -1;
+_j_[BEGIN]  = _i_[BEGIN] xscaled -1;
 _j_[MID]    = (mw-corr,dsc+mw);
 _j_[BOTTOM] = (-corr,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
@@ -3919,6 +3919,10 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+% Hilfspunkte: t-Strich auf Höhe i-Punkt:
+aux[LEFT]  := (xpart(_t_[LEFT]),ypart(_i_[TOP]));
+aux[RIGHT] := (xpart(_t_[RIGHT]),ypart(_i_[TOP]));
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -3927,8 +3931,8 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       draw m[_i_[TOP],_t_[LEFT]]
-            -- m[_i_[TOP],_t_[RIGHT]];
+       draw m[_i_[TOP],aux[LEFT]]
+            -- m[_i_[TOP],aux[RIGHT]];
        draw _i_[BEGIN]
             -- _i_[MID]{down}
             .. _i_[BOTTOM]
@@ -3945,7 +3949,8 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       draw _t_[LEFT] -- _t_[RIGHT];
+       draw m[aux[LEFT],_t_[LEFT]]
+            -- m[aux[RIGHT],_t_[RIGHT]];
        draw m[_i_[BEGIN],_t_[BEGIN]]
             -- _i_[MID]{down}
             .. _i_[BOTTOM]
