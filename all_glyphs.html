@@ -238,13 +238,11 @@
          }
 
          get charWidth() {
-           let n_of_chars = MorphData[this.type][this.format].length; // number of chars
+           let n_of_chars = MorphData[this.type][this.format].length; // number of characters
            let n_of_sover = 0; // number of small overlaps
            let n_of_bover = 0; // number of big overlaps
            if (this.type == "logo") {
               n_of_sover = n_of_chars - 1; // n Zeichen -> n-1 Überlappungen
-              n_of_bover = 0;
-              console.log("calcCharWidth: logo", n_of_chars, n_of_sover, n_of_bover);
            }
            else if (this.type == "clock") {
               n_of_sover = 2; // zwei small overlaps, je einer für Stunden und Minuten
@@ -257,12 +255,17 @@
                  n_of_sover += 1; // small overlap für die Sekunden
                  n_of_bover += 2; // zwei big overlaps für den ':' vor den Sekunden
               }
-              console.log("calcCharWidth: clock", this.format, n_of_chars, n_of_sover, n_of_bover);
            }
-           else if (this.type == "date" ) { // TODO: korrekte Berechnung
-              n_of_sover = 2;
-              n_of_bover = 2;
-              console.log("calcCharWidth: date", this.format, n_of_chars, n_of_sover, n_of_bover);
+           else if (this.type == "date" ) {
+              n_of_sover = 5; // 1x Tag, 1x Monat, 3x Jahr
+              n_of_bover = 4; // je 2 pro Trenner (,.-/)
+              if (this.showMonth) {
+                 n_of_sover += 1; // Monat 3stellig statt 2stellig
+              }
+              if (this.showWeekday) {
+                 n_of_sover += 2; // 3stelliger Wochentag
+                 n_of_bover += 2; // zusätzlicher Trenner nach Wochentag
+              }
            }
            return 100/(n_of_chars -
                   n_of_sover * this.smallOverlap -
@@ -277,13 +280,23 @@
            let data = MorphData[this.type][this.format];
            if (this.type == "logo") {
               for (let i = 1, dlen = data.length; i < dlen; i++ ) {
-                  pos += width*(1 - this.smallOverlap);
+                  pos += width * (1 - this.smallOverlap);
                   positions.push(pos);
               }
            }
-           else if (this.type == "clock") { // TODO: korrekte Berechnung
+           else if (this.type == "clock") {
               for (let i = 1, dlen = data.length; i < dlen; i++ ) {
-                  pos += width*(1 - this.smallOverlap);
+                  if (data[i].slot.includes('c')  ||
+                      data[i].slot == 'mx' ||
+                      data[i].slot == 'sx') {
+                     pos += width * (1 - this.bigOverlap);
+                  }
+                  else if (data[i].slot == 'dx') {
+                     pos += 2 * width * (1 - this.bigOverlap);
+                  }
+                  else {
+                     pos += width * (1 - this.smallOverlap);
+                  }
                   positions.push(pos);
               }
            }
@@ -315,12 +328,12 @@
 
          get showMonth() {
              return (this.type == "date") &&
-                    (this.slots.some(x => x == 'xMx'));
+                    (this.slots.includes('xMx'));
          }
 
          get showWeekday() {
              return (this.type == "date") &&
-                    (this.slots.some(x => x == 'xWx'));
+                    (this.slots.includes('xWx'));
          }
        }
 
