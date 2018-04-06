@@ -3,20 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
     <title>morphclock: glyphs</title>
-    <style>
-    [data-type^=morph] {
-      position: relative;
-      white-space: nowrap;
-      stroke: black;
-    }
-    .morph-svg-path {
-      fill: none;
-      stroke: black;
-      stroke-linejoin: round;
-      stroke-linecap: round;
-      opacity: inherit;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="morph.css">
   </head>
   <body>
     <script type='text/javascript' language='javascript' src='morphpaths.js'></script>
@@ -40,6 +27,8 @@
             <div data-type="morphlogo"></div>
         <h2>morphdate</h2>
             <div data-type="morphdate" data-format="D/M/Y"></div>
+            <div data-type="morphdate" data-format="Month D,Y"></div>
+            <div data-type="morphdate" data-format="full"></div>
             <div data-type="morphdate"></div> <!-- ohne data-format -> default -->
         <h2>morphclock</h2>
             <div data-type="morphclock" data-format="hhmmss24"></div>
@@ -156,6 +145,60 @@
                    { glyph: '90-00', slot: 'xxYx' },
                    { glyph: '90-00', slot: 'xxxY' },
                 ],
+                'Y/M/D': [
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                   { glyph: '/',     slot: null },
+                   { glyph: '10-00', slot: 'Mx' },
+                   { glyph: '21-00', slot: 'xM' },
+                   { glyph: '/',     slot: null },
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' }
+                ],
+                'Y-M-D': [
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                   { glyph: '-',     slot: null },
+                   { glyph: '10-00', slot: 'Mx' },
+                   { glyph: '21-00', slot: 'xM' },
+                   { glyph: '-',     slot: null },
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' }
+                ],
+                'Month D,Y': [
+                   { glyph: 'dj-00', slot: 'Mxx' },
+                   { glyph: 'ea-00', slot: 'xMx' },
+                   { glyph: 'cn-00', slot: 'xxM' },
+                   { glyph: '~',     slot: null },
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' },
+                   { glyph: ',',     slot: null },
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                ],
+                'full': [
+                   { glyph: 'fs-00', slot: 'Wxx' },
+                   { glyph: 'ra-00', slot: 'xWx' },
+                   { glyph: 'it-00', slot: 'xxW' },
+                   { glyph: ',', slot: null },
+                   { glyph: 'dj-00', slot: 'Mxx' },
+                   { glyph: 'ea-00', slot: 'xMx' },
+                   { glyph: 'cn-00', slot: 'xxM' },
+                   { glyph: '~',     slot: null },
+                   { glyph: '30-00', slot: 'Dx' },
+                   { glyph: '11-00', slot: 'xD' },
+                   { glyph: ',',     slot: null },
+                   { glyph: '12-00', slot: 'Yxxx' },
+                   { glyph: '90-00', slot: 'xYxx' },
+                   { glyph: '90-00', slot: 'xxYx' },
+                   { glyph: '90-00', slot: 'xxxY' },
+                ],
              },
 
              logo: {
@@ -199,7 +242,7 @@
            let n_of_sover = 0; // number of small overlaps
            let n_of_bover = 0; // number of big overlaps
            if (this.type == "logo") {
-              n_of_sover = n_of_chars - 1;
+              n_of_sover = n_of_chars - 1; // n Zeichen -> n-1 Überlappungen
               n_of_bover = 0;
               console.log("calcCharWidth: logo", n_of_chars, n_of_sover, n_of_bover);
            }
