@@ -31,7 +31,7 @@
             <div data-type="morphdate" data-format="full"></div>
             <div data-type="morphdate"></div> <!-- ohne data-format -> default -->
         <h2>morphclock</h2>
-            <div data-type="morphclock" data-format="hhmmss24"></div>
+            <div data-type="morphclock" data-format="hhmmss12"></div>
             <div data-type="morphclock" data-format="hhmm24"></div>
             <div data-type="morphclock"></div><!-- ohne data-format -> default -->
 
@@ -47,7 +47,7 @@
           s Sekunde
           m Minute
           h Stunde
-          c Doppelpunkt (colon)
+          c Doppelpunkt (colon); C phasenverschobener Doppelpunkt
           d Wechsel am/pm (day time)
           D Tag
           M Monat (zweistellig: in Ziffern, dreistellig: Abkürzung)
@@ -69,27 +69,27 @@
                 hhmmss24: [
                    { glyph: '20-00', slot: 'hx' },
                    { glyph: '30-00', slot: 'xh' },
-                   { glyph: '::-00', slot: 'cx' },
+                   { glyph: '::-00', slot: 'Cx' },
                    { glyph: '50-00', slot: 'mx' },
                    { glyph: '90-00', slot: 'xm' },
-                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '::-00', slot: 'cx' },
                    { glyph: '50-00', slot: 'sx' },
                    { glyph: '90-00', slot: 'xs' }
                 ],
                 hhmm24: [
                    { glyph: '20-00', slot: 'hx' },
                    { glyph: '30-00', slot: 'xh' },
-                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '::-00', slot: 'cx' },
                    { glyph: '50-00', slot: 'mx' },
                    { glyph: '90-00', slot: 'xm' },
                 ],
                 hhmmss12: [
                    { glyph: '10-00', slot: 'hx' },
                    { glyph: '21-00', slot: 'xh' },
-                   { glyph: '::-00', slot: 'cx' },
+                   { glyph: '::-00', slot: 'Cx' },
                    { glyph: '50-00', slot: 'mx' },
                    { glyph: '90-00', slot: 'xm' },
-                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '::-00', slot: 'cx'  },
                    { glyph: '50-00', slot: 'sx' },
                    { glyph: '90-00', slot: 'xs' },
                    { glyph: '~',     slot: null },
@@ -99,7 +99,7 @@
                 hhmm12: [
                    { glyph: '10-00', slot: 'hx' },
                    { glyph: '21-00', slot: 'xh' },
-                   { glyph: '::-00', slot: 'xc' },
+                   { glyph: '::-00', slot: 'cx'  },
                    { glyph: '50-00', slot: 'mx' },
                    { glyph: '90-00', slot: 'xm' },
                    { glyph: '~',     slot: null },
@@ -186,7 +186,7 @@
                    { glyph: 'fs-00', slot: 'Wxx' },
                    { glyph: 'ra-00', slot: 'xWx' },
                    { glyph: 'it-00', slot: 'xxW' },
-                   { glyph: ',', slot: null },
+                   { glyph: ',',     slot: null },
                    { glyph: 'dj-00', slot: 'Mxx' },
                    { glyph: 'ea-00', slot: 'xMx' },
                    { glyph: 'cn-00', slot: 'xxM' },
@@ -258,7 +258,7 @@
            }
            else if (this.type == "date" ) {
               n_of_sover = 5; // 1x Tag, 1x Monat, 3x Jahr
-              n_of_bover = 4; // je 2 pro Trenner (,.-/)
+              n_of_bover = 4; // je 2 pro Trenner (,.-/~)
               if (this.showMonth) {
                  n_of_sover += 1; // Monat 3stellig statt 2stellig
               }
@@ -278,33 +278,26 @@
            let width = this.charWidth;
            positions.push(pos);
            let data = MorphData[this.type][this.format];
-           if (this.type == "logo") {
-              for (let i = 1, dlen = data.length; i < dlen; i++ ) {
+           for (let i = 1, dlen = data.length; i < dlen; i++) {
+               /*
+                  Die folgende if-Anweisung überprüft, ob
+                  entweder der Glyph aus einem der Zeichen ,.-:~/ besteht
+                  oder der slot nicht null ist
+                       und nicht mit einem x startet
+                       und auch nicht 'clock' lautet.
+                  Dann nämlich wird ein großer Überlapp notwendig
+               */
+               if ([',', '.', '-', ':', '~', '/']
+                     .some(x => x == data[i].glyph) ||
+                  (data[i].slot &&
+                   data[i].slot.charAt(0) != 'x' &&
+                   data[i].slot != 'clock')) {
+                  pos += width * (1 - this.bigOverlap);
+               }
+               else {
                   pos += width * (1 - this.smallOverlap);
-                  positions.push(pos);
-              }
-           }
-           else if (this.type == "clock") {
-              for (let i = 1, dlen = data.length; i < dlen; i++ ) {
-                  if (data[i].slot.includes('c')  ||
-                      data[i].slot == 'mx' ||
-                      data[i].slot == 'sx') {
-                     pos += width * (1 - this.bigOverlap);
-                  }
-                  else if (data[i].slot == 'dx') {
-                     pos += 2 * width * (1 - this.bigOverlap);
-                  }
-                  else {
-                     pos += width * (1 - this.smallOverlap);
-                  }
-                  positions.push(pos);
-              }
-           }
-           else if (this.type == "date") { // TODO: korrekte Berechnung
-              for (let i = 1, dlen = data.length; i < dlen; i++ ) {
-                  pos += width*(1 - this.smallOverlap);
-                  positions.push(pos);
-              }
+               }
+               positions.push(pos);
            }
            return positions;
          }
@@ -327,13 +320,13 @@
          }
 
          get showMonth() {
-             return (this.type == "date") &&
-                    (this.slots.includes('xMx'));
+             return (MorphData[this.type][this.format]
+                       .some(x => x.slot == 'xMx'));
          }
 
          get showWeekday() {
-             return (this.type == "date") &&
-                    (this.slots.includes('xWx'));
+             return (MorphData[this.type][this.format]
+                       .some(x => x.slot == 'xWx'));
          }
        }
 
@@ -349,7 +342,8 @@
                                       xpos.shift()+"%");
 
              let slot = data[i].slot || data[i].glyph;
-             // data[i].slot ist null bei ungemorphten Glyphen
+             // data[i].slot ist null bei ungemorphten Glyphen, wir wollen
+             // eine aussagekräftigere Klassenbenennung
              newglyph.svg.setAttribute('class', this.type + "-" +
                                                 this.format + "-" +
                                                 slot);
