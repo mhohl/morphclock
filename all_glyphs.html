@@ -119,8 +119,12 @@
 
         tglyphs.forEach(g => {
           if (s % 3 == 0) morph = "00";
-          if (s % 3 == 1) morph = quickMorph();
-          if (s % 3 == 2) morph = "99";
+          else if (s % 3 == 1) {
+            // quickmorph-Definition
+            morph = Math.floor(t/10);s
+            morph = morph < 10 ? morph = "0" + morph : morph;
+          }
+          else morph = "99";
           g.type = g.prefix + morph;
         });
 
@@ -133,18 +137,6 @@
         for (let type in morphElements) {
           morphElements[type].forEach(entry => entry.update());
         };
-      }
-
-      function quickMorph() {
-        return doubleDigit(Math.floor(t/10));
-      }
-
-      function slowMorph(x) {
-        return doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
-      }
-
-      function doubleDigit(x) {
-        return x < 10 ? x = "0" + x : x ;
       }
       renderTime();
     </script>

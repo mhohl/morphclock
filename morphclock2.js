@@ -375,7 +375,7 @@ var Glyph = class Glyph {
                        "left: " + xpos);
     }
     div.appendChild(svg);
-    morphpath[_glyphtype].forEach(p => svg.appendChild(buildPath(p)));
+    morphpath[_glyphtype].forEach(p => svg.appendChild(this.buildPath(p)));
     this.svg = svg;
   }
 
@@ -396,7 +396,7 @@ var Glyph = class Glyph {
       while (svg.firstChild) {
         svg.removeChild(svg.firstChild);
       }
-      morphpath[t].forEach(p => svg.appendChild(buildPath(p)));
+      morphpath[t].forEach(p => svg.appendChild(this.buildPath(p)));
       this.svg = svg;
       this._glyphtype  = t;
     }
@@ -405,7 +405,7 @@ var Glyph = class Glyph {
 
 // erstelle aus den gespeicherten Pfadinformationen ein <path>-Element
 
-let buildPath = function (p) {
+Glyph.prototype.buildPath = function (p) {
   const path = document.createElementNS (xmlns, "path");
   const attrs = ['stroke-width', 'stroke-linecap',
                  'stroke-linejoin', 'stroke-miterlimit',
@@ -418,4 +418,16 @@ let buildPath = function (p) {
   }
   path.setAttribute ('d', p);
   return path;
+}
+
+function quickMorph() {
+  return doubleDigit(Math.floor(t/10));
+}
+
+function slowMorph(x) {
+  return doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
+}
+
+function doubleDigit(x) {
+  return x < 10 ? x = "0" + x : x ;
 }
