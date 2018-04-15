@@ -195,34 +195,48 @@ var MorphDisplay = class MorphDisplay {
   }
 
   get charWidth() {
-    let n_of_chars = MorphData[this.type][this.format].length; // number of characters
-    let n_of_sover = 0; // number of small overlaps
-    let n_of_bover = 0; // number of big overlaps
+    // number of characters
+    let n_of_chars = MorphData[this.type][this.format].length;
+     // number of [s]mall/[b]ig [over]laps
+    let n_of_sover = 0;
+    let n_of_bover = 0;
 
     if (this.type == "logo") {
-      n_of_sover = n_of_chars - 1; // n Zeichen -> n-1 Überlappungen
+      // n Zeichen -> n-1 Überlappungen
+      n_of_sover = n_of_chars - 1;
     }
     else if (this.type == "clock") {
-      n_of_sover = 2; // zwei small overlaps, je einer für Stunden und Minuten
-      n_of_bover = 2; // zwei big overlaps für den ':' vor den Minuten
+      // zwei small overlaps, je einer für Stunden und Minuten
+      n_of_sover = 2;
+      // zwei big overlaps für den ':' vor den Minuten
+      n_of_bover = 2;
       if (this.showDaytime) {
-        n_of_sover += 1; // small overlap zwischen 'a|p' and 'm'
-        n_of_bover += 2; // zwei big overlaps für das Leerzeichen vor 'am|pm'
+        // small overlap zwischen 'a|p' and 'm'
+        n_of_sover += 1;
+        // zwei big overlaps für das Leerzeichen vor 'am|pm'
+        n_of_bover += 2;
       }
       if (this.showSeconds) {
-        n_of_sover += 1; // small overlap für die Sekunden
-        n_of_bover += 2; // zwei big overlaps für den ':' vor den Sekunden
+        // small overlap für die Sekunden
+        n_of_sover += 1;
+        // zwei big overlaps für den ':' vor den Sekunden
+        n_of_bover += 2;
       }
     }
     else if (this.type == "date") {
-      n_of_sover = 5; // 1x Tag, 1x Monat, 3x Jahr
-      n_of_bover = 4; // je 2 pro Trenner (,.-/~)
+      // 1x Tag, 1x Monat, 3x Jahr
+      n_of_sover = 5;
+      // je 2 pro Trenner (,.-/~)
+      n_of_bover = 4;
       if (this.showMonth) {
-        n_of_sover += 1; // Monat 3stellig statt 2stellig
+        // Monat 3stellig statt 2stellig
+        n_of_sover += 1;
       }
       if (this.showWeekday) {
-        n_of_sover += 2; // 3stelliger Wochentag
-        n_of_bover += 2; // zusätzlicher Trenner nach Wochentag
+        // 3stelliger Wochentag
+        n_of_sover += 2;
+        // zusätzlicher Trenner nach Wochentag
+        n_of_bover += 2;
       }
     }
 
@@ -247,9 +261,9 @@ var MorphDisplay = class MorphDisplay {
               und auch nicht 'clock' lautet.
          Dann nämlich wird ein großer Überlapp notwendig
       */
-      let di = data[i];
-      if ([',', '.', '-', ':', '~', '/'].some(x => x == di.glyph) ||
-          (di.slot && di.slot.charAt(0) != 'x' && di.slot != 'clock')) {
+      let d = data[i];
+      if ([',', '.', '-', ':', '~', '/'].some(x => x == d.glyph) ||
+          (d.slot && d.slot.charAt(0) != 'x' && d.slot != 'clock')) {
         pos += width * (1 - this.bigOverlap);
       }
       else {
@@ -280,11 +294,11 @@ var MorphDisplay = class MorphDisplay {
   }
 
   get showMonth() {
-    return (MorphData[this.type][this.format].some(x => x.slot == 'xMx'));
+    return MorphData[this.type][this.format].some(x => x.slot == 'xMx');
   }
 
   get showWeekday() {
-    return (MorphData[this.type][this.format].some(x => x.slot == 'xWx'));
+    return MorphData[this.type][this.format].some(x => x.slot == 'xWx');
   }
 }
 
@@ -293,11 +307,11 @@ MorphDisplay.prototype.createGlyphs = function() {
   let xpos = this.charPos;
   let data = MorphData[this.type][this.format];
 
-  for (let i = 0, dlen = data.length; i < dlen; i++ ){
+  for (let i = 0, dlen = data.length; i < dlen; i++){
     let newglyph = new Glyph(data[i].glyph,
                              this.div,
                              width + "%",
-                             xpos.shift()+"%");
+                             xpos.shift() + "%");
 
     let slot = data[i].slot || data[i].glyph;
     // data[i].slot ist null bei ungemorphten Glyphen, wir wollen
@@ -332,16 +346,16 @@ MorphDisplay.prototype.date.update = function(now) {
 MorphDisplay.prototype.logo.update = function(now) {
   let m = now.getMinutes();
   let h = now.getHours();
-  let glyphnum = (h * 60 + m) % 720;
-  let idx = this.slots.findIndex(s => s == "clock");
 
+  let glyphnum = (h * 60 + m) % 720;
+  let idx = this.slots.findIndex(x => x == "clock");
   this.glyphs[idx].type = this.glyphs[idx].prefix + glyphnum;
 }
 
 MorphDisplay.prototype.update = function() {
   let now = new Date();
   // wir übergeben 'this' an die jeweilige Funktion:
-  this[this.type].update.call(this,now);
+  this[this.type].update.call(this, now);
 }
 
 

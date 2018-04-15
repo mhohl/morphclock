@@ -95,7 +95,7 @@
 
       let divs = document.body.getElementsByTagName("div");
       // wir durchsuchen alle <div>-Elements nach data-type="morph..."
-      for (let i = 0; i < divs.length; i++ ) {
+      for (let i = 0; i < divs.length; i++) {
         let datatype = divs[i].getAttribute("data-type");
         // Zur Sicherheit genauer Check:
         if (datatype == "morphclock" ||
@@ -129,13 +129,13 @@
         });
 
         // die Uhr läuft 60× schneller als gewöhnlich
-        let offset = ((m-startmin) * 60 + (s-startsec));
-        morph = (offset + clockstart ) % 720;
+        let offset = ((m - startmin) * 60 + (s - startsec));
+        morph = (offset + clockstart) % 720;
         cglyph.type = cglyph.prefix + morph;
 
         // animiere die MorphDisplay-Elemente
         for (let type in morphElements) {
-          morphElements[type].forEach(entry => entry.update());
+          morphElements[type].forEach(m => m.update());
         };
       }
       renderTime();
