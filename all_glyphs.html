@@ -357,6 +357,36 @@
        }
 
        /*
+          Funktionen zum Update
+       */
+
+       MorphDisplay.prototype.logo = {};
+       MorphDisplay.prototype.clock = {};
+       MorphDisplay.prototype.date = {};
+
+       MorphDisplay.prototype.clock.update = function(now) {
+          //console.log("clock-update aufgerufen...");
+       }
+
+       MorphDisplay.prototype.date.update = function(now) {
+          //console.log("date-update aufgerufen ...");
+       }
+
+       MorphDisplay.prototype.logo.update = function(now) {
+          let m = now.getMinutes();
+          let h = now.getHours();
+          let glyphnum = (h * 60 + m) % 720;
+          let idx = this.slots.findIndex(s => s == "clock");
+          this.glyphs[idx].type = this.glyphs[idx].prefix + glyphnum;
+       }
+
+       MorphDisplay.prototype.update = function() {
+          let now = new Date();
+          // wir übergeben 'this' an die jeweilige Funktion:
+          this[this.type].update.call(this,now);
+       }
+
+       /*
           das Glyph-Objekt:
           'type' bestimmt die Art des Glyphen,
           'div' das übergeordnete <div>-Element,
@@ -515,16 +545,6 @@
        var dd = new Date(2018, 2, 25, 01, 59, 30, 0); console.log(dd.toUTCString());
        var ddd = new Date(2018, 2, 25, 03, 59, 30, 0); console.log(ddd.toUTCString());
        */
-       // dummy-Schleife
-       for (let type in morphElements) {
-           morphElements[type].forEach(entry => {
-             let div = entry.div;
-             let format = entry.format;
-             let glyphs = entry.glyphs;
-             let slots = entry.slots;
-             console.log(format, glyphs, slots, entry.showSeconds, entry.showDaytime, entry.showWeekday, entry.showMonth);
-           });
-       }
 
        function renderTime() {
          currentTime = new Date();
@@ -546,6 +566,11 @@
          let offset = ((m-startmin) * 60 + (s-startsec));
          morph = (offset + clockstart ) % 720;
          cglyph.type = cglyph.prefix + morph;
+
+         // animiere alles
+         for (let type in morphElements) {
+           morphElements[type].forEach(entry => entry.update());
+         };
        }
 
       function quickMorph() {
