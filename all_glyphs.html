@@ -23,102 +23,83 @@
         <div id="transition"></div>
       <h2>Die Uhr</h2>
         <div id="clock"></div>
-    <h1>morphclock: Anwendungen</h1>
-      <h2>morphlogo</h2>
-        <div data-type="morphlogo"></div>
-      <h2>morphdate</h2>
-        <div data-type="morphdate" data-format="D/M/Y"></div>
-        <div data-type="morphdate" data-format="Month D,Y"></div>
-        <div data-type="morphdate" data-format="full"></div>
-        <div data-type="morphdate"></div> <!-- ohne data-format -> default -->
-      <h2>morphclock</h2>
-        <div data-type="morphclock" data-format="hhmmss12"></div>
-        <div data-type="morphclock" data-format="hhmm24"></div>
-        <div data-type="morphclock"></div><!-- ohne data-format -> default -->
 
-    <script type='text/javascript' language='javascript'>
-      /* Einfache Beispiele:
-         Wir verteilen die gesamten Pfade auf die drei Bereiche
-         standalone, transition und clock:
-      */
-      const standalone = {};
-      const transition = {};
-      const clock = {};
-      const exampleWidth = "12.5%";
+        <script type='text/javascript' language='javascript'>
+          /* Einfache Beispiele:
+             Wir verteilen die gesamten Pfade auf die drei Bereiche
+             standalone, transition und clock:
+          */
+          const standalone = {};
+          const transition = {};
+          const clock = {};
+          const exampleWidth = "12.5%";
 
-      for (let key of Object.keys(morphpath)) {
-        if (key.length == 1)
-          standalone[key] = morphpath[key];
-        else if (key.slice(4) == "clock")
-          clock[key] = morphpath[key];
-        else if (key.slice(2,5) == "-00")
-          transition[key] = morphpath[key];
-      }
-
-      // die standalone-Glyphen
-      const skeys = Object.keys(standalone).sort();
-      const sglyphs = [];
-      const sdiv = document.getElementById('standalone');
-
-      for (let key of skeys) {
-        sglyphs.push(new Glyph(key, sdiv, exampleWidth));
-      }
-
-      // die transition-Glyphen
-      var tkeys = Object.keys(transition).sort();
-      const tglyphs = [];
-      const tdiv = document.getElementById('transition');
-      for (let key of tkeys) {
-        var tglyph = new Glyph(key, tdiv, exampleWidth);
-        tglyphs.push(tglyph);
-      }
-
-      // die Uhr
-      const cdiv = document.getElementById('clock');
-      const cglyph = new Glyph('clock-0', cdiv, exampleWidth);
-      // wir stellen die Uhr auf die aktuelle Zeit:
-      let currentTime = new Date;
-      let h = currentTime.getHours();
-      let m = currentTime.getMinutes();
-      let s = currentTime.getSeconds();
-      let clockstart = (h * 60 + m) % 720;
-      let startmin = m;
-      let startsec = s;
-      cglyph.type = cglyph.prefix + clockstart;
-
-      // Auswertung der morph-Elemente
-
-      function renderTime() {
-        currentTime = new Date();
-        m = currentTime.getMinutes();
-        s = currentTime.getSeconds();
-        t = currentTime.getMilliseconds();
-
-        var morph = 0;
-
-        setTimeout('renderTime()',10);
-
-        tglyphs.forEach(g => {
-          if (s % 3 == 0) morph = "00";
-          else if (s % 3 == 1) {
-            // quickmorph-Definition
-            morph = Math.floor(t/10);
-            morph = morph < 10 ? morph = "0" + morph : morph;
+          for (let key of Object.keys(morphpath)) {
+            if (key.length == 1) standalone[key] = morphpath[key];
+            else if (key.slice(4) == "clock") clock[key] = morphpath[key];
+            else if (key.slice(2,5) == "-00") transition[key] = morphpath[key];
           }
-          else morph = "99";
-          g.type = g.prefix + morph;
-        });
 
-        // die Uhr läuft 60× schneller als gewöhnlich
-        let offset = ((m - startmin) * 60 + (s - startsec));
-        morph = (offset + clockstart) % 720;
-        cglyph.type = cglyph.prefix + morph;
+          // die standalone-Glyphen
+          const skeys = Object.keys(standalone).sort();
+          const sglyphs = [];
+          const sdiv = document.getElementById('standalone');
 
-        // animiere die MorphDisplay-Elemente
-        Morph.update();
-      }
-      renderTime();
-    </script>
+          for (let key of skeys) {
+            sglyphs.push(new Glyph(key, sdiv, exampleWidth));
+          }
 
+          // die transition-Glyphen
+          var tkeys = Object.keys(transition).sort();
+          const tglyphs = [];
+          const tdiv = document.getElementById('transition');
+
+          for (let key of tkeys) {
+            var tglyph = new Glyph(key, tdiv, exampleWidth);
+            tglyphs.push(tglyph);
+          }
+
+          // die Uhr
+          const cdiv = document.getElementById('clock');
+          const cglyph = new Glyph('clock-0', cdiv, exampleWidth);
+          // wir stellen die Uhr auf die aktuelle Zeit:
+          let currentTime = new Date;
+          let h = currentTime.getHours();
+          let m = currentTime.getMinutes();
+          let s = currentTime.getSeconds();
+          let clockstart = (h * 60 + m) % 720;
+          let startmin = m;
+          let startsec = s;
+
+          cglyph.type = cglyph.prefix + clockstart;
+
+          function renderTime() {
+            currentTime = new Date();
+            m = currentTime.getMinutes();
+            s = currentTime.getSeconds();
+            t = currentTime.getMilliseconds();
+
+            var morph = 0;
+
+            setTimeout('renderTime()',10);
+
+            tglyphs.forEach(g => {
+              if (s % 3 == 0) morph = "00";
+              else if (s % 3 == 1) {
+                // quickmorph-Definition
+                morph = Math.floor(t/10);
+                morph = morph < 10 ? morph = "0" + morph : morph;
+              }
+              else morph = "99";
+              g.type = g.prefix + morph;
+            });
+
+            // die Uhr läuft 60× schneller als gewöhnlich
+            let offset = ((m - startmin) * 60 + (s - startsec));
+            morph = (offset + clockstart) % 720;
+            cglyph.type = cglyph.prefix + morph;
+          }
+          renderTime();
+        </script>
   </body>
 </html>
