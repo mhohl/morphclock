@@ -87,25 +87,6 @@
       cglyph.type = cglyph.prefix + clockstart;
 
       // Auswertung der morph-Elemente
-      const morphElements = []; // Container für *alle* morphDisplay-Objekte
-
-      morphElements.clock = [];
-      morphElements.date = [];
-      morphElements.logo = [];
-
-      let divs = document.body.getElementsByTagName("div");
-      // wir durchsuchen alle <div>-Elements nach data-type="morph..."
-      for (let i = 0; i < divs.length; i++) {
-        let datatype = divs[i].getAttribute("data-type");
-        // Zur Sicherheit genauer Check:
-        if (datatype == "morphclock" ||
-            datatype == "morphdate" ||
-            datatype == "morphlogo") {
-          let type = datatype.slice(5); // morphclock -> clock etc.
-
-          morphElements[type].push(new MorphDisplay(type, divs[i]).createGlyphs());
-        }
-      }
 
       function renderTime() {
         currentTime = new Date();
@@ -134,9 +115,7 @@
         cglyph.type = cglyph.prefix + morph;
 
         // animiere die MorphDisplay-Elemente
-        for (let type in morphElements) {
-          morphElements[type].forEach(m => m.update());
-        };
+        Morph.update();
       }
       renderTime();
     </script>

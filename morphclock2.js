@@ -1,3 +1,35 @@
+// Container für alle morph-Objekte und Funktionen
+const Morph = {};
+Morph.elements = [];
+Morph.elements.clock = [];
+Morph.elements.date = [];
+Morph.elements.logo = [];
+
+Morph.init = function () {
+  let divs = document.body.getElementsByTagName("div");
+
+  // wir durchsuchen alle <div>-Elements nach data-type="morph..."
+  for (let i = 0; i < divs.length; i++) {
+    let datatype = divs[i].getAttribute("data-type");
+
+    // Zur Sicherheit genauer Check:
+    if (datatype == "morphclock" ||
+        datatype == "morphdate" ||
+        datatype == "morphlogo") {
+      let type = datatype.slice(5); // morphclock -> clock etc.
+
+      Morph.elements[type].push(new MorphDisplay(type, divs[i])
+                         .createGlyphs());
+    }
+  }
+}
+
+Morph.update = function () {
+  for (let type in Morph.elements) {
+    Morph.elements[type].forEach(m => m.update());
+  };
+}
+
 // der svg-namespace
 const xmlns = "http://www.w3.org/2000/svg";
 
@@ -427,7 +459,7 @@ Glyph.prototype.buildPath = function (p) {
 
   path.setAttribute('class', "morph-svg-path");
   for (let i = 0, alen = attrs.length; i < alen; i++ ) {
-    let attr=attrs[i];
+    let attr = attrs[i];
     path.setAttribute(attr,morphpath.metainfo[attr]);
   }
   path.setAttribute ('d', p);
@@ -444,4 +476,9 @@ function slowMorph(x) {
 
 function doubleDigit(x) {
   return x < 10 ? x = "0" + x : x ;
+}
+
+
+window.onload = function() {
+    Morph.init();
 }
