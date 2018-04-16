@@ -5,35 +5,7 @@ Morph.elements.clock = [];
 Morph.elements.date = [];
 Morph.elements.logo = [];
 
-Morph.init = function () {
-  let divs = document.body.getElementsByTagName("div");
-
-  // wir durchsuchen alle <div>-Elements nach data-type="morph..."
-  for (let i = 0; i < divs.length; i++) {
-    let datatype = divs[i].getAttribute("data-type");
-
-    // Zur Sicherheit genauer Check:
-    if (datatype == "morphclock" ||
-        datatype == "morphdate" ||
-        datatype == "morphlogo") {
-      let type = datatype.slice(5); // morphclock -> clock etc.
-
-      Morph.elements[type].push(new MorphDisplay(type, divs[i])
-                         .createGlyphs());
-    }
-  }
-}
-
-Morph.update = function () {
-  for (let type in Morph.elements) {
-    Morph.elements[type].forEach(m => m.update());
-  };
-}
-
-// der svg-namespace
-const xmlns = "http://www.w3.org/2000/svg";
-
-/* MorphData enthält die Struktur der angezeigten Daten/Zeiten;
+/* Morph.data enthält die Struktur der angezeigten Daten/Zeiten;
    in den Slots steht 'x' als Platzhalter für die unbeteiligte
    Stelle, und ein Buchstabe für:
    s Sekunde
@@ -49,7 +21,7 @@ const xmlns = "http://www.w3.org/2000/svg";
    Vorgabe angezeigt werden.
 */
 
-const MorphData = {
+Morph.data = {
   default: {
     clock: 'hhmmss24',
     date:  'D.M.Y',
@@ -208,6 +180,35 @@ const MorphData = {
   }
 };
 
+Morph.init = function () {
+  let divs = document.body.getElementsByTagName("div");
+
+  // wir durchsuchen alle <div>-Elements nach data-type="morph..."
+  for (let i = 0; i < divs.length; i++) {
+    let datatype = divs[i].getAttribute("data-type");
+
+    // Zur Sicherheit genauer Check:
+    if (datatype == "morphclock" ||
+        datatype == "morphdate" ||
+        datatype == "morphlogo") {
+      let type = datatype.slice(5); // morphclock -> clock etc.
+
+      Morph.elements[type].push(new MorphDisplay(type, divs[i])
+                         .createGlyphs());
+    }
+  }
+}
+
+Morph.update = function () {
+  for (let type in Morph.elements) {
+    Morph.elements[type].forEach(m => m.update());
+  };
+}
+
+// der svg-namespace
+const xmlns = "http://www.w3.org/2000/svg";
+
+
 /* Das MorphDisplay-Objekt
    'type' bestimmt den dargestellten Typ (clock, date, logo),
    'div' das <div>-Element, das die Glyphen aufnimmt, sowie
@@ -218,7 +219,7 @@ var MorphDisplay = class MorphDisplay {
   constructor(type, div, glyphs, slots) {
     this.type = type;
     this.div = div;
-    this.format = div.getAttribute("data-format") || MorphData.default[type];
+    this.format = div.getAttribute("data-format") || Morph.data.default[type];
     this.glyphs = glyphs || [];
     this.slots = slots || [];
 
@@ -228,7 +229,7 @@ var MorphDisplay = class MorphDisplay {
 
   get charWidth() {
     // number of characters
-    let n_of_chars = MorphData[this.type][this.format].length;
+    let n_of_chars = Morph.data[this.type][this.format].length;
      // number of [s]mall/[b]ig [over]laps
     let n_of_sover = 0;
     let n_of_bover = 0;
@@ -283,7 +284,7 @@ var MorphDisplay = class MorphDisplay {
     let width = this.charWidth;
 
     positions.push(pos);
-    let data = MorphData[this.type][this.format];
+    let data = Morph.data[this.type][this.format];
 
     for (let i = 1, dlen = data.length; i < dlen; i++) {
       /* Die folgende if-Anweisung überprüft, ob
@@ -326,18 +327,18 @@ var MorphDisplay = class MorphDisplay {
   }
 
   get showMonth() {
-    return MorphData[this.type][this.format].some(x => x.slot == 'xMx');
+    return Morph.data[this.type][this.format].some(x => x.slot == 'xMx');
   }
 
   get showWeekday() {
-    return MorphData[this.type][this.format].some(x => x.slot == 'xWx');
+    return Morph.data[this.type][this.format].some(x => x.slot == 'xWx');
   }
 }
 
 MorphDisplay.prototype.createGlyphs = function() {
   let width = this.charWidth;
   let xpos = this.charPos;
-  let data = MorphData[this.type][this.format];
+  let data = Morph.data[this.type][this.format];
 
   for (let i = 0, dlen = data.length; i < dlen; i++){
     let newglyph = new Glyph(data[i].glyph,
