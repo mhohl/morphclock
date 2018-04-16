@@ -5,6 +5,8 @@ Morph.elements.clock = [];
 Morph.elements.date = [];
 Morph.elements.logo = [];
 
+Morph.path = morphpath; morphpath = undefined;
+
 /* Morph.data enthält die Struktur der angezeigten Daten/Zeiten;
    in den Slots steht 'x' als Platzhalter für die unbeteiligte
    Stelle, und ein Buchstabe für:
@@ -414,15 +416,15 @@ var Glyph = class Glyph {
 
     let svg = document.createElementNS (xmlns, "svg");
     svg.setAttribute('width', width);
-    svg.setAttribute('viewBox', "0 0 " + morphpath.metainfo.width
-                                + " " + morphpath.metainfo.height);
+    svg.setAttribute('viewBox', "0 0 " + Morph.path.metainfo.width
+                                + " " + Morph.path.metainfo.height);
     if (xpos) {
       svg.setAttribute('style', "position: absolute; " +
                        "top: " + "0px" + "; " +
                        "left: " + xpos);
     }
     div.appendChild(svg);
-    morphpath[_glyphtype].forEach(p => svg.appendChild(this.buildPath(p)));
+    Morph.path[_glyphtype].forEach(p => svg.appendChild(this.buildPath(p)));
     this.svg = svg;
   }
 
@@ -443,7 +445,7 @@ var Glyph = class Glyph {
       while (svg.firstChild) {
         svg.removeChild(svg.firstChild);
       }
-      morphpath[t].forEach(p => svg.appendChild(this.buildPath(p)));
+      Morph.path[t].forEach(p => svg.appendChild(this.buildPath(p)));
       this.svg = svg;
       this._glyphtype  = t;
     }
@@ -461,7 +463,7 @@ Glyph.prototype.buildPath = function (p) {
   path.setAttribute('class', "morph-svg-path");
   for (let i = 0, alen = attrs.length; i < alen; i++ ) {
     let attr = attrs[i];
-    path.setAttribute(attr,morphpath.metainfo[attr]);
+    path.setAttribute(attr, Morph.path.metainfo[attr]);
   }
   path.setAttribute ('d', p);
   return path;

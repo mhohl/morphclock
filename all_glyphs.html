@@ -34,10 +34,10 @@
           const clock = {};
           const exampleWidth = "12.5%";
 
-          for (let key of Object.keys(morphpath)) {
-            if (key.length == 1) standalone[key] = morphpath[key];
-            else if (key.slice(4) == "clock") clock[key] = morphpath[key];
-            else if (key.slice(2,5) == "-00") transition[key] = morphpath[key];
+          for (let key of Object.keys(Morph.path)) {
+            if (key.length == 1) standalone[key] = Morph.path[key];
+            else if (key.slice(4) == "clock") clock[key] = Morph.path[key];
+            else if (key.slice(2,5) == "-00") transition[key] = Morph.path[key];
           }
 
           // die standalone-Glyphen
