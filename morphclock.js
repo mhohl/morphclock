@@ -12,9 +12,9 @@ var time_fomat;    // the chosen time format
 var refresh = 50; // refresh time in msec
 
 var xmlns = "http://www.w3.org/2000/svg";
-var svg_width = morphpath.metainfo['width'];
-var svg_height = morphpath.metainfo['height'];
-var svg_strokewidth = morphpath.metainfo['stroke-width'];
+var svg_width = Morph.path.metainfo['width'];
+var svg_height = Morph.path.metainfo['height'];
+var svg_strokewidth = Morph.path.metainfo['stroke-width'];
 
 /* the time variables */
 var currentTime;
@@ -336,7 +336,7 @@ function renderTime() {
         }
         // set new path information
         var idx = src.slice(-2);
-        var path_array = morphpath[main[idx] + "-" + morph[idx]];
+        var path_array = Morph.path[main[idx] + "-" + morph[idx]];
         for (var i=0, len=path_array.length; i < len; i++) {
             var path = document.createElementNS (xmlns, "path");
             path.setAttribute ('class', "svg-path");

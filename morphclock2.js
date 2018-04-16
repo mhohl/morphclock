@@ -1,11 +1,11 @@
-// Container für alle morph-Objekte und Funktionen
-const Morph = {};
+/* Container für alle morph-Objekte und Funktionen
+   Morph und Morph.path werden in morphpaths.js
+   definiert/gefüllt.
+*/
 Morph.elements = [];
 Morph.elements.clock = [];
 Morph.elements.date = [];
 Morph.elements.logo = [];
-
-Morph.path = morphpath; morphpath = undefined;
 
 /* Morph.data enthält die Struktur der angezeigten Daten/Zeiten;
    in den Slots steht 'x' als Platzhalter für die unbeteiligte

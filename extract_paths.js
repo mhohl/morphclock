@@ -1,4 +1,3 @@
-
 module.paths.push('/usr/local/lib/node_modules');
 // thanks to https://stackoverflow.com/questions/12594541/npm-global-install-cannot-find-module?rq=1
 
@@ -55,4 +54,6 @@ svgFileList.forEach(file => {
 });
 
 data.metainfo.glyphs = count;
-console.log("var morphpath =", data, ";");
+console.log("\"use strict\";");
+console.log("const Morph = {};");
+console.log("Morph.path =", data, ";");
