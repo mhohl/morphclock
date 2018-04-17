@@ -4,10 +4,10 @@
  * version 1.19
  *
  */
-
+"use strict";
 // global variable declarations
 var svg_slot = {}; // holds the references to the images
-var time_fomat;    // the chosen time format
+var time_format;    // the chosen time format
 
 var refresh = 50; // refresh time in msec
 

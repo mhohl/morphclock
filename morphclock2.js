@@ -1,3 +1,4 @@
+"use strict";
 /* Container für alle morph-Objekte und Funktionen
    Morph und Morph.path werden in morphpaths.js
    definiert/gefüllt.
@@ -54,7 +55,7 @@ Morph.data = {
       { glyph: '::-00', slot: 'Cx' },
       { glyph: '50-00', slot: 'mx' },
       { glyph: '90-00', slot: 'xm' },
-      { glyph: '::-00', slot: 'cx'  },
+      { glyph: '::-00', slot: 'cx' },
       { glyph: '50-00', slot: 'sx' },
       { glyph: '90-00', slot: 'xs' },
       { glyph: '~',     slot: null },
@@ -64,7 +65,7 @@ Morph.data = {
     hhmm12: [
       { glyph: '10-00', slot: 'hx' },
       { glyph: '21-00', slot: 'xh' },
-      { glyph: '::-00', slot: 'cx'  },
+      { glyph: '::-00', slot: 'cx' },
       { glyph: '50-00', slot: 'mx' },
       { glyph: '90-00', slot: 'xm' },
       { glyph: '~',     slot: null },
@@ -227,6 +228,8 @@ var MorphDisplay = class MorphDisplay {
 
     this.smallOverlap = 0.2;
     this.bigOverlap = 2 * this.smallOverlap;
+
+    this.slowMorphStart = 7;
   }
 
   get charWidth() {
@@ -337,6 +340,7 @@ var MorphDisplay = class MorphDisplay {
   }
 }
 
+// Erzeuge Glyphen aus den in Morph.data hinterlegten Formaten
 MorphDisplay.prototype.createGlyphs = function() {
   let width = this.charWidth;
   let xpos = this.charPos;
@@ -364,6 +368,28 @@ MorphDisplay.prototype.createGlyphs = function() {
   return this;
 }
 
+// Funktionen zum Morphen
+MorphDisplay.prototype.doubleDigit = function(x) {
+  return x < 10 ? x = "0" + x : x ;
+}
+
+MorphDisplay.prototype.quickMorph = function(now) {
+  return this.doubleDigit(Math.floor(now.getMilliseconds()/10));
+}
+
+MorphDisplay.prototype.slowMorph = function(now) {
+  let xS = now.getSeconds() % 10;
+  let t = now.getMilliseconds();
+  let x = this.slowMorphStart;
+  return this.doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
+}
+
+MorphDisplay.prototype.addNextDigit = function(x) {
+  return this.doubleDigit(x * 10 + x + 1);
+}
+
+
+
 // Funktionen zum Update
 
 MorphDisplay.prototype.logo = {};
@@ -371,11 +397,153 @@ MorphDisplay.prototype.clock = {};
 MorphDisplay.prototype.date = {};
 
 MorphDisplay.prototype.clock.update = function(now) {
-  //console.log("clock-update aufgerufen...");
+  let h = now.getHours();
+  let m = now.getMinutes();
+  let s = now.getSeconds();
+
+  let main = { 'cx': '::',
+               'Cx': '::',
+               'dx': 'ap' };
+
+  let morph = { 'sx': '00',
+                'xm': '00',
+                'mx': '00',
+                'xh': '00',
+                'hx': '00',
+                'xd': '00',
+                'dx': '00' };
+
+  // im 12h-Modus ist Mitternacht 12:00pm
+  if (this.showDaytime) {
+    if (h == 0) {
+      h = 12;
+    }
+    else if (h > 12) {
+      h = h - 12;
+      main['dx'] = "pa";
+    }
+  }
+
+  let hx = Math.floor(h/10); // Zehner- und
+  let xh = h % 10;           // Einerstelle
+  let mx = Math.floor(m/10);
+  let xm = m % 10;
+  let sx = Math.floor(s/10);
+  let xs = s % 10;
+
+  let maxh = this.format.slice(-2); // 12h oder 24h?
+  maxh = ( maxh == 24 ? 23 : maxh );
+  let maxhx = Math.floor(maxh/10); // maximal erreichbare Zehnerstelle
+
+  let slow_morph = (xs >= this.slowMorphStart);
+
+  // Sekunden
+  if (sx == 5) {
+    main['sx'] = sx + "0";
+    if (slow_morph) {
+      morph['xm'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['sx'] = this.addNextDigit(sx);
+  }
+  if (this.showSeconds) {
+    morph['xs'] = this.quickMorph(now);
+    if (xs == 9) {
+      main['xs'] = xs + "0";
+      morph['sx'] = morph['xs'];
+    }
+    else {
+      main['xs'] = this.addNextDigit(xs);
+    }
+    /* Doppelpunkt: der rechte Doppelpunkt läuft synchron mit den
+       Sekunden, der linke ist um 50% hasenverschoben.
+    */
+    morph['cx'] = morph['xs'];
+    morph['Cx'] = this.doubleDigit((this.quickMorph(now) + 50) % 100);
+  }
+  else {
+    /* Keine Sekunden angezeigt, der einzige Doppelpunkt ist
+       synchron zu den Sekunden
+    */
+    morph['cx'] = this.quickMorph(now);
+  }
+
+  // Minuten
+  slow_morph = slow_morph && (sx == 5);
+
+  if (xm == 9) {
+    main['xm'] = xm + "0";
+    if (slow_morph) {
+      morph['mx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['xm'] = this.addNextDigit(xm);
+  }
+
+  slow_morph = slow_morph && (xm == 9);
+
+  if (mx == 5) {
+    main['mx'] = mx + "0";
+    if (slow_morph) {
+      morph['xh'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['mx'] = this.addNextDigit(mx);
+  }
+
+  slow_morph = slow_morph && (mx == 5);
+
+  // Stunden
+  if (h == maxh || xh == 9) {
+    if (h == maxh && this.showDaytime ) {
+      // Übergang "12" -> "01"
+      main['xh'] = xh + "1";
+    }
+    else {
+      main['xh'] = xh + "0";
+    }
+    if (slow_morph) {
+      morph['hx'] = this.slowMorph(now);
+      if (h == maxh) {
+        morph['dx'] = morph['hx'];
+        morph['xd'] = morph['hx'];
+      }
+    }
+  }
+  else {
+    main['xh'] = this.addNextDigit(xh);
+  }
+
+  if (hx == maxhx) {
+    main['hx'] = hx + "0";
+  }
+  else {
+    main['hx'] = this.addNextDigit(hx);
+  }
+  // wende Änderungen an ...
+  /* Wir gehen von den main-Einträgen aus, da es auch Slots
+     gibt, die null sind
+  */
+  let keys = Object.keys(main);
+  for (let key of keys) {
+    let idx = this.slots.findIndex(x => x == key);
+    if (idx > -1) {
+       this.glyphs[idx].type = main[key] + "-" + morph[key];
+    }
+  }
 }
 
 MorphDisplay.prototype.date.update = function(now) {
   //console.log("date-update aufgerufen ...");
+  let Y = now.getYear();
+  let M = now.getMonth() + 1;
+  let D = now.getDay();
+  let h = now.getHours();
+  let m = now.getMinutes();
+  let s = now.getSeconds();
 }
 
 MorphDisplay.prototype.logo.update = function(now) {
@@ -467,18 +635,6 @@ Glyph.prototype.buildPath = function (p) {
   }
   path.setAttribute ('d', p);
   return path;
-}
-
-function quickMorph() {
-  return doubleDigit(Math.floor(t/10));
-}
-
-function slowMorph(x) {
-  return doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
-}
-
-function doubleDigit(x) {
-  return x < 10 ? x = "0" + x : x ;
 }
 
 
