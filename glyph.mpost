@@ -1988,15 +1988,15 @@ comma[TOP]    = (-sw/2,corr);
 comma[BOTTOM] = (-sw,-dy);
 
 % "-"
-dash[LEFT]  = (-sw,xh/2);
+dash[LEFT]  = (-sw/2,xh/2);
 dash[RIGHT] = dash[LEFT] xscaled -1;
 
 % "."
 dot[CENTER] = comma[TOP];
 
 % "/"
-slash[BEGIN] = (-sw,dsc/2);
-slash[END]   = (sw,(asc+xh)/2);
+slash[BEGIN] = (-sw/2,2dy);
+slash[END]   = (sw/2,xh-2dy);
 
 % ":"
 colon[TOP]    = (0,xh-dy);
