@@ -388,6 +388,11 @@ MorphDisplay.prototype.addNextDigit = function(x) {
   return this.doubleDigit(x * 10 + x + 1);
 }
 
+MorphDisplay.prototype.leapYear = function(now) {
+  let Y = now.getFullYear();
+  return (Y % 100 == 0) ? (Y % 400 == 0) : (Y % 4 == 0);
+}
+
 
 
 // Funktionen zum Update
@@ -527,8 +532,7 @@ MorphDisplay.prototype.clock.update = function(now) {
   /* Wir gehen von den main-Einträgen aus, da es auch Slots
      gibt, die null sind
   */
-  let keys = Object.keys(main);
-  for (let key of keys) {
+  for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
        this.glyphs[idx].type = main[key] + "-" + morph[key];
@@ -538,12 +542,206 @@ MorphDisplay.prototype.clock.update = function(now) {
 
 MorphDisplay.prototype.date.update = function(now) {
   //console.log("date-update aufgerufen ...");
-  let Y = now.getYear();
-  let M = now.getMonth() + 1;
-  let D = now.getDay();
+  let Y = now.getFullYear();
+  let M = now.getMonth() + 1; // Januar = 1
+  let D = now.getDate();
   let h = now.getHours();
   let m = now.getMinutes();
   let s = now.getSeconds();
+
+  let Yxxx = Math.floor(Y/1000);
+  let xYxx = Math.floor(Y/100) % 10;
+  let xxYx = Math.floor(Y/10) % 10;
+  let xxxY = Y % 10;
+  let Mx = Math.floor(M/10);
+  let xM = M % 10;
+  let Dx = Math.floor(D/10);
+  let xD = D % 10;
+  //console.log(Yxxx, xYxx, xxYx, xxxY, Mx, xM, Dx, xD);
+
+  let main = { };
+
+  let morph = { 'Yxxx': '00',
+                'xYxx': '00',
+                'xxYx': '00',
+                'xxxY': '00',
+                'Mxx': '00',
+                'xMx': '00',
+                'xxM': '00',
+                'Mx': '00',
+                'xM': '00',
+                'Dx': '00',
+                'xD': '00' };
+
+  let slow_morph = (h == 23 && m == 59 && s >= (50 + this.slowMorphStart));
+
+  if (slow_morph) {
+    morph['xD'] = this.slowMorph(now);
+  }
+
+  // Tage
+
+  let slow_morph_add = false; // um komplexere Bedingungen abzufangen
+
+  if (xD == 9) {
+    main['xD'] = xD + "0";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['Dx'] = this.slowMorph(now);
+    }
+  }
+  else if (D == 30 && (M == 4 || M == 6 || M == 9 || M == 11)) {
+    main['xD'] = xD + "1";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['Dx'] = this.slowMorph(now);
+    }
+  }
+  else if (D == 31 && (M == 1 || M == 3 || M == 5 || M == 7 || M == 8 || M == 10 || M == 12)) {
+    main['xD'] = xD + "1";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['Dx'] = this.slowMorph(now);
+    }
+  }
+  else if (M == 2 && D == 28 && !this.leapYear) {
+    main['xD'] = xD + "1";
+    slowmorph_add = true;
+    if (slow_morph) {
+      morph['Dx'] = this.slowMorph(now);
+    }
+  }
+  else if (M == 2 && D == 29) {
+    main['xD'] = xD + "1";
+    slowmorph_add = true;
+    if (slow_morph) {
+      morph['Dx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['xD'] = this.addNextDigit(xD);
+    slow_morph_add = false;
+  }
+
+  slow_morph = slow_morph && slow_morph_add;
+
+  if (Dx == 3) {
+    main['Dx'] = Dx + "0";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['xM'] = this.slowMorph(now);
+    }
+  }
+  else if (M == 2 && D == 28 && !this.leapYear) {
+    main['Dx'] = Dx + "0";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['xM'] = this.slowMorph(now);
+    }
+  }
+  else if (M == 2 && D == 29) {
+    main['Dx'] = Dx + "0";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['xM'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['Dx'] = this.addNextDigit(Dx);
+    slow_morph_add = false;
+  }
+
+  slow_morph = slow_morph && slow_morph_add;
+
+  // Monate
+
+  if (xM == 9) {
+    main['xM'] = xM + "0";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['Mx'] = this.slowMorph(now);
+    }
+  }
+  else if (M == 12) {
+    main['xM'] = xM + "1";
+    slow_morph_add = true;
+    if (slow_morph) {
+      morph['Mx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['xM'] = this.addNextDigit(xM);
+    slow_morph_add = false;
+  }
+
+  slow_morph = slow_morph && slow_morph_add;
+
+  if (M == 12) {
+    main['Mx'] = Mx + "0";
+    if (slow_morph) {
+      morph['xxxY'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['Mx'] = this.addNextDigit(Mx);
+  }
+
+  slow_morph = slow_morph && (M == 12);
+
+  // Jahre
+
+  if (xxxY == 9) {
+    main['xxxY'] = xxxY + "0";
+    if (slow_morph) {
+      morph['xxYx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['xxxY'] = this.addNextDigit(xxxY);
+  }
+
+  slow_morph = slow_morph && (xxxY == 9);
+
+  if (xxYx == 9) {
+    main['xxYx'] = xxYx + "0";
+    if (slow_morph) {
+      morph['xYxx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['xxYx'] = this.addNextDigit(xxYx);
+  }
+
+  slow_morph = slow_morph && (xxYx == 9);
+
+  if (xYxx == 9) {
+    main['xYxx'] = xYxx + "0";
+    if (slow_morph) {
+      morph['Yxxx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['xYxx'] = this.addNextDigit(xYxx);
+  }
+
+  slow_morph = slow_morph && (xYxx == 9);
+
+  if (Yxxx == 9) {
+    main['Yxxx'] = Yxxx + "0";
+    if (slow_morph) {
+      //morph['Yxxxx'] = this.slowMorph(now);
+    }
+  }
+  else {
+    main['Yxxx'] = this.addNextDigit(Yxxx);
+  }
+
+  for (let key of Object.keys(main)) {
+    let idx = this.slots.findIndex(x => x == key);
+    if (idx > -1) {
+       this.glyphs[idx].type = main[key] + "-" + morph[key];
+    }
+  }
 }
 
 MorphDisplay.prototype.logo.update = function(now) {
