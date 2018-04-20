@@ -542,8 +542,7 @@ MorphDisplay.prototype.clock.update = function(now) {
   for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
-       this.glyphs[idx].type = main[key] + "-" +
-        (morph[key] ? morph[key] : "00");
+       this.glyphs[idx].type = main[key] + "-" + (morph[key] || "00");
     }
   }
 }
@@ -770,8 +769,7 @@ MorphDisplay.prototype.date.update = function(now) {
   for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
-      this.glyphs[idx].type = main[key] + "-" +
-        (morph[key] ? morph[key] : "00");
+      this.glyphs[idx].type = main[key] + "-" + (morph[key] || "00");
     }
   }
 }
