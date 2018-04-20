@@ -46,7 +46,7 @@
           const sdiv = document.getElementById('standalone');
 
           for (let key of skeys) {
-            sglyphs.push(new Glyph(key, sdiv, exampleWidth));
+            sglyphs.push(new MorphGlyph(key, sdiv, exampleWidth));
           }
 
           // die transition-Glyphen
@@ -55,13 +55,13 @@
           const tdiv = document.getElementById('transition');
 
           for (let key of tkeys) {
-            var tglyph = new Glyph(key, tdiv, exampleWidth);
+            var tglyph = new MorphGlyph(key, tdiv, exampleWidth);
             tglyphs.push(tglyph);
           }
 
           // die Uhr
           const cdiv = document.getElementById('clock');
-          const cglyph = new Glyph('clock-0', cdiv, exampleWidth);
+          const cglyph = new MorphGlyph('clock-0', cdiv, exampleWidth);
           // wir stellen die Uhr auf die aktuelle Zeit:
           let currentTime = new Date;
           let h = currentTime.getHours();

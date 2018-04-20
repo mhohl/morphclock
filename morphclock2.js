@@ -226,7 +226,7 @@ const xmlns = "http://www.w3.org/2000/svg";
 /* Das MorphDisplay-Objekt
    'type' bestimmt den dargestellten Typ (clock, date, logo),
    'div' das <div>-Element, das die Glyphen aufnimmt, sowie
-   'glyphs' ein Array der einzelnen Glyph-Objekte
+   'glyphs' ein Array der einzelnen MorphGlyph-Objekte
 */
 
 var MorphDisplay = class MorphDisplay {
@@ -237,6 +237,10 @@ var MorphDisplay = class MorphDisplay {
     this.glyphs = glyphs || [];
     this.slots = slots || [];
 
+    /* Die einzelnen Glyphen bzw. SVG-Elemente überlappen sich an den Rändern;
+       Ziffern und Buchstaben um den Faktor smallOverlap, Interpunktionen und
+       Leerzeichen um bigOverlap.
+    */
     this.smallOverlap = 0.2;
     this.bigOverlap = 2 * this.smallOverlap;
 
@@ -343,11 +347,11 @@ var MorphDisplay = class MorphDisplay {
   }
 
   get showMonth() {
-    return Morph.data[this.type][this.format].some(x => x.slot == 'xMx');
+    return Morph.data[this.type][this.format].some(x => x.slot == 'Mxx');
   }
 
   get showWeekday() {
-    return Morph.data[this.type][this.format].some(x => x.slot == 'xWx');
+    return Morph.data[this.type][this.format].some(x => x.slot == 'Wxx');
   }
 }
 
@@ -358,7 +362,7 @@ MorphDisplay.prototype.createGlyphs = function() {
   let data = Morph.data[this.type][this.format];
 
   for (let i = 0, dlen = data.length; i < dlen; i++){
-    let newglyph = new Glyph(data[i].glyph,
+    let newglyph = new MorphGlyph(data[i].glyph,
                              this.div,
                              width + "%",
                              xpos.shift() + "%");
@@ -403,8 +407,6 @@ MorphDisplay.prototype.leapYear = function(now) {
   let Y = now.getFullYear();
   return (Y % 100 == 0) ? (Y % 400 == 0) : (Y % 4 == 0);
 }
-
-
 
 // Funktionen zum Update
 
@@ -459,27 +461,21 @@ MorphDisplay.prototype.clock.update = function(now) {
   else {
     main['sx'] = this.addNextDigit(sx);
   }
-  if (this.showSeconds) {
-    morph['xs'] = this.quickMorph(now);
-    if (xs == 9) {
-      main['xs'] = xs + "0";
-      morph['sx'] = morph['xs'];
-    }
-    else {
-      main['xs'] = this.addNextDigit(xs);
-    }
-    /* Doppelpunkt: der rechte Doppelpunkt läuft synchron mit den
-       Sekunden, der linke ist um 50% hasenverschoben.
-    */
-    morph['cx'] = morph['xs'];
-    morph['Cx'] = this.doubleDigit((this.quickMorph(now) + 50) % 100);
+
+  morph['xs'] = this.quickMorph(now);
+
+  if (xs == 9) {
+    main['xs'] = xs + "0";
+    morph['sx'] = morph['xs'];
   }
   else {
-    /* Keine Sekunden angezeigt, der einzige Doppelpunkt ist
-       synchron zu den Sekunden
-    */
-    morph['cx'] = this.quickMorph(now);
+    main['xs'] = this.addNextDigit(xs);
   }
+  /* Der rechte Doppelpunkt läuft synchron mit den
+     Sekunden, der linke ist um 50% phasenverschoben.
+  */
+  morph['cx'] = morph['xs'];
+  morph['Cx'] = this.doubleDigit((this.quickMorph(now) + 50) % 100);
 
   // Minuten
   slow_morph = slow_morph && (sx == 5);
@@ -754,14 +750,10 @@ MorphDisplay.prototype.date.update = function(now) {
     main['xYxx'] = this.addNextDigit(xYxx);
   }
 
-  slow_morph = slow_morph && (xYxx == 9);
-
   if (Yxxx == 9) {
     main['Yxxx'] = Yxxx + "0";
-    if (slow_morph) {
-      //morph['Yxxxx'] = this.slowMorph(now);
-    }
   }
+
   else {
     main['Yxxx'] = this.addNextDigit(Yxxx);
   }
@@ -790,7 +782,7 @@ MorphDisplay.prototype.update = function() {
 }
 
 
-/* Das Glyph-Objekt:
+/* Das MorphGlyph-Objekt:
    'type' bestimmt die Art des Glyphen,
    'div' das übergeordnete <div>-Element,
    'width' die Breite, sowie optimonal 'xpos', das – falls gesetzt –
@@ -803,7 +795,7 @@ MorphDisplay.prototype.update = function() {
    leicht geändert werden.
 */
 
-var Glyph = class Glyph {
+var MorphGlyph = class MorphGlyph {
   constructor(_glyphtype, div, width, xpos) {
     this._glyphtype = _glyphtype;
     this.div = div;
@@ -830,7 +822,7 @@ var Glyph = class Glyph {
     let idx = this._glyphtype.indexOf('-');
 
     if (idx > -1 )
-      return this._glyphtype.slice(0,idx+1);
+      return this._glyphtype.slice(0, idx + 1);
     return this._glyphtype; // kein Morphanteil
   }
 
@@ -850,14 +842,14 @@ var Glyph = class Glyph {
 
 // erstelle aus den gespeicherten Pfadinformationen ein <path>-Element
 
-Glyph.prototype.buildPath = function (p) {
+MorphGlyph.prototype.buildPath = function (p) {
   const path = document.createElementNS (xmlns, "path");
   const attrs = ['stroke-width', 'stroke-linecap',
                  'stroke-linejoin', 'stroke-miterlimit',
                  'fill'];
 
   path.setAttribute('class', "morph-svg-path");
-  for (let i = 0, alen = attrs.length; i < alen; i++ ) {
+  for (let i = 0, alen = attrs.length; i < alen; i++) {
     let attr = attrs[i];
     path.setAttribute(attr, Morph.path.metainfo[attr]);
   }
