@@ -43,7 +43,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.45";
+version := "Version: 1.5";
 show(version);
 
 show("call with '-numbersystem=double' to prevent overflow errors");
@@ -141,7 +141,7 @@ pair twoA[], twoB[];
 
 % Array für die Interpunktionen:
 
-pair comma[], dash[], dot[], slash[], colon[];
+pair asterisk[], comma[], dash[], dot[], slash[], colon[];
 
 % Arrays für die Buchstaben:
 pair _a_[], _b_[], _c_[], _d_[],
@@ -1983,6 +1983,10 @@ endfor
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% "*"
+asterisk[TOP] = (0,xh-dy);
+asterisk[BOTTOM] = (0,xh/2+dy);
+
 % ","
 comma[TOP]    = (-sw/2,corr);
 comma[BOTTOM] = (-sw,-dy);
@@ -2007,6 +2011,27 @@ colon[BOTTOM] = (0,dy);
 %
 %%%%%%%%%%%% Interpunktion/Übergänge
 %
+
+%
+% * -> ()
+%
+
+start := standalone("*");
+
+beginfig(start);
+   draw_grid(u);
+   pickup pc;
+
+   tmppath0 := asterisk[TOP]
+               -- asterisk[BOTTOM];
+
+   for i = 0 upto 4:
+      draw tmppath0 rotatedaround (C,72*i);
+   endfor
+
+   setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
+endfig;
 
 %
 % , -> ()
@@ -5830,6 +5855,96 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmp1 := min(2(1-m),1)*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
        draw tmppath1 shifted (tmp1,0);
 
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% t -> n
+%
+
+start := transition ("t","n");
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Wir schieben _t_[BOTTOM] um die Hälfte _t_[MID]/_t_[BOTTOM]
+% nach links, sowie _t_[END] oberhalb von _t_[BOTTOM]:
+
+aux[BOTTOM] := (1/2(xpart(_t_[MID])+xpart(_t_[BOTTOM])),ypart(_t_[BOTTOM]));
+aux[END]    := (xpart(_t_[BOTTOM]),ypart(_t_[END]));
+
+% Zwei zusätzliche Hilfspunkte, die die Verlängerung des t-Bogens darstellen;
+% aux[D_ARC] wandert zu aux[R_ARC], aux[U_ARC] zu aux[L_ARC]:
+
+aux[U_ARC] := 2[_t_[BOTTOM],_t_[END]];
+aux[L_ARC] := (1/2(xpart(_t_[END])+xpart(_t_[BOTTOM])),ypart(aux[U_ARC]));
+
+aux[D_ARC] := (2*xpart(_t_[END]),ypart(_t_[BOTTOM]));
+aux[R_ARC] := (xpart(_t_[END]),ypart(_t_[BOTTOM]));
+
+
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _t_[LEFT] -- _t_[RIGHT];
+
+       tmppath0 := _t_[BEGIN]
+                   -- _t_[MID]{down}
+                   .. m[_t_[BOTTOM],aux[BOTTOM]]
+                   .. m[_t_[END],aux[END]]
+                   .. m[aux[U_ARC],aux[L_ARC]]
+                   .. m[aux[D_ARC],aux[R_ARC]]{down};
+
+       draw subpath (0,3+2m) of tmppath0;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := _t_[BEGIN]
+            -- _t_[MID]{down}
+            .. aux[BOTTOM]
+            .. aux[END]
+            .. aux[L_ARC]
+            .. aux[R_ARC]{down};
+
+aux[RIGHT] := point 4.5 of tmppath0;
+% aux[RIGHT] wandert zu _n_[RIGHT]
+
+% Winkel:
+phi[LEFT]  := angle(direction 3 of tmppath0);
+phi[RIGHT] := angle(direction 4.5 of tmppath0);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_t_[LEFT],_n_[LEFT]]
+            -- m[_t_[RIGHT],_n_[BEGIN]];
+
+       tmppath0 := _t_[BEGIN]
+                   -- _t_[MID]{down}
+                   .. {dir min(2m,1)[0,90]}
+                      m[aux[BOTTOM],_n_[BOTTOM]]
+                      {dir min(2m,1)[0,90]}
+                   .. m[aux[END],_n_[LEFT]]{dir m[phi[LEFT],90]}
+                   .. m[aux[L_ARC],_n_[MID]]
+                   .. m[aux[RIGHT],_n_[RIGHT]]{dir m[phi[RIGHT],-90]}
+                   .. m[aux[R_ARC],_n_[END]]{down};
+
+       draw subpath (2m,6) of tmppath0;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor

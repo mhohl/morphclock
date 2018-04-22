@@ -26,6 +26,8 @@ function format_name {
       target="${to}"
       if [[ $target == / ]]; then
          target="slash"
+      elif [[ $target == \* ]]; then
+         target="asterisk"
       fi
    else
       from=$( chr $(( i / 10000 + 32 )) )

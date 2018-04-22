@@ -50,6 +50,7 @@ svgFileList.forEach(file => {
   nodes.forEach(node => result.push(node.value));
   var key = file.slice(0,-4); // strip ".svg"
   if ( key == "slash" ) key = "/";
+  if ( key == "asterisk" ) key = "*";
   data[key] = result;
 });
 

@@ -833,6 +833,10 @@ var MorphGlyph = class MorphGlyph {
       while (svg.firstChild) {
         svg.removeChild(svg.firstChild);
       }
+      if (!Morph.path[t]) {
+        console.log("Glyph ",t , " missing, using '*' instead.");
+        t = '*';
+      }
       Morph.path[t].forEach(p => svg.appendChild(this.buildPath(p)));
       this.svg = svg;
       this._glyphtype  = t;
@@ -856,6 +860,13 @@ MorphGlyph.prototype.buildPath = function (p) {
   path.setAttribute ('d', p);
   return path;
 }
+
+/* Das MorphTimeDate-Objekt ist eine Kopie vom Date-Objekt
+   mit zusätzlichen Eigenschaften
+*/
+
+//TODO
+
 
 
 window.onload = function() {
