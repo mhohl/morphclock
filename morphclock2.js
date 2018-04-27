@@ -389,23 +389,18 @@ MorphDisplay.prototype.doubleDigit = function(x) {
 }
 
 MorphDisplay.prototype.quickMorph = function(now) {
-  return this.doubleDigit(Math.floor(now.getMilliseconds()/10));
+  return this.doubleDigit(Math.floor(now.milliseconds/10));
 }
 
 MorphDisplay.prototype.slowMorph = function(now) {
-  let xS = now.getSeconds() % 10;
-  let t = now.getMilliseconds();
+  let xS = now.seconds % 10;
+  let t = now.milliseconds;
   let x = this.slowMorphStart;
   return this.doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
 }
 
 MorphDisplay.prototype.addNextDigit = function(x) {
   return this.doubleDigit(x * 10 + x + 1);
-}
-
-MorphDisplay.prototype.leapYear = function(now) {
-  let Y = now.getFullYear();
-  return (Y % 100 == 0) ? (Y % 400 == 0) : (Y % 4 == 0);
 }
 
 // Funktionen zum Update
@@ -415,9 +410,9 @@ MorphDisplay.prototype.clock = {};
 MorphDisplay.prototype.date = {};
 
 MorphDisplay.prototype.clock.update = function(now) {
-  let h = now.getHours();
-  let m = now.getMinutes();
-  let s = now.getSeconds();
+  let h = now.hours;
+  let m = now.minutes;
+  let s = now.seconds;
 
   let main = {};
 
@@ -545,13 +540,13 @@ MorphDisplay.prototype.clock.update = function(now) {
 
 MorphDisplay.prototype.date.update = function(now) {
   //console.log("date-update aufgerufen ...");
-  let Y = now.getFullYear();
-  let M = now.getMonth() + 1; // Januar = 1
-  let D = now.getDate();
-  let W = now.getDay(); // Wochentag
-  let h = now.getHours();
-  let m = now.getMinutes();
-  let s = now.getSeconds();
+  let Y = now.year;
+  let M = now.month; // Januar = 1
+  let D = now.day;
+  let W = now.weekday; // Wochentag
+  let h = now.hours;
+  let m = now.minutes;
+  let s = now.seconds;
 
   let Yxxx = Math.floor(Y/1000);
   let xYxx = Math.floor(Y/100) % 10;
@@ -621,7 +616,7 @@ MorphDisplay.prototype.date.update = function(now) {
     }
   }
   // Februar, normal
-  else if (M == 2 && D == 28 && !this.leapYear) {
+  else if (M == 2 && D == 28 && !now.leapYear) {
     main['xD'] = xD + "1";
     slowmorph_add = true;
     if (slow_morph) {
@@ -767,8 +762,8 @@ MorphDisplay.prototype.date.update = function(now) {
 }
 
 MorphDisplay.prototype.logo.update = function(now) {
-  let m = now.getMinutes();
-  let h = now.getHours();
+  let m = now.minutes;
+  let h = now.hours;
 
   let glyphnum = (h * 60 + m) % 720;
   let idx = this.slots.findIndex(x => x == "clock");
@@ -776,7 +771,7 @@ MorphDisplay.prototype.logo.update = function(now) {
 }
 
 MorphDisplay.prototype.update = function() {
-  let now = new Date();
+  let now = new MorphTimeDate();
   // wir übergeben 'this' an die jeweilige Funktion:
   this[this.type].update.call(this, now);
 }
@@ -866,6 +861,79 @@ MorphGlyph.prototype.buildPath = function (p) {
 */
 
 //TODO
+
+var MorphTimeDate = class MorphTimeDate {
+  constructor (offset) {
+    this._date = new Date();
+    this._month = this._date.getUTCMonth();
+    this._weekday = this._date.getUTCDay();
+    this._day = this._date.getUTCDate(),
+    this._hour = this._date.getUTCHours();
+
+    this.transition = {};
+
+    if ((this._month == 2) && // März
+        (this._day > 24) &&
+        (this._weekday == 0)) { // am letzen Sonntag
+      if (this._hour == 1) {    // um 1 Uhr UTC
+        this.transition['1->3'] = true;
+      }
+    }
+    else if ((this._month == 9) && // Oktober
+             (this._day > 24) &&
+             (this._weekday == 0)) { // am letzen Sonntag
+      if (this._hour == 0) {         // um 0 Uhr UTC
+        this.transition['1->2a'] = true;
+      }
+      else if (this._hour == 1) {
+        this.transition['2a->2b'] = true;
+      }
+      else if (this._hour == 2) {
+        this.transition['2b->3'] = true;
+      }
+    }
+  }
+
+  get year() {
+    return this._date.getFullYear();
+  }
+
+  get month() {
+    return this._month + 1;
+  }
+
+  get day() {
+    return this._day;
+  }
+
+  get weekday() {
+    return this._weekday;
+  }
+
+  get hours() {
+    return this._date.getHours();
+  }
+
+  get minutes() {
+    return this._date.getMinutes();
+  }
+
+  get seconds() {
+    return this._date.getSeconds();
+  }
+
+  get milliseconds() {
+    return this._date.getMilliseconds();
+  }
+
+  get leapYear() {
+    let Y = this.year;
+    return (Y % 100 == 0) ? (Y % 400 == 0) : (Y % 4 == 0);
+  }
+}
+
+var testnow = new MorphTimeDate();
+console.log(testnow.year, testnow.leapYear);
 
 
 
