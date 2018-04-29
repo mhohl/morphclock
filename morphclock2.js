@@ -389,14 +389,14 @@ MorphDisplay.prototype.doubleDigit = function(x) {
 }
 
 MorphDisplay.prototype.quickMorph = function(now) {
-  return this.doubleDigit(Math.floor(now.milliseconds/10));
+  return this.doubleDigit(Math.floor(now.milliseconds / 10));
 }
 
 MorphDisplay.prototype.slowMorph = function(now) {
   let xS = now.seconds % 10;
   let t = now.milliseconds;
   let x = this.slowMorphStart;
-  return this.doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
+  return this.doubleDigit(Math.floor(((xS - x) * 1000 + t) / ((10 - x) * 10)));
 }
 
 MorphDisplay.prototype.addNextDigit = function(x) {
@@ -414,15 +414,17 @@ MorphDisplay.prototype.clock.update = function(now) {
   let m = now.minutes;
   let s = now.seconds;
 
-  let main = {};
-
-  let morph = {};
+  let main = {}, morph = {};
 
   // im 12h-Modus ist Mitternacht 12:00pm
-  main['dx'] = 'ap';
   if (this.showDaytime) {
+    main['xd'] = 'mm';
     if (h == 0) {
       h = 12;
+      main['dx'] = 'pa';
+    }
+    else if (h >= 1 && h <= 12) {
+      main['dx'] = 'ap';
     }
     else if (h > 12) {
       h = h - 12;
@@ -438,7 +440,7 @@ MorphDisplay.prototype.clock.update = function(now) {
   let xs = s % 10;
 
   let maxh = this.format.slice(-2); // 12h oder 24h?
-  maxh = ( maxh == 24 ? 23 : maxh );
+  maxh = (maxh == 24 ? 23 : maxh);
   let maxhx = Math.floor(maxh/10); // maximal erreichbare Zehnerstelle
 
   main['cx'] = '::';
@@ -570,6 +572,11 @@ MorphDisplay.prototype.date.update = function(now) {
     ['', 'nb', 'br', 'rr', 'ry', 'yn', 'nl', 'lg', 'gp', 'pt', 'tv', 'vc', 'cn']
   ]
 
+  const lastDayOfMonth = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (now.leapYear) {
+    lastDayOfMonth[2] = 29;
+  }
+
   let main = {};
 
   let morph = {};
@@ -598,34 +605,10 @@ MorphDisplay.prototype.date.update = function(now) {
       morph['Dx'] = this.slowMorph(now);
     }
   }
-  // April, Juni, September und November
-  else if (D == 30 && [4, 6, 9, 11].some(x => x == M)) {
+  // Monatsende
+  else if (D == lastDayOfMonth[M]) {
     main['xD'] = xD + "1";
     slow_morph_add = true;
-    if (slow_morph) {
-      morph['Dx'] = this.slowMorph(now);
-    }
-  }
-  // Januar, März, Mai, Juli, August, Oktober, Dezember
-  else if (D == 31 && [1, 3, 5, 7, 8, 10, 12].some(x => x == M)) {
-    main['xD'] = xD + "1";
-    slow_morph_add = true;
-    if (slow_morph) {
-      morph['Dx'] = this.slowMorph(now);
-    }
-  }
-  // Februar, normal
-  else if (M == 2 && D == 28 && !now.leapYear) {
-    main['xD'] = xD + "1";
-    slowmorph_add = true;
-    if (slow_morph) {
-      morph['Dx'] = this.slowMorph(now);
-    }
-  }
-  // Februar, Schaltjahr
-  else if (M == 2 && D == 29) {
-    main['xD'] = xD + "1";
-    slowmorph_add = true;
     if (slow_morph) {
       morph['Dx'] = this.slowMorph(now);
     }
@@ -642,6 +625,10 @@ MorphDisplay.prototype.date.update = function(now) {
     slow_morph_add = true;
     if (slow_morph) {
       morph['xM'] = this.slowMorph(now);
+      // Monatsname
+      morph['xxM'] = this.slowMorph(now);
+      morph['xMx'] = this.slowMorph(now);
+      morph['Mxx'] = this.slowMorph(now);
     }
   }
   else if (M == 2 && D == 28 && !now.leapYear) {
@@ -649,6 +636,10 @@ MorphDisplay.prototype.date.update = function(now) {
     slow_morph_add = true;
     if (slow_morph) {
       morph['xM'] = this.slowMorph(now);
+      // Monatsname
+      morph['xxM'] = this.slowMorph(now);
+      morph['xMx'] = this.slowMorph(now);
+      morph['Mxx'] = this.slowMorph(now);
     }
   }
   else if (M == 2 && D == 29) {
@@ -770,7 +761,11 @@ MorphDisplay.prototype.logo.update = function(now) {
 }
 
 MorphDisplay.prototype.update = function() {
-  let now = new MorphTimeDate();
+  let offset = 0 * 24 * 60 * 60 * 1000 + // Tage
+                    5 * 60 * 60 * 1000 + // Stunden
+                        39 * 60 * 1000 ; // Minuten
+  offset = 0;
+  let now = new MorphTimeDate(offset);
   // wir übergeben 'this' an die jeweilige Funktion:
   this[this.type].update.call(this, now);
 }
@@ -862,7 +857,7 @@ MorphGlyph.prototype.buildPath = function (p) {
 //TODO
 
 var MorphTimeDate = class MorphTimeDate {
-  constructor (offset = new Date(0)) {
+  constructor (offset = 0) {
     // wir rechnen mit UTC-Zeiten, um die Zeitumstellung bestimmen zu können
     let UTCdate = new Date();
     let month = UTCdate.getUTCMonth();
@@ -923,7 +918,7 @@ var MorphTimeDate = class MorphTimeDate {
     }
     this.localdate = new Date(UTCdate.valueOf() +
                               TZoffset * 60 * 60 * 1000
-                              + offset.valueOf()); // ggf. offset zum Testen
+                              + offset); // ggf. offset zum Testen
   }
 
   get year() {
