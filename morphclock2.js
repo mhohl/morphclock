@@ -230,12 +230,12 @@ const xmlns = "http://www.w3.org/2000/svg";
 */
 
 var MorphDisplay = class MorphDisplay {
-  constructor(type, div, glyphs, slots) {
+  constructor(type, div, glyphs = [], slots = []) {
     this.type = type;
     this.div = div;
     this.format = div.getAttribute("data-format") || Morph.data.default[type];
-    this.glyphs = glyphs || [];
-    this.slots = slots || [];
+    this.glyphs = glyphs;
+    this.slots = slots;
 
     /* Die einzelnen Glyphen bzw. SVG-Elemente überlappen sich an den Rändern;
        Ziffern und Buchstaben um den Faktor smallOverlap, Interpunktionen und
@@ -501,7 +501,7 @@ MorphDisplay.prototype.clock.update = function(now) {
 
   // Stunden
   if (h == maxh || xh == 9) {
-    if (h == maxh && this.showDaytime ) {
+    if (h == maxh && this.showDaytime) {
       // Übergang "12" -> "01"
       main['xh'] = xh + "1";
     }
@@ -539,11 +539,10 @@ MorphDisplay.prototype.clock.update = function(now) {
 }
 
 MorphDisplay.prototype.date.update = function(now) {
-  //console.log("date-update aufgerufen ...");
   let Y = now.year;
   let M = now.month; // Januar = 1
   let D = now.day;
-  let W = now.weekday; // Wochentag
+  let W = now.weekday;
   let h = now.hours;
   let m = now.minutes;
   let s = now.seconds;
@@ -600,7 +599,7 @@ MorphDisplay.prototype.date.update = function(now) {
     }
   }
   // April, Juni, September und November
-  else if (D == 30 && (M == 4 || M == 6 || M == 9 || M == 11)) {
+  else if (D == 30 && [4, 6, 9, 11].some(x => x == M)) {
     main['xD'] = xD + "1";
     slow_morph_add = true;
     if (slow_morph) {
@@ -608,7 +607,7 @@ MorphDisplay.prototype.date.update = function(now) {
     }
   }
   // Januar, März, Mai, Juli, August, Oktober, Dezember
-  else if (D == 31 && (M == 1 || M == 3 || M == 5 || M == 7 || M == 8 || M == 10 || M == 12)) {
+  else if (D == 31 && [1, 3, 5, 7, 8, 10, 12].some(x => x == M)) {
     main['xD'] = xD + "1";
     slow_morph_add = true;
     if (slow_morph) {
@@ -645,7 +644,7 @@ MorphDisplay.prototype.date.update = function(now) {
       morph['xM'] = this.slowMorph(now);
     }
   }
-  else if (M == 2 && D == 28 && !this.leapYear) {
+  else if (M == 2 && D == 28 && !now.leapYear) {
     main['Dx'] = Dx + "0";
     slow_morph_add = true;
     if (slow_morph) {
@@ -779,7 +778,7 @@ MorphDisplay.prototype.update = function() {
 
 /* Das MorphGlyph-Objekt:
    'type' bestimmt die Art des Glyphen,
-   'div' das übergeordnete <div>-Element,
+   'div' das übergeordnete <div> Element,
    'width' die Breite, sowie optimonal 'xpos', das – falls gesetzt –
    eine absolute Positionierung der Glyphen erlaubt
 
@@ -863,67 +862,102 @@ MorphGlyph.prototype.buildPath = function (p) {
 //TODO
 
 var MorphTimeDate = class MorphTimeDate {
-  constructor (offset) {
-    this._date = new Date();
-    this._month = this._date.getUTCMonth();
-    this._weekday = this._date.getUTCDay();
-    this._day = this._date.getUTCDate(),
-    this._hour = this._date.getUTCHours();
+  constructor (offset = new Date(0)) {
+    // wir rechnen mit UTC-Zeiten, um die Zeitumstellung bestimmen zu können
+    let UTCdate = new Date();
+    let month = UTCdate.getUTCMonth();
+    let weekday = UTCdate.getUTCDay();
+    let day = UTCdate.getUTCDate();
+    let hour = UTCdate.getUTCHours();
 
     this.transition = {};
 
-    if ((this._month == 2) && // März
-        (this._day > 24) &&
-        (this._weekday == 0)) { // am letzen Sonntag
-      if (this._hour == 1) {    // um 1 Uhr UTC
-        this.transition['1->3'] = true;
-      }
+    if ((month == 2) && // März
+        (day > 24) &&
+        (weekday == 0) && // am letzen Sonntag
+        (hour == 1)) {    // um 1 Uhr UTC
+      this.transition['1->3'] = true;
     }
-    else if ((this._month == 9) && // Oktober
-             (this._day > 24) &&
-             (this._weekday == 0)) { // am letzen Sonntag
-      if (this._hour == 0) {         // um 0 Uhr UTC
+    else if (month == 9) {  // Oktober
+      if ((day > 23) &&     // am Samstag vor dem letzten Sonntag im Monat
+          (day < 31) &&     // ist der Samstag der 24., dann ist am 31 wieder
+          (weekday == 6) && // ein Samstag
+          (hour == 23)) {
         this.transition['1->2a'] = true;
       }
-      else if (this._hour == 1) {
-        this.transition['2a->2b'] = true;
-      }
-      else if (this._hour == 2) {
-        this.transition['2b->3'] = true;
+      else if ((day > 24) &&
+               (weekday == 0)) { // am letzen Sonntag
+        if (hour == 0) {
+          this.transition['2a->2b'] = true;
+        }
+        else if (hour == 1) {
+          this.transition['2b->3'] = true;
+        }
       }
     }
+
+    let TZoffset = 1; // Timezone Offset
+    if (
+        (month > 2 && month < 9) // April bis September
+        ||
+        (
+          (month == 2 && day > 24) &&
+          (
+            (weekday == 0 && hour>=1) ||
+            (weekday > 0 && (day - weekday) > 24)
+          )
+        ) // oder nach 1:00 Uhr im letzen Sonntag im März
+        ||
+        (
+          (month == 9) &&
+          !(
+            (day > 24) &&
+            (
+              (weekday == 0 && hour >= 1) ||
+              (weekday > 0 && (day - weekday) > 24)
+            )
+          )
+        ) // oder vor 1:00 Uhr im letzen Sonntag im Oktober
+      ) {
+      TZoffset = 2;
+    }
+    this.localdate = new Date(UTCdate.valueOf() +
+                              TZoffset * 60 * 60 * 1000
+                              + offset.valueOf()); // ggf. offset zum Testen
   }
 
   get year() {
-    return this._date.getFullYear();
+    return this.localdate.getUTCFullYear();
   }
 
   get month() {
-    return this._month + 1;
+    return this.localdate.getUTCMonth() + 1;
   }
 
   get day() {
-    return this._day;
+    return this.localdate.getUTCDate();
   }
 
   get weekday() {
-    return this._weekday;
+    return this.localdate.getUTCDay();
   }
 
   get hours() {
-    return this._date.getHours();
+    // wichtig: hier getUTCHours(), sonst wird die Zeitzone
+    // nochmals dazuaddiert
+    return this.localdate.getUTCHours();
   }
 
   get minutes() {
-    return this._date.getMinutes();
+    return this.localdate.getUTCMinutes();
   }
 
   get seconds() {
-    return this._date.getSeconds();
+    return this.localdate.getUTCSeconds();
   }
 
   get milliseconds() {
-    return this._date.getMilliseconds();
+    return this.localdate.getUTCMilliseconds();
   }
 
   get leapYear() {
