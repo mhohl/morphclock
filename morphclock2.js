@@ -518,6 +518,18 @@ MorphDisplay.prototype.clock.update = function(now) {
       }
     }
   }
+  else if (now.transition['1->2a']) {
+    main['xh'] = "1A";
+  }
+  else if (now.transition['2a->2b']) {
+    main['xh'] = "AB";
+  }
+  else if (now.transition['2b->3']) {
+    main['xh'] = "B3";
+  }
+  else if (now.transition['1->3']) {
+    main['xh'] = "13";
+  }
   else {
     main['xh'] = this.addNextDigit(xh);
   }
@@ -592,15 +604,12 @@ MorphDisplay.prototype.date.update = function(now) {
 
   // Tage
 
-  let slow_morph_add = false; // um komplexere Bedingungen abzufangen
-
   main['Wxx'] = weekday[0][W];
   main['xWx'] = weekday[1][W];
   main['xxW'] = weekday[2][W];
 
   if (xD == 9) {
     main['xD'] = xD + "0";
-    slow_morph_add = true;
     if (slow_morph) {
       morph['Dx'] = this.slowMorph(now);
     }
@@ -608,21 +617,18 @@ MorphDisplay.prototype.date.update = function(now) {
   // Monatsende
   else if (D == lastDayOfMonth[M]) {
     main['xD'] = xD + "1";
-    slow_morph_add = true;
     if (slow_morph) {
       morph['Dx'] = this.slowMorph(now);
     }
   }
   else {
     main['xD'] = this.addNextDigit(xD);
-    slow_morph_add = false;
   }
 
-  slow_morph = slow_morph && slow_morph_add;
+  slow_morph = slow_morph && (xD == 9 || D == lastDayOfMonth[M]);
 
   if (Dx == 3) {
     main['Dx'] = Dx + "0";
-    slow_morph_add = true;
     if (slow_morph) {
       morph['xM'] = this.slowMorph(now);
       // Monatsname
@@ -631,20 +637,8 @@ MorphDisplay.prototype.date.update = function(now) {
       morph['Mxx'] = this.slowMorph(now);
     }
   }
-  else if (M == 2 && D == 28 && !now.leapYear) {
+  else if (M == 2 && D == lastDayOfMonth[M]) {
     main['Dx'] = Dx + "0";
-    slow_morph_add = true;
-    if (slow_morph) {
-      morph['xM'] = this.slowMorph(now);
-      // Monatsname
-      morph['xxM'] = this.slowMorph(now);
-      morph['xMx'] = this.slowMorph(now);
-      morph['Mxx'] = this.slowMorph(now);
-    }
-  }
-  else if (M == 2 && D == 29) {
-    main['Dx'] = Dx + "0";
-    slow_morph_add = true;
     if (slow_morph) {
       morph['xM'] = this.slowMorph(now);
       // Monatsname
@@ -655,10 +649,9 @@ MorphDisplay.prototype.date.update = function(now) {
   }
   else {
     main['Dx'] = this.addNextDigit(Dx);
-    slow_morph_add = false;
   }
 
-  slow_morph = slow_morph && slow_morph_add;
+  slow_morph = slow_morph && (Dx == 3 || (M == 2 && D == lastDayOfMonth[M]));
 
   // Monate
 
@@ -668,24 +661,21 @@ MorphDisplay.prototype.date.update = function(now) {
 
   if (xM == 9) {
     main['xM'] = xM + "0";
-    slow_morph_add = true;
     if (slow_morph) {
       morph['Mx'] = this.slowMorph(now);
     }
   }
   else if (M == 12) {
     main['xM'] = xM + "1";
-    slow_morph_add = true;
     if (slow_morph) {
       morph['Mx'] = this.slowMorph(now);
     }
   }
   else {
     main['xM'] = this.addNextDigit(xM);
-    slow_morph_add = false;
   }
 
-  slow_morph = slow_morph && slow_morph_add;
+  slow_morph = slow_morph && (xM == 9 || M == 12);
 
   if (M == 12) {
     main['Mx'] = Mx + "0";
@@ -761,9 +751,9 @@ MorphDisplay.prototype.logo.update = function(now) {
 }
 
 MorphDisplay.prototype.update = function() {
-  let offset = 0 * 24 * 60 * 60 * 1000 + // Tage
-                    5 * 60 * 60 * 1000 + // Stunden
-                        39 * 60 * 1000 ; // Minuten
+  let offset = 179 * 24 * 60 * 60 * 1000 + // Tage
+                    17 * 60 * 60 * 1000 + // Stunden
+                        30 * 60 * 1000 ; // Minuten
   offset = 0;
   let now = new MorphTimeDate(offset);
   // wir übergeben 'this' an die jeweilige Funktion:
@@ -851,15 +841,22 @@ MorphGlyph.prototype.buildPath = function (p) {
 }
 
 /* Das MorphTimeDate-Objekt ist eine Kopie vom Date-Objekt
-   mit zusätzlichen Eigenschaften
+   mit zusätzlichen Eigenschaften:
+   transition liefert das Signal, wenn die Zeitumstellung aktiv ist:
+   am letzen Sonntag im März: 1 Uhr -> 3 Uhr;
+   am letzten Sonntag im Oktober: 1 Uhr -> 2a Uhr -> 2b Uhr -> 3 Uhr.
+   Die getter liefern dann die lokalen Zeiten zurück, der
+   Monatsindex geht von 1 bis 12, damit die Ziffern direkt zur Indizireung
+   der Glyphen verwendet werden können.
 */
-
-//TODO
 
 var MorphTimeDate = class MorphTimeDate {
   constructor (offset = 0) {
     // wir rechnen mit UTC-Zeiten, um die Zeitumstellung bestimmen zu können
     let UTCdate = new Date();
+    if (offset != 0) {
+       UTCdate = new Date(UTCdate.valueOf() + offset); // offset zu Testzwecken
+    }
     let month = UTCdate.getUTCMonth();
     let weekday = UTCdate.getUTCDay();
     let day = UTCdate.getUTCDate();
@@ -870,22 +867,22 @@ var MorphTimeDate = class MorphTimeDate {
     if ((month == 2) && // März
         (day > 24) &&
         (weekday == 0) && // am letzen Sonntag
-        (hour == 1)) {    // um 1 Uhr UTC
+        (hour == 0)) {    // um 0 Uhr UTC = 1 Uhr MEZ
       this.transition['1->3'] = true;
     }
     else if (month == 9) {  // Oktober
       if ((day > 23) &&     // am Samstag vor dem letzten Sonntag im Monat
-          (day < 31) &&     // ist der Samstag der 24., dann ist am 31 wieder
-          (weekday == 6) && // ein Samstag
-          (hour == 23)) {
+          (day < 31) &&     // ist der Samstag der 24., dann ist am 31. wieder
+          (weekday == 6) && // ein Samstag, den wir nicht brauchen!
+          (hour == 23)) {   // Sa, 23 Uhr UTC = So, 1 Uhr MESZ
         this.transition['1->2a'] = true;
       }
       else if ((day > 24) &&
                (weekday == 0)) { // am letzen Sonntag
-        if (hour == 0) {
+        if (hour == 0) {         // um 0 Uhr UTC = 2 Uhr MESZ
           this.transition['2a->2b'] = true;
         }
-        else if (hour == 1) {
+        else if (hour == 1) {    // um 1 Uhr UTC = 2 Uhr MEZ
           this.transition['2b->3'] = true;
         }
       }
@@ -917,8 +914,7 @@ var MorphTimeDate = class MorphTimeDate {
       TZoffset = 2;
     }
     this.localdate = new Date(UTCdate.valueOf() +
-                              TZoffset * 60 * 60 * 1000
-                              + offset); // ggf. offset zum Testen
+                              TZoffset * 60 * 60 * 1000);
   }
 
   get year() {
@@ -926,6 +922,7 @@ var MorphTimeDate = class MorphTimeDate {
   }
 
   get month() {
+    // Monate gehen nun von 1 - 12
     return this.localdate.getUTCMonth() + 1;
   }
 
@@ -961,11 +958,7 @@ var MorphTimeDate = class MorphTimeDate {
   }
 }
 
-var testnow = new MorphTimeDate();
-console.log(testnow.year, testnow.leapYear);
-
-
-
+// Wir starten die Morphelemente:
 window.onload = function() {
     Morph.init();
 }
