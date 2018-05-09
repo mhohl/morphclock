@@ -637,7 +637,7 @@ endfor
 % 1 -> 2a
 %
 
-outputtemplate := "1A-%c.mps";
+outputtemplate := "12a-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1786,7 +1786,7 @@ endfor
 % 2a -> ()
 %
 
-outputtemplate := "A.mps";
+outputtemplate := "2a.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1805,7 +1805,7 @@ endfig;
 % 2a -> 2b
 %
 
-outputtemplate := "AB-%c.mps";
+outputtemplate := "2a2b-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1864,7 +1864,7 @@ endfor
 % 2b -> ()
 %
 
-outputtemplate := "B.mps";
+outputtemplate := "2b.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1887,7 +1887,7 @@ endfig;
 % 2b -> 3
 %
 
-outputtemplate := "B3-%c.mps";
+outputtemplate := "2b3-%c.mps";
 
 beginfig(start);
    draw tmppic;

@@ -13,5 +13,3 @@ rm -f ./*.svg
 mpost $SOURCE > /dev/null
 rm $SOURCE
 cd ..
-
-

@@ -517,13 +517,13 @@ MorphDisplay.prototype.clock.update = function(now) {
     }
   }
   else if (now.transition['1->2a']) {
-    main['xh'] = "1A";
+    main['xh'] = "12a";
   }
   else if (now.transition['2a->2b']) {
-    main['xh'] = "AB";
+    main['xh'] = "2a2b";
   }
   else if (now.transition['2b->3']) {
-    main['xh'] = "B3";
+    main['xh'] = "2b3";
   }
   else if (now.transition['1->3']) {
     main['xh'] = "13";

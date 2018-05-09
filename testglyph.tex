@@ -13,14 +13,8 @@
 \newcommand{\showglyph}[1]{%
   \IfFileExists{#1.mps}{\includegraphics[width=\digitwidth]{#1.mps} }{}
 }
-\def\letterA{A}\def\letterB{B}
 \newcommand{\showtransition}[2]{%
-  \def\from{#1}\def\to{#2}
-  \ifx\from\letterA\def\from{2a}\fi
-  \ifx\from\letterB\def\from{2b}\fi
-  \ifx\to\letterA\def\to{2a}\fi
-  \ifx\to\letterB\def\to{2b}\fi
-  \subsection{Übergang \from…\to}
+  \subsection{Übergang #1…#2}
   \directlua{\unexpanded{
     for index = 0,99 do
          if math.fmod(index+1,10) == 0 then
@@ -41,9 +35,7 @@
   \hfill \hyperref[inhalt]{← zurück zum Inhaltsverzeichnis}
   \newpage
 }
-\newcommand{\showclock}[1]{%
-  \IfFileExists{glyph-clock-#1.mps}{\includegraphics[width=\digitwidth]{glyph-clock-#1.mps}}{}
-}
+
 \newcommand{\showclocks}{%
   \directlua{\unexpanded{
      for index = 0,719 do
@@ -110,9 +102,9 @@
 \showglyph{x}
 \showglyph{y}
 \showglyph{z}
-\showclock{42}
-\showglyph{A} % 2a
-\showglyph{B} % 2b
+\showglyph{clock-42}
+\showglyph{2a}
+\showglyph{2b}
 \newpage
 \digitwidth=1.75cm
 
@@ -141,9 +133,9 @@
 \showtransition{9}{1}
 
 \section{Spezielle Ziffern}
-\showtransition{1}{A}
-\showtransition{A}{B}
-\showtransition{B}{3}
+\showtransition{1}{2a}
+\showtransition{2a}{2b}
+\showtransition{2b}{3}
 
 \section{Interpunktion}
 \showtransition{:}{:}
