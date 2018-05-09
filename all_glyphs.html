@@ -37,7 +37,8 @@
           for (let key of Object.keys(Morph.path)) {
             if (key.length == 1) standalone[key] = Morph.path[key];
             else if (key.slice(4) == "clock") clock[key] = Morph.path[key];
-            else if (key.slice(2,5) == "-00") transition[key] = Morph.path[key];
+            else if (key.slice(-2) == "-0") transition[key] = Morph.path[key];
+            console.log(key, key.slice(-2));
           }
 
           // die standalone-Glyphen
@@ -84,11 +85,10 @@
             setTimeout('renderTime()',10);
 
             tglyphs.forEach(g => {
-              if (s % 3 == 0) morph = "00";
+              if (s % 3 == 0) morph = "0";
               else if (s % 3 == 1) {
                 // quickmorph-Definition
                 morph = Math.floor(t/10);
-                morph = morph < 10 ? morph = "0" + morph : morph;
               }
               else morph = "99";
               g.type = g.prefix + morph;

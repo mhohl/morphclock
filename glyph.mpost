@@ -2,11 +2,10 @@
 % glyph.mpost
 %
 % die Ziffern und Buchstaben werden
-% a) als Einzelzeichen in der Form glyph-n erzeugt:
-%    n := ASCII(glyph)-32
-% b) als Übergänge in der Form glyph-ffttnn erzeugt:
-% f = "from": Startziffer (Position im Alphabet)
-% t = "to":   Endziffer
+% a) als Einzelzeichen
+% b) als Übergänge in der Form ft-nn erzeugt:
+% f = "from": Startglyph
+% t = "to":   Endglyph
 % nn : laufende Nummer
 %
 % Als Ziffernübergänge benötigen wir
@@ -46,13 +45,11 @@ string version;
 version := "Version: 1.5";
 show(version);
 
-show("call with '-numbersystem=double' to prevent overflow errors");
-
-outputtemplate := "%j-%c.mps";
 outputformat := "eps";
 
 numeric f;      % [f]rame index
 numeric start;  % [start] of transition;
+start = 0;
 numeric m;      % [m]orph factor
 numeric t;      % [t]ension
 numeric phi[];  % angle [phi]
@@ -131,7 +128,6 @@ THREE_UARC = 2004;
 THREE_LARC = 2005;
 
 
-
 % Arrays für die Koordinaten der Ziffern:
 pair zero[], one[],   two[], three[], four[];
 pair five[], six[], seven[], eight[], nine[];
@@ -186,19 +182,6 @@ vardef exp(expr xx) = (mexp(256)**xx) enddef;
 
 % Wir definieren ein "yshifted" für den Buchstaben "m":
 primarydef z yshifted yy = z shifted (0,yy) enddef;
-
-% eine Funktion zur Berechnung des Startwertes gemäß ffttnn:
-vardef transition(expr from, to) =
-    i := (ASCII(from)-32)*10000+(ASCII(to)-32)*100;
-    i
-enddef;
-
-% die Glyphen verwenden wir zusätzlich "standalone":
-vardef standalone(expr glyph) =
-    save i;
-    i := ASCII(glyph)-32;
-    i
-enddef;
 
 %
 % Zur Animation des m benutzen wir folgende Funktion:
@@ -360,7 +343,7 @@ nine[END]    = (-sw,dsc);
 % 0 -> ()
 %
 
-start := standalone("0");
+outputtemplate := "0.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -379,7 +362,7 @@ endfig;
 % 0 -> 1
 %
 
-start := transition("0","1");
+outputtemplate := "01-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -424,7 +407,7 @@ endfor
 % 1 -> ()
 %
 
-start := standalone("1");
+outputtemplate := "1.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -441,7 +424,7 @@ endfig;
 % 1 -> 2
 %
 
-start := transition("1","2");
+outputtemplate := "12-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -488,7 +471,7 @@ endfor
 % 1 -> 0
 %
 
-start := transition("1","0");
+outputtemplate := "10-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -536,7 +519,7 @@ endfor
 % 1 -> 1
 %
 
-start := transition("1","1");
+outputtemplate := "11-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -585,7 +568,7 @@ endfor
 % 1 -> 3
 %
 
-start := transition("1","3");
+outputtemplate := "13-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -654,7 +637,7 @@ endfor
 % 1 -> 2a
 %
 
-start := transition("1","A");
+outputtemplate := "1A-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -705,7 +688,7 @@ endfor
 % 2 -> ()
 %
 
-start := standalone("2");
+outputtemplate := "2.mps";
 
 tmppath[TWO_HOOK] := two[BEGIN]
                      .. two[TOP]
@@ -727,7 +710,7 @@ endfig;
 % 2 -> 3
 %
 
-start := transition("2","3");
+outputtemplate := "23-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -777,7 +760,7 @@ endfor
 % 2 -> 0
 %
 
-start := transition("2","0");
+outputtemplate := "20-%c.mps";
 beginfig(start);
    draw tmppic;
 endfig;
@@ -835,7 +818,7 @@ endfor
 % 2 -> 1
 %
 
-start := transition("2","1");
+outputtemplate := "21-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -889,7 +872,7 @@ endfor
 % 3 -> ()
 %
 
-start := standalone("3");
+outputtemplate := "3.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -905,7 +888,7 @@ endfig;
 % 3 -> 4
 %
 
-start := transition("3","4");
+outputtemplate := "34-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -989,7 +972,7 @@ endfor
 % 3 -> 0
 %
 
-start := transition("3","0");
+outputtemplate := "30-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1050,7 +1033,7 @@ endfor
 % 4 -> ()
 %
 
-start := standalone("4");
+outputtemplate := "4.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1068,7 +1051,7 @@ endfig;
 % 4 -> 5
 %
 
-start := transition("4","5");
+outputtemplate := "45-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1121,7 +1104,7 @@ endfor
 % 5 -> ()
 %
 
-start := standalone("5");
+outputtemplate := "5.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1141,7 +1124,7 @@ endfig;
 % 5 -> 6
 %
 
-start := transition("5","6");
+outputtemplate := "56-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1209,7 +1192,7 @@ endfor
 % 5 -> 0
 %
 
-start := transition("5","0");
+outputtemplate := "50-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1267,7 +1250,7 @@ endfor
 % 6 -> ()
 %
 
-start := standalone("6");
+outputtemplate := "6.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1287,7 +1270,7 @@ endfig;
 % 6 -> 7
 %
 
-start := transition("6","7");
+outputtemplate := "67-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1363,7 +1346,7 @@ endfor
 % 6 -> 0
 %
 
-start := transition("6","0");
+outputtemplate := "60-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1415,7 +1398,7 @@ endfor
 % 7 -> ()
 %
 
-start := standalone("7");
+outputtemplate := "7.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1434,7 +1417,7 @@ endfig;
 % 7 -> 8
 %
 
-start := transition("7","8");
+outputtemplate := "78-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1503,7 +1486,7 @@ endfor
 % 8 -> ()
 %
 
-start := standalone("8");
+outputtemplate := "8.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1526,7 +1509,7 @@ endfig;
 % 8 -> 9
 %
 
-start := transition("8","9");
+outputtemplate := "89-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1598,7 +1581,7 @@ endfor
 % 8 -> 1
 %
 
-start := transition("8","1");
+outputtemplate := "81-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1652,7 +1635,7 @@ endfor
 % 9 -> ()
 %
 
-start := standalone("9");
+outputtemplate := "9.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1672,7 +1655,7 @@ endfig;
 % 9 -> 0
 %
 
-start := transition("9","0");
+outputtemplate := "90-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1737,7 +1720,7 @@ endfor
 % 9 -> 1
 %
 
-start := transition("9","1");
+outputtemplate := "91-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1803,7 +1786,7 @@ endfor
 % 2a -> ()
 %
 
-start := standalone("A");
+outputtemplate := "A.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1822,7 +1805,7 @@ endfig;
 % 2a -> 2b
 %
 
-start := transition("A","B");
+outputtemplate := "AB-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -1881,7 +1864,7 @@ endfor
 % 2b -> ()
 %
 
-start := standalone("B");
+outputtemplate := "B.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -1904,7 +1887,7 @@ endfig;
 % 2b -> 3
 %
 
-start := transition("B","3");
+outputtemplate := "B3-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2016,7 +1999,7 @@ colon[BOTTOM] = (0,dy);
 % * -> ()
 %
 
-start := standalone("*");
+outputtemplate := "asterisk.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2037,7 +2020,7 @@ endfig;
 % , -> ()
 %
 
-start := standalone(",");
+outputtemplate := ",.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2054,7 +2037,7 @@ endfig;
 % - -> ()
 %
 
-start := standalone("-");
+outputtemplate := "dash.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2070,7 +2053,7 @@ endfig;
 % . -> ()
 %
 
-start := standalone(".");
+outputtemplate := "dot.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2086,7 +2069,7 @@ endfig;
 % / -> ()
 %
 
-start := standalone("/");
+outputtemplate := "slash.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2102,7 +2085,7 @@ endfig;
 % : -> ()
 %
 
-start := standalone(":");
+outputtemplate := ":.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2118,7 +2101,7 @@ endfig;
 % ":" -> ":"
 %
 
-start := transition(":",":");
+outputtemplate := "::-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2159,7 +2142,7 @@ endfor
 % ~ -> ()
 %
 
-start := standalone("~");
+outputtemplate := "tilde.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2438,7 +2421,7 @@ tmppath[A_LOOP] := _a_[R_ARC]{_a_[DIR]}
                    .. _a_[BOTTOM]
                    .. _a_[JOINT];
 
-start := standalone("a");
+outputtemplate := "a.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2454,7 +2437,7 @@ endfig;
 % a -> e
 %
 
-start := transition("a","e");
+outputtemplate := "ae-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2565,7 +2548,7 @@ endfor
 % a -> m
 %
 
-start := transition("a","m");
+outputtemplate := "am-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2658,7 +2641,7 @@ endfor
 % a -> p
 %
 
-start := transition("a","p");
+outputtemplate := "ap-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2742,7 +2725,7 @@ endfor
 % a -> s
 %
 
-start := transition("a","s");
+outputtemplate := "as-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2809,7 +2792,7 @@ endfor
 % a -> u
 %
 
-start := transition("a","u");
+outputtemplate := "au-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2872,7 +2855,7 @@ endfor
 % b -> ()
 %
 
-start := standalone("b");
+outputtemplate := "b.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -2892,7 +2875,7 @@ endfig;
 % b -> r
 %
 
-start := transition("b","r");
+outputtemplate := "br-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -2986,7 +2969,7 @@ endfor
 % c -> ()
 %
 
-start := standalone("c");
+outputtemplate := "c.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3005,7 +2988,7 @@ endfig;
 % c -> n
 %
 
-start := transition("c","n");
+outputtemplate := "cn-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3073,7 +3056,7 @@ endfor
 % c -> o
 %
 
-start := transition("c","o");
+outputtemplate := "co-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3127,7 +3110,7 @@ endfor
 % d -> ()
 %
 
-start := standalone("d");
+outputtemplate := "d.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3147,7 +3130,7 @@ endfig;
 % d -> j
 %
 
-start := transition("d","j");
+outputtemplate := "dj-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3220,7 +3203,7 @@ endfor
 % d -> u
 %
 
-start := transition("d","u");
+outputtemplate := "du-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3287,7 +3270,7 @@ endfor
 % e -> ()
 %
 
-start := standalone("e");
+outputtemplate := "e.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3307,7 +3290,7 @@ endfig;
 % e -> a
 %
 
-start := transition("e","a");
+outputtemplate := "ea-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3394,7 +3377,7 @@ endfor
 % e -> c
 %
 
-start := transition("e","c");
+outputtemplate := "ec-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3444,7 +3427,7 @@ endfor
 % e -> d
 %
 
-start := transition("e","d");
+outputtemplate := "ed-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3509,7 +3492,7 @@ endfor
 % e -> h
 %
 
-start := transition("e","h");
+outputtemplate := "eh-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3573,7 +3556,7 @@ tmppath0 :=  _f_[BEGIN]
 % Wir brauchen den Winkel an der Spitze für den Übergang f -> s
 phi[END] := 180+angle(direction 3 of tmppath0);
 
-start := standalone("f");
+outputtemplate := "f.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3590,7 +3573,7 @@ endfig;
 % f -> m
 %
 
-start := transition("f","m");
+outputtemplate := "fm-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3660,7 +3643,7 @@ endfor
 % f -> s
 %
 
-start := transition("f","s");
+outputtemplate := "fs-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3731,7 +3714,7 @@ endfor
 % g -> ()
 %
 
-start := standalone("g");
+outputtemplate := "g.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3756,7 +3739,7 @@ endfig;
 % g -> p
 %
 
-start := transition("g","p");
+outputtemplate := "gp-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3845,7 +3828,7 @@ endfor
 % h -> ()
 %
 
-start := standalone("h");
+outputtemplate := "h.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3865,7 +3848,7 @@ endfig;
 % h -> r
 %
 
-start := transition("h","r");
+outputtemplate := "hr-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3919,7 +3902,7 @@ endfor
 % i -> ()
 %
 
-start := standalone("i");
+outputtemplate := "i.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -3938,7 +3921,7 @@ endfig;
 % i -> t
 %
 
-start := transition("i","t");
+outputtemplate := "it-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -3989,7 +3972,7 @@ endfor
 % j -> ()
 %
 
-start := standalone("j");
+outputtemplate := "j.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -4008,7 +3991,7 @@ endfig;
 % j -> a
 %
 
-start := transition("j","a");
+outputtemplate := "ja-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4086,7 +4069,7 @@ endfor
 % j -> f
 %
 
-start := transition("j","f");
+outputtemplate := "jf-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4150,7 +4133,7 @@ endfor
 % j -> j
 %
 
-start := transition("j","j");
+outputtemplate := "jj-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4183,7 +4166,9 @@ endfor
 % k -> ()
 %
 
-beginfig(standalone("k"));
+outputtemplate := "k.mps";
+
+beginfig(start);
    draw_grid(u);
    pickup pc;
 
@@ -4200,7 +4185,7 @@ endfig;
 % l -> ()
 %
 
-start := standalone("l");
+outputtemplate := "l.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -4218,7 +4203,7 @@ endfig;
 % l -> g
 %
 
-start := transition("l","g");
+outputtemplate := "lg-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4306,7 +4291,7 @@ endfor
 % m -> ()
 %
 
-start := standalone("m");
+outputtemplate := "m.mps";
 
 beginfig(start);
 draw_grid(u);
@@ -4330,7 +4315,7 @@ endfig;
 % m -> a
 %
 
-start := transition("m","a");
+outputtemplate := "ma-%c.mps";
 
 beginfig(start);
 draw tmppic;
@@ -4414,7 +4399,7 @@ endfor
 % m -> j
 %
 
-start := transition("m","j");
+outputtemplate := "mj-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4489,7 +4474,7 @@ endfor
 % m -> m
 %
 
-start := transition("m","m");
+outputtemplate := "mm-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4528,7 +4513,7 @@ endfor
 % m -> t
 %
 
-start := transition("m","t");
+outputtemplate := "mt-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4605,7 +4590,7 @@ endfor
 % n -> ()
 %
 
-start := standalone("n");
+outputtemplate := "n.mps";
 
 beginfig(start);
 draw_grid(u);
@@ -4625,7 +4610,7 @@ endfig;
 % n -> b
 %
 
-start := transition("n","b");
+outputtemplate := "nb-%c.mps";
 
 beginfig(start);
 draw tmppic;
@@ -4702,7 +4687,7 @@ endfor
 % n -> d
 %
 
-start := transition("n","d");
+outputtemplate := "nd-%c.mps";
 
 beginfig(start);
 draw tmppic;
@@ -4778,7 +4763,7 @@ endfor
 % n -> e
 %
 
-start := transition("n","e");
+outputtemplate := "ne-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4841,7 +4826,7 @@ endfor
 % n -> l
 %
 
-start := transition("n","l");
+outputtemplate := "nl-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4915,7 +4900,7 @@ endfor
 % n -> n
 %
 
-start := transition("n","n");
+outputtemplate := "nn-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -4948,7 +4933,7 @@ endfor
 % o -> ()
 %
 
-start := standalone("o");
+outputtemplate := "o.mps";
 
 beginfig(start);
 draw_grid(u);
@@ -4967,7 +4952,7 @@ endfig;
 % o -> e
 %
 
-start := transition("o","e");
+outputtemplate := "oe-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5017,7 +5002,7 @@ endfor
 % o -> n
 %
 
-start := transition("o","n");
+outputtemplate := "on-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5095,7 +5080,7 @@ endfor
 % o -> u
 %
 
-start := transition("o","u");
+outputtemplate := "ou-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5172,7 +5157,7 @@ endfor
 % p -> ()
 %
 
-start := standalone("p");
+outputtemplate := "p.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -5192,7 +5177,7 @@ endfig;
 % p -> a
 %
 
-start := transition("p","a");
+outputtemplate := "pa-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5286,7 +5271,7 @@ endfor
 % p -> t
 %
 
-start := transition("p","t");
+outputtemplate := "pt-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5351,7 +5336,7 @@ endfor
 % q -> ()
 %
 
-start := standalone("q");
+outputtemplate := "q.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -5370,7 +5355,7 @@ endfig;
 % r -> ()
 %
 
-start := standalone("r");
+outputtemplate := "r.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -5388,7 +5373,7 @@ endfig;
 % r -> a
 %
 
-start := transition("r","a");
+outputtemplate := "ra-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5468,7 +5453,7 @@ endfor
 % r -> r
 %
 
-start := transition("r","r");
+outputtemplate := "rr-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5498,7 +5483,7 @@ endfor
 % r -> y
 %
 
-start := transition("r","y");
+outputtemplate := "ry-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5561,7 +5546,7 @@ endfor
 % s -> ()
 %
 
-start := standalone("s");
+outputtemplate := "s.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -5583,7 +5568,7 @@ endfig;
 % s -> m
 %
 
-start := transition("s","m");
+outputtemplate := "sm-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5663,7 +5648,7 @@ endfor
 % s -> o
 %
 
-start := transition("s","o");
+outputtemplate := "so-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5716,7 +5701,7 @@ endfor
 % s -> s
 %
 
-start := transition("s","s");
+outputtemplate := "ss-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5752,7 +5737,7 @@ endfor
 % t -> ()
 %
 
-start := standalone("t");
+outputtemplate := "t.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -5773,7 +5758,7 @@ endfig;
 % t -> f
 %
 
-start := transition ("t","f");
+outputtemplate := "tf-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5863,7 +5848,7 @@ endfor
 % t -> n
 %
 
-start := transition ("t","n");
+outputtemplate := "tn-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -5953,7 +5938,7 @@ endfor
 % t -> u
 %
 
-start := transition("t","u");
+outputtemplate := "tu-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6035,7 +6020,7 @@ endfor
 % t -> v
 %
 
-start := transition("t","v");
+outputtemplate := "tv-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6106,7 +6091,7 @@ endfor
 % t -> w
 %
 
-start := transition("t","w");
+outputtemplate := "tw-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6163,7 +6148,7 @@ endfor
 % u -> ()
 %
 
-start := standalone("u");
+outputtemplate := "u.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -6183,7 +6168,7 @@ endfig;
 % u -> e
 %
 
-start := transition("u","e");
+outputtemplate := "ue-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6246,7 +6231,7 @@ endfor
 % u -> i
 %
 
-start := transition("u","i");
+outputtemplate := "ui-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6320,7 +6305,7 @@ endfor
 % u -> o
 %
 
-start := transition("u","o");
+outputtemplate := "uo-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6377,7 +6362,7 @@ endfor
 % u -> u
 %
 
-start := transition("u","u");
+outputtemplate := "uu-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6410,7 +6395,7 @@ endfor
 % v -> ()
 %
 
-start := standalone("v");
+outputtemplate := "v.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -6427,7 +6412,7 @@ endfig;
 % v -> c
 %
 
-start := transition("v","c");
+outputtemplate := "vc-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6492,7 +6477,7 @@ endfor
 % w -> ()
 %
 
-start := standalone("w");
+outputtemplate := "w.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -6512,7 +6497,7 @@ endfig;
 % w -> t
 %
 
-start := transition("w","t");
+outputtemplate := "wt-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6573,7 +6558,7 @@ endfor
 % x -> ()
 %
 
-start := standalone("x");
+outputtemplate := "x.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -6590,7 +6575,7 @@ endfig;
 % y -> ()
 %
 
-start := standalone("y");
+outputtemplate := "y.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -6612,7 +6597,7 @@ endfig;
 % y -> n
 %
 
-start := transition("y","n");
+outputtemplate := "yn-%c.mps";
 
 beginfig(start);
    draw tmppic;
@@ -6668,7 +6653,7 @@ endfor
 % z -> ()
 %
 
-start := standalone("z");
+outputtemplate := "z.mps";
 
 beginfig(start);
    draw_grid(u);
@@ -6693,7 +6678,7 @@ endfig;
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-outputtemplate := "%j-clock-%c.mps";
+outputtemplate := "clock-%c.mps";
 
 % Um das Uhr-Oval zu zeichnen, werden die Punkte in Hilfsvariablen kopiert;
 % mittels modulo-Berechnungen können dann die Punkte passend angesprochen

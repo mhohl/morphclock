@@ -44,137 +44,137 @@ Morph.data = {
 
   clock: {
     hhmmss24: [
-      { glyph: '20-00', slot: 'hx' },
-      { glyph: '30-00', slot: 'xh' },
-      { glyph: '::-00', slot: 'Cx' },
-      { glyph: '50-00', slot: 'mx' },
-      { glyph: '90-00', slot: 'xm' },
-      { glyph: '::-00', slot: 'cx' },
-      { glyph: '50-00', slot: 'sx' },
-      { glyph: '90-00', slot: 'xs' }
+      { glyph: '20-0', slot: 'hx' },
+      { glyph: '30-0', slot: 'xh' },
+      { glyph: '::-0', slot: 'Cx' },
+      { glyph: '50-0', slot: 'mx' },
+      { glyph: '90-0', slot: 'xm' },
+      { glyph: '::-0', slot: 'cx' },
+      { glyph: '50-0', slot: 'sx' },
+      { glyph: '90-0', slot: 'xs' }
     ],
     hhmm24: [
-      { glyph: '20-00', slot: 'hx' },
-      { glyph: '30-00', slot: 'xh' },
-      { glyph: '::-00', slot: 'cx' },
-      { glyph: '50-00', slot: 'mx' },
-      { glyph: '90-00', slot: 'xm' },
+      { glyph: '20-0', slot: 'hx' },
+      { glyph: '30-0', slot: 'xh' },
+      { glyph: '::-0', slot: 'cx' },
+      { glyph: '50-0', slot: 'mx' },
+      { glyph: '90-0', slot: 'xm' },
     ],
     hhmmss12: [
-      { glyph: '10-00', slot: 'hx' },
-      { glyph: '21-00', slot: 'xh' },
-      { glyph: '::-00', slot: 'Cx' },
-      { glyph: '50-00', slot: 'mx' },
-      { glyph: '90-00', slot: 'xm' },
-      { glyph: '::-00', slot: 'cx' },
-      { glyph: '50-00', slot: 'sx' },
-      { glyph: '90-00', slot: 'xs' },
+      { glyph: '10-0', slot: 'hx' },
+      { glyph: '21-0', slot: 'xh' },
+      { glyph: '::-0', slot: 'Cx' },
+      { glyph: '50-0', slot: 'mx' },
+      { glyph: '90-0', slot: 'xm' },
+      { glyph: '::-0', slot: 'cx' },
+      { glyph: '50-0', slot: 'sx' },
+      { glyph: '90-0', slot: 'xs' },
       { glyph: '~',     slot: null },
-      { glyph: 'ap-00', slot: 'dx' },
-      { glyph: 'mm-00', slot: 'xd' }
+      { glyph: 'ap-0', slot: 'dx' },
+      { glyph: 'mm-0', slot: 'xd' }
     ],
     hhmm12: [
-      { glyph: '10-00', slot: 'hx' },
-      { glyph: '21-00', slot: 'xh' },
-      { glyph: '::-00', slot: 'cx' },
-      { glyph: '50-00', slot: 'mx' },
-      { glyph: '90-00', slot: 'xm' },
+      { glyph: '10-0', slot: 'hx' },
+      { glyph: '21-0', slot: 'xh' },
+      { glyph: '::-0', slot: 'cx' },
+      { glyph: '50-0', slot: 'mx' },
+      { glyph: '90-0', slot: 'xm' },
       { glyph: '~',     slot: null },
-      { glyph: 'ap-00', slot: 'dx' },
-      { glyph: 'mm-00', slot: 'xd' }
+      { glyph: 'ap-0', slot: 'dx' },
+      { glyph: 'mm-0', slot: 'xd' }
     ],
   },
 
   date: {
     'D/M/Y': [
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' },
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' },
       { glyph: '/',     slot: null },
-      { glyph: '10-00', slot: 'Mx' },
-      { glyph: '21-00', slot: 'xM' },
+      { glyph: '10-0', slot: 'Mx' },
+      { glyph: '21-0', slot: 'xM' },
       { glyph: '/',     slot: null },
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
     ],
     'D.M.Y': [
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' },
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' },
       { glyph: '.',     slot: null },
-      { glyph: '10-00', slot: 'Mx' },
-      { glyph: '21-00', slot: 'xM' },
+      { glyph: '10-0', slot: 'Mx' },
+      { glyph: '21-0', slot: 'xM' },
       { glyph: '.',     slot: null },
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
     ],
     'D-M-Y': [
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' },
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' },
       { glyph: '-',     slot: null },
-      { glyph: '10-00', slot: 'Mx' },
-      { glyph: '21-00', slot: 'xM' },
+      { glyph: '10-0', slot: 'Mx' },
+      { glyph: '21-0', slot: 'xM' },
       { glyph: '-',     slot: null },
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
     ],
     'Y/M/D': [
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
       { glyph: '/',     slot: null },
-      { glyph: '10-00', slot: 'Mx' },
-      { glyph: '21-00', slot: 'xM' },
+      { glyph: '10-0', slot: 'Mx' },
+      { glyph: '21-0', slot: 'xM' },
       { glyph: '/',     slot: null },
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' }
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' }
     ],
     'Y-M-D': [
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
       { glyph: '-',     slot: null },
-      { glyph: '10-00', slot: 'Mx' },
-      { glyph: '21-00', slot: 'xM' },
+      { glyph: '10-0', slot: 'Mx' },
+      { glyph: '21-0', slot: 'xM' },
       { glyph: '-',     slot: null },
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' }
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' }
     ],
     'Month D,Y': [
-      { glyph: 'dj-00', slot: 'Mxx' },
-      { glyph: 'ea-00', slot: 'xMx' },
-      { glyph: 'cn-00', slot: 'xxM' },
+      { glyph: 'dj-0', slot: 'Mxx' },
+      { glyph: 'ea-0', slot: 'xMx' },
+      { glyph: 'cn-0', slot: 'xxM' },
       { glyph: '~',     slot: null },
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' },
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' },
       { glyph: ',',     slot: null },
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
     ],
     'full': [
-      { glyph: 'fs-00', slot: 'Wxx' },
-      { glyph: 'ra-00', slot: 'xWx' },
-      { glyph: 'it-00', slot: 'xxW' },
+      { glyph: 'fs-0', slot: 'Wxx' },
+      { glyph: 'ra-0', slot: 'xWx' },
+      { glyph: 'it-0', slot: 'xxW' },
       { glyph: ',',     slot: null },
-      { glyph: 'dj-00', slot: 'Mxx' },
-      { glyph: 'ea-00', slot: 'xMx' },
-      { glyph: 'cn-00', slot: 'xxM' },
+      { glyph: 'dj-0', slot: 'Mxx' },
+      { glyph: 'ea-0', slot: 'xMx' },
+      { glyph: 'cn-0', slot: 'xxM' },
       { glyph: '~',     slot: null },
-      { glyph: '30-00', slot: 'Dx' },
-      { glyph: '11-00', slot: 'xD' },
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' },
       { glyph: ',',     slot: null },
-      { glyph: '12-00', slot: 'Yxxx' },
-      { glyph: '90-00', slot: 'xYxx' },
-      { glyph: '90-00', slot: 'xxYx' },
-      { glyph: '90-00', slot: 'xxxY' },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
     ],
   },
 
@@ -384,30 +384,28 @@ MorphDisplay.prototype.createGlyphs = function() {
 }
 
 // Funktionen zum Morphen
-MorphDisplay.prototype.doubleDigit = function(x) {
-  return x < 10 ? x = "0" + x : x ;
-}
 
 MorphDisplay.prototype.quickMorph = function(now) {
-  return this.doubleDigit(Math.floor(now.milliseconds / 10));
+  return Math.floor(now.milliseconds / 10);
 }
 
 MorphDisplay.prototype.slowMorph = function(now) {
   let xS = now.seconds % 10;
   let t = now.milliseconds;
   let x = this.slowMorphStart;
-  return this.doubleDigit(Math.floor(((xS - x) * 1000 + t) / ((10 - x) * 10)));
+  return Math.floor(((xS - x) * 1000 + t) / ((10 - x) * 10));
 }
 
 MorphDisplay.prototype.addNextDigit = function(x) {
-  return this.doubleDigit(x * 10 + x + 1);
+  var res = (x * 10 + x + 1);
+  return res < 10 ? "0" + res : res ;
 }
 
 // Funktionen zum Update
 
-MorphDisplay.prototype.logo = {};
+MorphDisplay.prototype.logo  = {};
 MorphDisplay.prototype.clock = {};
-MorphDisplay.prototype.date = {};
+MorphDisplay.prototype.date  = {};
 
 MorphDisplay.prototype.clock.update = function(now) {
   let h = now.hours;
@@ -472,7 +470,7 @@ MorphDisplay.prototype.clock.update = function(now) {
      Sekunden, der linke ist um 50% phasenverschoben.
   */
   morph['cx'] = morph['xs'];
-  morph['Cx'] = this.doubleDigit((this.quickMorph(now) + 50) % 100);
+  morph['Cx'] = (this.quickMorph(now) + 50) % 100;
 
   // Minuten
   slow_morph = slow_morph && (sx == 5);
@@ -547,7 +545,7 @@ MorphDisplay.prototype.clock.update = function(now) {
   for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
-       this.glyphs[idx].type = main[key] + "-" + (morph[key] || "00");
+       this.glyphs[idx].type = main[key] + "-" + (morph[key] || "0");
     }
   }
 }
@@ -736,7 +734,7 @@ MorphDisplay.prototype.date.update = function(now) {
   for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
-      this.glyphs[idx].type = main[key] + "-" + (morph[key] || "00");
+      this.glyphs[idx].type = main[key] + "-" + (morph[key] || "0");
     }
   }
 }
@@ -797,7 +795,7 @@ var MorphGlyph = class MorphGlyph {
 
   get prefix() {
     // der Teil des Glyphnamen ohne Morphanteil,
-    //  z.B. 'am-00' -> 'am-'
+    //  z.B. 'am-42' -> 'am-'
     let idx = this._glyphtype.indexOf('-');
 
     if (idx > -1 )

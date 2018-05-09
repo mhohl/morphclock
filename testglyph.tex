@@ -11,10 +11,7 @@
 \begin{document}\pagestyle{empty}
 %
 \newcommand{\showglyph}[1]{%
-  \directlua{\unexpanded{
-    index = string.byte(tostring("#1"))-32
-    tex.print("\\IfFileExists{glyph-" .. index .. ".mps}{\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps} }{}")
-  }}
+  \IfFileExists{#1.mps}{\includegraphics[width=\digitwidth]{#1.mps} }{}
 }
 \def\letterA{A}\def\letterB{B}
 \newcommand{\showtransition}[2]{%
@@ -25,19 +22,16 @@
   \ifx\to\letterB\def\to{2b}\fi
   \subsection{Übergang \from…\to}
   \directlua{\unexpanded{
-    from = string.byte(tostring("#1"))-32
-    to = string.byte(tostring("#2"))-32
-    res = from * 10000 + to * 100
-    for index = res,res+99 do
+    for index = 0,99 do
          if math.fmod(index+1,10) == 0 then
             maybenewline="\\newline"
          else
             maybenewline="\\hfill"
          end
-         num = index-res
+         num = index
          if num < 10 then num = "0" .. num end
-         tex.print("\\IfFileExists{glyph-" .. index .. ".mps}
-                    {\\includegraphics[width=\\digitwidth]{glyph-" .. index ..".mps}←"
+         tex.print("\\IfFileExists{#1#2-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{#1#2-" .. index ..".mps}←"
                     .. num .. maybenewline .. "}{}")
      end
   }}
@@ -64,8 +58,8 @@
          elseif num < 100 then
             num = "0" .. num
          end
-         tex.print("\\IfFileExists{glyph-clock-" .. index .. ".mps}
-                    {\\includegraphics[width=\\digitwidth]{glyph-clock-" .. index ..".mps}←"
+         tex.print("\\IfFileExists{clock-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps}←"
                     .. num .. maybenewline .. "}{}")
      end
   }}
@@ -84,11 +78,11 @@
 \showglyph{7}
 \showglyph{8}
 \showglyph{9}
-\showglyph{*}
+\showglyph{asterisk}
 \showglyph{,}
-\showglyph{-}
-\showglyph{.}
-\showglyph{/}
+\showglyph{dash}
+\showglyph{dot}
+\showglyph{slash}
 \showglyph{:}
 \showglyph{a}
 \showglyph{b}

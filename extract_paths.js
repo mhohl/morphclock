@@ -49,8 +49,18 @@ svgFileList.forEach(file => {
   const result = [];
   nodes.forEach(node => result.push(node.value));
   var key = file.slice(0,-4); // strip ".svg"
+  /*if (key.indexOf('clock') == -1) {
+    var splitkey = key.split("-");
+    if (splitkey.length > 1) {
+      var padded = "0" + splitkey[1];
+      key = splitkey[0] + "-" + padded.slice(-2);
+    }
+  }*/
   if ( key == "slash" ) key = "/";
   if ( key == "asterisk" ) key = "*";
+  if ( key == "dot" ) key = ".";
+  if ( key == "dash" ) key = "-";
+  if ( key == "tilde" ) key = "~";
   data[key] = result;
 });
 

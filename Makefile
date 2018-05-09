@@ -7,28 +7,26 @@ SHELL = /bin/bash
 
 # executables
 MPEXEC = mpost
-MPOPTS = "-numbersystem=double"
+MPOPTS = ""
 
-${TARGET}-*.mps: ${TARGET}.mpost
-	@rm -f ${TARGET}-*.mps
+*.mps: ${TARGET}.mpost
+	@rm -f ./*.mps
 	${MPEXEC} ${MPOPTS} $<
 
 svg/*.svg: ${TARGET}.mpost
 	bash generate_svg.sh
 
-testglyph.pdf: testglyph.tex ${TARGET}-*.mps
+testglyph.pdf: testglyph.tex *.mps
 	while lualatex $< > /dev/null ; grep -q "Rerun to" $(<:.tex=.log) ; do : ; done
 
 morphpaths.js: svg/*.svg extract_paths.js
 	node extract_paths.js > $@
-# hier wurde vorher
-# bash extract_paths_to_js.sh $^ > $@
-# aufgerufen
 
 morphclock.min.js: morphpaths.js morphclock.js
 	uglifyjs $^ > $@
 
 .PHONY: test paths min all
+
 test: testglyph.pdf
 
 paths: morphpaths.js
