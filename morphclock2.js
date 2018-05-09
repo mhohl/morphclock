@@ -559,7 +559,7 @@ MorphDisplay.prototype.date.update = function(now) {
   let m = now.minutes;
   let s = now.seconds;
 
-  let Yxxx = Math.floor(Y/1000);
+  let Yxxx = Math.floor(Y/1000) % 10;
   let xYxx = Math.floor(Y/100) % 10;
   let xxYx = Math.floor(Y/10) % 10;
   let xxxY = Y % 10;
@@ -749,11 +749,7 @@ MorphDisplay.prototype.logo.update = function(now) {
 }
 
 MorphDisplay.prototype.update = function() {
-  let offset = 179 * 24 * 60 * 60 * 1000 + // Tage
-                    17 * 60 * 60 * 1000 + // Stunden
-                        30 * 60 * 1000 ; // Minuten
-  offset = 0;
-  let now = new MorphTimeDate(offset);
+  let now = new MorphTimeDate();
   // wir übergeben 'this' an die jeweilige Funktion:
   this[this.type].update.call(this, now);
 }

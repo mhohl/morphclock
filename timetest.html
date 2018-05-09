@@ -1,0 +1,163 @@
+<html>
+ 	<head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
+    	<title>morphclock: timetest</title>
+    	<link rel="stylesheet" type="text/css" href="morph.css">
+    	<script type='text/javascript' language='javascript' src='morphpaths.js'></script>
+    	<script type='text/javascript' language='javascript' src='morphclock2.js'></script>
+ 	</head>
+	<body>
+
+	<div id="button-container" style="width: 45%; display: inline-block;">
+		<table>
+  			<tr>
+  	  			<td>Jahre: </td>
+	  	  		<td>
+  		  			<span id="year-field">
+	            		<button id="Y-up">+</button>
+  	            		<input type="text" id="Y-quantity" value="0">
+	              		<button id="Y-down">-</button>
+ 		           	</span>
+        		</td>
+	      	</tr>
+      		<tr>
+      			<td>Monate: </td>
+      			<td>
+      				<span id="month-field">
+              			<button id="M-up">+</button>
+              			<input type="text" id="M-quantity" value="0">
+              			<button id="M-down">-</button>
+            		</span>
+        		</td>
+    		</tr>
+      		<tr>
+	      		<td>Tage: </td>
+      			<td>
+	      			<span id="day-field">
+        				<button id="D-up">+</button>
+        				<input type="text" id="D-quantity" value="0">
+        				<button id="D-down">-</button>
+      				</span>
+      			</td>
+      		</tr>
+      		<tr>
+	      		<td>Stunden: </td>
+      			<td>
+	      			<span id="hour-field">
+        				<button id="h-up">+</button>
+        				<input type="text" id="h-quantity" value="0">
+        				<button id="h-down">-</button>
+      				</span>
+      			</td>
+      		</tr>
+      		<tr>
+	      		<td>Minuten: </td>
+      			<td>
+	      			<span id="minute-field">
+        				<button id="m-up">+</button>
+        				<input type="text" id="m-quantity" value="0">
+        				<button id="m-down">-</button>
+      				</span>
+      			</td>
+      		</tr>
+      		<tr>
+	      		<td>Sekunden: </td>
+      			<td>
+	      			<span id="second-field">
+        				<button id="s-up">+</button>
+        				<input type="text" id="s-quantity" value="0">
+        				<button id="s-down">-</button>
+      				</span>
+      			</td>
+      		</tr>
+      		<tr>
+	      		<td><button id="reset">reset</button></td>
+      			<td>&nbsp;</td>
+      		</tr>
+    	</table>
+    </div>
+
+    <script>
+      const Y = document.getElementById('Y-quantity');
+      const M = document.getElementById('M-quantity');
+      const D = document.getElementById('D-quantity');
+      const h = document.getElementById('h-quantity');
+      const m = document.getElementById('m-quantity');
+      const s = document.getElementById('s-quantity');
+
+      const reset = document.getElementById('reset');
+      reset.onclick = () => resetValues();
+
+      const Y_button_up = document.getElementById('Y-up');
+      const Y_button_down = document.getElementById('Y-down');
+      const M_button_up = document.getElementById('M-up');
+      const M_button_down = document.getElementById('M-down');
+      const D_button_up = document.getElementById('D-up');
+      const D_button_down = document.getElementById('D-down');
+      const h_button_up = document.getElementById('h-up');
+      const h_button_down = document.getElementById('h-down');
+      const m_button_up = document.getElementById('m-up');
+      const m_button_down = document.getElementById('m-down');
+      const s_button_up = document.getElementById('s-up');
+      const s_button_down = document.getElementById('s-down');
+
+      Y_button_up.onclick = () => setQuantity(Y, 'up');
+      Y_button_down.onclick = () => setQuantity(Y, 'down');
+      M_button_up.onclick = () => setQuantity(M, 'up');
+      M_button_down.onclick = () => setQuantity(M, 'down');
+      D_button_up.onclick = () => setQuantity(D, 'up');
+      D_button_down.onclick = () => setQuantity(D, 'down');
+      h_button_up.onclick = () => setQuantity(h, 'up');
+      h_button_down.onclick = () => setQuantity(h, 'down');
+      m_button_up.onclick = () => setQuantity(m, 'up');
+      m_button_down.onclick = () => setQuantity(m, 'down');
+      s_button_up.onclick = () => setQuantity(s, 'up');
+      s_button_down.onclick = () => setQuantity(s, 'down');
+
+      function setQuantity(qty, upordown) {
+        //var quantity = document.getElementById('quantity');
+
+        if (upordown == 'up'){++qty.value;}
+        if (upordown == 'down'){--qty.value;}
+      }
+
+      function resetValues() {
+      	Y.value = 0;
+      	M.value = 0;
+      	D.value = 0;
+      	h.value = 0;
+      	m.value = 0;
+      	s.value = 0;
+      }
+
+      MorphDisplay.prototype.update = function() {
+  		let offset = Y.value * 365 * 24 * 60 * 60 * 1000 + // Jahre
+  		              M.value * 30 * 24 * 60 * 60 * 1000 + // Monate
+  		                   D.value * 24 * 60 * 60 * 1000 + // Tage
+                                h.value * 60 * 60 * 1000 + // Stunden
+                                     m.value * 60 * 1000 + // Minuten
+                                          s.value * 1000; // Sekunden
+
+		let now = new MorphTimeDate(offset);
+  		// wir übergeben 'this' an die jeweilige Funktion:
+  		this[this.type].update.call(this, now);
+	  }
+
+    </script>
+    <div id="morph-container" style="width:50%; display: inline-block;">
+    	<div data-type="morphclock" data-format="hhmmss12"></div>
+    	<div data-type="morphclock" data-format="hhmmss24"></div>
+    	<div data-type="morphdate" data-format="full"></div>
+    </div>
+
+    <script type='text/javascript' language='javascript'>
+      function renderTime() {
+        // animiere die MorphDisplay-Elemente
+        setTimeout('renderTime()',10);
+
+        Morph.update();
+      }
+      renderTime();
+    </script>
+</body>
