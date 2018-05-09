@@ -77,24 +77,21 @@ var main  = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
               'Sx':'00', 'xS':'00', 'Cx':'::', 'xC':'::',
               'Dx':'ap', 'xD':'mm' };
 
-var morph = { 'Hx':'00', 'xH':'00', 'Mx':'00', 'xM':'00',
-              'Sx':'00', 'xS':'00', 'Cx':'00', 'xC':'00',
-              'Dx':'00', 'xD':'00' };
+var morph = { 'Hx':'0', 'xH':'0', 'Mx':'0', 'xM':'0',
+              'Sx':'0', 'xS':'0', 'Cx':'0', 'xC':'0',
+              'Dx':'0', 'xD':'0' };
 
 function quickMorph() {
-   return doubleDigit(Math.floor(t/10));
+   return Math.floor(t/10);
 }
 
 function slowMorph(x) {
-   return doubleDigit(Math.floor(((xS-x)*1000+t)/((10-x)*10)));
-}
-
-function doubleDigit(x) {
-   return x < 10 ? x = "0" + x : x ;
+   return Math.floor(((xS-x)*1000+t)/((10-x)*10));
 }
 
 function addNextDigit(x) {
-   return doubleDigit(x * 10 + x + 1);
+   var res = x * 10 + x +1;
+   return res < 10 ? res = "0" + res : res ;
 }
 
 function morphclock(){
@@ -114,7 +111,7 @@ function getTimeFormat() {
 
 function resetMorph(){
     for (var idx in morph) {
-       morph[idx] = "00";
+       morph[idx] = "0";
     }
 }
 
@@ -264,7 +261,7 @@ function renderTime() {
        /* colon stuff: the right colon is in sync with
         * the seconds, the left one has a 50% phase shift */
        morph['xC'] = morph['xS'];
-       morph['Cx'] = doubleDigit((quickMorph() + 50) % 100);
+       morph['Cx'] = (quickMorph() + 50) % 100;
     }
     else {
        /* no seconds shown, the first (and only) colon
