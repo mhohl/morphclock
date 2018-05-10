@@ -69,7 +69,7 @@ Morph.data = {
       { glyph: '::-0', slot: 'cx' },
       { glyph: '50-0', slot: 'sx' },
       { glyph: '90-0', slot: 'xs' },
-      { glyph: '~',     slot: null },
+      { glyph: '~',    slot: null },
       { glyph: 'ap-0', slot: 'dx' },
       { glyph: 'mm-0', slot: 'xd' }
     ],
@@ -79,7 +79,7 @@ Morph.data = {
       { glyph: '::-0', slot: 'cx' },
       { glyph: '50-0', slot: 'mx' },
       { glyph: '90-0', slot: 'xm' },
-      { glyph: '~',     slot: null },
+      { glyph: '~',    slot: null },
       { glyph: 'ap-0', slot: 'dx' },
       { glyph: 'mm-0', slot: 'xd' }
     ],
@@ -89,10 +89,10 @@ Morph.data = {
     'D/M/Y': [
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' },
-      { glyph: '/',     slot: null },
+      { glyph: '/',    slot: null },
       { glyph: '10-0', slot: 'Mx' },
       { glyph: '21-0', slot: 'xM' },
-      { glyph: '/',     slot: null },
+      { glyph: '/',    slot: null },
       { glyph: '12-0', slot: 'Yxxx' },
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
@@ -101,10 +101,10 @@ Morph.data = {
     'D.M.Y': [
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' },
-      { glyph: '.',     slot: null },
+      { glyph: '.',    slot: null },
       { glyph: '10-0', slot: 'Mx' },
       { glyph: '21-0', slot: 'xM' },
-      { glyph: '.',     slot: null },
+      { glyph: '.',    slot: null },
       { glyph: '12-0', slot: 'Yxxx' },
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
@@ -113,10 +113,10 @@ Morph.data = {
     'D-M-Y': [
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' },
-      { glyph: '-',     slot: null },
+      { glyph: '-',    slot: null },
       { glyph: '10-0', slot: 'Mx' },
       { glyph: '21-0', slot: 'xM' },
-      { glyph: '-',     slot: null },
+      { glyph: '-',    slot: null },
       { glyph: '12-0', slot: 'Yxxx' },
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
@@ -127,10 +127,10 @@ Morph.data = {
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
       { glyph: '90-0', slot: 'xxxY' },
-      { glyph: '/',     slot: null },
+      { glyph: '/',    slot: null },
       { glyph: '10-0', slot: 'Mx' },
       { glyph: '21-0', slot: 'xM' },
-      { glyph: '/',     slot: null },
+      { glyph: '/',    slot: null },
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' }
     ],
@@ -139,10 +139,10 @@ Morph.data = {
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
       { glyph: '90-0', slot: 'xxxY' },
-      { glyph: '-',     slot: null },
+      { glyph: '-',    slot: null },
       { glyph: '10-0', slot: 'Mx' },
       { glyph: '21-0', slot: 'xM' },
-      { glyph: '-',     slot: null },
+      { glyph: '-',    slot: null },
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' }
     ],
@@ -150,10 +150,10 @@ Morph.data = {
       { glyph: 'dj-0', slot: 'Mxx' },
       { glyph: 'ea-0', slot: 'xMx' },
       { glyph: 'cn-0', slot: 'xxM' },
-      { glyph: '~',     slot: null },
+      { glyph: '~',    slot: null },
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' },
-      { glyph: ',',     slot: null },
+      { glyph: ',',    slot: null },
       { glyph: '12-0', slot: 'Yxxx' },
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
@@ -163,14 +163,14 @@ Morph.data = {
       { glyph: 'fs-0', slot: 'Wxx' },
       { glyph: 'ra-0', slot: 'xWx' },
       { glyph: 'it-0', slot: 'xxW' },
-      { glyph: ',',     slot: null },
+      { glyph: ',',    slot: null },
       { glyph: 'dj-0', slot: 'Mxx' },
       { glyph: 'ea-0', slot: 'xMx' },
       { glyph: 'cn-0', slot: 'xxM' },
-      { glyph: '~',     slot: null },
+      { glyph: '~',    slot: null },
       { glyph: '30-0', slot: 'Dx' },
       { glyph: '11-0', slot: 'xD' },
-      { glyph: ',',     slot: null },
+      { glyph: ',',    slot: null },
       { glyph: '12-0', slot: 'Yxxx' },
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
@@ -378,7 +378,7 @@ MorphDisplay.prototype.createGlyphs = function() {
     this.slots.push(slot);
   }
   // setze die Höhe des parent-div:
-  this.div.style.height = this.height;
+  this.div.style.height = this.height + "px";
 
   return this;
 }
