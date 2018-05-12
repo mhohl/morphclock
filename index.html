@@ -3,8 +3,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="last-modified" content="2018-05-12" />
     <title>morphclock: demo</title>
-    <link rel='stylesheet' type='text/css' href='morph.css'>
-    <script type='text/javascript' language='javascript' src='morphclock.min.js'></script>
+    <link rel="stylesheet" type="text/css" href="morph.css">
+    <script type="text/javascript" language="javascript" src="morphclock.min.js"></script>
     <style>
       .code {
          font-family: monospace;
@@ -33,7 +33,7 @@
         Die Einbindung ist denkbar einfach: Der JavaScript-Code wird mit
         <div class="code">
           &lt;link rel="stylesheet" type="text/css" href="morph.css"&gt;
-          &lt;script type='text/javascript' language='javascript' src='morphclock.min.js'&gt;&lt;/script&gt;
+          &lt;script type="text/javascript" language="javascript" src="morphclock.min.js"&gt;&lt;/script&gt;
         </div>
         <br />
        nach dem &lt;body&gt;-Tag eingefügt.
@@ -42,7 +42,7 @@
         <p>
           Die Uhr wird mit
           <div class="code">
-            &lt;div data-type='morphclock' data-format='<var>format</var>'&gt;&lt;/div&gt;
+            &lt;div data-type="morphclock" data-format="<var>format</var>"&gt;&lt;/div&gt;
           </div>
           <br />
           eingesetzt und aktiviert.
@@ -62,7 +62,7 @@
         <p>
           Und so sieht es aus:
         </p>
-        <div id='morph-container-2' data-type='morphclock'></div><!-- ohne data-format -> default -->
+        <div id="morph-container-2" data-type="morphclock"></div><!-- ohne data-format -> default -->
         <button id="hhmmss24">hhmmss24</button>
         <button id="hhmm24">hhmm24</button>
         <button id="hhmmss12">hhmmss12</button>
@@ -71,7 +71,7 @@
         <p>
           Die Datumsanzeige wird mit
           <div class="code">
-            &lt;div data-type='morphdate' data-format='<var>format</var>'&gt;&lt;/div&gt;
+            &lt;div data-type="morphdate" data-format="<var>format</var>"&gt;&lt;/div&gt;
           </div>
           <br />
           eingesetzt und aktiviert.
@@ -103,7 +103,7 @@
         <p>
           Das Logo wird mit
           <div class="code">
-            &lt;div data-type='morphlogo'&gt;&lt;/div&gt;
+            &lt;div data-type="morphlogo"&gt;&lt;/div&gt;
           </div>
           <br />
           eingesetzt und aktiviert. Das zweite 'o' zeigt die aktuelle Uhrzeit an.
@@ -112,19 +112,19 @@
           Und so sieht es aus:
         </p>
         <div id="morph-container-0" data-type="morphlogo"></div>
-        <button id='yellow'>Gelb/Yellow</button>
-        <button id='black'>Schwarz/Black</button>
-        <button id='green'>Grün/Green</button>
-        <button id='red'>Rot/Red</button>
-        <button id='blue'>Blau/Blue</button>
-        <button id='grad'>Gradient</button>
+        <button id="yellow">Gelb/Yellow</button>
+        <button id="black">Schwarz/Black</button>
+        <button id="green">Grün/Green</button>
+        <button id="red">Rot/Red</button>
+        <button id="blue">Blau/Blue</button>
+        <button id="grad">Gradient</button>
         <br>
-        <button id='50percent'>50%</button>
-        <button id='75percent'>75%</button>
-        <button id='100percent'>100%</button>
-        <button id='666px'>666px</button>
+        <button id="50percent">50%</button>
+        <button id="75percent">75%</button>
+        <button id="100percent">100%</button>
+        <button id="666px">666px</button>
 
-    <script type='text/javascript' language='javascript'>
+    <script type="text/javascript" language="javascript">
       function setDIVMorphFormat(id, format) {
         let div = document.getElementById(id);
 

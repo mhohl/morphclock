@@ -1,12 +1,12 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
+    <meta http-equiv="last-modified" content="2018-05-12" />
     <title>morphclock: glyphs</title>
     <link rel="stylesheet" type="text/css" href="morph.css">
+    <script type="text/javascript" language="javascript" src="morphclock.min.js"></script>
   </head>
   <body>
-    <script type='text/javascript' language='javascript' src='morphclock.min.js'></script>
     <svg style="position:absolute; width:0; height:0">
       <defs>
         <linearGradient id="Gradient-1" x1="0" y1="0" x2="0" y2="100%" gradientUnits="userSpaceOnUse">
@@ -17,13 +17,13 @@
     </svg>
     <h1>morphclock: glyphs</h1>
       <h2>Die statischen Glyphen</h2>
-        <div id="standalone"></div>
+        <div id="standalone" style="stroke: black;"></div>
       <h2>Die Übergänge</h2>
-        <div id="transition"></div>
+        <div id="transition" style="stroke: black;"></div>
       <h2>Die Uhr</h2>
-        <div id="clock"></div>
+        <div id="clock" style="stroke: black;"></div>
 
-        <script type='text/javascript' language='javascript'>
+        <script type="text/javascript" language="javascript">
           /* Einfache Beispiele:
              Wir verteilen die gesamten Pfade auf die drei Bereiche
              standalone, transition und clock:
@@ -37,7 +37,6 @@
             if (key.length == 1) standalone[key] = Morph.path[key];
             else if (key.slice(4) == "clock") clock[key] = Morph.path[key];
             else if (key.slice(-2) == "-0") transition[key] = Morph.path[key];
-            console.log(key, key.slice(-2));
           }
 
           // die standalone-Glyphen
