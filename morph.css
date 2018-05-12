@@ -1,10 +1,11 @@
 [data-type^=morph] {
   position: relative;
   white-space: nowrap;
+  stroke: black;
 }
 
 .morph-svg-path {
   fill: none;
-  stroke: black;
+  stroke: inherit;
   opacity: inherit;
 }

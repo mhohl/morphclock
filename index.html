@@ -1,8 +1,10 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="last-modified" content="2017-03-02@09:07:06 CET" />
+    <meta http-equiv="last-modified" content="2018-05-12" />
     <title>morphclock: demo</title>
+    <link rel='stylesheet' type='text/css' href='morph.css'>
+    <script type='text/javascript' language='javascript' src='morphclock.min.js'></script>
     <style>
       .code {
          font-family: monospace;
@@ -15,86 +17,199 @@
     </style>
   </head>
   <body>
-    <script type='text/javascript' language='javascript' src='morphclock.min.js'></script>
-
     <svg style="position:absolute; width:0; height:0">
       <defs>
         <linearGradient id="Gradient-1" x1="0" y1="0" x2="0" y2="100%" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="red" />
-            <stop offset="100%" stop-color="blue" />
+          <stop offset="0%" stop-color="red" />
+          <stop offset="100%" stop-color="blue" />
         </linearGradient>
       </defs>
     </svg>
     <h1>morphclock: demo</h1>
-    <p>
-       <strong>morphclock</strong> ist eine animierte Uhr für Webseiten.
-    </p>
-    <p>
-       Die Einbindung ist denkbar einfach: Der JavaScript-Code wird mit
-       <div class="code">
+      <p>
+       <strong>morphclock</strong> ist eine animierte Uhr/Datumsanzeige/Logo für Webseiten.
+      </p>
+      <p>
+        Die Einbindung ist denkbar einfach: Der JavaScript-Code wird mit
+        <div class="code">
+          &lt;link rel="stylesheet" type="text/css" href="morph.css"&gt;
           &lt;script type='text/javascript' language='javascript' src='morphclock.min.js'&gt;&lt;/script&gt;
-       </div>
-       nach dem &lt;body&gt;-Tag eingefügt, die Uhr selber wird mit
-       <div class="code">
-          &lt;div id="morphclock" data-format="<var>format</var>"&gt;&lt;/div&gt;
-       </div>
-       eingesetzt und aktiviert.
+        </div>
+        <br />
+       nach dem &lt;body&gt;-Tag eingefügt.
     </p>
-    <p>
-       <var>format</var> kann folgende Werte annehmen:
-       <ul>
-          <li><var>hhmm12</var> für die Anzeige im 12-Stunden-Format ohne Sekunden,</li>
-          <li><var>hhmm24</var> für die Anzeige im 24-Stunden-Format ohne Sekunden,</li>
-          <li><var>hhmmss12</var> für die Anzeige im 12-Stunden-Format mit Sekunden,</li>
-          <li><var>hhmmss24</var> für die Anzeige im 24-Stunden-Format mit Sekunden.</li>
-        </ul>
-    </p>
-    <p>
-    Und so sieht es aus:
-    </p>
-    <div id="morphclock" data-format="hhmmss24"></div>
+      <h2>morphclock</h2>
+        <p>
+          Die Uhr wird mit
+          <div class="code">
+            &lt;div data-type='morphclock' data-format='<var>format</var>'&gt;&lt;/div&gt;
+          </div>
+          <br />
+          eingesetzt und aktiviert.
+        </p>
+        <p>
+          <var>format</var> kann folgende Werte annehmen:
+          <ul>
+            <li><var>hhmm12</var> für die Anzeige im 12-Stunden-Format ohne Sekunden,</li>
+            <li><var>hhmm24</var> für die Anzeige im 24-Stunden-Format ohne Sekunden,</li>
+            <li><var>hhmmss12</var> für die Anzeige im 12-Stunden-Format mit Sekunden,</li>
+            <li><var>hhmmss24</var> für die Anzeige im 24-Stunden-Format mit Sekunden.</li>
+          </ul>
+        </p>
+        <p>
+          Die Zeitbasis ist die mitteleuropäische (Sommer-)Zeit.
+        </p>
+        <p>
+          Und so sieht es aus:
+        </p>
+        <div id='morph-container-2' data-type='morphclock'></div><!-- ohne data-format -> default -->
+        <button id="hhmmss24">hhmmss24</button>
+        <button id="hhmm24">hhmm24</button>
+        <button id="hhmmss12">hhmmss12</button>
+        <button id="hhmm12">hhmm12</button>
+      <h2>morphdate</h2>
+        <p>
+          Die Datumsanzeige wird mit
+          <div class="code">
+            &lt;div data-type='morphdate' data-format='<var>format</var>'&gt;&lt;/div&gt;
+          </div>
+          <br />
+          eingesetzt und aktiviert.
+        </p>
+        <p>
+          <var>format</var> kann folgende Werte annehmen:
+          <ul>
+            <li><var>D.M.Y</var> für die Anzeige in der Form <var>DD.MM.YYYY</var>,</li>
+            <li><var>D-M-Y</var> für die Anzeige in der Form <var>DD-MM-YYYY</var>,</li>
+            <li><var>D/M/Y</var> für die Anzeige in der Form <var>DD/MM/YYYY</var>,</li>
+            <li><var>Y-M-D</var> für die Anzeige in der Form <var>YYYY-MM-DD</var>,</li>
+            <li><var>Y-M-D</var> für die Anzeige in der Form <var>YYYY/MM/DD</var>,</li>
+            <li><var>Month D,Y</var> für die Anzeige mit abgekürztem Monatsnamen,</li>
+            <li><var>full</var> für die Anzeige mit ausgeschriebenem Wochentag.</li>
+          </ul>
+        </p>
+        <p>
+          Und so sieht es aus:
+        </p>
+        <div id="morph-container-1" data-type="morphdate"></div> <!-- ohne data-format -> default -->
+        <button id="D.M.Y">D.M.Y</button>
+        <button id="D-M-Y">D-M-Y</button>
+        <button id="D/M/Y">D/M/Y</button>
+        <button id="Y-M-D">Y-M-D</button>
+        <button id="Y/M/D">Y/M/D</button>
+        <button id="MonthDY">Month D,Y</button>
+        <button id="full">full</button>
+      <h2>morphlogo</h2>
+        <p>
+          Das Logo wird mit
+          <div class="code">
+            &lt;div data-type='morphlogo'&gt;&lt;/div&gt;
+          </div>
+          <br />
+          eingesetzt und aktiviert. Das zweite 'o' zeigt die aktuelle Uhrzeit an.
+        </p>
+        <p>
+          Und so sieht es aus:
+        </p>
+        <div id="morph-container-0" data-type="morphlogo"></div>
+        <button id='yellow'>Gelb/Yellow</button>
+        <button id='black'>Schwarz/Black</button>
+        <button id='green'>Grün/Green</button>
+        <button id='red'>Rot/Red</button>
+        <button id='blue'>Blau/Blue</button>
+        <button id='grad'>Gradient</button>
+        <br>
+        <button id='50percent'>50%</button>
+        <button id='75percent'>75%</button>
+        <button id='100percent'>100%</button>
+        <button id='666px'>666px</button>
 
-    <p>
-    <button onclick="morphclockSetTimeFormat('hhmm12')">HH:MM 12 hr</button>
-    <button onclick="morphclockSetTimeFormat('hhmmss12')">HH:MM:SS 12 hr</button>
-    <button onclick="morphclockSetTimeFormat('hhmm24')">HH:MM 24 hr</button>
-    <button onclick="morphclockSetTimeFormat('hhmmss24')">HH:MM:SS 24 hr</button>
-    <br>
-    <button onclick="morphclock().style.stroke='yellow'">Gelb/Yellow</button>
-    <button onclick="morphclock().style.stroke='black'">Schwarz/Black</button>
-    <button onclick="morphclock().style.stroke='green'">Grün/Green</button>
-    <button onclick="morphclock().style.stroke='red'">Rot/Red</button>
-    <button onclick="morphclock().style.stroke='blue'">Blau/Blue</button>
-    <button onclick="morphclock().style.stroke='url(#Gradient-1)'">Gradient</button>
-    <br>
-    <button onclick="morphclockSetWidth('50%')">50%</button>
-    <button onclick="morphclockSetWidth('75%')">75%</button>
-    <button onclick="morphclockSetWidth('100%')">100%</button>
-    <button onclick="morphclockSetWidth(666)">666px</button>
-    </p>
-    <p>
-       <strong>morphclock</strong> is an animated clock for web pages.
-    </p>
-    <p>
-       Embedding is quite easy: insert the javascript code after the body-tag like this:
-       <div class="code">
-          &lt;script type='text/javascript' language='javascript' src='morphclock.min.js'&gt;&lt;/script&gt;
-       </div>
-       and activate the clock by inserting
-       <div class="code">
-          &lt;div id="morphclock" data-format="<var>format</var>"&gt;&lt;/div&gt;
-       </div>
-       anywhere on the web page.
-    </p>
-    <p>
-       <var>format</var> can be one of the following:
-       <ul>
-          <li><var>hhmm12</var> for 12-hr display format without seconds,</li>
-          <li><var>hhmm24</var> for 24-hr display format without seconds,</li>
-          <li><var>hhmmss12</var> for 12-hr display format with seconds,</li>
-          <li><var>hhmmss24</var> for 24-hr display format with seconds.</li>
-        </ul>
-    </p>
+    <script type='text/javascript' language='javascript'>
+      function setDIVMorphFormat(id, format) {
+        let div = document.getElementById(id);
+
+        while (div.firstChild) {
+          div.removeChild(div.firstChild);
+        }
+        div.setAttribute("data-format", format);
+        Morph.init();
+      }
+
+      function setDIVStrokeColor(id, color) {
+        let div = document.getElementById(id);
+        div.style.stroke = color;
+      }
+
+      function setDIVWidth(id, width) {
+        let div = document.getElementById(id);
+        let type = div.getAttribute('data-type').slice(5); // entferne 'morph'
+        div.style.width = width;
+        // finde das passende MorphDisplay-Objekt
+        Morph.elements[type].forEach(m => {
+          if (m.div.id == id) {
+            div.style.height = m.height + 'px';
+          }
+        });
+      }
+
+      const button_yellow = document.getElementById('yellow');
+      const button_black = document.getElementById('black');
+      const button_green = document.getElementById('green');
+      const button_red = document.getElementById('red');
+      const button_blue = document.getElementById('blue');
+      const button_grad = document.getElementById('grad');
+
+      button_yellow.onclick = () => setDIVStrokeColor('morph-container-0', 'yellow');
+      button_black.onclick = () => setDIVStrokeColor('morph-container-0', 'black');
+      button_green.onclick = () => setDIVStrokeColor('morph-container-0', 'green');
+      button_red.onclick = () => setDIVStrokeColor('morph-container-0', 'red');
+      button_blue.onclick = () => setDIVStrokeColor('morph-container-0', 'blue');
+      button_grad.onclick = () => setDIVStrokeColor('morph-container-0', 'url(#Gradient-1)');
+
+      const button_fifty = document.getElementById('50percent');
+      const button_seventyfive = document.getElementById('75percent');
+      const button_fullwidth = document.getElementById('100percent');
+      const button_sixsixsix = document.getElementById('666px');
+
+      button_fifty.onclick = () => setDIVWidth('morph-container-0', '50%');
+      button_seventyfive.onclick = () => setDIVWidth('morph-container-0', '75%');
+      button_fullwidth.onclick = () => setDIVWidth('morph-container-0', '100%');
+      button_sixsixsix.onclick = () => setDIVWidth('morph-container-0', '666px');
+
+      const button_DMYdot = document.getElementById('D.M.Y');
+      const button_DMYdash = document.getElementById('D-M-Y');
+      const button_DMYslash = document.getElementById('D/M/Y');
+      const button_YMDdash = document.getElementById('Y-M-D');
+      const button_YMDslash = document.getElementById('Y/M/D');
+      const button_MonthDY = document.getElementById('MonthDY');
+      const button_full = document.getElementById('full');
+
+      button_DMYdot.onclick = () => setDIVMorphFormat('morph-container-1', 'D.M.Y');
+      button_DMYdash.onclick = () => setDIVMorphFormat('morph-container-1', 'D-M-Y');
+      button_DMYslash.onclick = () => setDIVMorphFormat('morph-container-1', 'D/M/Y');
+      button_YMDdash.onclick = () => setDIVMorphFormat('morph-container-1', 'Y-M-D');
+      button_YMDslash.onclick = () => setDIVMorphFormat('morph-container-1', 'Y/M/D');
+      button_MonthDY.onclick = () => setDIVMorphFormat('morph-container-1', 'Month D,Y');
+      button_full.onclick = () => setDIVMorphFormat('morph-container-1', 'full');
+
+      const button_hhmmssxxiv = document.getElementById('hhmmss24');
+      const button_hhmmxxiv = document.getElementById('hhmm24');
+      const button_hhmmssxii = document.getElementById('hhmmss12');
+      const button_hhmmxii = document.getElementById('hhmm12');
+
+      button_hhmmssxxiv.onclick = () => setDIVMorphFormat('morph-container-2', 'hhmmss24');
+      button_hhmmxxiv.onclick = () => setDIVMorphFormat('morph-container-2', 'hhmm24');
+      button_hhmmssxii.onclick = () => setDIVMorphFormat('morph-container-2', 'hhmmss12');
+      button_hhmmxii.onclick = () => setDIVMorphFormat('morph-container-2', 'hhmm12');
+
+      function renderTime() {
+        // animiere die MorphDisplay-Elemente
+        setTimeout('renderTime()',10);
+
+        Morph.update();
+      }
+      renderTime();
+    </script>
 
   </body>
 </html>
