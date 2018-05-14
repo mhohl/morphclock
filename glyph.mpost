@@ -2965,7 +2965,9 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       tmppath0 := m[_b_[BEGIN],aux[BEGIN]]
+       % Der Strich wird schnell verkürzt, damit er nicht aus der
+       % Zeichenfläche ragt und im Browser abgeschnitten wird:
+       tmppath0 := min(2m,1)[_b_[BEGIN],aux[BEGIN]]
                    -- _b_[END];
        tmppath1 := _b_[U_ARC]
                    .. m[_b_[TOP],aux[TOP]]
