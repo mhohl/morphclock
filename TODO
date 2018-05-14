@@ -20,7 +20,12 @@ TODO morphclock
 
 - Schaltsekunde implementieren
 - ggf. mehr Sprachen unterstützen?
-- t, l, j, i, r ggf. breiter?
 - 8 etwas schmäler? Braucht es sw, mw, iw, lw?
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
+
+- Korrekturen:
+  b -> r wird links beschnitten
+  "Kink" bei c -> o
+  "Kink" bei o -> e
+  n -> l Schlaufe zu klein
 

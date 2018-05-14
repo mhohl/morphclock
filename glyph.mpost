@@ -103,7 +103,7 @@ numeric lw;     % [l]arge [w]idth
 lw := 3/2*sw;
 
 numeric corr;   % [corr]ection for f/i/j/l/r/t
-corr := mw - sw;
+corr := iw - sw;
 
 pair C;         % [C]enter of rotation
 C := (0,xh/2);
@@ -2282,14 +2282,14 @@ _e_[BOTTOM] = _c_[BOTTOM];
 _e_[END]    = _c_[END];
 
 % f
-_f_[BEGIN]  = (-mw+corr,0);
-_f_[MID]    = (-mw+corr,asc-mw);
+_f_[BEGIN]  = (-iw+corr,0);
+_f_[MID]    = (-iw+corr,asc-iw);
 _f_[TOP]    = (corr, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-mw-0.10u+corr,xh-dy);
-_f_[RIGHT]  = (-mw+0.15u+corr,xh-dy);
+_f_[LEFT]   = (-iw-0.10u+corr,xh-dy);
+_f_[RIGHT]  = (-iw+0.15u+corr,xh-dy);
 
 % g
 _g_[TOP]    = (0,xh);
@@ -2329,9 +2329,9 @@ _h_[RIGHT] = _h_[LEFT] xscaled -1;
 _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
-_i_[TOP]    = (-mw+corr,2/3[xh,asc]);
-_i_[BEGIN]  = (-mw+corr,xh);
-_i_[MID]    = (-mw+corr,mw);
+_i_[TOP]    = (-iw+corr,2/3[xh,asc]);
+_i_[BEGIN]  = (-iw+corr,xh);
+_i_[MID]    = (-iw+corr,iw);
 _i_[BOTTOM] = (corr,0);
 _i_[END]    = _i_[BOTTOM] rotatedaround
               ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
@@ -2339,7 +2339,7 @@ _i_[END]    = _i_[BOTTOM] rotatedaround
 % j
 _j_[TOP]    = _i_[TOP] xscaled -1;
 _j_[BEGIN]  = _i_[BEGIN] xscaled -1;
-_j_[MID]    = (mw-corr,dsc+mw);
+_j_[MID]    = (iw-corr,dsc+iw);
 _j_[BOTTOM] = (-corr,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
               ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
@@ -2352,7 +2352,7 @@ _k_[TOP]    = (sw,xh);
 _k_[BOTTOM] = (sw,0);
 
 % l
-_l_[BEGIN]  = (-mw+corr,asc);
+_l_[BEGIN]  = (-iw+corr,asc);
 _l_[MID]    = _i_[MID];
 _l_[BOTTOM] = _i_[BOTTOM];
 _l_[END]    = _i_[END];
@@ -2401,9 +2401,9 @@ _q_[BOTTOM] = zero[BOTTOM];
 _q_[LEFT]   = _p_[RIGHT] xscaled -1;
 
 % r
-_r_[BEGIN]  = (-mw+corr,xh);
-_r_[BOTTOM] = (-mw+corr,0);
-_r_[MID]    = (-mw+corr,xh-mw);
+_r_[BEGIN]  = (-iw+corr,xh);
+_r_[BOTTOM] = (-iw+corr,0);
+_r_[MID]    = (-iw+corr,xh-iw);
 _r_[TOP]    = (corr,xh);
 _r_[END]    = _r_[TOP] rotatedaround
               ((xpart(_r_[TOP]),ypart(_r_[MID])),-45);
