@@ -12,8 +12,8 @@
 % 0 -> 1, 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5,
 % 5 -> 6, 6 -> 7, 7 -> 8, 8 -> 9, 9 -> 0 sowie
 % 1 -> 0, 1 -> 1, 2 -> 0, 2 -> 1, 3 -> 0,
-% 5 -> 0, 6 -> 0, 8 -> 1, 9 -> 1, 1 -> 2a,
-% 2a -> 2b, 2b -> 3
+% 5 -> 0, 6 -> 0, 8 -> 1, 9 -> 1, 0 -> 0,
+% 1 -> 2a, 2a -> 2b, 2b -> 3
 %
 % Als Interpunktionen haben wir ":", ",", ".", "-", "/"
 % sowie "~" als Leerzeichen
@@ -357,6 +357,66 @@ beginfig(start);
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
+
+%
+% 0 -> 0
+%
+
+outputtemplate := "00-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+tmppath0 := zero[TOP]
+            .. zero[RIGHT]
+            .. zero[BOTTOM]
+            .. zero[LEFT]
+            .. cycle;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       aux[R_ARC] := point 2m of tmppath0;
+
+       draw m[zero[TOP],aux[R_ARC]]
+            .. m[zero[RIGHT],aux[R_ARC]]
+            .. m[zero[BOTTOM],aux[R_ARC]]
+            .. m[zero[LEFT],aux[R_ARC]]
+            .. cycle;
+       % um Artefakte bei kleinen Schlaufen zu vermeiden:
+       if ypart(m[zero[TOP],aux[R_ARC]]) - ypart(zero[BOTTOM]) < pendia:
+          draw m[zero[TOP],aux[R_ARC]];
+       fi
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       aux[L_ARC] := point 2m + 2 of tmppath0;
+
+       draw m[aux[L_ARC],zero[TOP]]
+            .. m[aux[L_ARC],zero[RIGHT]]
+            .. m[aux[L_ARC],zero[BOTTOM]]
+            .. m[aux[L_ARC],zero[LEFT]]
+            .. cycle;
+       % um Artefakte bei kleinen Schlaufen zu vermeiden:
+       if ypart(m[aux[L_ARC],zero[TOP]]) - ypart(zero[BOTTOM]) < pendia:
+          draw m[aux[L_ARC],zero[TOP]];
+       fi
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % 0 -> 1
