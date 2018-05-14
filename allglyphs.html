@@ -22,13 +22,16 @@
           */
           const standalone = {};
           const transition = {};
-          const clock = {};
+          //const clock = {};
           const exampleWidth = "12.5%";
 
           for (let key of Object.keys(Morph.path)) {
-            if (key.length == 1) standalone[key] = Morph.path[key];
-            else if (key.slice(4) == "clock") clock[key] = Morph.path[key];
-            else if (key.slice(-2) == "-0") transition[key] = Morph.path[key];
+            if (key.length == 1) {
+              standalone[key] = Morph.path[key];
+            }
+            else if (key.slice(-2) == "-0" && key.indexOf('clock') < 0) {
+              transition[key] = Morph.path[key];
+            }
           }
 
           // die standalone-Glyphen
