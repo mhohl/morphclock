@@ -3134,6 +3134,12 @@ beginfig(start);
    draw tmppic;
 endfig;
 
+tmppath0 := _c_[BEGIN]
+            .. _c_[TOP]
+            .. _c_[LEFT]
+            .. _c_[BOTTOM]
+            .. _c_[END];
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -3142,23 +3148,26 @@ for i = start+1 upto start+fpht:
        f := (i-start)/fpht;
        m := retarded(f);
 
-       aux[BEGIN] := (_c_[BOTTOM]{right} .. _c_[RIGHT]{up} .. _c_[TOP]{left})
-              intersectionpoint
-              (((0,0) -- (infinity,0)) rotated (35-90m) shifted C);
-       aux[END]   := (_c_[RIGHT]{down} .. _c_[BOTTOM]{left} .. _c_[LEFT]{up})
-              intersectionpoint
-              (((0,0) -- (infinity,0)) rotated (-35-90m) shifted C);
-
-       draw aux[END]
-            if (-35-90m > -90): .. _c_[BOTTOM]{left} fi
-            .. _c_[LEFT]{up}
-            .. _c_[TOP]{right}
-            if (35-90m < 0): .. _c_[RIGHT]{down} fi
-            .. aux[BEGIN];
+       draw tmppath0 rotatedaround (C,-90m);
 
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+% Hilfspunkte im rotierten c:
+aux[END]   := _c_[BEGIN]  rotatedaround (C,-90);
+aux[RIGHT] := _c_[TOP]    rotatedaround (C,-90);
+aux[TOP]   := _c_[LEFT]   rotatedaround (C,-90);
+aux[LEFT]  := _c_[BOTTOM] rotatedaround (C,-90);
+aux[BEGIN] := _c_[END]    rotatedaround (C,-90);
+
+tmppath0 := aux[BEGIN]
+            .. aux[LEFT]
+            .. aux[TOP]
+            .. aux[RIGHT]
+            .. aux[END];
+phi[BEGIN] := angle(direction 0 of tmppath0);
+phi[END]   := angle(direction 4 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3168,12 +3177,11 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       tmppath0 := _c_[BOTTOM] .. _c_[LEFT] .. _c_[TOP] .. _c_[RIGHT] .. cycle;
-
-       % Wir wollen unten eine abgerundete Kurve, daher funktioniert der oben
-       % stehende Ansatz hier nicht.
-       draw tmppath0 cutafter  (((0,0) -- (infinity,0)) rotated  (35*(1-m)-90) shifted C)
-                     cutbefore (((0,0) -- (infinity,0)) rotated (-35*(1-m)-90) shifted C);
+       draw m[aux[BEGIN],_o_[BOTTOM]]{dir m[phi[BEGIN],180]}
+            .. m[aux[LEFT],_o_[LEFT]]
+            .. m[aux[TOP],_o_[TOP]]
+            .. m[aux[RIGHT],_o_[RIGHT]]
+            .. m[aux[END],_o_[BOTTOM]]{dir m[phi[END],-180]};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor

@@ -82,7 +82,7 @@
               if (xS == 0) morph = "0";
               else if (xS < 4) {
                 // slowmorph-Definition
-                morph = Math.floor((xS * 1000 + t) / 40);
+                morph = Math.floor(((xS-1) * 1000 + t) / 30);
               }
               else morph = "99";
               g.type = g.prefix + morph;

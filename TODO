@@ -24,7 +24,6 @@ TODO morphclock
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
 
 - Korrekturen:
-  "Kink" bei c -> o
   "Kink" bei o -> e
   n -> l Schlaufe zu klein
   l -> g jetzt wieder mal verzerrt
