@@ -1,0 +1,25 @@
+TODO morphclock
+
+- Übergang 0 -> 0 für Schaltsekunde (59 -> 60 -> 00)
+- de-Übergänge:
+  a -> o
+  ä -> p
+  d -> f
+  d -> m
+  e -> ä
+  e -> k
+  i -> i
+  i -> n
+  i -> o
+  k -> o
+  m -> d
+  o -> i
+  o -> o
+  o -> r
+  r -> i
+  v -> z
+  z -> n
+  
+- Schaltsekunde implementieren
+- ggf. mehr Sprachen unterstützen?
+
