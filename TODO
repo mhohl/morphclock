@@ -1,6 +1,5 @@
 TODO morphclock
 
-- Übergang 0 -> 0 für Schaltsekunde (59 -> 60 -> 00)
 - de-Übergänge:
   a -> o
   ä -> p
@@ -14,12 +13,14 @@ TODO morphclock
   k -> o
   m -> d
   o -> i
-  o -> o
   o -> r
   r -> i
   v -> z
   z -> n
-  
+
 - Schaltsekunde implementieren
 - ggf. mehr Sprachen unterstützen?
+- t, l, j, i, r ggf. breiter?
+- 8 etwas schmäler? Braucht es sw, mw, iw, lw?
+- slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
 

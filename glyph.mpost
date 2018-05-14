@@ -22,7 +22,7 @@
 % Für die Anzeige des Monats
 % (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)
 % und des Wochentages (mon|tue|wed|thu|fri|sat|sun)
-% sind folgende Übergänge notwendig
+% sind folgende Übergänge notwendig:
 %
 % a -> e, a -> m, a -> p, a -> s, a -> u,
 % b -> r, c -> n, c -> o, d -> j, d -> u,
@@ -36,13 +36,23 @@
 % t -> v, t -> w, u -> e, u -> i, u -> o,
 % u -> u, v -> c, w -> t, y -> n
 %
+% Speziell für die deutschen Abkürzungen
+% (jan|feb|mär|apr|mai|jun|jul|aug|sep|okt|nov|dez)
+% und die Wochentage (mo|di|mi|do|fr|sa|so) sind
+% zusätzlich notwendig:
+%
+% a -> o, ä -> p, d -> f, d -> m, e -> ä,
+% e -> k, i -> i, i -> n, i -> o, k -> o,
+% m -> d, o -> i, o -> o, o -> r, r -> i,
+% v -> z, z -> n
+%
 % Das Uhr-O schließlich ist unter clock-n
 % n := hour*60+min (also n = 0 ... 719)
 % abgelegt.
 
 % Versionsnummer:
 string version;
-version := "Version: 1.5";
+version := "Version: 1.51";
 show(version);
 
 outputformat := "eps";
@@ -5131,6 +5141,68 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. _n_[RIGHT]{down}
             .. aux[RIGHT]{down}
             .. m[_o_[BOTTOM],_n_[END]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+%
+% o -> o [de]
+%
+
+outputtemplate := "oo-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% übernommen vom Übergang 0 -> 0, der ja nur bei Schaltsekunden sichtbar wird:
+tmppath0 := _o_[TOP]
+            .. _o_[RIGHT]
+            .. _o_[BOTTOM]
+            .. _o_[LEFT]
+            .. cycle;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       aux[R_ARC] := point 2m of tmppath0;
+
+       draw m[_o_[TOP],aux[R_ARC]]
+            .. m[_o_[RIGHT],aux[R_ARC]]
+            .. m[_o_[BOTTOM],aux[R_ARC]]
+            .. m[_o_[LEFT],aux[R_ARC]]
+            .. cycle;
+       % um Artefakte bei kleinen Schlaufen zu vermeiden:
+       if ypart(m[_o_[TOP],aux[R_ARC]]) - ypart(_o_[BOTTOM]) < pendia:
+          draw m[_o_[TOP],aux[R_ARC]];
+       fi
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       aux[L_ARC] := point 2m + 2 of tmppath0;
+
+       draw m[aux[L_ARC],_o_[TOP]]
+            .. m[aux[L_ARC],_o_[RIGHT]]
+            .. m[aux[L_ARC],_o_[BOTTOM]]
+            .. m[aux[L_ARC],_o_[LEFT]]
+            .. cycle;
+       % um Artefakte bei kleinen Schlaufen zu vermeiden:
+       if ypart(m[aux[L_ARC],_o_[TOP]]) - ypart(_o_[BOTTOM]) < pendia:
+          draw m[aux[L_ARC],_o_[TOP]];
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
