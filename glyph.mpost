@@ -5059,6 +5059,13 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
+tmppath0 := _e_[RIGHT]{up}
+            .. _e_[TOP]
+            .. _e_[LEFT]
+            .. _e_[BOTTOM]
+            .. _e_[END];
+phi[END] := angle(direction 4 of tmppath0);
+
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
@@ -5072,7 +5079,7 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. _e_[TOP]
             .. _e_[LEFT]
             .. _e_[BOTTOM]
-            .. m[_e_[RIGHT],_e_[END]];
+            .. m[_e_[RIGHT],_e_[END]]{dir m[90,phi[END]]};
 
        setbounds currentpicture to boundingpath;
     endfig;
