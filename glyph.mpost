@@ -163,7 +163,11 @@ numeric draft; draft := 1;
 
 def draw_grid(expr u) =
     if draft > 0:
-      draw (-0.6u,-0.75u) -- (-0.6u,1.5u) -- (0.6u,1.5u) -- (0.6u,-0.75u) -- cycle;
+      draw (-0.6u,-0.75u)
+           -- (-0.6u,1.5u)
+           -- (0.6u,1.5u)
+           -- (0.6u,-0.75u)
+           -- cycle;
       draw (-0.6u,0) -- (0.6u,0);
       draw (-0.6u,xh) -- (0.6u,xh);
       draw (-sw,-0.75u)--(-sw,1.5u);
@@ -6201,7 +6205,7 @@ for i = start+1 upto start+fpht:
        tmppath1 := m[_t_[BEGIN],_v_[LEFT]]
                    -- m[_t_[MID],aux[LEFT]]
                    .. m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[LEFT]]}
-                   & m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[RIGHT]]}
+                 & m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[RIGHT]]}
                    .. m[_t_[END],aux[RIGHT]]
                    .. m[aux[R_ARC],aux[END]];
 
@@ -6262,7 +6266,7 @@ for i = start+1 upto start+fpht:
        tmppath1 := m[_t_[BEGIN],_v_[LEFT]]
                    -- m[_t_[MID],aux[LEFT]]
                    .. m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[LEFT]]}
-                   & m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[RIGHT]]}
+                 & m[_t_[BOTTOM],_v_[BOTTOM]]{dir m[0,phi[RIGHT]]}
                    .. m[_t_[END],aux[RIGHT]]
                    .. m[aux[R_ARC],aux[END]];
 
@@ -6536,6 +6540,7 @@ for i = start+1 upto start+2fpht-1:
             .. _u_[MID]
             .. aux[RIGHT]{up}
             -- aux[END];
+
     setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6553,6 +6558,7 @@ beginfig(start);
    draw _v_[LEFT]
         -- _v_[BOTTOM]
         -- _v_[RIGHT];
+
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -6584,6 +6590,7 @@ for i = start+1 upto start+fpht:
        tmppath0 := m[_v_[LEFT],aux[LEFT]]
                    -- m[_v_[BOTTOM],aux[BOTTOM]]
                    -- m[_v_[RIGHT],aux[RIGHT]];
+
        draw tmppath0 rotatedaround (C,-90m);
 
        setbounds currentpicture to boundingpath;
@@ -6617,7 +6624,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[BOTTOM],_c_[BOTTOM]]
             .. _c_[END];
 
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6637,6 +6643,7 @@ beginfig(start);
         -- _w_[MID]
         -- _w_[RIGHT]
         -- _w_[END];
+
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -6863,14 +6870,14 @@ for i = 0 upto 719:
 
        % parallel zum Stundenzeiger werden Halbgeraden definiert:
        tmppath3 := (C -- (0,infinity)) shifted (-0.15u,0) rotatedaround (C,-i*6);
-       tmppath4 := (C -- (0,infinity)) shifted (0.15u,0)  rotatedaround (C,-i*6);
+       tmppath4 := (C -- (0,infinity)) shifted  (0.15u,0) rotatedaround (C,-i*6);
        % die Schnittpunkte mit dem Oval bilden BEGIN und END der
        % offenen Begrenzungslinie:
        aux[BEGIN] := tmppath0 intersectionpoint tmppath4;
-       aux[END] := tmppath0 intersectionpoint tmppath3;
+       aux[END]   := tmppath0 intersectionpoint tmppath3;
 
        % zusätzlich werden die Winkel in diesen Punkten bestimmt und
-       % per ceiling-Funktion der jeweilige Quadrat beziffert, in dem
+       % per ceiling-Funktion der jeweilige Quadrant beziffert, in dem
        % die Punkte gerade liegen:
        %
        %   4  |  1
