@@ -563,19 +563,32 @@ MorphDisplay.prototype.date.update = function(now) {
   let Dx = Math.floor(D/10);
   let xD = D % 10;
 
-  const weekday = [
-    // lies ↓ mon ↓ tue ↓ wed ...
-    ['sm', 'mt', 'tw', 'wt', 'tf', 'fs', 'ss'],
-    ['uo', 'ou', 'ue', 'eh', 'hr', 'ra', 'au'],
-    ['nn', 'ne', 'ed', 'du', 'ui', 'it', 'tn']
-  ];
+  const weekday = {
+    en: [
+      // lies ↓ mon ↓ tue ↓ wed ...
+      ['sm', 'mt', 'tw', 'wt', 'tf', 'fs', 'ss'],
+      ['uo', 'ou', 'ue', 'eh', 'hr', 'ra', 'au'],
+      ['nn', 'ne', 'ed', 'du', 'ui', 'it', 'tn']
+    ];
+    de: [
+      // lies ↓ mo  ↓ di  ↓ mi ...
+      ['sm', 'md', 'dm', 'md', 'df', 'fs', 'ss'],
+      ['oo', 'oi', 'ii', 'io', 'or', 'ra', 'ao'],
+    ]
 
-  const month = [
+  const month = {
     // Monat geht von 1 bis 12, daher ist der Eintrag mit Index 0 leer definiert
-    ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
-    ['', 'ae', 'ea', 'ap', 'pa', 'au', 'uu', 'uu', 'ue', 'ec', 'co', 'oe', 'ea'],
-    ['', 'nb', 'br', 'rr', 'ry', 'yn', 'nl', 'lg', 'gp', 'pt', 'tv', 'vc', 'cn']
-  ]
+    en: [
+      ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
+      ['', 'ae', 'ea', 'ap', 'pa', 'au', 'uu', 'uu', 'ue', 'ec', 'co', 'oe', 'ea'],
+      ['', 'nb', 'br', 'rr', 'ry', 'yn', 'nl', 'lg', 'gp', 'pt', 'tv', 'vc', 'cn']
+    ];
+    de: [
+      ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
+      ['', 'ae', 'eä', 'äp', 'pa', 'au', 'uu', 'uu', 'ue', 'ek', 'ko', 'oe', 'ea'],
+      ['', 'nb', 'br', 'rr', 'ri', 'in', 'nl', 'lg', 'gp', 'pt', 'tv', 'vz', 'zn']
+    ]
+  }
 
   const lastDayOfMonth = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   if (now.leapYear) {
@@ -597,9 +610,9 @@ MorphDisplay.prototype.date.update = function(now) {
 
   // Tage
 
-  main['Wxx'] = weekday[0][W];
-  main['xWx'] = weekday[1][W];
-  main['xxW'] = weekday[2][W];
+  main['Wxx'] = weekday['en'][0][W];
+  main['xWx'] = weekday['en'][1][W];
+  main['xxW'] = weekday['en'][2][W];
 
   if (xD == 9) {
     main['xD'] = xD + "0";
@@ -648,9 +661,9 @@ MorphDisplay.prototype.date.update = function(now) {
 
   // Monate
 
-  main['Mxx'] = month[0][M];
-  main['xMx'] = month[1][M];
-  main['xxM'] = month[2][M];
+  main['Mxx'] = month['en'][0][M];
+  main['xMx'] = month['en'][1][M];
+  main['xxM'] = month['en'][2][M];
 
   if (xM == 9) {
     main['xM'] = xM + "0";
