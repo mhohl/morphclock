@@ -158,6 +158,9 @@ pair _a_[], _b_[], _c_[], _d_[],
      _u_[], _v_[], _w_[], _x_[],
      _y_[], _z_[];
 
+% Array für die Umlautpunkte:
+pair umlaut[];
+
 % draft kennzeichnet den Entwurfsmodus:
 numeric draft; draft := 1;
 
@@ -2354,6 +2357,8 @@ _k_[END]    = (-sw,0);
 _k_[MID]    = (-sw,xh/2);
 _k_[TOP]    = (sw,xh);
 _k_[BOTTOM] = (sw,0);
+% verlängere über sich selbst hinaus
+_k_[BOTTOM] := 4/3[_k_[MID],_k_[BOTTOM]];
 
 % l
 _l_[BEGIN]  = (-iw+corr,asc);
@@ -2473,6 +2478,10 @@ _z_[BEGIN] = _x_[LEFT];
 _z_[U_ARC] = _x_[RIGHT];
 _z_[D_ARC] = _x_[BEGIN];
 _z_[END]   = _x_[END];
+
+% Umlautpunkte:
+umlaut[LEFT] = (-2/3sw,(asc+xh)/2);
+umlaut[RIGHT] = umlaut[LEFT] xscaled -1;
 
 %
 %%%%%%%%%%%% Buchstaben/Übergänge
@@ -2924,6 +2933,22 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+%
+% ä -> () [de]
+%
+
+outputtemplate := "ä.mps";
+
+beginfig(start);
+   draw tmppic;
+   pickup pc;
+
+   draw umlaut[LEFT];
+   draw umlaut[RIGHT];
+   tmppic := currentpicture;
+endfig;
+
 
 %
 % b -> ()
@@ -3570,8 +3595,6 @@ for i = start+fpht+1 upto start+2fpht-1:
     endfig;
 endfor
 
-
-
 %
 % e -> h
 %
@@ -3624,6 +3647,65 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[_e_[RIGHT],_h_[RIGHT]]{down}
             -- m[_e_[RIGHT],_h_[END]];
 
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% e -> k [de]
+%
+
+outputtemplate := "ek-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+aux[TOP] := (xpart(_e_[RIGHT]),ypart(_e_[TOP]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _e_[RIGHT] -- _e_[LEFT];
+       draw _e_[RIGHT]{up}
+            .. {dir m[180,90]}
+               m[_e_[TOP],aux[TOP]]
+               {left}
+            .. _e_[LEFT]{down}
+            .. _e_[BOTTOM]
+            .. _e_[END];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % der Winkel mit Zentrum _e_[RIGHT] bildet die
+       % diagonalen k-Striche, der Bogen entrollt sich
+       % zur Linie:
+
+       draw m[_e_[LEFT],_k_[TOP]]
+            -- m[_e_[RIGHT],_k_[MID]]
+            -- m[aux[TOP],_k_[BOTTOM]];
+
+       tmppath0 := m[aux[TOP],_k_[BEGIN]]
+                   .. m[_e_[LEFT],_k_[MID]]{down}
+                   .. m[_e_[BOTTOM],_k_[END]]{dir m[0,-90]}
+                   .. _e_[END];
+       draw subpath (0,3-m) of tmppath0;
 
        setbounds currentpicture to boundingpath;
     endfig;
@@ -4261,7 +4343,7 @@ beginfig(start);
 
    draw _k_[TOP]
         -- _k_[MID]
-        -- 4/3[_k_[MID],_k_[BOTTOM]];
+        -- _k_[BOTTOM];
    setbounds currentpicture to boundingpath;
 endfig;
 
