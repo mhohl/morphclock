@@ -26,7 +26,7 @@
           const exampleWidth = "12.5%";
 
           for (let key of Object.keys(Morph.path)) {
-            if (key.length == 1) {
+            if (key.length < 3 && key != "~") { // 2a, 2b
               standalone[key] = Morph.path[key];
             }
             else if (key.slice(-2) == "-0" && key.indexOf('clock') < 0) {
@@ -91,7 +91,7 @@
             // die Uhr läuft 60× schneller als gewöhnlich
             let offset = ((m - startmin) * 60 + (s - startsec));
             morph = (offset + clockstart) % 720;
-            cglyph.type = cglyph.prefix + morph;
+            cglyph.type = "clock-" + morph;
           }
           renderTime();
         </script>
