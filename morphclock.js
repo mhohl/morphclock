@@ -569,12 +569,13 @@ MorphDisplay.prototype.date.update = function(now) {
       ['sm', 'mt', 'tw', 'wt', 'tf', 'fs', 'ss'],
       ['uo', 'ou', 'ue', 'eh', 'hr', 'ra', 'au'],
       ['nn', 'ne', 'ed', 'du', 'ui', 'it', 'tn']
-    ];
+    ],
     de: [
       // lies ↓ mo  ↓ di  ↓ mi ...
       ['sm', 'md', 'dm', 'md', 'df', 'fs', 'ss'],
       ['oo', 'oi', 'ii', 'io', 'or', 'ra', 'ao'],
     ]
+  };
 
   const month = {
     // Monat geht von 1 bis 12, daher ist der Eintrag mit Index 0 leer definiert
@@ -582,13 +583,13 @@ MorphDisplay.prototype.date.update = function(now) {
       ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
       ['', 'ae', 'ea', 'ap', 'pa', 'au', 'uu', 'uu', 'ue', 'ec', 'co', 'oe', 'ea'],
       ['', 'nb', 'br', 'rr', 'ry', 'yn', 'nl', 'lg', 'gp', 'pt', 'tv', 'vc', 'cn']
-    ];
+    ],
     de: [
       ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
       ['', 'ae', 'eä', 'äp', 'pa', 'au', 'uu', 'uu', 'ue', 'ek', 'ko', 'oe', 'ea'],
       ['', 'nb', 'br', 'rr', 'ri', 'in', 'nl', 'lg', 'gp', 'pt', 'tv', 'vz', 'zn']
     ]
-  }
+  };
 
   const lastDayOfMonth = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   if (now.leapYear) {
