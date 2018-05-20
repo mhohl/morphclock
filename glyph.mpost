@@ -52,7 +52,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.53";
+version := "Version: 1.55";
 show(version);
 
 outputformat := "eps";
@@ -4449,12 +4449,17 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-% Hilfspunkte:
-tmp0       := xpart(_l_[BOTTOM])-xpart(_l_[MID]);
-aux[LEFT]  := _l_[BEGIN] shifted (0,-1.75*tmp0);
-aux[TOP]   := _l_[BEGIN] shifted (3/4*tmp0,0);
-aux[RIGHT] := _l_[BEGIN] shifted (xpart(_l_[END]),-2tmp0);
+% Zuerst bildet sich eine Schlaufe auf dem l:
+% unterer Ansatzpunkt der Schlaufe:
 aux[JOINT] := 1/4[_l_[MID],_l_[BEGIN]];
+% linker Fixpunkt
+aux[LEFT]  := 3/5[_l_[MID],_l_[BEGIN]];
+% die Spitze wandert von _l_[BEGIN] zu aux[TOP]:
+aux[TOP]   := (xpart(_l_[BOTTOM]),ypart(_l_[BEGIN]));
+% rechter Fixpunkt
+aux[RIGHT] := (xpart(3/4[_l_[MID],_l_[END]]),
+               ypart(3/5[_l_[MID],_l_[BEGIN]]));
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -4471,8 +4476,6 @@ for i = start+1 upto start+fpht:
             .. {dir m[90,0]}m[_l_[BEGIN],aux[TOP]]{dir m[-90,0]}
             .. m[aux[LEFT],aux[RIGHT]]
             .. {dir m[270,240]}aux[JOINT];
-       draw aux[LEFT] withcolor red;
-       draw aux[JOINT] withcolor red;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor

@@ -6,7 +6,6 @@ TODO morphclock
   d -> f
   d -> m
   i -> i
-  i -> n
   i -> o
   k -> o
   m -> d
@@ -19,7 +18,3 @@ TODO morphclock
 - ggf. mehr Sprachen unterstützen?
 - 8 etwas schmäler? Braucht es sw, mw, iw, lw?
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
-
-- Korrekturen:
-  l -> g jetzt wieder mal verzerrt
-
