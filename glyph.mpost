@@ -52,7 +52,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.51";
+version := "Version: 1.53";
 show(version);
 
 outputformat := "eps";
@@ -3397,9 +3397,19 @@ endfig;
 
 %
 % e -> a
+% e -> ä [de]
 %
 
-outputtemplate := "ea-%c.mps";
+% wir zeichnen beide Male denselben Übergang und fügen
+% beim zweiten Mal die Punkte hinzu:
+
+for o = 1 upto 2:
+
+if o = 1:
+   outputtemplate := "ea-%c.mps";
+else:
+   outputtemplate := "eä-%c.mps";
+fi
 
 beginfig(start);
    draw tmppic;
@@ -3478,9 +3488,15 @@ for i = start+fpht+1 upto start+2fpht-1:
             --- m[aux[RIGHT],_a_[JOINT]]
             .. m[aux[BOTTOM],_a_[END]]{dir m[-180,phi[END]]};
 
+       if o = 2:
+          if m > 3/5: draw umlaut[LEFT]; fi
+          if m > 4/5: draw umlaut[RIGHT]; fi
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+endfor % äußere Schleife: e -> a / e -> ä
 
 %
 % e -> c
