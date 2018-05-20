@@ -5804,7 +5804,6 @@ tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
             .. _a_[BOTTOM]
             .. _a_[JOINT];
 
-
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -5856,6 +5855,62 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+%
+% r -> i
+%
+
+outputtemplate := "ri-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+tmppath0 := _r_[BOTTOM]
+                   -- _r_[MID]{up}
+                   .. _r_[TOP]
+                   .. _r_[END];
+phi[END] := angle(direction 3 of tmppath0); show(phi[END]);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[_r_[MID],_i_[TOP]]
+            -- m[_r_[BEGIN],_i_[TOP]];
+
+       draw tmppath0 rotatedaround (C,-180m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[BOTTOM] := _r_[BOTTOM] rotatedaround (C,180);
+aux[MID]    := _r_[MID]    rotatedaround (C,180);
+aux[TOP]    := _r_[TOP]    rotatedaround (C,180);
+aux[END]    := _r_[END]    rotatedaround (C,180);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw _i_[TOP];
+
+        draw m[aux[BOTTOM],_i_[END]]{dir m[270,180-phi[END]]}
+             .. m[aux[MID],_i_[BOTTOM]]{dir m[-90,-180]}
+             .. m[aux[TOP],_i_[MID]]{dir m[180,90]}
+             .. m[aux[END],_i_[BEGIN]]{dir m[180+phi[END],90]};
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
 %
 % r -> r
 %
