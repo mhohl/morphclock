@@ -5244,7 +5244,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[aux[BEGIN],_e_[LEFT]]
             -- m[aux[END],_e_[RIGHT]];
 
-       draw m[aux[RIGHT],_e_[RIGHT]]
+       draw m[aux[RIGHT],_e_[RIGHT]]{dir m[180,90]}
             .. m[aux[TOP],_e_[TOP]]{left}
             .. m[aux[LEFT],_e_[LEFT]]
             .. m[aux[BOTTOM],_e_[BOTTOM]]{right}
