@@ -52,7 +52,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.55";
+version := "Version: 1.56";
 show(version);
 
 outputformat := "eps";
@@ -4452,7 +4452,71 @@ beginfig(start);
         -- _k_[MID]
         -- _k_[BOTTOM];
    setbounds currentpicture to boundingpath;
+   tmppic := currentpicture;
 endfig;
+
+%
+% k -> o [de]
+%
+
+outputtemplate := "ko-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Hilfspfad zur Winkelbestimmung:
+tmppath0 := _k_[TOP]
+            -- _k_[MID]
+            -- _k_[BOTTOM];
+phi[TOP]    := angle(direction 0 of tmppath0);
+phi[BOTTOM] := angle(direction 2 of tmppath0);
+
+% der k-Stamm rückt zur x-Position von _o_[LEFT]:
+aux[BEGIN] := (xpart(_o_[LEFT]),ypart(_k_[BEGIN]));
+aux[MID]   := (xpart(_o_[LEFT]),ypart(_k_[MID]));
+aux[END]   := (xpart(_o_[LEFT]),ypart(_k_[END]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[_k_[BEGIN],aux[BEGIN]]
+            -- m[_k_[END],aux[END]];
+
+       draw m[_k_[TOP],_o_[TOP]]{dir m[phi[TOP],-180]}
+            .. {dir m[phi[TOP],-90]}
+               m[_k_[MID],_o_[LEFT]]
+               {dir m[phi[BOTTOM],-90]}
+            .. m[_k_[BOTTOM],_o_[BOTTOM]]{dir m[phi[BOTTOM],0]};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw _o_[TOP]{left}
+            .. _o_[LEFT]{down}
+            .. _o_[BOTTOM]{right};
+
+       draw m[aux[BEGIN],_o_[TOP]]{dir m[-90,0]}
+            .. m[aux[MID],_o_[RIGHT]]{down}
+            .. m[aux[END],_o_[BOTTOM]]{dir m[-90,-180]};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % l -> ()

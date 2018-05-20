@@ -7,7 +7,6 @@ TODO morphclock
   d -> m
   i -> i
   i -> o
-  k -> o
   m -> d
   o -> i
   o -> r
