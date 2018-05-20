@@ -5,7 +5,6 @@ TODO morphclock
   ä -> p
   d -> f
   d -> m
-  e -> ä
   i -> i
   i -> n
   i -> o
@@ -14,7 +13,6 @@ TODO morphclock
   o -> i
   o -> r
   r -> i
-  v -> z
   z -> n
 
 - Schaltsekunde implementieren
@@ -23,6 +21,5 @@ TODO morphclock
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
 
 - Korrekturen:
-  n -> l Schlaufe zu klein
   l -> g jetzt wieder mal verzerrt
 
