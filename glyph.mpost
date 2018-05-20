@@ -4100,6 +4100,39 @@ beginfig(start);
 endfig;
 
 %
+% i -> i [de]
+%
+
+outputtemplate := "ii-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/(2fpht);
+       m := f;
+
+       aux[BOTTOM] := _i_[BOTTOM] yshifted (wiggle(xpart(_i_[BOTTOM])/u,f)*u);
+       aux[BEGIN]  := _i_[BEGIN]  yshifted (wiggle(xpart(_i_[BEGIN] )/u,f)*u);
+       aux[TOP]    := _i_[TOP]    yshifted (wiggle(xpart(_i_[TOP]   )/u,f)*u);
+       aux[MID]    := _i_[MID]    yshifted (wiggle(xpart(_i_[MID]   )/u,f)*u);
+       aux[END]    := _i_[END]    yshifted (wiggle(xpart(_i_[END]   )/u,f)*u);
+
+       draw aux[TOP];
+       draw aux[BEGIN]
+            -- aux[MID]{down}
+            .. aux[BOTTOM]
+            .. aux[END];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % i -> n [de]
 %
 
