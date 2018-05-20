@@ -1,16 +1,13 @@
 TODO morphclock
 
 - de-Übergänge:
-  a -> o
   ä -> p
   d -> f
   d -> m
-  i -> i
   i -> o
   m -> d
   o -> i
   o -> r
-  r -> i
   z -> n
 
 - Schaltsekunde implementieren
