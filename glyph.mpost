@@ -4097,8 +4097,66 @@ beginfig(start);
         .. _i_[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
-
 endfig;
+
+%
+% i -> n [de]
+%
+
+outputtemplate := "in-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+tmppath0 := _i_[BEGIN]
+            -- _i_[MID]{down}
+            .. _i_[BOTTOM]
+            .. _i_[END];
+phi[LEFT] := angle(direction 3 of tmppath0);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _i_[TOP];
+
+       draw tmppath0 rotatedaround (C,180m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+aux[LEFT]  := _i_[END]    rotatedaround (C,180);
+aux[MID]   := _i_[BOTTOM] rotatedaround (C,180);
+aux[RIGHT] := _i_[MID]    rotatedaround (C,180);
+aux[END]  := _i_[BEGIN]   rotatedaround (C,180);
+
+% der Punkt wird zum n-Strich, das gedrehte i
+% zum n-Bogen:
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_i_[TOP],_n_[BEGIN]]
+            -- m[_i_[TOP],_n_[BOTTOM]];
+       draw m[aux[LEFT],_n_[LEFT]]{dir m[phi[LEFT],90]}
+            .. m[aux[MID],_n_[MID]]
+            .. m[aux[RIGHT],_n_[RIGHT]]{down}
+            .. m[aux[END],_n_[END]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
 %
 % i -> t
 %
@@ -4393,7 +4451,7 @@ endfig;
 
 % Hilfspunkte:
 tmp0       := xpart(_l_[BOTTOM])-xpart(_l_[MID]);
-aux[LEFT]  := _l_[BEGIN] shifted (0,-2tmp0);
+aux[LEFT]  := _l_[BEGIN] shifted (0,-1.75*tmp0);
 aux[TOP]   := _l_[BEGIN] shifted (3/4*tmp0,0);
 aux[RIGHT] := _l_[BEGIN] shifted (xpart(_l_[END]),-2tmp0);
 aux[JOINT] := 1/4[_l_[MID],_l_[BEGIN]];
@@ -4413,7 +4471,8 @@ for i = start+1 upto start+fpht:
             .. {dir m[90,0]}m[_l_[BEGIN],aux[TOP]]{dir m[-90,0]}
             .. m[aux[LEFT],aux[RIGHT]]
             .. {dir m[270,240]}aux[JOINT];
-
+       draw aux[LEFT] withcolor red;
+       draw aux[JOINT] withcolor red;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5030,7 +5089,7 @@ tmppath0 := _l_[BEGIN]
             -- _l_[MID]
             .. _l_[BOTTOM]
             .. _l_[END];
-phi[END] := angle(direction 3 of tmppath0);
+phi[LEFT] := angle(direction 3 of tmppath0);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -5042,7 +5101,7 @@ for i = start+1 upto start+fpht:
 
        draw m[_n_[BEGIN],aux[BEGIN]]
             -- m[_n_[BOTTOM],aux[BOTTOM]];
-       draw m[_n_[LEFT],aux[LEFT]]{dir m[90,phi[END]]}
+       draw m[_n_[LEFT],aux[LEFT]]{dir m[90,phi[LEFT]]}
             .. m[_n_[MID],aux[MID]]
             .. m[_n_[RIGHT],aux[RIGHT]]{down}
             -- m[_n_[END],aux[END]];
@@ -5062,7 +5121,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        % der n-Stamm wandert schnell zum Start von l ...
        draw (aux[BEGIN] -- aux[BOTTOM])
             shifted (min(2m,1)[aux[BEGIN],_l_[BEGIN]]-aux[BEGIN]);
-       % während sich der Rest  um 180° dreht – am Ende überlagern
+       % während sich der Rest um 180° dreht – am Ende überlagern
        % sich beide geraden Abschnitte teilweise und bilden den
        % l-Strich:
        tmppath0 := aux[LEFT]
