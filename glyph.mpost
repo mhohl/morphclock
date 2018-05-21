@@ -137,6 +137,7 @@ G_LOOP     = 2002;
 TWO_HOOK   = 2003;
 THREE_UARC = 2004;
 THREE_LARC = 2005;
+HOOK_END_I = 2006;
 
 
 % Arrays für die Koordinaten der Ziffern:
@@ -2347,6 +2348,12 @@ _i_[MID]    = (-iw+corr,iw);
 _i_[BOTTOM] = (corr,0);
 _i_[END]    = _i_[BOTTOM] rotatedaround
               ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
+% Berechne und speichere den Winkel am Ende
+tmppath0 := _i_[BEGIN]
+            -- _i_[MID]{down}
+            .. _i_[BOTTOM]
+            .. _i_[END];
+phi[HOOK_END_I] := angle(direction 3 of tmppath0);
 
 % j
 _j_[TOP]    = _i_[TOP] xscaled -1;
@@ -2467,7 +2474,9 @@ _w_[END] = _w_[BEGIN] xscaled -1;
 _x_[LEFT]  = (-mw,xh);
 _x_[RIGHT] = _x_[LEFT] xscaled -1;
 _x_[BEGIN] = (-mw,0);
-_x_[END]   = _x_[BEGIN] xscaled -1 ;
+_x_[END]   = _x_[BEGIN] xscaled -1;
+% verlängere über sich selbst hinaus:
+_x_[END]  := 5/4[_x_[LEFT],_x_[END]];
 
 % y
 _y_[BOTTOM] = _u_[BOTTOM];
@@ -2482,7 +2491,7 @@ _y_[END] = _u_[END];
 _z_[BEGIN] = _x_[LEFT];
 _z_[U_ARC] = _x_[RIGHT];
 _z_[D_ARC] = _x_[BEGIN];
-_z_[END]   = _x_[END];
+_z_[END]   = _z_[D_ARC] xscaled -1;
 
 % Umlautpunkte:
 umlaut[LEFT] = (-1/2sw,(asc+xh)/2);
@@ -2921,8 +2930,14 @@ for i = start+fpht+1 upto start+2fpht-1:
        else:
        % ...ansonsten wandert der Umlautstrich an diese Stelle:
           draw _p_[END] -- aux[BEGIN];
-          draw m[umlaut[LEFT],aux[BEGIN]]
-               -- m[umlaut[RIGHT],_p_[BEGIN]];
+          % auch hier Hilfspfade, sonst wandert der linke Punkt
+          % in die p-Schlaufe:
+          tmppath3 := umlaut[LEFT]{left}
+                      .. aux[BEGIN]{down};
+          tmppath4 := umlaut[RIGHT]{left}
+                      .. _p_[BEGIN]{down};
+          draw point m of tmppath3
+               -- point m of tmppath4;
        fi
 
        draw tmppath1;
@@ -3569,6 +3584,15 @@ for i = start+1 upto start+fpht:
 
        draw tmppath0 rotatedaround (C,180m);
 
+       if run = 2:
+          tmppath1 := _e_[RIGHT]{up}
+                      .. umlaut[LEFT]{left};
+          tmppath2 := _e_[RIGHT]{up}
+                      .. umlaut[RIGHT]{left};
+          draw point m of tmppath1;
+          draw point m of tmppath2;
+       fi
+
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3580,21 +3604,11 @@ aux[RIGHT]  := zero[LEFT]  rotatedaround (C,180);
 aux[L_ARC]  := zero[RIGHT] rotatedaround (C,180);
 aux[BOTTOM] := _e_[TOP]    rotatedaround (C,180);
 
-% einige Winkel
-tmppath1 := _a_[BEGIN]
-            ..  _a_[TOP]
-            ..  _a_[R_ARC]
-            --- _a_[JOINT]
-            .. _a_[END];
-phi[R_ARC] := angle(direction 2 of tmppath1);
-phi[END]   := angle(direction 4 of tmppath1);
-
-tmppath2 := _a_[R_ARC]{dir phi[R_ARC]}
-            .. _a_[L_ARC]
-            .. _a_[BOTTOM]
-            .. _a_[JOINT];
-phi[L_ARC] := angle(direction 1 of tmppath2);
-phi[JOINT] := angle(direction 3 of tmppath2);
+% einige Winkel im a:
+phi[R_ARC] := angle(direction 2 of tmppath[A_SWEEP]);
+phi[END]   := angle(direction 4 of tmppath[A_SWEEP]);
+phi[L_ARC] := angle(direction 1 of tmppath[A_LOOP]);
+phi[JOINT] := angle(direction 3 of tmppath[A_LOOP]);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -3622,8 +3636,8 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[BOTTOM],_a_[END]]{dir m[-180,phi[END]]};
 
        if run = 2:
-          if m > 3/5: draw umlaut[LEFT]; fi
-          if m > 4/5: draw umlaut[RIGHT]; fi
+          draw umlaut[LEFT];
+          draw umlaut[RIGHT];
        fi
        setbounds currentpicture to boundingpath;
     endfig;
@@ -4279,7 +4293,6 @@ tmppath0 := _i_[BEGIN]
             -- _i_[MID]{down}
             .. _i_[BOTTOM]
             .. _i_[END];
-phi[LEFT] := angle(direction 3 of tmppath0);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -4313,7 +4326,7 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw m[_i_[TOP],_n_[BEGIN]]
             -- m[_i_[TOP],_n_[BOTTOM]];
-       draw m[aux[LEFT],_n_[LEFT]]{dir m[phi[LEFT],90]}
+       draw m[aux[LEFT],_n_[LEFT]]{dir m[phi[HOOK_END_I],90]}
             .. m[aux[MID],_n_[MID]]
             .. m[aux[RIGHT],_n_[RIGHT]]{down}
             .. m[aux[END],_n_[END]];
@@ -4336,9 +4349,6 @@ endfig;
 aux[RIGHT] := (xpart(_o_[RIGHT]),ypart(_i_[TOP]));
 aux[TOP]   := (xpart(_o_[TOP]),ypart(_i_[TOP]));
 
-% phi[LEFT] ist beim Übergang i -> n definiert als
-% Winkel am Ende vom i-Bogen:
-
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -4354,7 +4364,7 @@ for i = start+1 upto start+fpht:
        draw m[_i_[BEGIN],_o_[LEFT]]
             -- m[_i_[MID],_o_[LEFT]]{down}
             .. m[_i_[BOTTOM],_o_[BOTTOM]]
-            .. m[_i_[END],_o_[RIGHT]]{dir m[phi[LEFT],90]};
+            .. m[_i_[END],_o_[RIGHT]]{dir m[phi[HOOK_END_I],90]};
 
        setbounds currentpicture to boundingpath;
     endfig;
@@ -4464,10 +4474,7 @@ endfig;
 
 % Der Endwinkel beim j soll in der ersten Hälfte
 % des Überganges unverändert bleiben:
-tmppath0 := _j_[MID]{down}
-            .. _j_[BOTTOM]
-            .. _j_[END];
-phi[END] := angle(direction 2 of tmppath0);
+phi[END] := 180-phi[HOOK_END_I];
 
 aux[MID] := 1/2[_j_[BEGIN],_j_[MID]];
 
@@ -5075,7 +5082,7 @@ for i = start+1 upto start+fpht:
                    .. _m_[R_ARC]
                    .. _m_[RIGHT]{down}
                    -- _m_[END];
-       tmppath2 :=  _m_[MID] -- _m_[JOINT];
+       tmppath2 := _m_[MID] -- _m_[JOINT];
 
        draw tmppath0 rotatedaround (C,90m);
        draw tmppath1 rotatedaround (C,90m);
@@ -5168,7 +5175,7 @@ tmppath0 := aux[BOTTOM]
             .. aux[MID]
             .. aux[RIGHT]
             .. aux[END];
-phi[LEFT] := angle(direction 1 of tmppath0);
+phi[LEFT]  := angle(direction 1 of tmppath0);
 phi[RIGHT] := angle(direction 3 of tmppath0);
 
 for i = start+1 upto start+fpht:
@@ -5382,12 +5389,7 @@ aux[RIGHT]:= _l_[MID]    rotatedaround (C,180);
 
 aux[END] := (xpart(aux[RIGHT]),ypart(_n_[END]));
 
-% Der Winkel an der l-Spitze:
-tmppath0 := _l_[BEGIN]
-            -- _l_[MID]
-            .. _l_[BOTTOM]
-            .. _l_[END];
-phi[LEFT] := angle(direction 3 of tmppath0);
+% Der Winkel an der l-Spitze entspricht dem beim i
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -5399,7 +5401,7 @@ for i = start+1 upto start+fpht:
 
        draw m[_n_[BEGIN],aux[BEGIN]]
             -- m[_n_[BOTTOM],aux[BOTTOM]];
-       draw m[_n_[LEFT],aux[LEFT]]{dir m[90,phi[LEFT]]}
+       draw m[_n_[LEFT],aux[LEFT]]{dir m[90,phi[HOOK_END_I]]}
             .. m[_n_[MID],aux[MID]]
             .. m[_n_[RIGHT],aux[RIGHT]]{down}
             -- m[_n_[END],aux[END]];
@@ -6083,7 +6085,6 @@ tmppath0 := _r_[BOTTOM]
                    -- _r_[MID]{up}
                    .. _r_[TOP]
                    .. _r_[END];
-phi[END] := angle(direction 3 of tmppath0); show(phi[END]);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -6116,10 +6117,10 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw _i_[TOP];
 
-        draw m[aux[BOTTOM],_i_[END]]{dir m[270,180-phi[END]]}
+        draw m[aux[BOTTOM],_i_[END]]{dir m[-90,-90-phi[HOOK_END_I]]}
              .. m[aux[MID],_i_[BOTTOM]]{dir m[-90,-180]}
              .. m[aux[TOP],_i_[MID]]{dir m[180,90]}
-             .. m[aux[END],_i_[BEGIN]]{dir m[180+phi[END],90]};
+             .. m[aux[END],_i_[BEGIN]]{dir m[180-phi[HOOK_END_I],90]};
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6944,11 +6945,6 @@ for i = start+1 upto start+fpht:
     endfig;
 endfor
 
-tmppath0 := _i_[MID]{down}
-            .. _i_[BOTTOM]
-            .. _i_[END];
-phi[END] := angle(direction 2 of tmppath0);
-
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
        draw_grid(u);
@@ -6962,7 +6958,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmppath0 := m[aux[BEGIN],_i_[BEGIN]]
                    -- m[_u_[LEFT],_i_[MID]]{down}
                    .. m[_u_[MID],_i_[BOTTOM]]
-                   .. m[_u_[RIGHT],_i_[END]]{dir m[90,phi[END]]}
+                   .. m[_u_[RIGHT],_i_[END]]{dir m[90,phi[HOOK_END_I]]}
                    .. aux[END];
        draw subpath (0,4-m) of tmppath0;
 
@@ -7304,7 +7300,7 @@ beginfig(start);
    draw _x_[BEGIN]
         -- _x_[RIGHT];
    draw _x_[LEFT]
-        -- 5/4[_x_[LEFT],_x_[END]];
+        -- _x_[END];
    setbounds currentpicture to boundingpath;
 endfig;
 
