@@ -6047,6 +6047,7 @@ for i = start+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
 %
 % r -> y
 %
@@ -6108,7 +6109,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 %
 % s -> ()
@@ -6210,7 +6210,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 %
 % s -> o
@@ -6437,8 +6436,6 @@ aux[L_ARC] := (1/2(xpart(_t_[END])+xpart(_t_[BOTTOM])),ypart(aux[U_ARC]));
 aux[D_ARC] := (2*xpart(_t_[END]),ypart(_t_[BOTTOM]));
 aux[R_ARC] := (xpart(_t_[END]),ypart(_t_[BOTTOM]));
 
-
-
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -6651,9 +6648,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
-
-
 
 %
 % t -> w
@@ -7206,9 +7200,9 @@ beginfig(start);
         -- _y_[BOTTOM]{down}
         .. _y_[D_ARC];
    draw _y_[BEGIN]
-        -- _y_[LEFT]
+        -- _y_[LEFT]{down}
         .. _y_[MID]
-        .. _y_[RIGHT]
+        .. _y_[RIGHT]{up}
         -- _y_[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -7287,6 +7281,69 @@ beginfig(start);
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
+
+%
+% z -> n [de]
+%
+
+outputtemplate := "zn-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[_z_[BEGIN],_z_[D_ARC]]
+            -- _z_[BEGIN]
+            -- _z_[U_ARC]
+            -- _z_[D_ARC]
+            -- _z_[END]
+            -- m[_z_[END],_z_[U_ARC]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% der Punkt in der Mitte der unteren Linie:
+aux[BOTTOM] := 1/2[_z_[D_ARC],_z_[END]];
+% bzw. der oberen Linie:
+aux[MID] := 1/2[_z_[BEGIN],_z_[U_ARC]];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % Der diagonale z-Strich wird zum n-Stamm;
+       draw m[_z_[D_ARC],_n_[BOTTOM]]
+            -- m[_z_[U_ARC],_n_[BEGIN]];
+
+       % der untere Querstrich verschwindet:
+       draw m[_z_[D_ARC],_n_[BOTTOM]]
+            -- m[aux[BOTTOM],_n_[BOTTOM]];
+       draw m[_z_[END],_n_[END]]
+            -- m[aux[BOTTOM],_n_[END]];
+
+       % die nach unten offene "Box" wird zum n-Boden:
+       draw m[_z_[D_ARC],_n_[BOTTOM]]
+            -- m[_z_[BEGIN],_n_[LEFT]]{dir m[0,90]}
+            .. m[aux[MID],_n_[MID]]
+            .. m[_z_[U_ARC],_n_[RIGHT]]{dir m[0,-90]}
+            -- m[_z_[END],_n_[END]];
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
