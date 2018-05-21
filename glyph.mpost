@@ -58,6 +58,7 @@ show(version);
 outputformat := "eps";
 
 numeric f;      % [f]rame index
+numeric run;    % number of [run]s through loop
 numeric start;  % [start] of transition;
 start = 0;
 numeric m;      % [m]orph factor
@@ -2486,7 +2487,8 @@ _z_[END]   = _x_[END];
 % Umlautpunkte:
 umlaut[LEFT] = (-2/3sw,(asc+xh)/2);
 umlaut[RIGHT] = umlaut[LEFT] xscaled -1;
-
+% Hilfspunkt
+umlaut[MID] = 1/2[umlaut[LEFT],umlaut[RIGHT]];
 %
 %%%%%%%%%%%% Buchstaben/Übergänge
 %
@@ -2821,12 +2823,25 @@ endfor
 
 %
 % a -> p
+% ä -> p
 %
 
-outputtemplate := "ap-%c.mps";
+for run = 1 upto 2:
+
+if run = 1:
+   outputtemplate := "ap-%c.mps";
+else:
+   outputtemplate := "äp-%c.mps";
+fi
 
 beginfig(start);
    draw tmppic;
+   pickup pc;
+
+   if run = 2:
+      draw umlaut[LEFT];
+      draw umlaut[RIGHT];
+   fi
 endfig;
 
 for i = start+1 upto start+fpht:
@@ -2836,6 +2851,14 @@ for i = start+1 upto start+fpht:
 
        f := (i-start)/fpht;
        m := retarded(f);
+
+       % Falls Umlautpunkte da sind, werden diese zu einer Linie:
+       if run = 2:
+          draw umlaut[LEFT]
+               -- m[umlaut[LEFT],umlaut[MID]];
+          draw umlaut[RIGHT]
+               -- m[umlaut[RIGHT],umlaut[MID]];
+       fi
 
        % Der Startpunkt vom "a" wandert nach links
        aux[BEGIN] := (xpart(m[_a_[BEGIN],_p_[END]]),ypart(_a_[BEGIN]));
@@ -2892,7 +2915,16 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmppath2    := aux[L_ARC] .. _a_[BOTTOM]{right};
        aux[BOTTOM] := point m of tmppath2;
 
-       draw _p_[END] -- m[aux[BEGIN],_p_[BEGIN]];
+       % im Fall a -> p wird der p-Stamm nach oben erweitert ...
+       if run = 1:
+          draw _p_[END] -- m[aux[BEGIN],_p_[BEGIN]];
+       else:
+       % ...ansonsten wandert der Umlautstrich an diese Stelle:
+          draw _p_[END] -- aux[BEGIN];
+          draw m[umlaut[LEFT],aux[BEGIN]]
+               -- m[umlaut[RIGHT],_p_[BEGIN]];
+       fi
+
        draw tmppath1;
        % Während der Ansatzpunkt wandert, verändert sich der Winkel:
        draw aux[R_ARC]{dir m[phi[R_ARC],phi[D_ARC]]}
@@ -2902,6 +2934,8 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+endfor % äußere Schleife: a -> p / ä -> p
 
 %
 % a -> s
@@ -3503,9 +3537,9 @@ endfig;
 % wir zeichnen beide Male denselben Übergang und fügen
 % beim zweiten Mal die Punkte hinzu:
 
-for o = 1 upto 2:
+for run = 1 upto 2:
 
-if o = 1:
+if run = 1:
    outputtemplate := "ea-%c.mps";
 else:
    outputtemplate := "eä-%c.mps";
@@ -3588,7 +3622,7 @@ for i = start+fpht+1 upto start+2fpht-1:
             --- m[aux[RIGHT],_a_[JOINT]]
             .. m[aux[BOTTOM],_a_[END]]{dir m[-180,phi[END]]};
 
-       if o = 2:
+       if run = 2:
           if m > 3/5: draw umlaut[LEFT]; fi
           if m > 4/5: draw umlaut[RIGHT]; fi
        fi
