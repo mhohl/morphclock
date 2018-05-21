@@ -1072,9 +1072,12 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        aux[JOINT]  := m[three[JOINT],zero[BOTTOM]];
-       aux[BOTTOM] := (point 2/3 of tmppath1) rotatedaround (zero[BOTTOM],phi[TEMP]);
-       aux[D_ARC]  := (point 1/3 of tmppath1) rotatedaround (zero[BOTTOM],phi[TEMP]);
-       aux[END]    := zero[LEFT]              rotatedaround (zero[BOTTOM],phi[TEMP]);
+       aux[BOTTOM] := (point 2/3 of tmppath1)
+                      rotatedaround (zero[BOTTOM],phi[TEMP]);
+       aux[D_ARC]  := (point 1/3 of tmppath1)
+                      rotatedaround (zero[BOTTOM],phi[TEMP]);
+       aux[END]    := zero[LEFT]
+                      rotatedaround (zero[BOTTOM],phi[TEMP]);
 
        draw m[three[BEGIN],zero[LEFT]]{dir m[phi[BEGIN],90]}
             .. m[three[TOP],zero[TOP]]
@@ -1516,7 +1519,8 @@ for i = start+1 upto start+fpht:
 
        % der Mittelstrich wächst aus der Mitte der Höhe der Sieben:
        tmp0 := 1/2[ypart(seven[LEFT]),ypart(seven[END])];
-       aux[INTER] := ((-infinity,tmp0)--(infinity,tmp0)) intersectionpoint tmppath1;
+       aux[INTER] := ((-infinity,tmp0)--(infinity,tmp0))
+                     intersectionpoint tmppath1;
        aux[LEFT]  := aux[INTER] - (0.15u,0);
        aux[RIGHT] := aux[INTER] + (0.15u,0);
 
@@ -2612,8 +2616,12 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        tmppath1 := m[_a_[BEGIN],aux[TOP]]
                    .. m[_a_[TOP],aux[R_ARC]]
-                   .. {dir m[phi[R_ARC],0]}m[_a_[R_ARC],aux[RIGHT]]{dir m[phi[R_ARC],-90]}
-                  --- {dir m[phi[R_ARC],-90]}m[_a_[JOINT],aux[LEFT]]{dir m[phi[R_ARC],-180]}
+                   .. {dir m[phi[R_ARC],0]}
+                      m[_a_[R_ARC],aux[RIGHT]]
+                      {dir m[phi[R_ARC],-90]}
+                  --- {dir m[phi[R_ARC],-90]}
+                      m[_a_[JOINT],aux[LEFT]]
+                      {dir m[phi[R_ARC],-180]}
                    .. m[_a_[BOTTOM],aux[L_ARC]]
                    .. m[_a_[L_ARC],aux[U_ARC]]
                    .. cycle;
@@ -2942,7 +2950,8 @@ for i = start+fpht+1 upto start+2fpht-1:
        % dieser Winkel soll 90 = up nicht überschreiten:
        phi[TEMP] := min(angle(direction 2 of tmppath3),90);
 
-       % Der komplette Pfad, bestehend aus dem Rest von a und einem vollständigen s:
+       % Der komplette Pfad, bestehend aus dem Rest von a
+       % und einem vollständigen s:
        tmppath4 := m[_a_[BEGIN],_s_[U_ARC]]
                    .. _a_[TOP]
                    .. _a_[R_ARC]{_a_[DIR]}
@@ -3107,7 +3116,7 @@ aux[LEFT]  := aux[BEGIN] rotatedaround (C,90);
 aux[RIGHT] := _b_[END]   rotatedaround (C,90);
 
 % Er rotiert um den Schnittpunkt mit dem r-Strich:
-aux[INTER]  := (aux[LEFT] -- aux[RIGHT]) 
+aux[INTER]  := (aux[LEFT] -- aux[RIGHT])
                intersectionpoint (_r_[BEGIN] -- _r_[BOTTOM]);
 aux[BEGIN]  := _r_[BEGIN]  rotatedaround (aux[INTER],-90);
 aux[BOTTOM] := _r_[BOTTOM] rotatedaround (aux[INTER],-90);
@@ -4034,8 +4043,8 @@ for i = start+1 upto start+fpht:
 
        draw _g_[BEGIN] -- _g_[TOP];
 
-       % Der Schnittpunkt aux[JOINT] wandert an der Rundung entlang Richtung _g_[LEFT]
-       % und ist am Ende deckungsgleich:
+       % Der Schnittpunkt aux[JOINT] wandert an der Rundung entlang
+       % Richtung _g_[LEFT] und ist am Ende deckungsgleich:
        tmppath1 := (_g_[CENTER] -- (0,infinity))
                    rotatedaround (_g_[CENTER],m[135,90]);
 
@@ -4418,7 +4427,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[_j_[BEGIN],_a_[BEGIN]]
             .. m[aux[TOP],_a_[TOP]]
             .. m[aux[MID],_a_[R_ARC]]{dir m[-90,phi[R_ARC]]}
-            .. {dir m[-90,phi[R_ARC]]}m[_j_[MID],_a_[JOINT]]{dir m[270,phi[JOINT]]}
+            .. {dir m[-90,phi[R_ARC]]}
+               m[_j_[MID],_a_[JOINT]]
+               {dir m[270,phi[JOINT]]}
             .. m[_j_[BOTTOM],_a_[BOTTOM]]
             .. m[_j_[END],_a_[L_ARC]]
             .. m[aux[MID],_a_[R_ARC]]{dir m[30,180+phi[R_ARC]]};
@@ -4811,7 +4822,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmppath0 := m[_m_[RIGHT],_a_[R_ARC]]{dir m[-270,phi[R_ARC]]}
                    .. m[_m_[R_ARC],aux[MID]]
                    .. m[_m_[JOINT],_a_[L_ARC]]{dir m[-90,phi[L_ARC]]}
-                   .. {dir m[-90,phi[BOTTOM]]}m[_m_[MID],_a_[BOTTOM]]{dir m[0,phi[BOTTOM]]}
+                   .. {dir m[-90,phi[BOTTOM]]}
+                      m[_m_[MID],_a_[BOTTOM]]
+                      {dir m[0,phi[BOTTOM]]}
                    .. m[aux[JOINT],_a_[JOINT]];
 
        tmppath1 := _m_[BOTTOM]
@@ -4897,7 +4910,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmppath1 := _m_[MID]{up}
                    .. m[aux[R_ARC],aux[TOP]]
                    .. m[_m_[END],aux[END]]{down};
-       draw subpath (0,2-0.5m) of tmppath1 shifted m[_m_[MID],_j_[MID]] rotatedaround (m[_m_[MID],_j_[MID]],-180m);
+       draw subpath (0,2-0.5m) of tmppath1
+            shifted m[_m_[MID],_j_[MID]]
+            rotatedaround (m[_m_[MID],_j_[MID]],-180m);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
