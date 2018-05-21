@@ -4289,6 +4289,65 @@ for i = start+fpht+1 upto start+2fpht-1:
     endfig;
 endfor
 
+%
+% i -> o [de]
+%
+
+outputtemplate := "io-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% zwei Hilfspunkte in Höhe des i-Punktes:
+aux[RIGHT] := (xpart(_o_[RIGHT]),ypart(_i_[TOP]));
+aux[TOP]   := (xpart(_o_[TOP]),ypart(_i_[TOP]));
+
+% phi[LEFT] ist beim Übergang i -> n definiert als
+% Winkel am Ende vom i-Bogen:
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _i_[TOP]
+            -- m[_i_[TOP],aux[RIGHT]];
+
+       % der i-Bogen wird zum unteren Teil des o:
+       draw m[_i_[BEGIN],_o_[LEFT]]
+            -- m[_i_[MID],_o_[LEFT]]{down}
+            .. m[_i_[BOTTOM],_o_[BOTTOM]]
+            .. m[_i_[END],_o_[RIGHT]]{dir m[phi[LEFT],90]};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % Der Strich wird zur oberen Hälfte des o:
+
+       draw m[_i_[TOP],_o_[LEFT]]{dir m[0,90]}
+            .. m[aux[TOP],_o_[TOP]]
+            .. m[aux[RIGHT],_o_[RIGHT]]{dir m[0,-90]};
+
+       draw _o_[LEFT]{down}
+            .. _o_[BOTTOM]
+            .. _o_[RIGHT]{up};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % i -> t
