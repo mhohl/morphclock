@@ -2485,7 +2485,7 @@ _z_[D_ARC] = _x_[BEGIN];
 _z_[END]   = _x_[END];
 
 % Umlautpunkte:
-umlaut[LEFT] = (-2/3sw,(asc+xh)/2);
+umlaut[LEFT] = (-1/2sw,(asc+xh)/2);
 umlaut[RIGHT] = umlaut[LEFT] xscaled -1;
 % Hilfspunkt
 umlaut[MID] = 1/2[umlaut[LEFT],umlaut[RIGHT]];
@@ -3082,7 +3082,6 @@ beginfig(start);
    draw umlaut[RIGHT];
    tmppic := currentpicture;
 endfig;
-
 
 %
 % b -> ()
@@ -5760,6 +5759,21 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% ö -> () [de]
+%
+
+outputtemplate := "ö.mps";
+
+beginfig(start);
+   draw tmppic;
+   pickup pc;
+
+   draw umlaut[LEFT];
+   draw umlaut[RIGHT];
+   tmppic := currentpicture;
+endfig;
+
+%
 % p -> ()
 %
 
@@ -7046,6 +7060,21 @@ for i = start+1 upto start+2fpht-1:
     setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
+%
+% ü -> () [de]
+%
+
+outputtemplate := "ü.mps";
+
+beginfig(start);
+   draw tmppic;
+   pickup pc;
+
+   draw umlaut[LEFT];
+   draw umlaut[RIGHT];
+   tmppic := currentpicture;
+endfig;
 
 %
 % v -> ()
