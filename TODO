@@ -4,11 +4,9 @@ TODO morphclock
   ä -> p
   d -> f
   d -> m
-  i -> o
   m -> d
   o -> i
   o -> r
-  z -> n
 
 - Schaltsekunde implementieren
 - ggf. mehr Sprachen unterstützen?
