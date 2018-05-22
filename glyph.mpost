@@ -52,7 +52,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.58";
+version := "Version: 1.59";
 show(version);
 
 outputformat := "eps";
@@ -5538,6 +5538,69 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. _e_[LEFT]
             .. _e_[BOTTOM]
             .. m[_e_[RIGHT],_e_[END]]{dir m[90,phi[END]]};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% o -> i [de]
+%
+
+outputtemplate := "oi-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Das rechte obere Viertelsegment des o:
+tmppath0 := _o_[TOP]{right}
+            .. _o_[RIGHT]{down};
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _o_[TOP]{left}
+            .. _o_[LEFT]
+            .. _o_[BOTTOM]
+            .. _o_[RIGHT]{up};
+
+       tmppath0 := _o_[TOP]{right}
+                   .. _o_[RIGHT]{down};
+
+       draw tmppath0 shifted (0,m*(ypart(_i_[TOP])-ypart(_o_[TOP])));
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Das verschobene Viertelsegment:
+aux[TOP]   := _o_[TOP]   shifted (0,ypart(_i_[TOP])-ypart(_o_[TOP]));
+aux[RIGHT] := _o_[RIGHT] shifted (0,ypart(_i_[TOP])-ypart(_o_[TOP]));
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_o_[TOP],_i_[BEGIN]]{dir m[180,270]}
+            .. m[_o_[LEFT],_i_[MID]]{down}
+            .. m[_o_[BOTTOM],_i_[BOTTOM]]
+            .. m[_o_[RIGHT],_i_[END]]{dir m[90,phi[HOOK_END_I]]};
+
+       tmppath0 := _i_[TOP]
+                   .. aux[TOP]{right}
+                   .. aux[RIGHT]{down};
+
+       draw subpath (1-m,2-2m) of tmppath0;
 
        setbounds currentpicture to boundingpath;
     endfig;

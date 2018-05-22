@@ -4,7 +4,6 @@ TODO morphclock
   d -> f
   d -> m
   m -> d
-  o -> i
   o -> r
 
 - Schaltsekunde implementieren
