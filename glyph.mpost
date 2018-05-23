@@ -5557,6 +5557,9 @@ endfig;
 tmppath0 := _o_[TOP]{right}
             .. _o_[RIGHT]{down};
 
+% die Verschiebung:
+tmp0 := (ypart(_i_[TOP])-ypart(_o_[TOP]));
+
 for i = start+1 upto start+fpht:
     beginfig(i);
        draw_grid(u);
@@ -5573,15 +5576,15 @@ for i = start+1 upto start+fpht:
        tmppath0 := _o_[TOP]{right}
                    .. _o_[RIGHT]{down};
 
-       draw tmppath0 shifted (0,m*(ypart(_i_[TOP])-ypart(_o_[TOP])));
+       draw tmppath0 shifted (1/2*m*tmp0,m*tmp0);
 
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
 % Das verschobene Viertelsegment:
-aux[TOP]   := _o_[TOP]   shifted (0,ypart(_i_[TOP])-ypart(_o_[TOP]));
-aux[RIGHT] := _o_[RIGHT] shifted (0,ypart(_i_[TOP])-ypart(_o_[TOP]));
+aux[TOP]   := _o_[TOP]   shifted (1/2*tmp0,tmp0);
+aux[RIGHT] := _o_[RIGHT] shifted (1/2*tmp0,tmp0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
