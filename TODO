@@ -4,9 +4,7 @@ TODO morphclock
   d -> f
   d -> m
   m -> d
-  o -> r
 
 - Schaltsekunde implementieren
 - ggf. mehr Sprachen unterstützen?
-- 8 etwas schmäler? Braucht es sw, mw, iw, lw?
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)

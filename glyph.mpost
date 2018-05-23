@@ -98,13 +98,11 @@ numeric sw;     % [s]mall [w]idth
 sw := 0.25u;
 numeric mw;     % [m]edium [w]idth
 mw := 11/10*sw;
-numeric iw;     % [i]ntermediate [w]idth
-iw := 13/10*sw;
 numeric lw;     % [l]arge [w]idth
-lw := 3/2*sw;
+lw := 13/10*sw;
 
 numeric corr;   % [corr]ection for f/i/j/l/r/t
-corr := iw - sw;
+corr := lw - sw;
 
 pair C;         % [C]enter of rotation
 C := (0,xh/2);
@@ -300,15 +298,15 @@ three[BEGIN]  = (-sw,xh-dy);
 three[TOP]    = two[TOP];
 three[U_ARC]  = (sw,2/3*xh);
 three[JOINT]  = (-0.15u,dy);
-three[D_ARC]  = (iw,1/2*dsc);
+three[D_ARC]  = (lw,1/2*dsc);
 three[BOTTOM] = (0,dsc);
-three[END]    = (-iw,2/3*dsc);
+three[END]    = (-lw,2/3*dsc);
 
 % 4
 four[LEFT]   = (-sw,0);
 four[TOP]    = (sw,xh);
 four[BOTTOM] = (sw,dsc);
-four[RIGHT]  = (lw,dy);
+four[RIGHT]  = (3/2*sw,dy);
 
 four[INTER]  = (four[LEFT] -- four [RIGHT])
                intersectionpoint
@@ -324,7 +322,7 @@ five[END]   = (-mw,dsc);
 
 % 6
 six[BEGIN]  = (sw,asc);
-six[LEFT]   = (-iw,(xh-dy)/2);
+six[LEFT]   = (-lw,(xh-dy)/2);
 six[RIGHT]  = six[LEFT] xscaled -1;
 six[TOP]    = (0,xh-dy);
 six[BOTTOM] = zero[BOTTOM];
@@ -349,7 +347,7 @@ eight[BOTTOM] = zero[BOTTOM];
 
 % 9
 nine[TOP]    = zero[TOP];
-nine[LEFT]   = (-iw,(xh+dy)/2);
+nine[LEFT]   = (-lw,(xh+dy)/2);
 nine[RIGHT]  = nine[LEFT] xscaled -1;
 nine[BOTTOM] = (0,dy);
 nine[END]    = (-sw,dsc);
@@ -2252,7 +2250,7 @@ _a_[BEGIN]  = (-sw,12/17*xh);
 _a_[TOP]    = zero[TOP];
 _a_[R_ARC]  = (mw,12/17*xh);
 _a_[JOINT]  = (mw,0.15u);
-_a_[END]    = (iw,0);
+_a_[END]    = (lw,0);
 _a_[L_ARC]  = _a_[JOINT] xscaled -1;
 _a_[BOTTOM] = zero[BOTTOM];
 
@@ -2266,7 +2264,7 @@ _b_[BOTTOM] = _p_[BOTTOM];
 _b_[RIGHT]  = _p_[RIGHT];
 
 % c
-_c_[LEFT]   = (-iw,xh/2);
+_c_[LEFT]   = (-lw,xh/2);
 _c_[RIGHT]  = _c_[LEFT] xscaled -1;
 _c_[TOP]    = zero[TOP];
 _c_[BOTTOM] = zero[BOTTOM];
@@ -2295,28 +2293,28 @@ _e_[BOTTOM] = _c_[BOTTOM];
 _e_[END]    = _c_[END];
 
 % f
-_f_[BEGIN]  = (-iw+corr,0);
-_f_[MID]    = (-iw+corr,asc-iw);
+_f_[BEGIN]  = (-lw+corr,0);
+_f_[MID]    = (-lw+corr,asc-lw);
 _f_[TOP]    = (corr, asc);
 _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
-_f_[LEFT]   = (-iw-0.10u+corr,xh-dy);
-_f_[RIGHT]  = (-iw+0.15u+corr,xh-dy);
+_f_[LEFT]   = (-lw-0.10u+corr,xh-dy);
+_f_[RIGHT]  = (-lw+0.15u+corr,xh-dy);
 
 % g
 _g_[TOP]    = (0,xh);
-_g_[LEFT]   = (-iw,1/2*(xh+dy));
+_g_[LEFT]   = (-lw,1/2*(xh+dy));
 _g_[RIGHT]  = _g_[LEFT] xscaled -1;
 _g_[BOTTOM] = (0,dy);
 
 _g_[BEGIN]  = (sw,xh); % "Schwänzchen" oben rechts
 
 _g_[U_ARC]  = (-dy,-2/3*dy);
-_g_[L_ARC]  = (-lw,-sw);
-_g_[R_ARC]  = (lw,-sw);
+_g_[L_ARC]  = (-3/2sw,-sw);
+_g_[R_ARC]  = _g_[L_ARC] xscaled -1;
 _g_[D_ARC]  = (0,dsc);
-_g_[END]    = (dy,-2/3*dy);
+_g_[END]    = _g_[U_ARC] xscaled -1;
 
 % Wir berechnen den Schnittpunkt der geschlossenen oberen Schlaufe
 % mit einer Halbgeraden im Zentrum dieser Schlaufe unter einem
@@ -2342,9 +2340,9 @@ _h_[RIGHT] = _h_[LEFT] xscaled -1;
 _h_[END]   = _h_[BOTTOM] xscaled -1;
 
 % i
-_i_[TOP]    = (-iw+corr,2/3[xh,asc]);
-_i_[BEGIN]  = (-iw+corr,xh);
-_i_[MID]    = (-iw+corr,iw);
+_i_[TOP]    = (-lw+corr,2/3[xh,asc]);
+_i_[BEGIN]  = (-lw+corr,xh);
+_i_[MID]    = (-lw+corr,lw);
 _i_[BOTTOM] = (corr,0);
 _i_[END]    = _i_[BOTTOM] rotatedaround
               ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
@@ -2358,7 +2356,7 @@ phi[HOOK_END_I] := angle(direction 3 of tmppath0);
 % j
 _j_[TOP]    = _i_[TOP] xscaled -1;
 _j_[BEGIN]  = _i_[BEGIN] xscaled -1;
-_j_[MID]    = (iw-corr,dsc+iw);
+_j_[MID]    = (lw-corr,dsc+lw);
 _j_[BOTTOM] = (-corr,dsc);
 _j_[END]    = _j_[BOTTOM] rotatedaround
               ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
@@ -2373,16 +2371,16 @@ _k_[BOTTOM] = (sw,0);
 _k_[BOTTOM] := 4/3[_k_[MID],_k_[BOTTOM]];
 
 % l
-_l_[BEGIN]  = (-iw+corr,asc);
+_l_[BEGIN]  = (-lw+corr,asc);
 _l_[MID]    = _i_[MID];
 _l_[BOTTOM] = _i_[BOTTOM];
 _l_[END]    = _i_[END];
 
 % m
-_m_[BEGIN] = (-iw,xh);
-_m_[LEFT]  = (-iw,3/4*xh);
-_m_[BOTTOM] = (-iw,0);
-_m_[L_ARC] = (-iw/2,xh);
+_m_[BEGIN] = (-lw,xh);
+_m_[LEFT]  = (-lw,3/4*xh);
+_m_[BOTTOM] = (-lw,0);
+_m_[L_ARC] = (-lw/2,xh);
 _m_[JOINT] = (0,13/17*xh);
 _m_[MID]   = (0,0);
 _m_[R_ARC] = _m_[L_ARC] xscaled -1;
@@ -2404,13 +2402,13 @@ _o_[TOP]    = _c_[TOP];
 _o_[BOTTOM] = _c_[BOTTOM];
 
 % p
-_p_[BEGIN]  = (-iw,xh);
-_p_[END]    = (-iw,dsc);
-_p_[U_ARC]  = (-iw,12/17*xh); % [u]pper end of [arc]
-_p_[D_ARC]  = (-iw,0.15u);
+_p_[BEGIN]  = (-lw,xh);
+_p_[END]    = (-lw,dsc);
+_p_[U_ARC]  = (-lw,12/17*xh); % [u]pper end of [arc]
+_p_[D_ARC]  = (-lw,0.15u);
 _p_[TOP]    = zero[TOP];
 _p_[BOTTOM] = zero[BOTTOM];
-_p_[RIGHT]  = (iw,xh/2);
+_p_[RIGHT]  = (lw,xh/2);
 
 % q
 _q_[BEGIN]  = _p_[BEGIN] xscaled -1;
@@ -2422,9 +2420,9 @@ _q_[BOTTOM] = zero[BOTTOM];
 _q_[LEFT]   = _p_[RIGHT] xscaled -1;
 
 % r
-_r_[BEGIN]  = (-iw+corr,xh);
-_r_[BOTTOM] = (-iw+corr,0);
-_r_[MID]    = (-iw+corr,xh-iw);
+_r_[BEGIN]  = (-lw+corr,xh);
+_r_[BOTTOM] = (-lw+corr,0);
+_r_[MID]    = (-lw+corr,xh-lw);
 _r_[TOP]    = (corr,xh);
 _r_[END]    = _r_[TOP] rotatedaround
               ((xpart(_r_[TOP]),ypart(_r_[MID])),-45);
@@ -2434,7 +2432,7 @@ _s_[BEGIN]  = (sw,3/4*xh);
 _s_[TOP]    = _o_[TOP];
 _s_[U_ARC]  = _s_[BEGIN] xscaled -1;
 _s_[MID]    = C;
-_s_[D_ARC]  = (1/2(mw+iw),xh/4);
+_s_[D_ARC]  = (1/2(mw+lw),xh/4);
 _s_[BOTTOM] = _o_[BOTTOM];
 _s_[END]    = _s_[D_ARC] xscaled -1;
 
@@ -7611,7 +7609,7 @@ outputtemplate := "clock-%c.mps";
 % mittels modulo-Berechnungen können dann die Punkte passend angesprochen
 % werden:
 aux[0] := _o_[TOP];
-aux[1] := (lw,xh/2);
+aux[1] := (3/2*sw,xh/2);
 aux[2] := _o_[BOTTOM];
 aux[3] := aux[1] xscaled -1;
 % Dasselbe gilt für die Winkel:
