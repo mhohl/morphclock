@@ -52,7 +52,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.59";
+version := "Version: 1.6";
 show(version);
 
 outputformat := "eps";
@@ -5573,9 +5573,6 @@ for i = start+1 upto start+fpht:
             .. _o_[BOTTOM]
             .. _o_[RIGHT]{up};
 
-       tmppath0 := _o_[TOP]{right}
-                   .. _o_[RIGHT]{down};
-
        draw tmppath0 shifted (1/2*m*tmp0,m*tmp0);
 
        setbounds currentpicture to boundingpath;
@@ -5748,6 +5745,73 @@ for i = start+fpht+1 upto start+2fpht-1:
     endfig;
 endfor
 
+%
+% o -> r [de]
+%
+
+outputtemplate := "or-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Das rechte untere Viertelsegment des o:
+tmppath0 := _o_[RIGHT]{down}
+            .. _o_[BOTTOM]{left};
+
+% die Verschiebung analog zu o -> i:
+tmp0 := (ypart(_i_[TOP])-ypart(_o_[TOP]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw _o_[RIGHT]{up}
+            .. _o_[TOP]
+            .. _o_[LEFT]
+            .. _o_[BOTTOM]{right};
+
+       draw tmppath0 shifted (1/2*m*tmp0,-m*tmp0);
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Das verschobene Viertelsegment:
+aux[RIGHT]  := _o_[RIGHT]  shifted (1/2*tmp0,-tmp0);
+aux[BOTTOM] := _o_[BOTTOM] shifted (1/2*tmp0,-tmp0);
+% und ein Hilfspunkt, um den Pfad tmppath1 in kleinere
+% Abschnitte zu gliedern:
+aux[TOP]    := _o_[TOP] shifted (0,tmp0);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[_o_[RIGHT],_r_[END]]{dir m[90,90+phi[HOOK_END_I]]}
+            .. m[_o_[TOP],_r_[TOP]]
+            .. m[_o_[LEFT],_r_[MID]]{down}
+            .. m[_o_[BOTTOM],_r_[BOTTOM]]{dir m[0,-90]};
+
+       tmppath1 := _r_[MID]
+                   --_r_[BEGIN]{up}
+                   .. aux[TOP]{right}
+                   .. aux[RIGHT]{down}
+                   .. aux[BOTTOM]{left};
+
+       draw subpath(3-3m,4-3m) of tmppath1;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
 
 %
 % o -> u
