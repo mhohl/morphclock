@@ -577,17 +577,18 @@ for i = start+fpht+1 upto start+2fpht-1:
        f := (i-start-fpht)/fpht;
        m := advanced(f);
 
-       % Der horizontale Abstand zwischen dem linken und rechten Rand:
-       tmp0 := xpart(m[one[MID],zero[RIGHT]])-xpart(m[one[MID],zero[LEFT]]);
-
        draw m[one[MID],zero[TOP]]
             .. m[one[MID],zero[RIGHT]]
             .. m[one[MID],zero[BOTTOM]]
             .. m[one[MID],zero[LEFT]]
             .. cycle;
+
        % Bei engen Schlaufen gibt es Artefakte, daher setzen wir
        % einen Punkt in die Mitte, der diese überdeckt:
-       if tmp0 < 0.1u : draw one[MID]; fi
+       if xpart(m[one[MID],zero[RIGHT]]) -
+          xpart(m[one[MID],zero[LEFT]]) < pendia:
+          draw one[MID];
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -1446,7 +1447,6 @@ for i = start+1 upto start+fpht:
         .. m[six[BOTTOM],C]
         .. m[six[LEFT],C]{up}
         .. m[six[BEGIN],C];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -2092,7 +2092,6 @@ beginfig(start);
    for i = 0 upto 4:
       draw tmppath0 rotatedaround (C,72*i);
    endfor
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -2109,7 +2108,6 @@ beginfig(start);
 
    draw comma[TOP]{down}
         .. comma[BOTTOM];
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -2124,8 +2122,8 @@ beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw dash[LEFT] -- dash[RIGHT];
-
+   draw dash[LEFT]
+        -- dash[RIGHT];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -2141,7 +2139,6 @@ beginfig(start);
    pickup pc;
 
    draw dot[CENTER];
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -2156,8 +2153,8 @@ beginfig(start);
    draw_grid(u);
    pickup pc;
 
-   draw slash[BEGIN] -- slash[END];
-
+   draw slash[BEGIN]
+        -- slash[END];
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -2449,12 +2446,12 @@ _t_[INTER]  = (_t_[LEFT] -- _t_[RIGHT]) intersectionpoint
               (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt Querstrich/Stamm
 
 % u
-_u_[BOTTOM] = _n_[BEGIN]  rotatedaround(C,180);
-_u_[RIGHT]  = _n_[LEFT]   rotatedaround(C,180);
-_u_[BEGIN]  = _n_[END]    rotatedaround(C,180);
-_u_[MID]    = _n_[MID]    rotatedaround(C,180);
-_u_[LEFT]   = _n_[RIGHT]  rotatedaround(C,180);
-_u_[END]    = _n_[BOTTOM] rotatedaround(C,180);
+_u_[BOTTOM] = _n_[BEGIN]  rotatedaround (C,180);
+_u_[RIGHT]  = _n_[LEFT]   rotatedaround (C,180);
+_u_[BEGIN]  = _n_[END]    rotatedaround (C,180);
+_u_[MID]    = _n_[MID]    rotatedaround (C,180);
+_u_[LEFT]   = _n_[RIGHT]  rotatedaround (C,180);
+_u_[END]    = _n_[BOTTOM] rotatedaround (C,180);
 
 % v
 _v_[LEFT] = (-mw,xh);
@@ -2970,7 +2967,6 @@ for i = start+1 upto start+fpht:
 
        draw subpath (0,4-2m) of tmppath[A_SWEEP];
        draw tmppath[A_LOOP];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3012,7 +3008,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. _s_[BEGIN]{down};
 
        draw subpath (3m,5+4m) of tmppath4;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3045,7 +3040,6 @@ for i = start+1 upto start+fpht:
             .. m[_a_[END],_u_[BOTTOM]];
        % wir zeichnen A_LOOP bis aux[MID]:
        draw subpath (m/2,4) of tmppath[A_LOOP];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3076,7 +3070,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[_a_[L_ARC],_u_[LEFT]]{dir m[phi[L_ARC],-90]}
             .. m[_a_[BOTTOM],_u_[MID]]
             .. m[_a_[JOINT],_u_[RIGHT]]{dir m[phi[JOINT],90]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3152,7 +3145,6 @@ for i = start+1 upto start+fpht:
 
        draw tmppath0 rotatedaround (C,90m);
        draw tmppath1 rotatedaround (C,90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3260,7 +3252,6 @@ for i = start+1 upto start+fpht:
 
        draw _c_[BOTTOM]
             -- m[_c_[BOTTOM],aux[TEMP]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3290,10 +3281,9 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. m[_c_[END],aux[END]];
        tmppath1 := m[_c_[BOTTOM],aux[BOTTOM]]
                    -- m[aux[TEMP],aux[JOINT]];
+
        draw tmppath0 rotatedaround (C,270m);
        draw tmppath1 rotatedaround (C,270m);
-
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3324,7 +3314,6 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        draw tmppath0 rotatedaround (C,-90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3413,7 +3402,6 @@ for i = start+1 upto start+fpht:
             .. m[_d_[LEFT],aux[LEFT]]
             .. m[_d_[BOTTOM],aux[BOTTOM]]
             .. m[_d_[D_ARC],aux[RIGHT]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3448,8 +3436,9 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. cycle;
 
        % Um Artefakte in kleinen Schlaufen zu vermeiden:
-
-       if m > 0.85: draw m[aux[MID],_j_[TOP]]; fi
+       if m > 0.85:
+          draw m[aux[MID],_j_[TOP]];
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3494,7 +3483,6 @@ for i = start+1 upto start+fpht:
             .. m[_d_[LEFT],aux[MID]]
             .. m[_d_[BOTTOM],aux[RIGHT]]{dir m[phi[BOTTOM],0]}
             .. m[_d_[D_ARC],aux[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3517,10 +3505,10 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. aux[RIGHT]{right}
             .. aux[END];
        draw tmppath0 rotatedaround (C,90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
+
 %
 % e -> ()
 %
@@ -3590,7 +3578,6 @@ for i = start+1 upto start+fpht:
           draw point m of tmppath1;
           draw point m of tmppath2;
        fi
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3667,7 +3654,6 @@ for i = start+1 upto start+fpht:
         .. _e_[LEFT]
         .. _e_[BOTTOM]
         .. _e_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3688,7 +3674,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. _e_[END];
 
        draw subpath (m,5) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3719,7 +3704,6 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        draw (subpath (0,5-2m) of tmppath0) rotatedaround (C,90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3751,7 +3735,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[LEFT],_d_[LEFT]]
             .. m[aux[BOTTOM],_d_[BOTTOM]]
             .. m[aux[END],_d_[D_ARC]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3784,7 +3767,6 @@ for i = start+1 upto start+fpht:
 
        draw _e_[LEFT] -- _e_[RIGHT] rotatedaround (_e_[LEFT],90m);
        draw subpath (0,4-2m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3807,7 +3789,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[_e_[TOP],_h_[MID]]
             .. m[_e_[RIGHT],_h_[RIGHT]]{down}
             -- m[_e_[RIGHT],_h_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3840,7 +3821,6 @@ for i = start+1 upto start+fpht:
             .. _e_[LEFT]{down}
             .. _e_[BOTTOM]
             .. _e_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3867,7 +3847,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. m[_e_[BOTTOM],_k_[END]]{dir m[0,-90]}
                    .. _e_[END];
        draw subpath (0,3-m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -3950,6 +3929,7 @@ for i = start+fpht+1 upto start+2fpht-1:
             -- m[aux[MID],_m_[LEFT]];
        draw m[aux[MID],_m_[JOINT]]
             -- m[aux[RIGHT],_m_[MID]];
+
        % der erweiterte f-Bogen bekommt die
        % "Mittendelle" und einen verlängerten
        % Abstrich rechts
@@ -3960,7 +3940,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. _m_[R_ARC]
             .. _m_[RIGHT]{down}
             .. m[_m_[RIGHT],_m_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4004,7 +3983,6 @@ for i = start+1 upto start+fpht:
             -- m[_f_[MID],aux[MID]]{up}
             .. m[_f_[TOP],aux[TOP]]
             .. m[_f_[END],aux[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4057,7 +4035,6 @@ beginfig(start);
         .. _g_[D_ARC]
         .. _g_[R_ARC]
         .. _g_[END];
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -4105,7 +4082,6 @@ for i = start+1 upto start+fpht:
             .. _g_[D_ARC]
             .. _g_[R_ARC]
             .. _g_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4146,7 +4122,6 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw tmppath0;
        draw subpath (0,6-2m) of tmppath2;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4197,7 +4172,6 @@ for i = start+1 upto start+fpht:
 
        draw _h_[BEGIN] -- _h_[LEFT];
        draw subpath (m,4-m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4220,7 +4194,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[_h_[LEFT],_r_[MID]]{up}
             .. m[_h_[MID],_r_[TOP]]
             .. m[_h_[RIGHT],_r_[END]]{dir m[-90,phi[END]]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4328,7 +4301,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[MID],_n_[MID]]
             .. m[aux[RIGHT],_n_[RIGHT]]{down}
             .. m[aux[END],_n_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4363,7 +4335,6 @@ for i = start+1 upto start+fpht:
             -- m[_i_[MID],_o_[LEFT]]{down}
             .. m[_i_[BOTTOM],_o_[BOTTOM]]
             .. m[_i_[END],_o_[RIGHT]]{dir m[phi[HOOK_END_I],90]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4385,7 +4356,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw _o_[LEFT]{down}
             .. _o_[BOTTOM]
             .. _o_[RIGHT]{up};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4436,7 +4406,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             -- _i_[MID]{down}
             .. _i_[BOTTOM]
             .. _i_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4577,9 +4546,7 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        draw _j_[TOP] shifted (m*corr/2,0);
-
        draw (subpath (0,5m+3) of tmppath0) shifted (m*corr/2,0);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4596,7 +4563,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             -- m[(_j_[TOP] shifted (corr/2,0)),_f_[RIGHT]];
 
        draw (subpath (5m,8) of tmppath0) shifted ((1+m)*corr/2,0);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4692,7 +4658,6 @@ for i = start+1 upto start+fpht:
                m[_k_[MID],_o_[LEFT]]
                {dir m[phi[BOTTOM],-90]}
             .. m[_k_[BOTTOM],_o_[BOTTOM]]{dir m[phi[BOTTOM],0]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4712,7 +4677,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[aux[BEGIN],_o_[TOP]]{dir m[-90,0]}
             .. m[aux[MID],_o_[RIGHT]]{down}
             .. m[aux[END],_o_[BOTTOM]]{dir m[-90,-180]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4822,7 +4786,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[_l_[BOTTOM],_g_[D_ARC]]
             .. m[aux[R_ARC],_g_[R_ARC]]
             .. m[_l_[END],_g_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4930,9 +4893,9 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. m[_m_[RIGHT],_a_[R_ARC]]{dir m[-90,phi[R_ARC]]}
                   --- m[aux[JOINT],_a_[JOINT]]
                    .. m[_m_[END],_a_[END]];
+
        draw subpath (0,3+m) of tmppath0;
        draw subpath (m,5) of tmppath1;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -4962,18 +4925,19 @@ for i = start+1 upto start+fpht:
        % Der kleine Strich wird zum Punkt:
        draw _m_[BEGIN]
             -- m[_m_[LEFT],_m_[BEGIN]];
-       % Der erste m-Bogen bleibt unverändert
+
+       % Der erste m-Bogen bleibt unverändert ...
        draw _m_[BOTTOM]
             -- _m_[LEFT]{up}
             .. _m_[L_ARC]
             .. _m_[JOINT]{down}
             -- _m_[MID];
-       % während der zweite schrumpft:
+
+       % ...während der zweite schrumpft:
        draw m[_m_[JOINT],_m_[MID]]{up}
             .. m[_m_[R_ARC],aux[R_ARC]]
             .. m[_m_[RIGHT],_m_[END]]{down}
             -- _m_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5124,7 +5088,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[END],_t_[BEGIN]];
        draw m[aux[JOINT],_t_[LEFT]]
             -- m[aux[MID],_t_[RIGHT]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5197,7 +5160,6 @@ for i = start+1 upto start+fpht:
             .. m[_n_[MID],aux[MID]]
             .. m[_n_[RIGHT],aux[RIGHT]]{dir m[-90,phi[RIGHT]]}
             .. m[_n_[END],aux[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5254,7 +5216,6 @@ for i = start+1 upto start+fpht:
 
        draw tmppath0 rotatedaround (C,90m);
        draw tmppath1 rotatedaround (C,90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5361,7 +5322,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[LEFT],_e_[LEFT]]
             .. m[aux[BOTTOM],_e_[BOTTOM]]{right}
             .. m[aux[END],_e_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5427,7 +5387,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. aux[RIGHT]{down}
                    -- aux[END];
        draw tmppath0 rotatedaround (C,-180m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5510,7 +5469,6 @@ for i = start+1 upto start+fpht:
 
        draw _o_[RIGHT]
             -- m[_o_[RIGHT],_o_[LEFT]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5536,7 +5494,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. _e_[LEFT]
             .. _e_[BOTTOM]
             .. m[_e_[RIGHT],_e_[END]]{dir m[90,phi[END]]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5572,7 +5529,6 @@ for i = start+1 upto start+fpht:
             .. _o_[RIGHT]{up};
 
        draw tmppath0 shifted (1/2*m*tmp0,m*tmp0);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5599,7 +5555,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. aux[RIGHT]{down};
 
        draw subpath (1-m,2-2m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5646,7 +5601,6 @@ for i = start+1 upto start+fpht:
             .. m[_o_[LEFT],aux[LEFT]]{up}
             .. m[_o_[LEFT],_n_[LEFT]]{up}
             .. cycle;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5774,7 +5728,6 @@ for i = start+1 upto start+fpht:
             .. _o_[BOTTOM]{right};
 
        draw tmppath0 shifted (1/2*m*tmp0,-m*tmp0);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5806,7 +5759,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. aux[BOTTOM]{left};
 
        draw subpath(3-3m,4-3m) of tmppath1;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5834,7 +5786,6 @@ for i = start+1 upto start+fpht:
             .. _o_[BOTTOM]
             .. _o_[LEFT]{dir m[90,0]}
             .. cycle;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5883,7 +5834,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    -- _u_[BOTTOM];
 
        draw subpath (0,(max(0,2m-1))) of tmppath1;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6051,7 +6001,6 @@ for i = start+1 upto start+fpht:
             .. _p_[RIGHT]
             .. _p_[BOTTOM]
             .. _p_[D_ARC];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6077,7 +6026,6 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw subpath (0,2+m)  of tmppath0;
        draw subpath (0,4-3m) of tmppath1;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6160,7 +6108,6 @@ for i = start+1 upto start+fpht:
        draw _r_[MID]{up}
             .. _r_[TOP]
             .. _r_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6309,7 +6256,6 @@ for i = start+1 upto start+fpht:
 
        draw tmppath0 rotatedaround (C,-90m);
        draw tmppath1 rotatedaround (C,-90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6363,7 +6309,6 @@ beginfig(start);
         .. _s_[D_ARC]{down}
         .. _s_[BOTTOM]
         .. _s_[END]{up};
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -6400,7 +6345,6 @@ for i = start+1 upto start+fpht:
                    .. m[_s_[END],aux[END]]{up};
 
        draw (subpath (1-m,7) of tmppath0) rotatedaround (_s_[MID],90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6441,8 +6385,8 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        tmppath1 := m[aux[LEFT],_m_[LEFT]]
                    -- _m_[BEGIN];
-       draw subpath (0,(max(0,2m-1))) of tmppath1;
 
+       draw subpath (0,(max(0,2m-1))) of tmppath1;
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6472,7 +6416,6 @@ for i = start+1 upto start+fpht:
             .. m[_s_[D_ARC],_o_[RIGHT]]{down}
             .. _s_[BOTTOM]
             .. m[_s_[END],_o_[LEFT]]{up};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6495,7 +6438,6 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw subpath (0,3-m) of tmppath0;
        draw subpath (3+m,6) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6552,7 +6494,6 @@ beginfig(start);
         -- _t_[MID]{down}
         .. _t_[BOTTOM]
         .. _t_[END];
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -6607,8 +6548,8 @@ for i = start+1 upto start+fpht:
        % Der Querstrich wandert nach links, um den Kreis vorbeizulassen:
 
        tmp1 := m*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
-       draw tmppath1 shifted (tmp1,0);
 
+       draw tmppath1 shifted (tmp1,0);
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6642,7 +6583,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        % des Übergangs:
        tmp1 := min(2(1-m),1)*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
        draw tmppath1 shifted (tmp1,0);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6690,7 +6630,6 @@ for i = start+1 upto start+fpht:
                    .. m[aux[D_ARC],aux[R_ARC]]{down};
 
        draw subpath (0,3+2m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6777,7 +6716,6 @@ for i = start+1 upto start+fpht:
        % der t-Stamm schrumpft, bis er bündig mit dem
        % t-Strich liegt:
        draw subpath (m,4) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6812,7 +6750,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmppath2 := aux[LEFT]{down} .. _u_[BOTTOM]{right};
        draw (point m of tmppath2) -- m[aux[RIGHT],_u_[END]];
        draw subpath (0,3+2m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6858,9 +6795,6 @@ for i = start+1 upto start+fpht:
                    .. m[aux[R_ARC],aux[END]];
 
        draw subpath (0,3+m) of tmppath1;
-
-
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6880,7 +6814,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw _v_[LEFT]
             -- _v_[BOTTOM]
             -- aux[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6916,7 +6849,6 @@ for i = start+1 upto start+fpht:
                    .. m[aux[R_ARC],aux[END]];
 
        draw subpath (0,3+m) of tmppath1;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6936,7 +6868,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[_v_[LEFT],_w_[MID]]
             -- m[_v_[BOTTOM],_w_[RIGHT]]
             -- m[_v_[RIGHT],_w_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7020,7 +6951,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[LEFT],_e_[LEFT]]
             .. m[aux[BOTTOM],_e_[BOTTOM]]{right}
             .. m[aux[END],_e_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7068,7 +6998,6 @@ for i = start+1 upto start+fpht:
             .. _u_[MID]
             .. _u_[RIGHT]{up}
             -- m[_u_[END],aux[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7089,7 +7018,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. m[_u_[RIGHT],_i_[END]]{dir m[90,phi[HOOK_END_I]]}
                    .. aux[END];
        draw subpath (0,4-m) of tmppath0;
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7122,7 +7050,6 @@ for i = start+1 upto start+fpht:
             .. _u_[MID]
             .. _u_[RIGHT]{up}
             -- _u_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7146,7 +7073,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[_u_[MID],_o_[BOTTOM]]
             .. m[_u_[RIGHT],_o_[RIGHT]]{up}
             -- m[_u_[END],_o_[RIGHT]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7180,8 +7106,7 @@ for i = start+1 upto start+2fpht-1:
             .. _u_[MID]
             .. aux[RIGHT]{up}
             -- aux[END];
-
-    setbounds currentpicture to boundingpath;
+       setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -7213,7 +7138,6 @@ beginfig(start);
    draw _v_[LEFT]
         -- _v_[BOTTOM]
         -- _v_[RIGHT];
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -7247,7 +7171,6 @@ for i = start+1 upto start+fpht:
                    -- m[_v_[RIGHT],aux[RIGHT]];
 
        draw tmppath0 rotatedaround (C,-90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7278,7 +7201,6 @@ for i = start+fpht+1 upto start+2fpht-1:
                {dir m[phi[D_ARC],-90]}
             .. m[aux[BOTTOM],_c_[BOTTOM]]
             .. _c_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7306,7 +7228,6 @@ for i = start+1 upto start+fpht:
                    -- _v_[RIGHT];
 
        draw tmppath0 rotatedaround (C,90m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7328,7 +7249,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             -- m[aux[U_ARC],_z_[U_ARC]]
             -- m[aux[D_ARC],_z_[D_ARC]]
             -- m[aux[D_ARC],_z_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7348,7 +7268,6 @@ beginfig(start);
         -- _w_[MID]
         -- _w_[RIGHT]
         -- _w_[END];
-
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -7386,7 +7305,6 @@ for i = start+1 upto start+fpht:
             -- _w_[MID];
 
        draw tmppath0 rotatedaround (_w_[MID],m[0,180-phi[RIGHT]]);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7410,7 +7328,6 @@ for i = start+fpht+1 upto start+2fpht-1:
          &  m[_w_[LEFT],_t_[MID]]
             .. m[aux[MID],_t_[BOTTOM]]
             .. m[_w_[MID],_t_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7483,7 +7400,6 @@ for i = start+1 upto start+fpht:
         .. _y_[MID]
         .. _y_[RIGHT]{up}
         -- _y_[END];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7505,7 +7421,6 @@ for i = start+fpht+1 upto start+2fpht-1:
 
        draw tmppath0 rotatedabout (C,180m);
        draw tmppath1 rotatedabout (C,180m);
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7552,7 +7467,6 @@ for i = start+1 upto start+fpht:
             -- _z_[D_ARC]
             -- _z_[END]
             -- m[_z_[END],_z_[U_ARC]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7586,7 +7500,6 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[MID],_n_[MID]]
             .. m[_z_[U_ARC],_n_[RIGHT]]{dir m[0,-90]}
             -- m[_z_[END],_n_[END]];
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -7675,7 +7588,6 @@ for i = 0 upto 719:
             .. aux[(tmp[BEGIN]+3) mod 4]{dir phi[(tmp[BEGIN]+3) mod 4]}
             fi
             .. aux[END]{dir phi[END]};
-
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
