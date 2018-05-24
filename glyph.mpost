@@ -3855,21 +3855,19 @@ endfor
 % f -> ()
 %
 
-tmppath0 :=  _f_[BEGIN]
-             -- _f_[MID]{up}
-             .. _f_[TOP]
-             .. _f_[END];
-% Wir brauchen den Winkel an der Spitze für den Übergang f -> s
-phi[END] := 180+angle(direction 3 of tmppath0);
-
 outputtemplate := "f.mps";
 
 beginfig(start);
    draw_grid(u);
    pickup pc;
 
+   draw _f_[BEGIN]
+        -- _f_[MID]{up}
+        .. _f_[TOP]
+        .. _f_[END];
+
    draw _f_[LEFT] -- _f_[RIGHT];
-   draw tmppath0;
+
 
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
@@ -3910,7 +3908,7 @@ for i = start+1 upto start+fpht:
             .. m[_f_[TOP],_m_[L_ARC]]
             .. m[_f_[TOP],aux[JOINT]]
             .. m[_f_[TOP],_m_[R_ARC]]
-            .. m[_f_[END],_m_[RIGHT]]{dir m[-45,-90]};
+            .. m[_f_[END],_m_[RIGHT]]{dir m[-phi[HOOK_END_I],-90]};
 
        setbounds currentpicture to boundingpath;
     endfig;
@@ -4004,7 +4002,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[aux[LEFT],_s_[MID]]
             -- m[aux[RIGHT],_s_[MID]];
 
-       draw m[aux[END],_s_[BEGIN]]{dir m[phi[END],90]}
+       draw m[aux[END],_s_[BEGIN]]{dir m[180-phi[HOOK_END_I],90]}
             .. m[aux[TOP],_s_[TOP]]
             .. max(2m-1,0)[aux[MID],_s_[U_ARC]]{down} % oder m*m
             .. _s_[MID]
