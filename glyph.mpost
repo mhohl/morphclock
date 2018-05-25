@@ -3371,6 +3371,104 @@ beginfig(start);
 endfig;
 
 %
+% d -> f [de]
+%
+
+outputtemplate := "df-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Vergleiche hierzu den Übergang p -> t
+
+% Der Beginn des f-Bogens
+aux[MID]    := _d_[BEGIN] shifted (0,-mw);
+aux[CENTER] := _d_[BEGIN] shifted (mw,0); % TOP ist belegt, s.u.
+aux[END]    := aux[CENTER]
+               rotatedabout ((xpart(aux[CENTER]),ypart(aux[MID])),-45);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       % Weil der Bogen aus der Zeichenfläche herausragen würde,
+       % verschieben wir alle Punkte (mit Ausnahme von _d_[LEFT])
+       % nach links:
+
+       aux[U_ARC]  := _d_[U_ARC]  shifted (-m/2*mw,0);
+       aux[TOP]    := _d_[TOP]    shifted (-m/2*mw,0);
+       aux[BOTTOM] := _d_[BOTTOM] shifted (-m/2*mw,0);
+       aux[D_ARC]  := _d_[D_ARC]  shifted (-m/2*mw,0);
+
+       % Der Bogen bildet sich zuerst nur bis zur Vierteldrehung aus:
+       tmppath0 := _d_[END]
+                   -- aux[MID]{up}
+                   .. m[_d_[BEGIN],aux[CENTER]];
+
+       draw aux[U_ARC]
+            .. aux[TOP]
+            .. _d_[LEFT]
+            .. aux[BOTTOM]
+            .. aux[D_ARC];
+
+       draw tmppath0 shifted (-m/2*mw,0);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% der verschobene d-Stamm:
+aux[BEGIN]  := _d_[END]    shifted (-1/2*mw,0);
+aux[MID]    := aux[MID]    shifted (-1/2*mw,0);
+aux[CENTER] := aux[CENTER] shifted (-1/2*mw,0);
+aux[END]    := aux[END]    shifted (-1/2*mw,0);
+
+% Der Winkel bei aux[TOP]:
+tmppath1 := aux[U_ARC]
+            .. aux[TOP]
+            .. _d_[LEFT]
+            .. aux[BOTTOM]
+            .. aux[D_ARC];
+phi[TOP] := angle(direction 1 of tmppath1);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % Wir schieben den d-Bogen weiter nach links
+       % (diesmal auch _d_[LEFT])
+       aux[U_ARC]  := _d_[U_ARC]  shifted ((-1-m)/2*mw,0);
+       aux[TOP]    := _d_[TOP]    shifted ((-1-m)/2*mw,0);
+       aux[LEFT]   := _d_[LEFT]   shifted (-m/2*mw,0);
+       aux[BOTTOM] := _d_[BOTTOM] shifted ((-1-m)/2*mw,0);
+       aux[D_ARC]  := _d_[D_ARC]  shifted ((-1-m)/2*mw,0);
+
+       tmppath0 := m[aux[BEGIN],_f_[BEGIN]]
+                   -- m[aux[MID],_f_[MID]]{up}
+                   .. m[aux[CENTER],_f_[TOP]]
+                   .. m[aux[END],_f_[END]];
+
+       tmppath1 := m[aux[U_ARC],_f_[RIGHT]]
+                   .. m[aux[TOP],_f_[LEFT]]{dir m[phi[TOP],-180]}
+                   .. aux[LEFT]
+                   .. aux[BOTTOM]
+                   .. aux[D_ARC];
+
+       draw subpath (0,2+m)  of tmppath0;
+       draw subpath (0,4-3m) of tmppath1;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % d -> j
 %
 
@@ -3891,7 +3989,7 @@ aux[LEFT]  := (xpart(_f_[LEFT]),ypart(_m_[JOINT]))
               shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
 aux[RIGHT] := (xpart(_f_[RIGHT]),ypart(_m_[JOINT]))
               shifted (xpart(_m_[BOTTOM])-xpart(_f_[BEGIN]),0);
-aux[MID] := 1/2[aux[LEFT],aux[RIGHT]];
+aux[MID]   := 1/2[aux[LEFT],aux[RIGHT]];
 
 for i = start+1 upto start+fpht:
     beginfig(i);
