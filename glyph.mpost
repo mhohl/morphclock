@@ -3542,13 +3542,13 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
-% d -> u
+% d -> m [de]
 %
 
-outputtemplate := "du-%c.mps";
+outputtemplate := "dm-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 % Winkel
@@ -3558,7 +3558,97 @@ tmppath0 := _d_[U_ARC]
             .. _d_[BOTTOM]
             .. _d_[D_ARC];
 phi[TOP]    := angle(direction 1 of tmppath0);
+phi[LEFT]   := angle(direction 2 of tmppath0);
 phi[BOTTOM] := angle(direction 3 of tmppath0);
+
+
+% ein rotiertes m:
+aux[BEGIN]  := _m_[BEGIN]  rotatedaround (C,90);
+aux[BOTTOM] := _m_[BOTTOM] rotatedaround (C,90);
+aux[LEFT]   := _m_[LEFT]   rotatedaround (C,90);
+aux[L_ARC]  := _m_[L_ARC]  rotatedaround (C,90);
+aux[JOINT]  := _m_[JOINT]  rotatedaround (C,90);
+aux[R_ARC]  := _m_[R_ARC]  rotatedaround (C,90);
+aux[RIGHT]  := _m_[RIGHT]  rotatedaround (C,90);
+aux[END]    := _m_[END]    rotatedaround (C,90);
+aux[MID]    := _m_[MID]    rotatedaround (C,90);
+% zusätzlich:
+aux[CENTER] := (xpart(_m_[JOINT]),ypart(_m_[L_ARC])) rotatedaround (C,90);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       % der d-Strich wandert nach rechts; nachdem das gedrehte m
+       % sehr viele Indizes braucht, berechnen wir die Punkte
+       % "on the fly":
+       tmp0 := xpart(m[_d_[U_ARC],aux[END]]);
+       draw (tmp0,ypart(_d_[BEGIN]))
+            -- (tmp0,ypart(_d_[END]));
+
+       draw m[_d_[U_ARC],aux[END]]
+            .. m[_d_[TOP],aux[RIGHT]]{dir m[phi[TOP],-180]}
+            .. m[_d_[LEFT],aux[R_ARC]]{dir m[phi[LEFT],-90]}
+            .. m[_d_[LEFT],aux[CENTER]]{dir m[phi[LEFT],-90]}
+            .. m[_d_[LEFT],aux[L_ARC]]{dir m[phi[LEFT],-90]}
+            .. m[_d_[BOTTOM],aux[LEFT]]{dir m[phi[BOTTOM],0]}
+            .. m[_d_[D_ARC],aux[BOTTOM]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % der gedrehte m-Bogen dreht sich in die richtige Position,
+       % die "Delle" entsteht:
+       tmppath0 := aux[END]
+                   .. aux[RIGHT]{left}
+                   .. aux[R_ARC]
+                   .. {dir m[-90,0]}
+                      m[aux[CENTER],aux[JOINT]]
+                      {dir m[-90,-180]}
+                   .. aux[L_ARC]
+                   .. aux[LEFT]{right}
+                   .. aux[BOTTOM];
+       draw tmppath0 rotatedaround (C,-90*min(2m,1));
+
+       % der verschobene d-Strich wird gespalten und verteilt sich auf die
+       % beiden Positionen:
+       tmp0 := xpart(aux[END]);
+       tmp1 := ypart(_m_[JOINT]);
+       tmp2 := ypart(_d_[END]);
+       tmp3 := ypart(_d_[BEGIN]);
+       draw m[(tmp0,tmp1),_m_[JOINT]]
+            -- m[(tmp0,tmp2),_m_[MID]];
+
+       draw m[(tmp0,tmp3),_m_[BEGIN]]
+            -- m[(tmp0,tmp1),_m_[LEFT]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% d -> u
+%
+
+outputtemplate := "du-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Die Winkel phi[TOP] und phi[BOTTOM] sind
+% bereits bei d -> m definiert
 
 % Hilfspunkte gedrehtes u:
 aux[BEGIN] := _u_[BEGIN] rotatedaround (C,-90);
@@ -3584,7 +3674,6 @@ for i = start+1 upto start+fpht:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);

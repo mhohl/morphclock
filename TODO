@@ -1,8 +1,5 @@
 TODO morphclock
 
-- de-Übergänge:
-  d -> m
-
 - Schaltsekunde implementieren
 - ggf. mehr Sprachen unterstützen?
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
