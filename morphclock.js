@@ -170,6 +170,23 @@ Morph.data = {
       { glyph: '90-0', slot: 'xxYx' },
       { glyph: '90-0', slot: 'xxxY' },
     ],
+    'full-de': [
+      { glyph: 'fs-0', slot: 'Wxx' },
+      { glyph: 'ra-0', slot: 'xWx' },
+      { glyph: '.',    slot: null },
+      { glyph: ',',    slot: null },
+      { glyph: '30-0', slot: 'Dx' },
+      { glyph: '11-0', slot: 'xD' },
+      { glyph: '.',    slot: null },
+      { glyph: 'dj-0', slot: 'Mxx' },
+      { glyph: 'ea-0', slot: 'xMx' },
+      { glyph: 'zn-0', slot: 'xxM' },
+      { glyph: '~',    slot: null },
+      { glyph: '12-0', slot: 'Yxxx' },
+      { glyph: '90-0', slot: 'xYxx' },
+      { glyph: '90-0', slot: 'xxYx' },
+      { glyph: '90-0', slot: 'xxxY' },
+    ],
   },
 
   logo: {
@@ -329,6 +346,11 @@ var MorphDisplay = class MorphDisplay {
     if (children.length > 0)
       return children[0].getBoundingClientRect().height;
     return 0;
+  }
+
+  get locale() {
+    if (this.format == "full-de") return "de";
+    return "en";
   }
 
   get showDaytime() {
@@ -610,10 +632,12 @@ MorphDisplay.prototype.date.update = function(now) {
   }
 
   // Tage
-
-  main['Wxx'] = weekday['en'][0][W];
-  main['xWx'] = weekday['en'][1][W];
-  main['xxW'] = weekday['en'][2][W];
+  let loc =this.locale;
+  main['Wxx'] = weekday[loc][0][W];
+  main['xWx'] = weekday[loc][1][W];
+  if (loc == 'en') {
+    main['xxW'] = weekday['en'][2][W];
+  }
 
   if (xD == 9) {
     main['xD'] = xD + "0";
@@ -662,9 +686,9 @@ MorphDisplay.prototype.date.update = function(now) {
 
   // Monate
 
-  main['Mxx'] = month['en'][0][M];
-  main['xMx'] = month['en'][1][M];
-  main['xxM'] = month['en'][2][M];
+  main['Mxx'] = month[loc][0][M];
+  main['xMx'] = month[loc][1][M];
+  main['xxM'] = month[loc][2][M];
 
   if (xM == 9) {
     main['xM'] = xM + "0";

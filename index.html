@@ -85,7 +85,8 @@
             <li><var>Y-M-D</var> für die Anzeige in der Form <var>YYYY-MM-DD</var>,</li>
             <li><var>Y-M-D</var> für die Anzeige in der Form <var>YYYY/MM/DD</var>,</li>
             <li><var>Month D,Y</var> für die Anzeige mit abgekürztem Monatsnamen,</li>
-            <li><var>full</var> für die Anzeige mit ausgeschriebenem Wochentag.</li>
+            <li><var>full</var> für die Anzeige mit ausgeschriebenem Wochentag,</li>
+            <li><var>full-de</var> ditto mit deutschen Abkürzungen.</li>
           </ul>
         </p>
         <p>
@@ -99,6 +100,7 @@
         <button id="Y/M/D">Y/M/D</button>
         <button id="MonthDY">Month D,Y</button>
         <button id="full">full</button>
+        <button id="full-de">full-de</button>
       <h2>morphlogo</h2>
         <p>
           Das Logo wird mit
@@ -183,6 +185,7 @@
       const button_YMDslash = document.getElementById('Y/M/D');
       const button_MonthDY = document.getElementById('MonthDY');
       const button_full = document.getElementById('full');
+      const button_full_de = document.getElementById('full-de');
 
       button_DMYdot.onclick = () => setDIVMorphFormat('morph-container-1', 'D.M.Y');
       button_DMYdash.onclick = () => setDIVMorphFormat('morph-container-1', 'D-M-Y');
@@ -191,6 +194,7 @@
       button_YMDslash.onclick = () => setDIVMorphFormat('morph-container-1', 'Y/M/D');
       button_MonthDY.onclick = () => setDIVMorphFormat('morph-container-1', 'Month D,Y');
       button_full.onclick = () => setDIVMorphFormat('morph-container-1', 'full');
+      button_full_de.onclick = () => setDIVMorphFormat('morph-container-1', 'full-de');
 
       const button_hhmmssxxiv = document.getElementById('hhmmss24');
       const button_hhmmxxiv = document.getElementById('hhmm24');

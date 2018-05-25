@@ -1,5 +1,5 @@
 TODO morphclock
 
 - Schaltsekunde implementieren
-- ggf. mehr Sprachen unterstützen?
+- Breite bei full-de korrekt berechnen
 - slowMorph freier: Start z.B. 56.5 sek (s+ms*1000 > slowMorphStart)
