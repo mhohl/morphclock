@@ -52,7 +52,7 @@
 
 % Versionsnummer:
 string version;
-version := "Version: 1.6";
+version := "Version: 1.62";
 show(version);
 
 outputformat := "eps";
@@ -4997,6 +4997,98 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% m -> d [de]
+%
+
+outputtemplate := "md-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath0 := _m_[BEGIN] -- _m_[LEFT];
+       tmppath1 := _m_[BOTTOM]
+                   -- _m_[LEFT]{up}
+                   .. _m_[L_ARC]
+                   .. _m_[JOINT]{down}
+                   &  _m_[JOINT]{up}
+                   .. _m_[R_ARC]
+                   .. _m_[RIGHT]{down}
+                   -- _m_[END];
+       tmppath2 := _m_[MID] -- _m_[JOINT];
+
+       draw tmppath0 rotatedaround (C,90m);
+       draw tmppath1 rotatedaround (C,90m);
+       draw tmppath2 rotatedaround (C,90m);
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% Hilfspunkte; das m ist bereits gedreht:
+aux[BEGIN]  := _m_[BEGIN]  rotatedaround (C,90);
+aux[BOTTOM] := _m_[BOTTOM] rotatedaround (C,90);
+aux[LEFT]   := _m_[LEFT]   rotatedaround (C,90);
+aux[L_ARC]  := _m_[L_ARC]  rotatedaround (C,90);
+aux[JOINT]  := _m_[JOINT]  rotatedaround (C,90);
+aux[R_ARC]  := _m_[R_ARC]  rotatedaround (C,90);
+aux[RIGHT]  := _m_[RIGHT]  rotatedaround (C,90);
+aux[END]    := _m_[END]    rotatedaround (C,90);
+aux[MID]    := _m_[MID]    rotatedaround (C,90);
+
+% Hilfspunkte zwischen _d_[U_ARC] und _d_[BEGIN]:
+aux[U_ARC]  := 3/4[_d_[U_ARC],_d_[BEGIN]];
+aux[CENTER] := 1/2[_d_[U_ARC],_d_[BEGIN]];
+aux[D_ARC]  := 1/4[_d_[U_ARC],_d_[BEGIN]];
+
+% Winkel am d-Bogen:
+tmppath0 := _d_[D_ARC]
+            .. _d_[BOTTOM]
+            .. _d_[LEFT]
+            .. _d_[TOP]
+            .. _d_[U_ARC];
+phi[D_ARC]  := angle(direction 0 of tmppath0);
+phi[BOTTOM] := angle(direction 1 of tmppath0);
+phi[TOP]    := angle(direction 3 of tmppath0);
+phi[U_ARC]  := angle(direction 4 of tmppath0);
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       % der m-Strich klappt hoch bis _d_[U_ARC]:
+       draw m[aux[BOTTOM],_d_[END]]
+            -- m[aux[BEGIN],_d_[U_ARC]];
+
+       % der linke (jetzt untere) m-Bogen wird zum d-Bogen
+       draw m[aux[BOTTOM],_d_[D_ARC]]{dir m[-180,phi[D_ARC]]}
+            .. m[aux[LEFT],_d_[BOTTOM]]{dir m[180,phi[BOTTOM]]}
+            .. m[aux[L_ARC],_d_[LEFT]]
+            .. m[aux[JOINT],_d_[TOP]]{dir m[0,phi[TOP]]}
+            .. m[aux[MID],_d_[U_ARC]]{dir m[0,phi[U_ARC]]};
+
+       % der rechte/obere m_Bogen wird zum Rest des d-Stamms:
+       draw m[aux[MID],_d_[U_ARC]]
+            --- m[aux[JOINT],aux[D_ARC]]
+            .. m[aux[R_ARC],aux[CENTER]]
+            .. m[aux[RIGHT],aux[U_ARC]]
+            --- m[aux[END],_d_[BEGIN]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % m -> j
 %
 
@@ -5187,7 +5279,6 @@ for i = start+fpht+1 upto start+2fpht-1:
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
 
 %
 % n -> ()
