@@ -303,6 +303,12 @@ var MorphDisplay = class MorphDisplay {
         // zusätzlicher Trenner nach Wochentag
         n_of_bover += 2;
       }
+      if (this.locale == "de") {
+        // zusätzlicher Punkt nach dem Wochentag
+        n_of_bover += 1;
+        // dt. Abkürzungen für den Wochentag sind nur zweistellig
+        n_of_sover -= 1;
+      }
     }
 
     return 100/(n_of_chars -
