@@ -181,7 +181,7 @@ Morph.data = {
       { glyph: 'dj-0', slot: 'Mxx' },
       { glyph: 'ea-0', slot: 'xMx' },
       { glyph: 'zn-0', slot: 'xxM' },
-      { glyph: '~',    slot: null },
+      { glyph: '.',    slot: 'M!=5' }, // kein Punkt im Monat Mai
       { glyph: '12-0', slot: 'Yxxx' },
       { glyph: '90-0', slot: 'xYxx' },
       { glyph: '90-0', slot: 'xxYx' },
@@ -696,6 +696,12 @@ MorphDisplay.prototype.date.update = function(now) {
   main['xMx'] = month[loc][1][M];
   main['xxM'] = month[loc][2][M];
 
+  // spezielles Handling für den Monat Mai
+  main['M!=5'] = ".";
+  if (M == 5) {
+    main['M!=5'] = "~";
+  }
+
   if (xM == 9) {
     main['xM'] = xM + "0";
     if (slow_morph) {
@@ -773,7 +779,12 @@ MorphDisplay.prototype.date.update = function(now) {
   for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
-      this.glyphs[idx].type = main[key] + "-" + (morph[key] || "0");
+      if (key == 'M!=5') {
+        this.glyphs[idx].type = main[key];
+      }
+      else {
+        this.glyphs[idx].type = main[key] + "-" + (morph[key] || "0");
+      }
     }
   }
 }
