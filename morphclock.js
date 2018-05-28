@@ -413,10 +413,10 @@ MorphDisplay.prototype.quickMorph = function(now) {
 }
 
 MorphDisplay.prototype.slowMorph = function(now) {
-  let s = now.seconds;
-  let t = now.milliseconds;
   let start = this.slowMorphStart;
-  return Math.floor((((s + t/1000) - start) * 100)/(60 - start));
+  return Math.floor(
+    (((now.seconds + now.milliseconds/1000) - start) * 100)
+    /(60 - start));
 }
 
 MorphDisplay.prototype.addNextDigit = function(x) {
