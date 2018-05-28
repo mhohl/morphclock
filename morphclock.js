@@ -256,7 +256,7 @@ var MorphDisplay = class MorphDisplay {
     this.smallOverlap = 0.2;
     this.bigOverlap = 2 * this.smallOverlap;
 
-    this.slowMorphStart = 7;
+    this.slowMorphStart = 57;
   }
 
   get charWidth() {
@@ -413,10 +413,10 @@ MorphDisplay.prototype.quickMorph = function(now) {
 }
 
 MorphDisplay.prototype.slowMorph = function(now) {
-  let xS = now.seconds % 10;
+  let s = now.seconds;
   let t = now.milliseconds;
-  let x = this.slowMorphStart;
-  return Math.floor(((xS - x) * 1000 + t) / ((10 - x) * 10));
+  let start = this.slowMorphStart;
+  return Math.floor((((s + t/1000) - start) * 100)/(60 - start));
 }
 
 MorphDisplay.prototype.addNextDigit = function(x) {
@@ -467,7 +467,7 @@ MorphDisplay.prototype.clock.update = function(now) {
   main['cx'] = '::';
   main['Cx'] = '::';
 
-  let slow_morph = (xs >= this.slowMorphStart);
+  let slow_morph = (s >= this.slowMorphStart);
 
   // Sekunden
   if (sx == 5) {
@@ -628,7 +628,7 @@ MorphDisplay.prototype.date.update = function(now) {
 
   let morph = {};
 
-  let slow_morph = (h == 23 && m == 59 && s >= (50 + this.slowMorphStart));
+  let slow_morph = (h == 23 && m == 59 && s >= this.slowMorphStart);
 
   if (slow_morph) {
     morph['xD'] = this.slowMorph(now);
