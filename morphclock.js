@@ -420,7 +420,7 @@ MorphDisplay.prototype.slowMorph = function(now) {
 }
 
 MorphDisplay.prototype.addNextDigit = function(x) {
-  var res = (x * 10 + x + 1);
+  var res = x * 11 + 1; //(x * 10 + x + 1);
   return res < 10 ? "0" + res : res ;
 }
 
