@@ -697,10 +697,7 @@ MorphDisplay.prototype.date.update = function(now) {
   main['xxM'] = month[loc][2][M];
 
   // spezielles Handling für den Monat Mai
-  main['M!=5'] = ".";
-  if (M == 5) {
-    main['M!=5'] = "~";
-  }
+  main['M!=5'] = (M == 5 ? "~" : ".");
 
   if (xM == 9) {
     main['xM'] = xM + "0";
