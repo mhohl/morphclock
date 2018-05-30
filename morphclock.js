@@ -370,11 +370,13 @@ var MorphDisplay = class MorphDisplay {
   }
 
   get showMonth() {
-    return Morph.data[this.type][this.format].some(x => x.slot == 'Mxx');
+    return Morph.data[this.type][this.format]
+                .some(x => x.slot == 'Mxx');
   }
 
   get showWeekday() {
-    return Morph.data[this.type][this.format].some(x => x.slot == 'Wxx');
+    return Morph.data[this.type][this.format]
+                .some(x => x.slot == 'Wxx');
   }
 }
 
@@ -489,9 +491,9 @@ MorphDisplay.prototype.clock.update = function(now) {
   else {
     main['xs'] = this.addNextDigit(xs);
   }
-  /* Der rechte Doppelpunkt läuft synchron mit den
-     Sekunden, der linke ist um 50% phasenverschoben.
-  */
+
+  // Der rechte Doppelpunkt läuft synchron mit den
+  // Sekunden, der linke ist um 50% phasenverschoben.
   morph['cx'] = morph['xs'];
   morph['Cx'] = (this.quickMorph(now) + 50) % 100;
 
@@ -561,10 +563,10 @@ MorphDisplay.prototype.clock.update = function(now) {
   else {
     main['hx'] = this.addNextDigit(hx);
   }
+
   // wende Änderungen an ...
-  /* Wir gehen von den main-Einträgen aus, da es auch Slots
-     gibt, die null sind
-  */
+  // Wir gehen von den main-Einträgen aus, da es auch Slots
+  // gibt, die null sind
   for (let key of Object.keys(main)) {
     let idx = this.slots.findIndex(x => x == key);
     if (idx > -1) {
@@ -594,35 +596,33 @@ MorphDisplay.prototype.date.update = function(now) {
   const weekday = {
     en: [
       // lies ↓ mon ↓ tue ↓ wed ...
-      ['sm', 'mt', 'tw', 'wt', 'tf', 'fs', 'ss'],
-      ['uo', 'ou', 'ue', 'eh', 'hr', 'ra', 'au'],
-      ['nn', 'ne', 'ed', 'du', 'ui', 'it', 'tn']
+      [ 'sm', 'mt', 'tw', 'wt', 'tf', 'fs', 'ss' ],
+      [ 'uo', 'ou', 'ue', 'eh', 'hr', 'ra', 'au' ],
+      [ 'nn', 'ne', 'ed', 'du', 'ui', 'it', 'tn' ]
     ],
     de: [
       // lies ↓ mo  ↓ di  ↓ mi ...
-      ['sm', 'md', 'dm', 'md', 'df', 'fs', 'ss'],
-      ['oo', 'oi', 'ii', 'io', 'or', 'ra', 'ao'],
+      [ 'sm', 'md', 'dm', 'md', 'df', 'fs', 'ss' ],
+      [ 'oo', 'oi', 'ii', 'io', 'or', 'ra', 'ao' ],
     ]
   };
 
   const month = {
     // Monat geht von 1 bis 12, daher ist der Eintrag mit Index 0 leer definiert
     en: [
-      ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
-      ['', 'ae', 'ea', 'ap', 'pa', 'au', 'uu', 'uu', 'ue', 'ec', 'co', 'oe', 'ea'],
-      ['', 'nb', 'br', 'rr', 'ry', 'yn', 'nl', 'lg', 'gp', 'pt', 'tv', 'vc', 'cn']
+      [ '', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj' ],
+      [ '', 'ae', 'ea', 'ap', 'pa', 'au', 'uu', 'uu', 'ue', 'ec', 'co', 'oe', 'ea' ],
+      [ '', 'nb', 'br', 'rr', 'ry', 'yn', 'nl', 'lg', 'gp', 'pt', 'tv', 'vc', 'cn' ]
     ],
     de: [
-      ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
-      ['', 'ae', 'eä', 'äp', 'pa', 'au', 'uu', 'uu', 'ue', 'ek', 'ko', 'oe', 'ea'],
-      ['', 'nb', 'br', 'rr', 'ri', 'in', 'nl', 'lg', 'gp', 'pt', 'tv', 'vz', 'zn']
+      [ '', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj' ],
+      [ '', 'ae', 'eä', 'äp', 'pa', 'au', 'uu', 'uu', 'ue', 'ek', 'ko', 'oe', 'ea' ],
+      [ '', 'nb', 'br', 'rr', 'ri', 'in', 'nl', 'lg', 'gp', 'pt', 'tv', 'vz', 'zn' ]
     ]
   };
 
-  const lastDayOfMonth = [-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  if (now.leapYear) {
-    lastDayOfMonth[2] = 29;
-  }
+  const lastDayOfMonth = [ -1,
+    31, now.leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
   let main = {};
 
@@ -870,9 +870,9 @@ var MorphGlyph = class MorphGlyph {
 
 MorphGlyph.prototype.buildPath = function (p) {
   const path = document.createElementNS (xmlns, "path");
-  const attrs = ['stroke-width', 'stroke-linecap',
+  const attrs = [ 'stroke-width', 'stroke-linecap',
                  'stroke-linejoin', 'stroke-miterlimit',
-                 'fill'];
+                 'fill' ];
 
   path.setAttribute('class', "morph-svg-path");
   for (let i = 0, alen = attrs.length; i < alen; i++) {
