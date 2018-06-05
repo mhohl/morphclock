@@ -8,7 +8,7 @@
    Morph und Morph.path werden in morphpaths.js
    definiert/gefüllt.
 */
-Morph.elements = [];
+Morph.elements = {};
 Morph.elements.clock = [];
 Morph.elements.date = [];
 Morph.elements.logo = [];
@@ -205,6 +205,104 @@ Morph.data = {
   }
 };
 
+/* Morph.io enthält die Daten für die Anbindung an den WebSocket
+*/
+
+Morph.io = {};
+
+Morph.io.websocket = io('https://uhr.ptb.de');
+Morph.io.active = false;    // Verbindung aktiv?
+Morph.io.redo = 60000;      // zeitlicher Abstand der WebSocket-Anfragen in ms
+Morph.io.ppTimer = 0;       // ID des Ping-Pong-Timers,
+                            // der nach 'redo' wieder aktiv wird
+Morph.io.pings = 5;         // Anzahl der "Pings"
+Morph.io.deltaArray = [];   // Array für Laufzeitberechnungen
+Morph.io.timeDelta = 0;     // Differenz zwischen lokaler Zeit und Serverzeit
+Morph.io.leapDelta = 0;     // Korrektur Schaltsekunde
+Morph.io.connected = function(c) {
+  console.log("connection status:", c);
+  // hier kommt das Handling hin
+  for (let type in Morph.elements) {
+    Morph.elements[type].forEach(
+      m => m.div.style.stroke = c ? "black"  : "gray"
+    )
+  }
+  return c;
+}
+
+
+Morph.io.websocket.on('connect', function() {
+    if (!Morph.io.active) {
+      clearTimeout(Morph.io.ppTimer);
+      Morph.io.deltaArray = [];
+      Morph.io.active = true;
+      Morph.io.connected(true);
+      console.log("connect ping!");
+      Morph.io.websocket.emit('pi!', {i: 0, ct: performance.now()});
+    }
+  });
+
+Morph.io.websocket.on('disconnect', function () {
+    clearTimeout(Morph.io.ppTimer);
+    Morph.io.connected(false);
+    console.log("Websocket: disconnect");
+  });
+
+Morph.io.websocket.on('error', function () {
+  console.log("Websocket: error");
+  Morph.io.connected(false);
+  //resetClock;
+  });
+
+Morph.io.websocket.on('po!', function(pong) {
+    console.log("pong!", pong);
+    // Berechne die Differenz (in ms) between zwischen der
+    // vom Server zurückgegebenen Zeit und performance.now();
+    var dtB = performance.now() - pong.ct;  // roundtrip to server
+    var tmDlt = performance.now() - pong.st - (dtB / 2);
+      // how many milliseconds is performance.now() away from UTC
+    Morph.io.deltaArray.push([tmDlt, dtB, pong.rd]);
+    if (Morph.io.deltaArray.length > Morph.io.pings) {
+      Morph.io.deltaArray.shift();
+      console.log("SHIFT called!");
+    }
+    Morph.io.deltaArray.sort((a, b) => a[1] - b[1]); // sort by dtb
+    Morph.io.timeDelta = Morph.io.deltaArray[0][0]; // use tmDlt of fastest dtb as time correction value
+    Morph.io.leapDelta = 0;
+    // reset calculated leap second correction because
+    // server gives correct time
+    //console.log('dtB:', ad[0][1], 'tmDlt:', ad[0][0],
+    // 'rootdelay:', ad[0][2], 'ad.len:', ad.length);
+    //timeViewModel.accuracy('±' + Math.round((ad[0][1] + ad[0][2]) / 2)
+    //                           + ' ms');
+    // use (dtB+rootdelay)/2 as uncertainty-value
+    pong.i += 1;
+    if (pong.i < Morph.io.pings) {
+      Morph.io.websocket.emit('pi!', {i: pong.i, ct: performance.now()});
+    }
+    else {
+      Morph.io.active = false;
+      if (pong.l == 3) {  // leap = 3 => Server clock not syncronized
+        Morph.io.connected(false);
+      }
+      else {
+        //timeViewModel.leap(pong.l);
+        if (!pong.l) {
+          //timeViewModel.leapSec('');
+        }
+      } // leap
+      // Redo PingPong after "redo" ms.
+      Morph.io.ppTimer = setTimeout(function() {
+        if (Morph.io.websocket.connected) {
+          Morph.io.deltaArray = [];
+          Morph.io.active = true;
+          Morph.io.websocket.emit('pi!', {i: 0, ct: performance.now()});
+        }
+      }, Morph.io.redo);
+    }
+  });
+
+
 Morph.init = function () {
   let divs = document.body.getElementsByTagName("div");
 
@@ -228,7 +326,7 @@ Morph.init = function () {
 Morph.update = function () {
   for (let type in Morph.elements) {
     Morph.elements[type].forEach(m => m.update());
-  };
+  }
 }
 
 // der svg-namespace
