@@ -2052,8 +2052,8 @@ asterisk[TOP] = (0,xh-dy);
 asterisk[BOTTOM] = (0,xh/2+dy);
 
 % ","
-comma[TOP]    = (-sw/2,corr);
-comma[BOTTOM] = (-sw,-dy);
+comma[TOP]    = (-sw/2,0);
+comma[BOTTOM] = (-sw,-dy-corr);
 
 % "-"
 dash[LEFT]  = (-sw/2,xh/2);
