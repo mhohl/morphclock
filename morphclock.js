@@ -351,7 +351,7 @@ var MorphDisplay = class MorphDisplay {
        Ziffern und Buchstaben um den Faktor smallOverlap, Interpunktionen und
        Leerzeichen um bigOverlap.
     */
-    this.smallOverlap = 0.2;
+    this.smallOverlap = 0.225;
     this.bigOverlap = 2 * this.smallOverlap;
 
     this.slowMorphStart = 57;
