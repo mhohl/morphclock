@@ -220,6 +220,7 @@ Morph.io.deltaArray = [];   // Array für Laufzeitberechnungen
 Morph.io.timeDelta = 0;     // Differenz zwischen lokaler Zeit und Serverzeit
 Morph.io.leap      = 0;     // Schaltsekunde?
 Morph.io.accuracy  = '';    // Genauigkeit
+Morph.io.timediff  = "--";  // Zeitunterschied local/Server
 Morph.io.connected = function(c) {
   // wenn keine Verbindung, dann Transparenz
   for (let type in Morph.elements) {
@@ -253,7 +254,7 @@ Morph.io.websocket.on('error', function () {
 Morph.io.websocket.on('po!', function(pong) {
   // Berechne die Differenz (in ms) between zwischen der
   // vom Server zurückgegebenen Zeit und performance.now();
-  var dtB = performance.now() - pong.ct;  // roundtrip to server
+  var dtB   = performance.now() - pong.ct;  // roundtrip to server
   var tmDlt = performance.now() - pong.st - (dtB / 2);
   // how many milliseconds is performance.now() away from UTC
   Morph.io.deltaArray.push([tmDlt, dtB, pong.rd]);
@@ -265,10 +266,6 @@ Morph.io.websocket.on('po!', function(pong) {
   Morph.io.deltaArray.sort((a, b) => a[1] - b[1]); // sort by dtb
   Morph.io.timeDelta = Morph.io.deltaArray[0][0]; // use tmDlt of fastest dtb as time correction value
   Morph.io.leap = 0;
-  // reset calculated leap second correction because
-  // server gives correct time
-  //console.log('dtB:', ad[0][1], 'tmDlt:', ad[0][0],
-  // 'rootdelay:', ad[0][2], 'ad.len:', ad.length);
   Morph.io.accuracy = '±' + Math.round((Morph.io.deltaArray[0][1] +
                                         Morph.io.deltaArray[0][2]) / 2)
                           + ' ms';
@@ -281,7 +278,8 @@ Morph.io.websocket.on('po!', function(pong) {
   }
   // ... anschließend wird die Verbindung auf 'inaktiv' gesetzt
   else {
-    console.log("Genauigkeit:", Morph.io.accuracy);
+    console.log("lokale Zeitabweichung:", Morph.io.timediff,
+                "ms, Genauigkeit:", Morph.io.accuracy);
     Morph.io.active = false;
     if (pong.l == 3) {  // leap = 3 => serverseitiger Synchronisationsfehler
       Morph.io.connected(false);
@@ -989,14 +987,23 @@ MorphGlyph.prototype.buildPath = function (p) {
 var MorphTimeDate = class MorphTimeDate {
   constructor (offset = 0) {
     // wir rechnen mit UTC-Zeiten, um die Zeitumstellung bestimmen zu können
-    let UTCdate = new Date();
+    var UTCdate;
+    if (Morph.io.websocket.connected) {
+      UTCdate = new Date(performance.now() - Morph.io.timeDelta);
+      let locdate = new Date();
+      Morph.io.timediff = locdate.getTime() - UTCdate.getTime();
+    }
+    else {
+      UTCdate = new Date();
+      Morph.io.timediff = "--";
+    }
     if (offset != 0) {
        UTCdate = new Date(UTCdate.valueOf() + offset); // offset zu Testzwecken
     }
-    let month = UTCdate.getUTCMonth();
+    let month   = UTCdate.getUTCMonth();
     let weekday = UTCdate.getUTCDay();
-    let day = UTCdate.getUTCDate();
-    let hour = UTCdate.getUTCHours();
+    let day     = UTCdate.getUTCDate();
+    let hour    = UTCdate.getUTCHours();
 
     this.transition = {};
 
@@ -1071,8 +1078,7 @@ var MorphTimeDate = class MorphTimeDate {
   }
 
   get hours() {
-    // wichtig: hier getUTCHours(), sonst wird die Zeitzone
-    // nochmals dazuaddiert
+    // wichtig: hier getUTCHours(), sonst wird die Zeitzone dazuaddiert!
     return this.localdate.getUTCHours();
   }
 
@@ -1091,6 +1097,11 @@ var MorphTimeDate = class MorphTimeDate {
   get leapYear() {
     let Y = this.year;
     return (Y % 100 == 0) ? (Y % 400 == 0) : (Y % 4 == 0);
+  }
+
+  get leapSec() {
+    // TODO: hier die Auswertung
+    return Morph.io.leap;
   }
 }
 
