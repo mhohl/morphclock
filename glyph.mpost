@@ -2297,7 +2297,7 @@ _f_[END]    = _f_[TOP] rotatedaround
               ((xpart(_f_[TOP]),ypart(_f_[MID])),-45);
 
 _f_[LEFT]   = (-lw-0.10u+corr,xh-dy);
-_f_[RIGHT]  = (-lw+0.15u+corr,xh-dy);
+_f_[RIGHT]  = (1/2sw+corr,xh-dy);
 
 % g
 _g_[TOP]    = (0,xh);
@@ -6799,7 +6799,8 @@ tmppath0 := _t_[MID]
             .. aux[TOP]
             .. cycle;
 
-tmppath1 := _t_[LEFT] -- _t_[RIGHT];
+% der t-Strich macht Platz nach links:
+aux[LEFT] := _t_[LEFT] shifted (-0.15u,0);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
@@ -6822,10 +6823,8 @@ for i = start+1 upto start+fpht:
        draw (subpath (0,3*min(2m,1)+2) of tmppath0) shifted (0,tmp0);
 
        % Der Querstrich wandert nach links, um den Kreis vorbeizulassen:
-
-       tmp1 := m*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
-
-       draw tmppath1 shifted (tmp1,0);
+       draw min(2m,1)[_t_[LEFT],aux[LEFT]]
+            -- min(2m,1)[_t_[RIGHT],_t_[INTER]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6855,10 +6854,9 @@ for i = start+fpht+1 upto start+2fpht-1:
        tmp0 := min(2m,1)[ypart(_t_[LEFT]),ypart(_f_[MID])]-ypart(_t_[MID]);
        draw (subpath (0,5-3*max(2m-1,0)) of tmppath0) shifted (0,tmp0);
 
-       % Der Querstrich wandert wieder zurück, aber erst in der zweiten Hälfte
-       % des Übergangs:
-       tmp1 := min(2(1-m),1)*(xpart(_t_[MID])-xpart(_t_[RIGHT]));
-       draw tmppath1 shifted (tmp1,0);
+       % Der Querstrich wandert wieder zurück:
+       draw max(2m-1,0)[aux[LEFT],_f_[LEFT]]
+            -- max(2m-1,0)[_t_[INTER],_f_[RIGHT]];
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6960,10 +6958,8 @@ beginfig(start);
    draw tmppic;
 endfig;
 
-% der t-Strich wächst zu einem um 90° gedrehten
-% u-Strich:
+% der t-Strich wächst nach rechts:
 
-aux[LEFT]  := (xpart(_u_[END])-ypart(_u_[END]),ypart(_t_[LEFT]));
 aux[RIGHT] := (xpart(_u_[END]),ypart(_t_[RIGHT]));
 
 % der Schnittpunkt des t-Striches mit dem t-Stamm:
@@ -6986,7 +6982,7 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        % der Strich wird breiter
-       draw m[_t_[LEFT],aux[LEFT]]
+       draw _t_[LEFT]
             -- m[_t_[RIGHT],aux[RIGHT]];
 
        % der t-Stamm schrumpft, bis er bündig mit dem
@@ -7023,7 +7019,7 @@ for i = start+fpht+1 upto start+2fpht-1:
        % bewege den überdimensionierten t-Strich in seine Endposition;
        % der linke Punkt bewegt sich annähernd auf einem Viertelkreis
        % nach unten, der rechte Punkt nach oben zu seinem Ziel:
-       tmppath2 := aux[LEFT]{down} .. _u_[BOTTOM]{right};
+       tmppath2 := _t_[LEFT]{down} .. _u_[BOTTOM]{right};
        draw (point m of tmppath2) -- m[aux[RIGHT],_u_[END]];
        draw subpath (0,3+2m) of tmppath0;
        setbounds currentpicture to boundingpath;
@@ -7573,7 +7569,7 @@ for i = start+1 upto start+fpht:
        m := retarded(f);
 
        tmppath0 := _w_[MID]
-                   -- min(2m,1)[_w_[RIGHT],aux[RIGHT]]
+                   -- min(10/3m,1)[_w_[RIGHT],aux[RIGHT]]
                    -- m[_w_[END],_w_[MID]];
 
        draw _w_[BEGIN]
