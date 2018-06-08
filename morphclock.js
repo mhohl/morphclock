@@ -206,6 +206,8 @@ Morph.data = {
 };
 
 /* Morph.io enthält die Daten für die Anbindung an den WebSocket
+   vielen Dank an Dr. Martin Gutbrod von der PTB, der die Einwilligung
+   gegeben hat, dass sein Code hier einfließen darf!
 */
 
 Morph.io = {};
