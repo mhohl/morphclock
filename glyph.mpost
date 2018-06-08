@@ -261,7 +261,7 @@ enddef;
 % 0
 zero[TOP]    = (0,xh);
 zero[BOTTOM] = (0,0);
-zero[LEFT]   = (-mw,xh/2);
+zero[LEFT]   = (-lw,xh/2);
 zero[RIGHT]  = zero[LEFT] xscaled -1;
 
 % 1
