@@ -568,7 +568,12 @@ MorphDisplay.prototype.clock.update = function(now) {
   let slow_morph = (s >= this.slowMorphStart);
 
   // Sekunden
-  if (sx == 5) {
+  if (
+      (sx == 5 && !now.transition['59->60']) ||
+      sx == 6
+     ) {
+    // keine positive Schaltsekunde, also 5 -> 0, oder
+    // während der positiven Schaltsekunde, also 6 -> 0
     main['sx'] = sx + "0";
     if (slow_morph) {
       morph['xm'] = this.slowMorph(now);
@@ -580,7 +585,11 @@ MorphDisplay.prototype.clock.update = function(now) {
 
   morph['xs'] = this.quickMorph(now);
 
-  if (xs == 9) {
+  if (
+      xs == 9 ||
+      (xs == 0 && s == 60) ||
+      (xs == 8 && now.transition['58->00'])
+     ) {
     main['xs'] = xs + "0";
     morph['sx'] = morph['xs'];
   }
@@ -1009,6 +1018,8 @@ var MorphTimeDate = class MorphTimeDate {
 
     this.transition = {};
 
+    // Zeitumstellung Sommerzeit/Winterzeit
+
     if ((month == 2) && // März
         (day > 24) &&
         (weekday == 0) && // am letzen Sonntag
@@ -1029,6 +1040,24 @@ var MorphTimeDate = class MorphTimeDate {
         }
         else if (hour == 1) {    // um 1 Uhr UTC = 2 Uhr MEZ
           this.transition['2b->3'] = true;
+        }
+      }
+    }
+
+    // Schaltsekunden
+
+    if (Morph.io.leap) { // leap ist 1 oder 2
+      let possibleLeapDay = [0, 0, 31, 0, 0, 30, 0, 0, 30, 0, 0, 31];
+      let minute = UTCdate.getUTCMinutes();
+      let second = UTCdate.getUTCSeconds();
+      if (day == possibleLeapDay[month] &&
+          hour == 23 && minute == 59 &&
+          second == 60 - Morph.io.leap) {
+        if (Morph.io.leap == 1) {
+          this.transition['59->60'] = true; //positive Schaltsekunde
+        }
+        else {
+          this.transition['58->00'] = true; // negative Schaltsekunde
         }
       }
     }
@@ -1099,11 +1128,6 @@ var MorphTimeDate = class MorphTimeDate {
   get leapYear() {
     let Y = this.year;
     return (Y % 100 == 0) ? (Y % 400 == 0) : (Y % 4 == 0);
-  }
-
-  get leapSec() {
-    // TODO: hier die Auswertung
-    return Morph.io.leap;
   }
 }
 
