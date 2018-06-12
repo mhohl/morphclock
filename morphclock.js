@@ -321,6 +321,11 @@ Morph.init = function () {
   }
 }
 
+Morph.start = function () {
+  Morph.update();
+  window.requestAnimationFrame(Morph.start);
+}
+
 Morph.update = function () {
   for (let type in Morph.elements) {
     Morph.elements[type].forEach(m => m.update());
@@ -1134,4 +1139,5 @@ var MorphTimeDate = class MorphTimeDate {
 // Wir starten die Morphelemente:
 window.onload = function() {
     Morph.init();
+    Morph.start();
 }

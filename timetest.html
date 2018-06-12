@@ -83,14 +83,6 @@
       // wir übergeben 'this' an die jeweilige Funktion:
       this[this.type].update.call(this, now);
     }
-
-    function renderTime() {
-      // animiere die MorphDisplay-Elemente
-      setTimeout('renderTime()',10);
-
-      Morph.update();
-    }
-    renderTime();
   </script>
 </body>
 </html>

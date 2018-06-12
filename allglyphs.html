@@ -74,15 +74,13 @@
 
           cglyph.type = cglyph.prefix + clockstart;
 
-          function renderTime() {
+          Morph.update = function() {
             currentTime = new Date();
             m = currentTime.getMinutes();
             s = currentTime.getSeconds();
             t = currentTime.getMilliseconds();
 
             var morph = 0;
-
-            setTimeout('renderTime()',10);
 
             tglyphs.forEach(g => {
               let xS = s % 5;
@@ -100,7 +98,6 @@
             morph = (offset + clockstart) % 720;
             cglyph.type = "clock-" + morph;
           }
-          renderTime();
         </script>
   </body>
 </html>
