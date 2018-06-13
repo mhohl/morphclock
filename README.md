@@ -47,4 +47,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thanks to Dr. Martin Gutbrod from the [PTB](https://www.ptb.de) who coded the websocket interface and allowed me to use parts of his code for this project.
+* Thanks to Dr. Martin Gutbrod ([PTB](https://www.ptb.de)) who coded the websocket interface and allowed me to use parts of his code for this project.
