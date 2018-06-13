@@ -1,4 +1,4 @@
-# Makefile für »morphclock«
+# Makefile for »morphclock«
 TARGET = glyph
 
 SHELL = /bin/bash

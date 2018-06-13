@@ -1,3 +1,4 @@
-TODO morphclock
+TODO
 
-- Übergang 8 -> 0 für die negative Schaltsekunde
+- Tests für Schaltsekunden, abrufbar unter timetest.html
+- bessere Formatierung der Webseiten (responsive design)
