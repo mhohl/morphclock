@@ -9,14 +9,15 @@ SHELL = /bin/bash
 MPEXEC = mpost
 MPOPTS = ""
 
-*.mps: ${TARGET}.mpost
-	@rm -f ./*.mps
+mps/*.mps: ${TARGET}.mpost
+	@rm -f mps/*.mps
 	${MPEXEC} ${MPOPTS} $<
+	@mv *.mps mps/
 
 svg/*.svg: ${TARGET}.mpost
 	bash generate_svg.sh
 
-testglyph.pdf: testglyph.tex *.mps
+testglyph.pdf: testglyph.tex mps/*.mps
 	while lualatex $< > /dev/null ; grep -q "Rerun to" $(<:.tex=.log) ; do : ; done
 
 morphpaths.js: svg/*.svg extract_paths.js

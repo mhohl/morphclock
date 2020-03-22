@@ -164,6 +164,14 @@ pair _a_[], _b_[], _c_[], _d_[],
 % Array für die Umlautpunkte:
 pair umlaut[];
 
+% demo kennzeichnet den Demo-Modus:
+% Stützpunkte und Pfeile werden gezeichnet:
+numeric demo; demo := 0;
+pen demodot;
+demodot := pencircle scaled 2/5pendia;
+pen demoline;
+demoline := pencircle scaled 1/10pendia;
+
 % draft kennzeichnet den Entwurfsmodus:
 numeric draft; draft := 1;
 
@@ -783,6 +791,19 @@ beginfig(start);
 
    draw tmppath[TWO_HOOK]
       & two[JOINT] -- two[END];
+
+   if demo > 0:
+      pickup demodot;
+      draw two[BEGIN] withcolor white;
+      draw two[TOP] withcolor white;
+      draw two[R_ARC] withcolor white;
+      draw two[JOINT] withcolor white;
+      draw two[END] withcolor red;
+
+      pickup demoline;
+      drawarrow two[END]{down}
+         .. (two[END] rotatedaround (two[JOINT],-90)){left} withcolor blue;
+   fi
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -808,6 +829,21 @@ for i = start+1 upto start+fpht:
        draw tmppath[TWO_HOOK]
           & two[JOINT]
             -- two[END] rotatedaround (two[JOINT],-90m);
+
+       % Demo 2 -> 3, Teil 1
+       if demo > 0:
+           pickup demodot;
+           draw two[BEGIN] withcolor white;
+           draw two[TOP] withcolor white;
+           draw two[R_ARC] withcolor white;
+           draw two[JOINT] withcolor white;
+           draw two[END] withcolor green;
+           draw two[END] rotatedaround (two[JOINT],-90m) withcolor red;
+
+           pickup demoline;
+           drawarrow two[END]{down}
+              .. (two[END] rotatedaround (two[JOINT],-90)){left} withcolor blue;
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -833,6 +869,31 @@ for i = start+fpht+1 upto start+2fpht-1:
             .. m[aux[D_ARC],three[D_ARC]]
             .. m[aux[BOTTOM],three[BOTTOM]]
             .. m[aux[END],three[END]];
+
+       % Demo 2 -> 3, Teil 2
+       if demo > 0:
+           pickup demodot;
+           draw two[BEGIN] withcolor green;
+           draw two[TOP] withcolor white;
+           draw two[R_ARC] withcolor white;
+           draw two[JOINT] withcolor green;
+           draw m[two[BEGIN],three[BEGIN]] withcolor red;
+           draw m[two[JOINT],three[JOINT]] withcolor red;
+           draw m[aux[D_ARC],three[D_ARC]] withcolor red;
+           draw m[aux[BOTTOM],three[BOTTOM]] withcolor red;
+           draw m[aux[END],three[END]] withcolor red;
+           draw aux[END] withcolor green;
+           draw aux[BOTTOM] withcolor green;
+           draw aux[D_ARC] withcolor green;
+
+           pickup demoline;
+           drawarrow two[BEGIN] -- three[BEGIN] withcolor blue;
+           drawarrow two[JOINT] -- three[JOINT] withcolor blue;
+           drawarrow aux[D_ARC] -- three[D_ARC] withcolor blue;
+           drawarrow aux[BOTTOM] -- three[BOTTOM] withcolor blue;
+           drawarrow aux[END] -- three[END] withcolor blue;
+           
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -5806,6 +5867,19 @@ draw_grid(u);
         .. _o_[BOTTOM]
         .. _o_[LEFT]
         .. cycle;
+
+   if demo > 0:
+       tmp0 := (ypart(_i_[TOP])-ypart(_o_[TOP])); % siehe o -> r
+       pickup demodot;
+       draw _o_[TOP] withcolor white;
+       draw _o_[LEFT] withcolor white;
+       draw _o_[RIGHT] withcolor red;
+       draw _o_[BOTTOM] withcolor red;
+
+       pickup demoline;
+       drawarrow _o_[RIGHT] -- (_o_[RIGHT] shifted (1/2tmp0, -tmp0)) withcolor blue;
+       drawarrow _o_[BOTTOM] -- (_o_[BOTTOM] shifted (1/2tmp0, -tmp0)) withcolor blue;
+   fi
    setbounds currentpicture to boundingpath;
    tmppic := currentpicture;
 endfig;
@@ -6095,6 +6169,21 @@ for i = start+1 upto start+fpht:
             .. _o_[BOTTOM]{right};
 
        draw tmppath0 shifted (1/2*m*tmp0,-m*tmp0);
+
+       % Demo o -> r, Teil 1
+       if demo > 0:
+          pickup demodot;
+          draw _o_[TOP] withcolor white;
+          draw _o_[LEFT] withcolor white;
+          draw _o_[RIGHT] withcolor green;
+          draw _o_[BOTTOM] withcolor green;
+          draw _o_[BOTTOM] shifted (1/2*m*tmp0, -m*tmp0) withcolor red;
+          draw _o_[RIGHT] shifted (1/2*m*tmp0, -m*tmp0) withcolor red;
+
+          pickup demoline;
+          drawarrow _o_[RIGHT] -- (_o_[RIGHT] shifted (1/2tmp0, -tmp0)) withcolor blue;
+          drawarrow _o_[BOTTOM] -- (_o_[BOTTOM] shifted (1/2tmp0, -tmp0)) withcolor blue;
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -6126,6 +6215,31 @@ for i = start+fpht+1 upto start+2fpht-1:
                    .. aux[BOTTOM]{left};
 
        draw subpath(3-3m,4-3m) of tmppath1;
+
+       % Demo o -> r, Teil 2
+       if demo > 0:
+          pickup demodot;
+          draw _o_[TOP] withcolor green;
+          draw _o_[LEFT] withcolor green;
+          draw _o_[RIGHT] withcolor green;
+          draw _o_[BOTTOM] withcolor green;
+          draw aux[TOP] withcolor blue;
+          draw aux[RIGHT] withcolor blue;
+          draw aux[BOTTOM] withcolor blue;
+          draw m[_o_[RIGHT],_r_[END]] withcolor red;
+          draw m[_o_[TOP],_r_[TOP]] withcolor red;
+          draw m[_o_[LEFT],_r_[MID]] withcolor red;
+          draw m[_o_[BOTTOM],_r_[BOTTOM]] withcolor red;
+          draw point 3-3m of tmppath1 withcolor red;
+          draw point 4-3m of tmppath1 withcolor red;
+
+          pickup demoline;
+          drawarrow reverse tmppath1 withcolor blue;
+          drawarrow _o_[RIGHT] -- _r_[END] withcolor blue;
+          drawarrow _o_[TOP] -- _r_[TOP] withcolor blue;
+          drawarrow _o_[LEFT] -- _r_[MID] withcolor blue;
+          drawarrow _o_[BOTTOM] -- _r_[BOTTOM] withcolor blue;
+       fi
        setbounds currentpicture to boundingpath;
     endfig;
 endfor

@@ -11,7 +11,7 @@
 \begin{document}\pagestyle{empty}
 %
 \newcommand{\showglyph}[1]{%
-  \IfFileExists{#1.mps}{\includegraphics[width=\digitwidth]{#1.mps} }{}
+  \IfFileExists{#1.mps}{\includegraphics[width=\digitwidth]{mps/#1.mps} }{}
 }
 \newcommand{\showtransition}[2]{%
   \subsection{Übergang #1…#2}
@@ -24,8 +24,8 @@
          end
          num = index
          if num < 10 then num = "0" .. num end
-         tex.print("\\IfFileExists{#1#2-" .. index .. ".mps}
-                    {\\includegraphics[width=\\digitwidth]{#1#2-" .. index ..".mps}←"
+         tex.print("\\IfFileExists{mps/#1#2-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{mps/#1#2-" .. index ..".mps}←"
                     .. num .. maybenewline .. "}{}")
      end
   }}
@@ -50,8 +50,8 @@
          elseif num < 100 then
             num = "0" .. num
          end
-         tex.print("\\IfFileExists{clock-" .. index .. ".mps}
-                    {\\includegraphics[width=\\digitwidth]{clock-" .. index ..".mps}←"
+         tex.print("\\IfFileExists{mps/clock-" .. index .. ".mps}
+                    {\\includegraphics[width=\\digitwidth]{mps/clock-" .. index ..".mps}←"
                     .. num .. maybenewline .. "}{}")
      end
   }}
