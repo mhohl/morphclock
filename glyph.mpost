@@ -57,6 +57,16 @@ show(version);
 
 outputformat := "eps";
 
+% Für die Demo-Erstellung exportieren wir nach PNG;
+% hierfür sind die folgenden Einstellungen notwendig
+% (und für eps/svg ohne Belang):
+% Auflösung für PNG:
+vppp := 0.25;
+hppp := 0.25;
+% Ausgabeoptionen
+outputformatoptions := "format=rgb antialias=best";
+
+
 numeric f;      % [f]rame index
 numeric run;    % number of [run]s through loop
 numeric start;  % [start] of transition;
@@ -165,8 +175,7 @@ pair _a_[], _b_[], _c_[], _d_[],
 pair umlaut[];
 
 % demo kennzeichnet den Demo-Modus:
-% Stützpunkte und Pfeile werden gezeichnet:
-numeric demo; demo := 0;
+numeric demo; demo := 0; % wird vom Skript generate_demo.sh geändert
 pen demodot;
 demodot := pencircle scaled 2/5pendia;
 pen demoline;

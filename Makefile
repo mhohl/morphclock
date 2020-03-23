@@ -26,7 +26,10 @@ morphpaths.js: svg/*.svg extract_paths.js
 morphclock.min.js: morphpaths.js morphclock.js
 	uglifyjs $^ > $@
 
-.PHONY: test paths min all
+.PHONY: demo test paths min all
+
+demo: ${TARGET}.mpost
+	bash generate_demo.sh
 
 test: testglyph.pdf
 

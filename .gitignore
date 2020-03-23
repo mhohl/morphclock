@@ -5,9 +5,12 @@
 *.mps
 *.pdf
 *.out
+*.mp4
 morphpaths.js
 morphclock.min.js
 
 upload_morph.sh
 svg/
+mps/
+demo/
 
