@@ -13,6 +13,7 @@ for (let key of Object.keys(Morph.path)) {
         transition[key] = Morph.path[key];
     }
 }
+
 // die standalone-Glyphen
 const skeys = Object.keys(standalone).sort();
 const sglyphs = [];
@@ -20,6 +21,7 @@ const sdiv = document.getElementById('standalone');
 for (let key of skeys) {
     sglyphs.push(new MorphGlyph(key, sdiv, exampleWidth));
 }
+
 // die transition-Glyphen
 var tkeys = Object.keys(transition).sort();
 const tglyphs = [];
@@ -27,6 +29,7 @@ const tdiv = document.getElementById('transition');
 for (let key of tkeys) {
     tglyphs.push(new MorphGlyph(key, tdiv, exampleWidth));
 }
+
 // die Uhr
 const cdiv = document.getElementById('clock');
 const cglyph = new MorphGlyph('clock-0', cdiv, exampleWidth);
