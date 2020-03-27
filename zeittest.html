@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="last-modified" content="2018-05-26" />
+    <title>morphclock: zeittest</title>
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
+    <link href="morph.css" rel="stylesheet" type="text/css">
+    <link href="morphdemo.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+    <!-- Header -->
+        <header id="top">
+            <!-- Fixed navbar -->
+            <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                <a class="navbar-brand" href="index.html">morphclock: zeittest</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Demo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="alle_glyphen.html">Alle Glyphen</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Zeittest<span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/mhohl/morphclock">morphclock auf GitHub</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <main role="main" class="container">
+            <h1 class="mt-5">morphclock: zeittests</h1>
+            <div class="row">
+                <div class="col">
+                    <p>
+                        Hier können Zeitoffsets eingestellt werden, um bestimmte Übergänge zu testen.
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="sticky-top">
+                        <h2>Offsets:</h2>
+                        <br>
+                        <form action="timetest.html">
+		                    <div class="form-group">
+                                <label for="offset_year">Jahre:</label>
+                                <input type="number" name="offset_year" id="offset_year" value="0"/>
+			                </div>
+			                <div class="form-group">
+				                <label for="offset_month">Monate:</label>
+				                <input type="number" name="offset_month" id="offset_month" value="0">
+			                </div>
+			                <div class="form-group">
+				                <label for="offset_day">Tage:</label>
+                                <input type="number" name="offset_day" id="offset_day" value="0">
+			                </div>
+			                <div class="form-group">
+				                <label for="offset_hour">Stunden:</label>
+				                <input type="number" name="offset_hour" id="offset_hour" value="0">
+			                </div>
+			                <div class="form-group">
+				                <label for="offset_minute">Minuten:</label>
+                                <input type="number" name="offset_minute" id="offset_minute" value="0">
+			                </div>
+			                <div class="form-group">
+				                <label for="offset_second">Sekunden:</label>
+                                <input type="number" name="offset_second" id="offset_second" value="0">
+			                </div>
+                            <button class="btn btn-info" type="reset">Zurücksetzen</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-9 offset-md-1">
+                    <div data-type="morphclock" data-format="hhmmss12"></div>
+                    <div data-type="morphclock" data-format="hhmmss24"></div>
+                    <div data-type="morphdate" data-format="full"></div>
+                    <div data-type="morphdate" data-format="full-de"></div>
+                    <div data-type="morphlogo"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="page-footer bg-dark">
+            <!-- Copyright -->
+            <div class="footer-copyright text-center text-white py-3">
+                © 2020
+                <a href="http://www.hohlart.de/"> Marc Hohl</a>
+            </div>
+        </footer>
+
+        <script crossorigin="anonymous" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+        <script crossorigin="anonymous" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+        <script crossorigin="anonymous" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" type="text/javascript"></script>
+        <script language="javascript" src="morphclock.min.js" type="text/javascript"></script>
+        <script language="javascript" src="morphdemo_timetest.js" type="text/javascript"></script>
+    </body>
+</html>
