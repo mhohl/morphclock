@@ -1,8 +1,32 @@
 /* morphdemo.css*/
 
-h1 {
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: black;
+    line-height: 30px;
+}
+
+h1, h2 {
+	font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
 	padding-top: 20px;
 	padding-bottom: 30px;
+}
+
+h1 {
+	font-size: 56px;
+}
+
+h2 {
+	font-size: 36px;
+}
+
+code, var {
+	font-family: 'Fira Code', monospace;
+	font-weight: 400;
+	color: #212529; /* wie <pre> */
 }
 
 hr {

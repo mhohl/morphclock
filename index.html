@@ -3,6 +3,7 @@
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
         <meta content="2020-03-26" http-equiv="last-modified"/>
         <title>morphclock: demo</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans&family=Fira+Code">
         <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
         <link href="morph.css" rel="stylesheet" type="text/css">
         <link href="morphdemo.css" rel="stylesheet" type="text/css">
@@ -69,7 +70,11 @@
                 <div class="col-md-6">
                     <h2>morphclock</h2>
                     <p>
-                        Die Uhr wird mit <code>&lt;div data-type="morphclock" data-format="</code><var>format</var><code>"&gt;</code> eingesetzt und aktiviert.
+                        Die Uhr wird mit
+                        <pre><code>
+&lt;div data-type="morphclock" data-format="</code><var>format</var><code>"&gt;
+                        </code></pre>
+                        eingesetzt und aktiviert.
                     </p>
 
                     <p>
@@ -104,7 +109,11 @@
                 <div class="col-md-6">
                     <h2>morphdate</h2>
                     <p>
-                        Die Datumsanzeige wird mit <code>&lt;div data-type="morphdate" data-format="</code><var>format</var><code>"&gt;</code> eingesetzt und aktiviert.
+                        Die Datumsanzeige wird mit
+                        <pre><code>
+&lt;div data-type="morphdate" data-format="</code><var>format</var><code>"&gt;
+                        </code></pre>
+                        eingesetzt und aktiviert.
                     </p>
                     <p>
                         <var>format</var> kann folgende Werte annehmen:
@@ -125,7 +134,7 @@
                                 <a href="#morphdate" id="morphdemo_Y/M/D">Y/M/D</a> für die Anzeige im Format <var>yyyy/mm/dd</var>
                             </li>
                             <li>
-                                <a href="#morphdate" id="morphdemo_MonthDY">MonthDY</a> für die Anzeige mit abgekürztem Monatsnamen</var>
+                                <a href="#morphdate" id="morphdemo_MonthDY">Month D,Y</a> für die Anzeige mit abgekürztem Monatsnamen</var>
                             </li>
                             <li>
                                 <a href="#morphdate" id="morphdemo_full">full</a> für die Anzeige mit ausgeschriebenem Wochentag
@@ -146,7 +155,11 @@
                 <div class="col-md-6">
                     <h2>morphlogo</h2>
                     <p>
-                        Die Datumsanzeige wird mit <code>&lt;div data-type="morphlogo"&gt;</code> eingesetzt und aktiviert. Das zweite 'o' zeigt die aktuelle Uhrzeit an.
+                        Die Datumsanzeige wird mit
+                        <pre><code>
+&lt;div data-type="morphlogo"&gt;
+                        </code></pre>
+                        eingesetzt und aktiviert. Das zweite 'o' zeigt die aktuelle Uhrzeit an.
                     </p>
                     <p>
                         Einige Variationen, die per JavaScript gesteuert werden (und natürlich auch auf die Uhr und die Datumsanzeige anwendbar sind):
