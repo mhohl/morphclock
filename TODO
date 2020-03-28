@@ -1,5 +1,5 @@
 TODO
 
-- Tests für Schaltsekunden, abrufbar unter timetest.html
-- bessere Formatierung der Webseiten (responsive design)
-- Gradient scheint unter Chrome nicht zu funktionieren
+- Tests für Schaltsekunden, abrufbar unter zeittest.html
+- Trennung der morphclock-Funktionalität von der PTB-Zeitinfo und Rewrite der WebSocket-Connection
+
