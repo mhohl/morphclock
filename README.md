@@ -1,6 +1,6 @@
 # Morphclock
 
-an animated time and date display (logo included). The displayed time is in sync with the time server from ptb.de and uses CE(S)T.
+an animated time and date display (logo included).
 
 ## Getting Started
 
@@ -47,4 +47,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thanks to Dr. Martin Gutbrod ([PTB](https://www.ptb.de)) who coded the websocket interface and allowed me to use parts of his code for this project.
+* Thanks to Dr. Martin Gutbrod ([PTB](https://www.ptb.de)) who coded the websocket interface and allowed me to use parts of his code for this project. The websocket interface is currently deactivated and will be included as an optional package once it is updated to the latest specs.
