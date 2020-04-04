@@ -1,8 +1,8 @@
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="last-modified" content="2020-03-26" />
-        <title>morphclock: glyphen</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+        <meta content="2020-03-26" http-equiv="last-modified"/>
+        <title>morphclock: ptb-option</title>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans&family=Fira+Code">
         <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
         <link href="morph.css" rel="stylesheet" type="text/css">
@@ -14,23 +14,23 @@
         <header id="top">
             <!-- Fixed navbar -->
             <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-                <a class="navbar-brand" href="index.html">morphclock: glyphen</a>
+                <a class="navbar-brand" href="index.html">morphclock: ptb-option</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a class="nav-link" href="index.html">Demo</a>
                         </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Alle Glyphen<span class="sr-only">(current)</span></a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="alle_glyphen.html">Alle Glyphen</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="zeittest.html">Zeittest</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="ptb-option.html">PTB-Option</a>
+                            <a class="nav-link" href="#">PTB-Option <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="https://github.com/mhohl/morphclock">morphclock auf GitHub</a>
@@ -41,29 +41,38 @@
         </header>
 
         <main role="main" class="container">
-            <h1 class="mt-5">morphclock: glyphen</h1>
+            <h1 class="mt-5">morphclock: ptb-option</h1>
             <div class="row">
                 <div class="col">
-                    <h2>Die statischen Glyphen</h2>
-                    <div id="standalone" style="stroke: black;"></div>
+                    <p>
+                    Die <strong>PTB-Option</strong> bietet eine direkte Anbindung an den Zeitserver der Physikalisch-Technischen Bundesanstalt (PTB). Damit wird die Uhr zum einen genauer synchronisiert, zum anderen werden auch Schaltsekunden in der Anzeige berücksichtigt:
+                    <ul>
+                        <li><strong>positive</strong> Schaltsekunden: 23:59:59 → 23:59:60 → 00:00:00</li>
+                        <li><strong>negative</strong> Schaltsekunden: 23:59:58 → 00:00:00</li>
+                    </ul>
+
+                    <p>
+                    Die Einbindung ist denkbar einfach: Der JavaScript-Code wird mit
+                    <pre><code>
+&lt;link rel="stylesheet" type="text/css" href="morph.css"&gt;
+&lt;script type="text/javascript" language="javascript" src="morphclock.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" language="javascript" src="morphclock-ptb.min.js"&gt;&lt;/script&gt;
+                    </code></pre>
+                    nach dem <code>&lt;body&gt;</code>-Tag eingefügt.
+                    </p>
+                    <p>
+                        Ist keine Verbindung zum PTB-Zeitserver möglich, läuft die Uhr synchron zur lokalen Browserzeit; die Glyphen werden dann durchscheinend (Deckung: 50%).
+                    </p>
                 </div>
             </div>
-            <hr>
+            <hr id="morphclock">
             <div class="row">
-                <div class="col">
-                    <h2>Die Übergänge</h2>
-                    <div id="transition" style="stroke: black;"></div>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col">
-                    <h2>Die Uhr</h2>
-                    <div id="clock" style="stroke: black;"></div>
+                <div class="offset-md-3 col-md-6">
+                    <div data-type="morphclock" id="morph-container-2"></div>
+                    <!-- ohne data-format -> default -->
                 </div>
             </div>
         </main>
-
         <footer class="page-footer bg-dark">
             <!-- Copyright -->
             <div class="footer-copyright text-center text-white py-3">
@@ -76,6 +85,6 @@
         <script crossorigin="anonymous" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
         <script crossorigin="anonymous" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script language="javascript" src="morphclock.min.js" type="text/javascript"></script>
-        <script language="javascript" src="morphdemo_alle_glyphen.js" type="text/javascript"></script>
+        <script language="javascript" src="morphclock-ptb.min.js" type="text/javascript"></script>
     </body>
 </html>

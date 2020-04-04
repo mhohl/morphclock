@@ -26,6 +26,9 @@ morphpaths.js: svg/*.svg extract_paths.js
 morphclock.min.js: morphpaths.js morphclock.js
 	uglifyjs $^ > $@
 
+morphclock-ptb.min.js: morphclock-ptb.js
+	uglifyjs $^ > $@
+
 .PHONY: demo test paths min all
 
 demo: ${TARGET}.mpost
@@ -35,6 +38,6 @@ test: testglyph.pdf
 
 paths: morphpaths.js
 
-min: morphclock.min.js
+min: morphclock.min.js morphclock-ptb.min.js
 
 all: test min

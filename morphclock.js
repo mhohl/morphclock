@@ -459,9 +459,7 @@ Morph.data = {
 */
 Morph.io = {
     leap: 0,
-    websocket: {
-        connected: false
-    }
+    connected: function(c) { return false; }
 };
 
 Morph.init = function() {
@@ -479,6 +477,10 @@ Morph.init = function() {
 Morph.start = function() {
     Morph.update();
     window.requestAnimationFrame(Morph.start);
+}
+Morph.launch = function() {
+    Morph.init();
+    Morph.start();
 }
 Morph.update = function() {
     for (let type in Morph.elements) {
@@ -795,9 +797,7 @@ MorphDisplay.prototype.date.update = function(now) {
             ['', 'nb', 'br', 'rr', 'ri', 'in', 'nl', 'lg', 'gp', 'pt', 'tv', 'vz', 'zn']
         ]
     };
-    const lastDayOfMonth = [-1,
-        31, now.leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-    ];
+    const lastDayOfMonth = [-1, 31, now.leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     let main = {};
     let morph = {};
     let slow_morph = (h == 23 && m == 59 && s >= this.slowMorphStart);
@@ -1013,7 +1013,7 @@ var MorphTimeDate = class MorphTimeDate {
     constructor(offset = 0) {
         // wir rechnen mit UTC-Zeiten, um die Zeitumstellung bestimmen zu können
         var UTCdate;
-        if (Morph.io.websocket.connected) {
+        if (Morph.io.connected()) {
             UTCdate = new Date(performance.now() - Morph.io.timeDelta);
             let locdate = new Date();
             Morph.io.timediff = locdate.getTime() - UTCdate.getTime();
@@ -1108,7 +1108,8 @@ var MorphTimeDate = class MorphTimeDate {
     }
 }
 // Wir starten die Morphelemente:
-window.onload = function() {
-    Morph.init();
-    Morph.start();
+if (window.addEventListener) {
+    window.addEventListener("load", Morph.launch);
+} else if (window.attachEvent) {
+    window.attachEvent("onload", Morph.launch);
 }
