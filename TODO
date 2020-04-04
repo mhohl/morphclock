@@ -1,5 +1,0 @@
-TODO
-
-- Tests für Schaltsekunden, abrufbar unter zeittest.html
-- Trennung der morphclock-Funktionalität von der PTB-Zeitinfo und Rewrite der WebSocket-Connection
-
