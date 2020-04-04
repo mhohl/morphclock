@@ -53,40 +53,76 @@
             </div>
             <hr>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <div class="sticky-top">
                         <h2>Offsets:</h2>
                         <br>
                         <form action="timetest.html">
-		                    <div class="form-group">
-                                <label for="offset_year">Jahre:</label>
-                                <input type="number" name="offset_year" id="offset_year" value="0"/>
-			                </div>
-			                <div class="form-group">
-				                <label for="offset_month">Monate:</label>
-				                <input type="number" name="offset_month" id="offset_month" value="0">
-			                </div>
-			                <div class="form-group">
-				                <label for="offset_day">Tage:</label>
-                                <input type="number" name="offset_day" id="offset_day" value="0">
-			                </div>
-			                <div class="form-group">
-				                <label for="offset_hour">Stunden:</label>
-				                <input type="number" name="offset_hour" id="offset_hour" value="0">
-			                </div>
-			                <div class="form-group">
-				                <label for="offset_minute">Minuten:</label>
-                                <input type="number" name="offset_minute" id="offset_minute" value="0">
-			                </div>
-			                <div class="form-group">
-				                <label for="offset_second">Sekunden:</label>
-                                <input type="number" name="offset_second" id="offset_second" value="0">
-			                </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="offset_year">Jahre:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="offset_year" id="offset_year" value="0"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="offset_month">Monate:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="offset_month" id="offset_month" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="offset_day">Tage:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="offset_day" id="offset_day" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="offset_hour">Stunden:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="offset_hour" id="offset_hour" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="offset_minute">Minuten:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="offset_minute" id="offset_minute" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="offset_second">Sekunden:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="offset_second" id="offset_second" value="0">
+                                </div>
+                            </div>
+                            <p>
+                                Schaltsekunde am letzten Tag eines Quartals (31.03./30.06./30.09./31.12.) um 23:59:xx UTC(!)
+                            </p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="leap" id="no_leap" value="0" checked="checked">
+                                <label class="form-check-label" for="no_leap">
+                                    keine
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="leap" id="plus_leap" value="1">
+                                <label class="form-check-label" for="plus_leap">
+                                    positive (59 → 60 → 00)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="leap" id="minus_leap" value="2">
+                                <label class="form-check-label" for="minus_leap">
+                                    negative (58 → 00)
+                                </label>
+                            </div>
+                            <p class="small">
+                                Weil die Zeit ja trotzdem "normal" weiterläuft, "springt" die Anzeige nach der Schaltsekunde.
+                            </p>
                             <button class="btn btn-info" type="reset">Zurücksetzen</button>
                         </form>
                     </div>
                 </div>
-                <div class="col-md-9 offset-md-1">
+                <div class="col-md-7 offset-md-1">
                     <div data-type="morphclock" data-format="hhmmss12"></div>
                     <div data-type="morphclock" data-format="hhmmss24"></div>
                     <div data-type="morphdate" data-format="full"></div>
