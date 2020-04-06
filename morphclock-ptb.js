@@ -7,9 +7,11 @@
  * mit morphclock-ptb.js aktiviert wird.
  * Vielen Dank an Dr. Martin Gutbrod von der PTB, der die Einwilligung
  * gegeben hat, dass sein Code hier einfließen darf!
+ *
+ * https://www.ptb.de/cms/fileadmin/internet/publikationen/ptb_mitteilungen/mitt2019/PTB-Mitteilungen_2019_Heft_4.pdf
+ * https://uhr.ptb.de/wst/paper
+ *
  */
-//Morph = {};
-//Morph.io = {};
 if (typeof Morph === 'undefined') {
     throw new Error("morphclock-ptb.min.js ist nur in Verbindung mit morphclock.min.js nutzbar!");
 }
