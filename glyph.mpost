@@ -1254,7 +1254,8 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw two[BEGIN]
             .. two[TOP]
             ..two[R_ARC]
-            .. tension (m+1) .. two[JOINT]{dir m[-180, phi[JOINT]]}
+            .. tension (f+1) .. two[JOINT]{dir m[-180, phi[JOINT]]}
+            % hier ist f↑ passender als m
           & two[JOINT] -- two[END]
             -- tmppath0;
 
