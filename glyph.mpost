@@ -46,6 +46,11 @@
 % m -> d, o -> i, o -> o, o -> r, r -> i,
 % v -> z, z -> n
 %
+% für die Timerfunktion brauchen wir:
+% 0 -> 9, 9 -> 8, 8 -> 7, 7 -> 6, 6 -> 5,
+% 5 -> 4, 4 -> 3, 3 -> 2 sowie 0 -> 5
+% (2 -> 1 und 1 -> 0 siehe oben)
+%
 % Das Uhr-O schließlich ist unter clock-n
 % n := hour*60+min (also n = 0 ... 719)
 % abgelegt.
@@ -496,6 +501,152 @@ for i = start+fpht+1 upto start+2fpht-1:
        draw m[one[TOP],one[BEGIN]]
             -- one[TOP]
             -- one[BOTTOM];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 0 -> 5
+%
+
+outputtemplate := "05-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+tmppath0 := zero[LEFT]{up}
+           .. zero[TOP]
+           .. zero[RIGHT]{down};
+tmppath1 := zero[LEFT]{down}
+           .. zero[BOTTOM]
+           .. zero[RIGHT]{up};
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmp0 := -m[ypart(zero[BOTTOM]), ypart(zero[LEFT])];
+       aux[LEFT] := zero[LEFT] shifted (0, tmp0);
+       aux[BOTTOM] := zero[BOTTOM] shifted (0, tmp0);
+       aux[RIGHT] := zero[RIGHT] shifted (0, tmp0);
+
+       tmppath1 := aux[LEFT]{down}
+           .. aux[BOTTOM]
+           .. aux[RIGHT]{up};
+
+       draw tmppath0;
+       draw tmppath1;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% ermittle noch einen Hilfspunkt im unteren 0-Bogen
+% (der Bogen der 5 hat 4 Punkte!)
+aux[TEMP] := point 1.5 of tmppath1;
+phi[TEMP] := angle(direction 1.5 of tmppath1);
+
+% ermittle Pfad und Winkel für den 5-er Bogen:
+aux[JOINT] := five[JOINT] rotated -90;
+aux[U_ARC] := five[U_ARC] rotated -90;
+aux[R_ARC] := five[R_ARC] rotated -90;
+aux[END] := five[END] rotated -90;
+
+tmppath2 := aux[END]{down}
+            .. aux[R_ARC]
+            .. aux[U_ARC]
+            .. aux[JOINT];
+phi[JOINT] := angle(direction 3 of tmppath2);
+phi[U_ARC] := angle(direction 2 of tmppath2);
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath1 := m[aux[LEFT], aux[END]]{down}
+           .. m[aux[BOTTOM], aux[R_ARC]]
+           .. m[aux[TEMP], aux[U_ARC]]{dir m[phi[TEMP], phi[U_ARC]]}
+           .. m[aux[RIGHT], aux[JOINT]]{dir m[90, phi[JOINT]]};
+
+       draw m[zero[LEFT], five[JOINT]]{up}
+           .. {dir m[0, 90]}m[zero[TOP], five[LEFT]]{right}
+           .. m[zero[RIGHT], five[BEGIN]]{dir m[-90, 0]};
+       draw tmppath1 rotated 90m;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 0 -> 9
+%
+
+outputtemplate := "09-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+tmppath0 := zero[LEFT]{up}
+           .. zero[TOP]
+           .. zero[RIGHT]{down};
+tmppath1 := zero[LEFT]{down}
+           .. zero[BOTTOM]
+           .. zero[RIGHT]{up};
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmp0 := -m[ypart(zero[BOTTOM]), ypart(zero[LEFT])];
+       aux[LEFT] := zero[LEFT] shifted (0, tmp0);
+       aux[BOTTOM] := zero[BOTTOM] shifted (0, tmp0);
+       aux[RIGHT] := zero[RIGHT] shifted (0, tmp0);
+
+       draw zero[LEFT]{up}
+            .. zero[TOP]
+            .. zero[RIGHT]{down}
+            -- aux[RIGHT]{down}
+            .. aux[BOTTOM]
+            .. aux[LEFT]{up};
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% bestimme Winkel in der unteren Spitze der 9:
+tmppath0 := nine[LEFT]{up}
+            .. nine[TOP]
+            .. nine[RIGHT]{down}
+            .. nine[END];
+phi[END] := angle(direction 3 of tmppath0);
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath0 := nine[RIGHT]
+            .. nine[BOTTOM]
+            .. m[zero[LEFT], nine[LEFT]]{up}
+            .. m[zero[TOP], nine[TOP]]
+            .. m[zero[RIGHT], nine[RIGHT]]{down}
+            -- m[aux[RIGHT], nine[RIGHT]]{down}
+            .. m[aux[BOTTOM], nine[END]]{dir m[-180, phi[END]]}
+            .. aux[LEFT]{up};
+       draw subpath (2-2m, 7-sqrt(m)) of tmppath0;
+       % schneller zum Punkt 7 ↑ ziehen
        setbounds currentpicture to boundingpath;
     endfig;
 endfor
