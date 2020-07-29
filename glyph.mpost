@@ -2253,6 +2253,86 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% 9 -> 8
+%
+
+outputtemplate := "98-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% wir ermitteln einen Hilfspunkt im unteren Teil der '9':
+tmppath0 := nine[RIGHT]{down}
+        .. nine[BOTTOM]
+        .. nine[LEFT]
+        .. nine[TOP]
+        .. nine[RIGHT]{down}
+        .. nine[END];
+aux[MID] := point 4.75 of tmppath0;
+
+% Wir ermitteln den Winkel am Kreuzungspunkt der '8'
+% sowie am oberen "Bauch":
+
+tmppath1 := eight[TOP]
+        .. eight[R_ARC]
+        .. eight[MID]
+        .. eight[LEFT]
+        .. eight[BOTTOM]
+        .. eight[RIGHT]
+        .. eight[MID]
+        .. eight[L_ARC]
+        .. cycle;
+
+phi[MID] := angle(direction 6 of tmppath1);
+phi[R_ARC] := angle(direction 1 of tmppath1);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       tmppath0 := m[nine[RIGHT], eight[R_ARC]]{dir m[-90, phi[R_ARC]]}
+        .. m[nine[BOTTOM], eight[MID]]{dir m[180, phi[MID]]}
+        .. m[nine[LEFT], eight[L_ARC]]
+        .. m[nine[TOP], eight[TOP]]
+        .. m[nine[RIGHT], eight[R_ARC]]{dir m[-90, phi[R_ARC]]}
+        .. m[aux[MID], eight[LEFT]]
+        .. m[nine[END], eight[BOTTOM]];
+
+        draw subpath (min(1, 2f), 6) of tmppath0;
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := eight[MID]{dir phi[MID]}
+            .. eight[L_ARC]
+            .. eight[TOP]
+            .. eight[R_ARC]
+            .. eight[MID]
+            .. eight[LEFT]
+            .. eight[BOTTOM]
+            .. eight[RIGHT]
+            .. eight[MID]{dir phi[MID]};
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw subpath (0,6+2m) of tmppath0;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 2a -> ()
 %
 
