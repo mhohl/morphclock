@@ -1888,6 +1888,99 @@ beginfig(start);
 endfig;
 
 %
+% 8 -> 7
+%
+
+outputtemplate := "87-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Die Winkel an den '8'-Bäuchen:
+tmppath0 := eight[TOP]
+        .. eight[R_ARC]
+        .. eight[MID]
+        .. eight[LEFT]
+        .. eight[BOTTOM]
+        .. eight[RIGHT]
+        .. eight[MID]
+        .. eight[L_ARC]
+        .. cycle;
+
+phi[R_ARC] := angle(direction 1 of tmppath0);
+phi[LEFT] := angle(direction 3 of tmppath0);
+phi[RIGHT] := angle(direction 5 of tmppath0);
+phi[L_ARC] := angle(direction 7 of tmppath0);
+
+aux[L_ARC] := (xpart(eight[LEFT]), ypart(eight[TOP]));
+aux[R_ARC] := (xpart(eight[RIGHT]), ypart(eight[TOP]));
+aux[LEFT]  := (xpart(eight[LEFT]), ypart(eight[BOTTOM]));
+aux[RIGHT] := (xpart(eight[RIGHT]), ypart(eight[BOTTOM]));
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw eight[TOP]
+        .. {dir m[phi[R_ARC], 0]}
+           m[eight[R_ARC], aux[R_ARC]]
+           {dir m[phi[R_ARC], -90]}
+        .. eight[MID]
+        .. {dir m[phi[LEFT], -90]}
+           m[eight[LEFT], aux[LEFT]]
+           {dir m[phi[LEFT], 0]}
+        .. eight[BOTTOM]
+        .. {dir m[phi[RIGHT],0]}
+           m[eight[RIGHT], aux[RIGHT]]
+           {dir m[phi[RIGHT], 90]}
+        .. eight[MID]
+        .. {dir m[phi[L_ARC], 90]}
+           m[eight[L_ARC], aux[L_ARC]]
+           {dir m[phi[L_ARC], 0]}
+        .. cycle;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+tmppath0 := aux[L_ARC]
+        -- aux[R_ARC]{down}
+        .. eight[MID]
+        .. {down}aux[LEFT]
+        -- aux[RIGHT]{up}
+        .. eight[MID]
+        .. {up}aux[L_ARC]
+        -- cycle;
+
+aux[BEGIN] := point 5.5 of tmppath0;
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       tmppath1 := m[aux[LEFT],seven[END]]
+        .. m[eight[MID], seven[MID]]
+        .. m[aux[R_ARC], seven[JOINT]]{up}
+        -- m[aux[L_ARC], seven[LEFT]]{down}
+        .. m[aux[BEGIN], seven[BEGIN]]
+        .. m[eight[MID], seven[MID]]
+        .. {down}aux[RIGHT]
+        -- m[aux[LEFT], seven[END]];
+        draw subpath (0, 7-3m) of tmppath1;
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+%
 % 8 -> 9
 %
 
@@ -2229,7 +2322,7 @@ aux[TOP]    := nine[TOP]    shifted aux[DIFF];
 aux[END]    := aux[END]     shifted aux[DIFF];
 
 % der Winkel der Eins:
-phi[TOP]    := angle(one[TOP]-aux[BEGIN]);
+phi[TOP]    := angle(one[TOP]-one[BEGIN]);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
