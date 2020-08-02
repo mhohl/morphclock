@@ -1581,6 +1581,76 @@ beginfig(start);
 endfig;
 
 %
+% 5 -> 4
+%
+
+outputtemplate := "54-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Hilfspunkte, auf die sich five[U_ARC] und five[R_ARC] zubewegen:
+aux[U_ARC] := 1/2[four[LEFT], four[RIGHT]];
+aux[R_ARC] := 1/2[four[RIGHT], five[END]];
+
+tmppath0 := five[JOINT]
+         .. five[U_ARC]
+         .. five[R_ARC]
+         .. {left}five[END];
+aux[RIGHT] := point 1.5 of tmppath0;
+
+% Winkel beim Hilfspunkt der '5':
+phi[MID] := angle(direction 1.5 of tmppath0);
+% Winkel bei der '4':
+phi[LEFT] := angle(four[INTER] - four[LEFT]);
+phi[RIGHT] := angle(five[END] - four[RIGHT]);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw m[five[BEGIN], four[TOP]]
+         -- five[LEFT]
+         -- m[five[JOINT], four[LEFT]]
+          & m[five[JOINT], four[LEFT]]
+         .. m[five[U_ARC], aux[U_ARC]]
+         .. {dir m[phi[MID], phi[LEFT]]}
+            m[aux[RIGHT], four[RIGHT]]
+            {dir m[phi[MID], phi[RIGHT]]}
+         .. m[five[R_ARC], aux[R_ARC]]
+         .. five[END]{dir m[-180, phi[RIGHT]]};
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% ein Hilfspunkt zwischen four[LEFT] und four[TOP]:
+aux[MID] := 1/2[four[LEFT], four[TOP]];
+
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw four[TOP]
+         -- m[five[LEFT], aux[MID]]
+         -- four[LEFT]
+         -- m[four[INTER], four[RIGHT]];
+       draw m[five[END], four[BOTTOM]]
+         -- m[four[INTER], four[TOP]];
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 5 -> 6
 %
 
