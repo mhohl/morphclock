@@ -11,7 +11,7 @@
 \begin{document}\pagestyle{empty}
 %
 \newcommand{\showglyph}[1]{%
-  \IfFileExists{#1.mps}{\includegraphics[width=\digitwidth]{mps/#1.mps} }{}
+  \IfFileExists{mps/#1.mps}{\includegraphics[width=\digitwidth]{mps/#1.mps} }{}
 }
 \newcommand{\showtransition}[2]{%
   \subsection{Übergang #1…#2}
