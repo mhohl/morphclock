@@ -1797,6 +1797,89 @@ beginfig(start);
 endfig;
 
 %
+% 6 -> 5
+%
+
+outputtemplate := "65-%c.mps";
+
+beginfig(start);
+   draw tmppic;
+endfig;
+
+% Das linke untere Viertelsegment der 6:
+tmppath0 := six[LEFT]{down}
+            .. six[BOTTOM]{right};
+
+% die Verschiebung (analog zu o -> i/o -> r:
+tmp0 := 2/3[xh,asc]-ypart(zero[TOP]);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start)/fpht;
+       m := retarded(f);
+
+       draw six[BEGIN] .. six[LEFT]{down};
+       draw six[LEFT]{up}
+         .. six[TOP]
+         .. six[RIGHT]
+         .. six[BOTTOM]{left};
+
+       draw tmppath0 shifted (-1/2*m*tmp0,-m*tmp0);
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+% der Winkel an five[JOINT]:
+tmppath1 := five[JOINT]
+        .. five[U_ARC]
+        .. five[R_ARC]
+        .. {left}five[END];
+phi[JOINT] := angle(direction 0 of tmppath1);
+
+% der Hilfspfad, an dem das ausgeschnittene Segment
+% nach oben zum Querstrich gleitet:
+
+aux1 := six[LEFT] shifted (-1/2*tmp0, -tmp0);
+aux2 := six[BOTTOM] shifted (-1/2*tmp0, -tmp0);
+aux3 := 3/2[C, six[RIGHT]];
+
+% Zwei Hilfspfade;das herausgelöste Segment läuft zwischen
+% Punkt 3m auf tmppath2 und Punkt 3m auf tmppath3:
+tmppath2 := aux1{down}
+            .. aux2{right}
+            .. aux3{up}
+            .. five[BEGIN]{left};
+tmppath3 := aux2{right}
+            .. aux3{up}
+            .. five[BEGIN] % added
+            .. five[LEFT]{left};
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+       draw_grid(u);
+       pickup pc;
+
+       f := (i-start-fpht)/fpht;
+       m := advanced(f);
+
+       draw m[six[BEGIN], five[LEFT]]
+         .. m[six[LEFT], five[JOINT]]{down};
+       draw m[six[LEFT], five[JOINT]]{dir m[90, phi[JOINT]]}
+         .. m[six[TOP], five[U_ARC]]
+         .. m[six[RIGHT], five[R_ARC]]
+         .. m[six[BOTTOM], five[END]]{left};
+
+       draw (point 3m of tmppath2){direction 3m of tmppath2}
+         .. (point 3m of tmppath3){direction 3m of tmppath3};
+
+       setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+%
 % 6 -> 7
 %
 
