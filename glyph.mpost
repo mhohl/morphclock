@@ -192,10 +192,10 @@ numeric draft; draft := 1;
 def draw_grid(expr u) =
     if draft > 0:
         draw (-0.6u,-0.75u)
-             -- (-0.6u,1.5u)
-             -- (0.6u,1.5u)
-             -- (0.6u,-0.75u)
-             -- cycle;
+            -- (-0.6u,1.5u)
+            -- (0.6u,1.5u)
+            -- (0.6u,-0.75u)
+            -- cycle;
         draw (-0.6u,0) -- (0.6u,0);
         draw (-0.6u,xh) -- (0.6u,xh);
         draw (-sw,-0.75u)--(-sw,1.5u);
@@ -211,10 +211,10 @@ enddef;
 
 path boundingpath;
 boundingpath := (-0.6u,-0.75u)
-                -- (-0.6u,1.5u)
-                -- (0.6u,1.5u)
-                -- (0.6u,-0.75u)
-                -- cycle;
+    -- (-0.6u,1.5u)
+    -- (0.6u,1.5u)
+    -- (0.6u,-0.75u)
+    -- cycle;
 
 vardef advanced(expr xx) = sind(90xx) enddef;
 vardef retarded(expr xx) = 1-cosd(90xx) enddef;
@@ -293,8 +293,7 @@ zero[RIGHT]  = zero[LEFT] xscaled -1;
 one[BEGIN]  = (-sw,xh/2);
 one[TOP]    = (sw,xh);
 one[BOTTOM] = (sw,0);
-% Hilfspunkt für Übergänge
-one[MID]    = 1/2[one[TOP],one[BOTTOM]];
+one[MID]    = 1/2[one[TOP],one[BOTTOM]]; % Hilfspunkt für Übergänge
 
 % 2
 two[BEGIN] = (-sw,3/4*xh);
@@ -307,9 +306,7 @@ two[END]   = (sw,0);
 twoA[BEGIN] = (dx,dsc/2);
 twoA[TOP]   = (sw,-dsc/2+dx);
 twoA[END]   = (2sw-dx,dsc/2);
-%
-twoA[MID]   = ((0,0) -- (2sw,0))
-              intersectionpoint (twoA[TOP] -- twoA[END]);
+twoA[MID]   = ((0,0) -- (2sw,0)) intersectionpoint (twoA[TOP] -- twoA[END]);
 
 % 2b
 twoB[TOP]    = twoA[TOP];
@@ -332,10 +329,8 @@ four[LEFT]   = (-sw,0);
 four[TOP]    = (sw,xh);
 four[BOTTOM] = (sw,dsc);
 four[RIGHT]  = (3/2*sw,dy);
-
 four[INTER]  = (four[LEFT] -- four [RIGHT])
-               intersectionpoint
-               (four[TOP] -- four[BOTTOM]);
+    intersectionpoint (four[TOP] -- four[BOTTOM]);
 
 % 5
 five[BEGIN] = four[TOP];
@@ -358,8 +353,7 @@ seven[LEFT]  = (-0.3u,xh);
 seven[JOINT] = seven[LEFT] xscaled -1;
 seven[MID]   = (0.1u,0.15u);
 seven[END]   = (0,dsc);
-% Hilfspunkt:
-seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]];
+seven[TOP]   = (1/2)[seven[LEFT],seven[JOINT]]; % Hilfspunkt:
 
 % 8
 eight[TOP]    = (0,asc);
@@ -2349,51 +2343,50 @@ endfor
 outputtemplate := "80-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 % Wir bestimmen den Winkel im Kreuzungspunkt:
 tmppath0 := eight[TOP]
-            .. eight[R_ARC]
-            .. eight[MID]
-            .. eight[LEFT]
-            .. eight[BOTTOM]
-            .. eight[RIGHT]
-            .. eight[MID]
-            .. eight[L_ARC]
-            .. cycle;
+    .. eight[R_ARC]
+    .. eight[MID]
+    .. eight[LEFT]
+    .. eight[BOTTOM]
+    .. eight[RIGHT]
+    .. eight[MID]
+    .. eight[L_ARC]
+    .. cycle;
 phi[MID] := angle(direction 6 of tmppath0);
 
 % Hilfspunkte, die auf der Höhe von eight[MID] und
 % gleichzeitig auf der Verbindung von eight[L_ARC]
 % und eight[LEFT] (bzw R_ARC und RIGHT) liegen:
 aux[LEFT] := ((-infinity,ypart(eight[MID]))--(infinity,ypart(eight[MID])))
-             intersectionpoint
-             (eight[L_ARC] -- eight[LEFT]);
+    intersectionpoint (eight[L_ARC] -- eight[LEFT]);
 aux[RIGHT] := aux[LEFT] xscaled -1;
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       % der Kreuzungspunkt wird als zwei sich berührende Spitzen
-       % interpretiert; diese Spitzen bewegen sich auf die jeweils
-       % gegenüberliegende Seite und bilden eine dritte Schlaufe:
-       tmppath1 := eight[TOP]{right}
+        % der Kreuzungspunkt wird als zwei sich berührende Spitzen
+        % interpretiert; diese Spitzen bewegen sich auf die jeweils
+        % gegenüberliegende Seite und bilden eine dritte Schlaufe:
+        tmppath1 := eight[TOP]{right}
             .. eight[R_ARC]
             .. {dir -m[phi[MID],90]}
                m[eight[MID],aux[LEFT]]
                {dir (m[phi[MID],90]-180)}
             .. eight[RIGHT]
             .. eight[BOTTOM]{left};
-       draw tmppath1;
-       tmppath2 := tmppath1 xscaled -1;
-       draw tmppath2;
-       setbounds currentpicture to boundingpath;
+        draw tmppath1;
+        tmppath2 := tmppath1 xscaled -1;
+        draw tmppath2;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2403,30 +2396,30 @@ aux[BOTTOM] := (subpath (2,4) of tmppath1) intersectionpoint tmppath2;
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       % die mittlere Schlaufe wächst und wird zur Null;
-       % die obere und die untere Schlaufe schrumpft zum Punkt
-       % und verschwindet:
-       draw m[aux[LEFT],zero[LEFT]]{up}
+        % die mittlere Schlaufe wächst und wird zur Null;
+        % die obere und die untere Schlaufe schrumpft zum Punkt
+        % und verschwindet:
+        draw m[aux[LEFT],zero[LEFT]]{up}
             .. m[aux[TOP],zero[TOP]]
             .. m[eight[R_ARC],zero[TOP]]
             .. m[eight[TOP],zero[TOP]]
             .. m[eight[L_ARC],zero[TOP]]
             .. m[aux[TOP],zero[TOP]]
             .. m[aux[RIGHT],zero[RIGHT]]{down};
-       draw m[aux[LEFT],zero[LEFT]]{down}
+        draw m[aux[LEFT],zero[LEFT]]{down}
             .. m[aux[BOTTOM],zero[BOTTOM]]
             .. m[eight[RIGHT],zero[BOTTOM]]
             .. m[eight[BOTTOM],zero[BOTTOM]]
             .. m[eight[LEFT],zero[BOTTOM]]
             .. m[aux[BOTTOM],zero[BOTTOM]]
             .. m[aux[RIGHT],zero[RIGHT]]{up};
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2437,7 +2430,7 @@ endfor
 outputtemplate := "81-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 % die Schlaufen werden schmäler:
@@ -2446,13 +2439,13 @@ aux[D_ARC] := 1/2[eight[LEFT],eight[RIGHT]];
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       draw eight[MID]
+        draw eight[MID]
             .. m[eight[LEFT],aux[D_ARC]]
             .. {dir max(2m-1,0)[0,-90]}
                eight[BOTTOM]
@@ -2465,22 +2458,22 @@ for i = start+1 upto start+fpht:
                {dir max(2m-1,0)[0,-90]}
             .. m[eight[R_ARC],aux[U_ARC]]
             ..cycle;
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       draw m[eight[TOP],one[BEGIN]]
+        draw m[eight[TOP],one[BEGIN]]
             -- m[eight[MID],one[TOP]]
             -- m[eight[BOTTOM],one[BOTTOM]];
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2491,17 +2484,17 @@ endfor
 outputtemplate := "9.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw nine[RIGHT]{down}
+    draw nine[RIGHT]{down}
         .. nine[BOTTOM]
         .. nine[LEFT]
         .. nine[TOP]
         .. nine[RIGHT]{down}
         .. nine[END];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -2511,61 +2504,62 @@ endfig;
 outputtemplate := "90-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       % Der Bogen der Neun soll beim Aufwickeln ein bisschen
-       % nach links gestreckt werden:
+        % Der Bogen der Neun soll beim Aufwickeln ein bisschen
+        % nach links gestreckt werden:
 
-       q := -2m*m+2m+1; % durchläuft 1 .. 3/2 .. 1 für x = 0 .. 0.5 .. 1;
-       aux[END] := m[nine[END],nine[LEFT]] xscaled q;
+        q := -2m*m+2m+1; % durchläuft 1 .. 3/2 .. 1 für x = 0 .. 0.5 .. 1;
+        aux[END] := m[nine[END],nine[LEFT]] xscaled q;
 
-       % wir legen einen Hilfspunkt dort an, wo der untere Bogen die
-       % y-Achse schneidet. Steigt der y-Wert des Hilfspunktes über
-       % die Unterkante der geschlossenen Schleife, wird als y-Koordinate
-       % die Unterkante der Schleife gewählt, um zu verhindern, dass
-       % der Bogen beim "Aufwickeln" ins Innere der geschlossenen Schleife
-       % ragt.
+        % wir legen einen Hilfspunkt dort an, wo der untere Bogen die
+        % y-Achse schneidet. Steigt der y-Wert des Hilfspunktes über
+        % die Unterkante der geschlossenen Schleife, wird als y-Koordinate
+        % die Unterkante der Schleife gewählt, um zu verhindern, dass
+        % der Bogen beim "Aufwickeln" ins Innere der geschlossenen Schleife
+        % ragt.
 
-       tmppath0 := nine[RIGHT]{down} .. aux[END];
-       aux[INTER] := ((0,-infinity)--(0,infinity)) intersectionpoint tmppath0;
-       tmp0 := ypart(aux[INTER]);
-       tmp1 := ypart(aux[BOTTOM]);
-       aux[MID] := (0,min(tmp0,tmp1));
+        tmppath0   := nine[RIGHT]{down} .. aux[END];
+        aux[INTER] := ((0,-infinity)--(0,infinity))
+            intersectionpoint tmppath0;
+        tmp0     := ypart(aux[INTER]);
+        tmp1     := ypart(aux[BOTTOM]);
+        aux[MID] := (0,min(tmp0,tmp1));
 
-       draw nine[RIGHT]{down}
+        draw nine[RIGHT]{down}
             .. nine[BOTTOM]
             .. nine[LEFT]
             .. nine[TOP]
             .. nine[RIGHT]{down}
             .. aux[MID]
             .. aux[END];
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       draw m[nine[TOP],zero[TOP]]
+        draw m[nine[TOP],zero[TOP]]
             .. m[nine[RIGHT],zero[RIGHT]]
             .. m[nine[BOTTOM],zero[BOTTOM]]
             .. m[nine[LEFT],zero[LEFT]]
             .. cycle;
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2576,31 +2570,31 @@ endfor
 outputtemplate := "91-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 aux[END] := (xpart(nine[RIGHT]),ypart(nine[END]));
 % Verschiebung: wir schieben die Neun so, dass sie rechts und oben
 % mit der oberen Spitze konform liegt:
 aux[DIFF] := (xpart(one[TOP])-xpart(nine[RIGHT]),
-              ypart(one[TOP])-ypart(nine[TOP]));
+    ypart(one[TOP])-ypart(nine[TOP]));
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       tmppath0 := nine[RIGHT]{down}
-                   .. nine[BOTTOM]
-                   .. nine[LEFT]
-                   .. nine[TOP]
-                   .. nine[RIGHT]{down}
-                   .. m[nine[END],aux[END]];
-       draw tmppath0 shifted m[(0,0),aux[DIFF]];
-       setbounds currentpicture to boundingpath;
+        tmppath0 := nine[RIGHT]{down}
+            .. nine[BOTTOM]
+            .. nine[LEFT]
+            .. nine[TOP]
+            .. nine[RIGHT]{down}
+            .. m[nine[END],aux[END]];
+        draw tmppath0 shifted m[(0,0),aux[DIFF]];
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2612,26 +2606,26 @@ aux[TOP]    := nine[TOP]    shifted aux[DIFF];
 aux[END]    := aux[END]     shifted aux[DIFF];
 
 % der Winkel der Eins:
-phi[TOP]    := angle(one[TOP]-one[BEGIN]);
+phi[TOP] := angle(one[TOP]-one[BEGIN]);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       tmppath0 := aux[RIGHT]{down}
-                   .. aux[BOTTOM]
-                   .. m[aux[LEFT],one[BEGIN]]{dir m[90,phi[TOP]]}
-                   .. {dir max(2m-1,0)[0,phi[TOP]]}
-                      m[aux[TOP],one[TOP]]
-                      {dir max(2m-1,0)[0,-90]}
-                   .. aux[RIGHT]{down}
-                   .. m[aux[END],one[BOTTOM]];
-       draw subpath (2m,5) of tmppath0;
-       setbounds currentpicture to boundingpath;
+        tmppath0 := aux[RIGHT]{down}
+            .. aux[BOTTOM]
+            .. m[aux[LEFT],one[BEGIN]]{dir m[90,phi[TOP]]}
+            .. {dir max(2m-1,0)[0,phi[TOP]]}
+               m[aux[TOP],one[TOP]]
+               {dir max(2m-1,0)[0,-90]}
+            .. aux[RIGHT]{down}
+            .. m[aux[END],one[BOTTOM]];
+        draw subpath (2m,5) of tmppath0;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2642,76 +2636,74 @@ endfor
 outputtemplate := "98-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 % wir ermitteln einen Hilfspunkt im unteren Teil der '9':
 tmppath0 := nine[RIGHT]{down}
-        .. nine[BOTTOM]
-        .. nine[LEFT]
-        .. nine[TOP]
-        .. nine[RIGHT]{down}
-        .. nine[END];
+    .. nine[BOTTOM]
+    .. nine[LEFT]
+    .. nine[TOP]
+    .. nine[RIGHT]{down}
+    .. nine[END];
 aux[MID] := point 4.75 of tmppath0;
 
 % Wir ermitteln den Winkel am Kreuzungspunkt der '8'
 % sowie am oberen "Bauch":
 
 tmppath1 := eight[TOP]
-        .. eight[R_ARC]
-        .. eight[MID]
-        .. eight[LEFT]
-        .. eight[BOTTOM]
-        .. eight[RIGHT]
-        .. eight[MID]
-        .. eight[L_ARC]
-        .. cycle;
+    .. eight[R_ARC]
+    .. eight[MID]
+    .. eight[LEFT]
+    .. eight[BOTTOM]
+    .. eight[RIGHT]
+    .. eight[MID]
+    .. eight[L_ARC]
+    .. cycle;
 
-phi[MID] := angle(direction 6 of tmppath1);
+phi[MID]   := angle(direction 6 of tmppath1);
 phi[R_ARC] := angle(direction 1 of tmppath1);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       tmppath0 := m[nine[RIGHT], eight[R_ARC]]{dir m[-90, phi[R_ARC]]}
-        .. m[nine[BOTTOM], eight[MID]]{dir m[180, phi[MID]]}
-        .. m[nine[LEFT], eight[L_ARC]]
-        .. m[nine[TOP], eight[TOP]]
-        .. m[nine[RIGHT], eight[R_ARC]]{dir m[-90, phi[R_ARC]]}
-        .. m[aux[MID], eight[LEFT]]
-        .. m[nine[END], eight[BOTTOM]];
-
+        tmppath0 := m[nine[RIGHT], eight[R_ARC]]{dir m[-90, phi[R_ARC]]}
+            .. m[nine[BOTTOM], eight[MID]]{dir m[180, phi[MID]]}
+            .. m[nine[LEFT], eight[L_ARC]]
+            .. m[nine[TOP], eight[TOP]]
+            .. m[nine[RIGHT], eight[R_ARC]]{dir m[-90, phi[R_ARC]]}
+            .. m[aux[MID], eight[LEFT]]
+            .. m[nine[END], eight[BOTTOM]];
         draw subpath (min(1, 2f), 6) of tmppath0;
-
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
 tmppath0 := eight[MID]{dir phi[MID]}
-            .. eight[L_ARC]
-            .. eight[TOP]
-            .. eight[R_ARC]
-            .. eight[MID]
-            .. eight[LEFT]
-            .. eight[BOTTOM]
-            .. eight[RIGHT]
-            .. eight[MID]{dir phi[MID]};
+    .. eight[L_ARC]
+    .. eight[TOP]
+    .. eight[R_ARC]
+    .. eight[MID]
+    .. eight[LEFT]
+    .. eight[BOTTOM]
+    .. eight[RIGHT]
+    .. eight[MID]{dir phi[MID]};
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       draw subpath (0,6+2m) of tmppath0;
-       setbounds currentpicture to boundingpath;
+        draw subpath (0,6+2m) of tmppath0;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2722,16 +2714,16 @@ endfor
 outputtemplate := "2a.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw tmppath[TWO_HOOK]
-      & two[JOINT] -- twoA[MID];
-   draw twoA[BEGIN]
+    draw tmppath[TWO_HOOK]
+         & two[JOINT] -- twoA[MID];
+    draw twoA[BEGIN]
         -- twoA[TOP]
         -- twoA[END];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -2741,7 +2733,7 @@ endfig;
 outputtemplate := "2a2b-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 % Hilfspunkte: aux[MID] ist der Schnittpunkt vom
@@ -2752,19 +2744,19 @@ aux[END] := (xpart(twoB[U_ARC]),ypart(twoB[BOTTOM]));
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       draw tmppath[TWO_HOOK]
-          & two[JOINT] -- twoA[MID];
-       draw m[twoA[BEGIN],twoB[BOTTOM]]
+        draw tmppath[TWO_HOOK]
+             & two[JOINT] -- twoA[MID];
+        draw m[twoA[BEGIN],twoB[BOTTOM]]
             -- m[twoA[TOP],twoB[TOP]]
             -- m[twoA[TOP],twoB[U_ARC]]
             -- m[twoA[END],aux[END]];
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2772,24 +2764,24 @@ aux[D_ARC] := 2/3[twoB[U_ARC],aux[END]];
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
-       t := 1/m;
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
+        t := 1/m;
 
-       draw tmppath[TWO_HOOK]
-          & two[JOINT]
+        draw tmppath[TWO_HOOK]
+             & two[JOINT]
             -- m[aux[MID],twoB[MID]];
-       draw twoB[TOP] -- twoB[BOTTOM];
-       draw twoB[TOP]
+        draw twoB[TOP] -- twoB[BOTTOM];
+        draw twoB[TOP]
             .. tension t .. twoB[U_ARC]
             .. tension t .. m[aux[MID],twoB[MID]];
-       draw m[aux[MID],twoB[MID]]
+        draw m[aux[MID],twoB[MID]]
             .. m[aux[D_ARC],twoB[D_ARC]]
             .. m[aux[END],twoB[BOTTOM]];
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2800,20 +2792,20 @@ endfor
 outputtemplate := "2b.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw tmppath[TWO_HOOK]
-      & two[JOINT] -- twoB[MID];
-   draw twoB[TOP]
+    draw tmppath[TWO_HOOK]
+          & two[JOINT] -- twoB[MID];
+    draw twoB[TOP]
         .. twoB[U_ARC]
         .. twoB[MID];
-   draw twoB[MID]
+    draw twoB[MID]
         .. twoB[D_ARC]
         .. twoB[BOTTOM];
-   draw twoB[TOP] -- twoB[BOTTOM];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    draw twoB[TOP] -- twoB[BOTTOM];
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -2823,28 +2815,28 @@ endfig;
 outputtemplate := "2b3-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       tmppath0 := twoB[TOP]
-                   .. twoB[U_ARC]
-                   .. twoB[MID];
-       draw tmppath[TWO_HOOK]
-          & two[JOINT] -- twoB[MID];
-       draw subpath (2m,2) of tmppath0;
-       draw twoB[MID]
+        tmppath0 := twoB[TOP]
+            .. twoB[U_ARC]
+            .. twoB[MID];
+        draw tmppath[TWO_HOOK]
+             & two[JOINT] -- twoB[MID];
+        draw subpath (2m,2) of tmppath0;
+        draw twoB[MID]
             .. twoB[D_ARC]
             .. twoB[BOTTOM];
-       draw twoB[TOP] -- twoB[BOTTOM];
-       setbounds currentpicture to boundingpath;
+        draw twoB[TOP] -- twoB[BOTTOM];
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2856,34 +2848,34 @@ phi[JOINT] := angle(direction 3 of tmppath[TWO_HOOK]);
 % Ein Hilfspunkt im unteren B-Bogen, der zu
 % three[BOTTOM] wandert:
 tmppath0 := twoB[MID]
-            .. twoB[D_ARC]
-            .. twoB[BOTTOM];
+    .. twoB[D_ARC]
+    .. twoB[BOTTOM];
 aux[BOTTOM] := point 1.5 of tmppath0;
 phi[MID]    := angle(direction 0 of tmppath0);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       aux[END] := m[twoB[BOTTOM],three[END]];
-       draw m[two[BEGIN],three[BEGIN]]
+        aux[END] := m[twoB[BOTTOM],three[END]];
+        draw m[two[BEGIN],three[BEGIN]]
             .. m[two[TOP],three[TOP]]
             .. m[two[R_ARC],three[U_ARC]]
             .. tension (2-m)
             .. m[two[JOINT],three[JOINT]]{dir m[phi[JOINT],-180]};
-       draw m[two[JOINT],three[JOINT]]
+        draw m[two[JOINT],three[JOINT]]
             -- m[twoB[MID],three[JOINT]];
-       draw m[twoB[MID],three[JOINT]]{dir m[phi[MID],0]}
+        draw m[twoB[MID],three[JOINT]]{dir m[phi[MID],0]}
             .. m[twoB[D_ARC],three[D_ARC]]
             .. m[aux[BOTTOM],three[BOTTOM]]
             .. aux[END];
-       draw m[twoB[TOP],aux[END]]
+        draw m[twoB[TOP],aux[END]]
             -- aux[END];
-       setbounds currentpicture to boundingpath;
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -2900,7 +2892,7 @@ endfor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % "*"
-asterisk[TOP] = (0,xh-dy);
+asterisk[TOP]    = (0,xh-dy);
 asterisk[BOTTOM] = (0,xh/2+dy);
 
 % ","
@@ -2922,8 +2914,6 @@ slash[END]   = (sw/2,xh-2dy);
 colon[TOP]    = (0,xh-dy);
 colon[BOTTOM] = (0,dy);
 
-
-
 %
 %%%%%%%%%%%% Interpunktion/Übergänge
 %
@@ -2935,17 +2925,17 @@ colon[BOTTOM] = (0,dy);
 outputtemplate := "asterisk.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   tmppath0 := asterisk[TOP]
-               -- asterisk[BOTTOM];
+    tmppath0 := asterisk[TOP]
+        -- asterisk[BOTTOM];
 
-   for i = 0 upto 4:
-      draw tmppath0 rotatedaround (C,72*i);
-   endfor
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    for i = 0 upto 4:
+        draw tmppath0 rotatedaround (C,72*i);
+    endfor
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -2955,13 +2945,13 @@ endfig;
 outputtemplate := ",.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw comma[TOP]{down}
+    draw comma[TOP]{down}
         .. comma[BOTTOM];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -2971,13 +2961,13 @@ endfig;
 outputtemplate := "dash.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw dash[LEFT]
+    draw dash[LEFT]
         -- dash[RIGHT];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -2987,12 +2977,12 @@ endfig;
 outputtemplate := "dot.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw dot[CENTER];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    draw dot[CENTER];
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -3002,13 +2992,13 @@ endfig;
 outputtemplate := "slash.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw slash[BEGIN]
+    draw slash[BEGIN]
         -- slash[END];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -3018,13 +3008,13 @@ endfig;
 outputtemplate := ":.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   draw colon[TOP];
-   draw colon[BOTTOM];
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    draw colon[TOP];
+    draw colon[BOTTOM];
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %
@@ -3034,7 +3024,7 @@ endfig;
 outputtemplate := "::-%c.mps";
 
 beginfig(start);
-   draw tmppic;
+    draw tmppic;
 endfig;
 
 aux[TOP]    := (0,(xh+pendia)/2);
@@ -3042,29 +3032,29 @@ aux[BOTTOM] := (0,(xh-pendia)/2);
 
 for i = start+1 upto start+fpht:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start)/fpht;
-       m := retarded(f);
+        f := (i-start)/fpht;
+        m := retarded(f);
 
-       draw m[colon[TOP],aux[TOP]];
-       draw m[colon[BOTTOM],aux[BOTTOM]];
-       setbounds currentpicture to boundingpath;
+        draw m[colon[TOP],aux[TOP]];
+        draw m[colon[BOTTOM],aux[BOTTOM]];
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
-       draw_grid(u);
-       pickup pc;
+        draw_grid(u);
+        pickup pc;
 
-       f := (i-start-fpht)/fpht;
-       m := advanced(f);
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
 
-       draw m[aux[TOP],colon[TOP]];
-       draw m[aux[BOTTOM],colon[BOTTOM]];
-       setbounds currentpicture to boundingpath;
+        draw m[aux[TOP],colon[TOP]];
+        draw m[aux[BOTTOM],colon[BOTTOM]];
+        setbounds currentpicture to boundingpath;
     endfig;
 endfor
 
@@ -3075,11 +3065,11 @@ endfor
 outputtemplate := "tilde.mps";
 
 beginfig(start);
-   draw_grid(u);
-   pickup pc;
+    draw_grid(u);
+    pickup pc;
 
-   setbounds currentpicture to boundingpath;
-   tmppic := currentpicture;
+    setbounds currentpicture to boundingpath;
+    tmppic := currentpicture;
 endfig;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3119,11 +3109,9 @@ _c_[TOP]    = zero[TOP];
 _c_[BOTTOM] = zero[BOTTOM];
 % Schnittpunkt zwischen o-Bogen und einer Halbgeraden
 _c_[BEGIN] = (_c_[RIGHT]{up} .. _c_[TOP]{left})
-             intersectionpoint
-             (((0,0) -- (infinity,0)) rotated 35 shifted C);
+    intersectionpoint (((0,0) -- (infinity,0)) rotated 35 shifted C);
 _c_[END]   = (_c_[RIGHT]{down} .. _c_[BOTTOM]{left})
-             intersectionpoint
-             (((0,0) -- (infinity,0)) rotated -35 shifted C);
+    intersectionpoint (((0,0) -- (infinity,0)) rotated -35 shifted C);
 
 % d
 _d_[BEGIN]  = _b_[BEGIN] xscaled -1;
@@ -3132,7 +3120,7 @@ _d_[U_ARC]  = _b_[U_ARC] xscaled -1;
 _d_[D_ARC]  = _b_[D_ARC] xscaled -1;
 _d_[TOP]    = _b_[TOP] xscaled -1;
 _d_[BOTTOM] = _b_[BOTTOM] xscaled -1;
-_d_[LEFT]  = _b_[RIGHT] xscaled -1;
+_d_[LEFT]   = _b_[RIGHT] xscaled -1;
 
 % e
 _e_[LEFT]   = _c_[LEFT];
@@ -3169,10 +3157,10 @@ _g_[END]    = _g_[U_ARC] xscaled -1;
 % mit einer Halbgeraden im Zentrum dieser Schlaufe unter einem
 % Winkel von 135°:
 tmppath[G_LOOP] := _g_[TOP]
-                   .. _g_[LEFT]
-                   .. _g_[BOTTOM]
-                   .. _g_[RIGHT]
-                   .. cycle;
+    .. _g_[LEFT]
+    .. _g_[BOTTOM]
+    .. _g_[RIGHT]
+    .. cycle;
 _g_[CENTER] := (0,1/2[ypart(_g_[TOP]),ypart(_g_[BOTTOM])]);
 tmppath1    := (_g_[CENTER] -- (0,infinity)) rotatedaround (_g_[CENTER],135);
 _g_[JOINT]  := tmppath[G_LOOP] intersectionpoint tmppath1;
@@ -3181,12 +3169,12 @@ tmp[JOINT]  := xpart(tmppath[G_LOOP] intersectiontimes tmppath1);
 _g_[DIR]    := direction tmp[JOINT] of tmppath[G_LOOP];
 
 % h
-_h_[BEGIN] = (-mw,asc);
-_h_[LEFT]  = (-mw,3/4*xh);
+_h_[BEGIN]  = (-mw,asc);
+_h_[LEFT]   = (-mw,3/4*xh);
 _h_[BOTTOM] = (-mw,0);
-_h_[MID]   = (0,xh+ocorr);
-_h_[RIGHT] = _h_[LEFT] xscaled -1;
-_h_[END]   = _h_[BOTTOM] xscaled -1;
+_h_[MID]    = (0,xh+ocorr);
+_h_[RIGHT]  = _h_[LEFT] xscaled -1;
+_h_[END]    = _h_[BOTTOM] xscaled -1;
 
 % i
 _i_[TOP]    = (-lw+dx,2/3[xh,asc]);
@@ -3194,12 +3182,12 @@ _i_[BEGIN]  = (-lw+dx,xh);
 _i_[MID]    = (-lw+dx,lw);
 _i_[BOTTOM] = (dx,-ocorr);
 _i_[END]    = _i_[BOTTOM] rotatedaround
-              ((xpart(_i_[BOTTOM]),ypart(_i_[MID])),45);
+    ((xpart(_i_[BOTTOM]),ypart(_i_[MID])), 45);
 % Berechne und speichere den Winkel am Ende
 tmppath0 := _i_[BEGIN]
-            -- _i_[MID]{down}
-            .. _i_[BOTTOM]
-            .. _i_[END];
+    -- _i_[MID]{down}
+    .. _i_[BOTTOM]
+    .. _i_[END];
 phi[HOOK_END_I] := angle(direction 3 of tmppath0);
 
 % j
@@ -3208,7 +3196,7 @@ _j_[BEGIN]  = _i_[BEGIN] xscaled -1;
 _j_[MID]    = (lw-dx,dsc+lw);
 _j_[BOTTOM] = (-dx,dsc-ocorr);
 _j_[END]    = _j_[BOTTOM] rotatedaround
-              ((xpart(_j_[BOTTOM]),ypart(_j_[MID])),-45);
+    ((xpart(_j_[BOTTOM]),ypart(_j_[MID])), -45);
 
 % k
 _k_[BEGIN]  = (-sw,asc);
@@ -3226,23 +3214,23 @@ _l_[BOTTOM] = _i_[BOTTOM];
 _l_[END]    = _i_[END];
 
 % m
-_m_[BEGIN] = (-lw,xh);
-_m_[LEFT]  = (-lw,3/4*xh);
+_m_[BEGIN]  = (-lw,xh);
+_m_[LEFT]   = (-lw,3/4*xh);
 _m_[BOTTOM] = (-lw,0);
-_m_[L_ARC] = (-lw/2,xh+ocorr);
-_m_[JOINT] = (0,13/17*xh);
-_m_[MID]   = (0,0);
-_m_[R_ARC] = _m_[L_ARC] xscaled -1;
-_m_[RIGHT] = _m_[LEFT] xscaled -1;
-_m_[END]   = _m_[BOTTOM] xscaled -1;
+_m_[L_ARC]  = (-lw/2,xh+ocorr);
+_m_[JOINT]  = (0,13/17*xh);
+_m_[MID]    = (0,0);
+_m_[R_ARC]  = _m_[L_ARC] xscaled -1;
+_m_[RIGHT]  = _m_[LEFT] xscaled -1;
+_m_[END]    = _m_[BOTTOM] xscaled -1;
 
 % n
-_n_[BEGIN] = (-mw,xh);
-_n_[LEFT]  = (-mw,3/4*xh);
+_n_[BEGIN]  = (-mw,xh);
+_n_[LEFT]   = (-mw,3/4*xh);
 _n_[BOTTOM] = (-mw,0);
-_n_[MID]   = _h_[MID];
-_n_[RIGHT] = _n_[LEFT] xscaled -1;
-_n_[END]   = _n_[BOTTOM] xscaled -1;
+_n_[MID]    = _h_[MID];
+_n_[RIGHT]  = _n_[LEFT] xscaled -1;
+_n_[END]    = _n_[BOTTOM] xscaled -1;
 
 % o
 _o_[LEFT]   = _c_[LEFT];
@@ -3274,7 +3262,7 @@ _r_[BOTTOM] = (-lw+dx,0);
 _r_[MID]    = (-lw+dx,xh-lw);
 _r_[TOP]    = (dx,xh+ocorr);
 _r_[END]    = _r_[TOP] rotatedaround
-              ((xpart(_r_[TOP]),ypart(_r_[MID])),-45);
+    ((xpart(_r_[TOP]),ypart(_r_[MID])), -45);
 
 % s
 _s_[BEGIN]  = (sw,3/4*xh);
@@ -3295,7 +3283,7 @@ _t_[BOTTOM] = _l_[BOTTOM];
 _t_[END]    = _l_[END];
 
 _t_[INTER]  = (_t_[LEFT] -- _t_[RIGHT]) intersectionpoint
-              (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt Querstrich/Stamm
+    (_t_[BEGIN] -- _t_[MID]); % Schnittpunkt Querstrich/Stamm
 
 % u
 _u_[BOTTOM] = _n_[BEGIN]  rotatedaround (C,180);
@@ -3306,16 +3294,16 @@ _u_[LEFT]   = _n_[RIGHT]  rotatedaround (C,180);
 _u_[END]    = _n_[BOTTOM] rotatedaround (C,180);
 
 % v
-_v_[LEFT] = (-mw,xh);
+_v_[LEFT]   = (-mw,xh);
 _v_[BOTTOM] = (0,0);
-_v_[RIGHT] = _v_[LEFT] xscaled -1;
+_v_[RIGHT]  = _v_[LEFT] xscaled -1;
 
 % w
 _w_[BEGIN] = _m_[BEGIN];
 _w_[LEFT]  = (1/2*xpart(_w_[BEGIN]),0);
 _w_[MID]   = (0,xh);
 _w_[RIGHT] = _w_[LEFT] xscaled -1;
-_w_[END] = _w_[BEGIN] xscaled -1;
+_w_[END]   = _w_[BEGIN] xscaled -1;
 
 % x
 _x_[LEFT]  = (-mw,xh);
@@ -3327,12 +3315,12 @@ _x_[END]  := 5/4[_x_[LEFT],_x_[END]];
 
 % y
 _y_[BOTTOM] = _u_[BOTTOM];
-_y_[D_ARC] = (-sw,dsc);
+_y_[D_ARC]  = (-sw,dsc);
 _y_[RIGHT]  = _u_[RIGHT];
-_y_[BEGIN] = _u_[BEGIN];
-_y_[MID] = _u_[MID];
-_y_[LEFT] = _u_[LEFT];
-_y_[END] = _u_[END];
+_y_[BEGIN]  = _u_[BEGIN];
+_y_[MID]    = _u_[MID];
+_y_[LEFT]   = _u_[LEFT];
+_y_[END]    = _u_[END];
 
 % z
 _z_[BEGIN] = _x_[LEFT];
@@ -3341,10 +3329,10 @@ _z_[D_ARC] = _x_[BEGIN];
 _z_[END]   = _z_[D_ARC] xscaled -1;
 
 % Umlautpunkte:
-umlaut[LEFT] = (-1/2sw,(asc+xh)/2);
+umlaut[LEFT]  = (-1/2sw,(asc+xh)/2);
 umlaut[RIGHT] = umlaut[LEFT] xscaled -1;
-% Hilfspunkt
-umlaut[MID] = 1/2[umlaut[LEFT],umlaut[RIGHT]];
+umlaut[MID]   = 1/2[umlaut[LEFT],umlaut[RIGHT]]; % Hilfspunkt
+
 %
 %%%%%%%%%%%% Buchstaben/Übergänge
 %
