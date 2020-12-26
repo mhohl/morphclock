@@ -48,7 +48,8 @@
 %
 % für die Timerfunktion brauchen wir:
 % 0 -> 9, 9 -> 8, 8 -> 7, 7 -> 6, 6 -> 5,
-% 5 -> 4, 4 -> 3, 3 -> 2 sowie 0 -> 5
+% 5 -> 4, 4 -> 3, 3 -> 2 sowie
+% 0 -> 5, 0 -> 3 und 0 -> 2
 % (2 -> 1 und 1 -> 0 siehe oben)
 %
 % Das Uhr-O schließlich ist unter clock-n
@@ -372,6 +373,20 @@ nine[BOTTOM] = (0,dy);
 nine[END]    = (-sw,dsc);
 
 %
+% vordefinierte Pfade
+%
+
+% Die Bögen der 3:
+tmppath[THREE_UARC] := three[BEGIN]
+    .. three[TOP]
+    .. three[U_ARC]
+    .. three[JOINT]{left};
+tmppath[THREE_LARC] := three[JOINT]{right}
+    .. three[D_ARC]
+    .. three[BOTTOM]
+    .. three[END];
+
+%
 %%%%%%%%%%%% Ziffern/Übergänge
 %
 
@@ -495,6 +510,71 @@ for i = start+fpht+1 upto start+2fpht-1:
         draw m[one[TOP],one[BEGIN]]
             -- one[TOP]
             -- one[BOTTOM];
+        setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
+% 0 -> 3
+%
+
+outputtemplate := "03-%c.mps";
+
+beginfig(start);
+    draw tmppic;
+endfig;
+
+% analog zu 0 -> 0, aber wir starten links und wandern
+% mit dem Hilfspunkt einmal um die Null herum:
+
+tmppath0 := zero[LEFT]
+    .. zero[TOP]
+    .. zero[RIGHT]
+    .. zero[BOTTOM]
+    .. cycle;
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+        draw_grid(u);
+        pickup pc;
+        f := (i-start)/fpht;
+        m := retarded(f);
+
+        aux[R_ARC] := point 4m of tmppath0;
+
+        draw m[zero[TOP],aux[R_ARC]]
+            .. m[zero[RIGHT],aux[R_ARC]]
+            .. m[zero[BOTTOM],aux[R_ARC]]
+            .. m[zero[LEFT],aux[R_ARC]]
+            .. cycle;
+        % um Artefakte bei kleinen Schlaufen zu vermeiden:
+        if ypart(m[zero[TOP],aux[R_ARC]]) - ypart(zero[BOTTOM]) < pendia:
+            draw m[zero[TOP],aux[R_ARC]];
+        fi
+        setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+
+% wir bauen den oberen Bogen der '3' nach und fügen vorne
+% der Punkt zero[LEFT] hinzu; der Winkel bei three[BEGIN]
+% muss unverändert zur Original-3 bleiben!
+phi[BEGIN] = angle(direction 0 of tmppath[THREE_UARC]);
+tmppath1 := zero[LEFT]
+    .. three[BEGIN]{dir phi[BEGIN]}
+    .. three[TOP]
+    .. three[U_ARC]
+    .. three[JOINT]{left}
+    & tmppath[THREE_LARC];
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+        draw_grid(u);
+        pickup pc;
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
+
+        draw subpath (m, 7m) of tmppath1;
         setbounds currentpicture to boundingpath;
     endfig;
 endfor
@@ -829,16 +909,6 @@ for i = start+1 upto start+fpht:
         setbounds currentpicture to boundingpath;
     endfig;
 endfor
-
-% Die Bögen der 3:
-tmppath[THREE_UARC] := three[BEGIN]
-    .. three[TOP]
-    .. three[U_ARC]
-    .. three[JOINT]{left};
-tmppath[THREE_LARC] := three[JOINT]{right}
-    .. three[D_ARC]
-    .. three[BOTTOM]
-    .. three[END];
 
 % Die Winkel der 3er-Kurve:
 phi[TOP]    := angle(direction 1 of tmppath[THREE_UARC]);
