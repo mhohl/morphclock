@@ -1,476 +1,872 @@
 /*
-   morphclock.js
-   © 2018 Marc Hohl
-*/
+ * morphclock.js
+ * © 2018-2020 Marc Hohl
+ */
 "use strict";
-/* Container für alle morph-Objekte und Funktionen
-   Morph und Morph.path werden in morphpaths.js
-   definiert/gefüllt.
-*/
-Morph.elements = {};
-Morph.elements.clock = [];
-Morph.elements.date = [];
-Morph.elements.logo = [];
-/* Morph.data enthält die Struktur der angezeigten Daten/Zeiten;
-   in den Slots steht 'x' als Platzhalter für die unbeteiligte
-   Stelle, und ein Buchstabe für:
-   s Sekunde
-   m Minute
-   h Stunde
-   c Doppelpunkt (colon); C phasenverschobener Doppelpunkt
-   d Wechsel am/pm (day time)
-   D Tag
-   M Monat (zweistellig: in Ziffern, dreistellig: Abkürzung)
-   Y Jahr
-   W Wochentag (dreistellig als Abkürzung)
-   Unter 'default' sind die Formate angegeben, die ohne explizite
-   Vorgabe angezeigt werden.
-*/
+/* Container for all morph-Objects and functions.
+ * Morph und Morph.path are defined/set in morphpaths.js
+ */
+Morph.elements = {
+    clock: [],
+    date: [],
+    logo: [],
+    timer: [],
+};
+
+// the svg namespace:
+Morph.xmlns = "http://www.w3.org/2000/svg";
+// the available types
+Morph.availableTypes = ["morphclock", "morphdate", "morphtimer", "morphlogo"];
+/* Morph.data defines the structure of all shown morph types:
+ *   'glyph' is a predefined placeholder for the actual glyph
+ *    'slot' indicates type and position of the glyph:
+ *           x indicates the actual position of the current slot relative
+ *             to other slots of the same type,
+ *             i.e. mx holds the "2" and xm holds the "3" of minute 23
+ *           s seconds
+ *           m minutes
+ *           h hours
+ *           c colon
+ *           d day time (am/pm)
+ *           D day (numeric)
+ *           M month two-figure: numeric, three-figure: abbreviation
+ *           Y Year
+ *           W weekday
+ * 'overlap' signals the overlap between the actual glyph and the preceding
+ *           glyph; punctiation symbols and digits following these are placed
+ *           with a bigger overlap. The overlap amount is defined in
+ *           MorphDisplay.bigOverlap and .smallOverlap, respectively.
+ *           Ann. 2020-12-25: hard-coding these values is actually much more
+ *           reliable than trying to expand the fancy algorithm for the timer
+ *           option.
+ *
+ * The 'default' entry contains default format options for clock, timer, date
+ * and logo types.
+ */
 Morph.data = {
     default: {
         clock: 'hhmmss24',
         date: 'D.M.Y',
-        logo: 'default'
+        logo: 'default',
+        timer: 'auto',
     },
     clock: {
         hhmmss24: [{
             glyph: '20-0',
-            slot: 'hx'
+            slot: 'hx',
+            overlap: null
         }, {
             glyph: '30-0',
-            slot: 'xh'
+            slot: 'xh',
+            overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'Cx'
+            slot: 'cx',
+            overlap: 'big'
         }, {
             glyph: '50-0',
-            slot: 'mx'
+            slot: 'mx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xm'
+            slot: 'xm',
+            overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'cx'
+            slot: 'xc',
+            overlap: 'big'
         }, {
             glyph: '50-0',
-            slot: 'sx'
+            slot: 'sx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xs'
+            slot: 'xs',
+            overlap: 'small'
         }],
         hhmm24: [{
             glyph: '20-0',
-            slot: 'hx'
+            slot: 'hx',
+            overlap: null
         }, {
             glyph: '30-0',
-            slot: 'xh'
+            slot: 'xh',
+            overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'cx'
+            slot: 'xc',
+            overlap: 'big'
         }, {
             glyph: '50-0',
-            slot: 'mx'
+            slot: 'mx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xm'
+            slot: 'xm',
+            overlap: 'small'
         }, ],
         hhmmss12: [{
             glyph: '10-0',
-            slot: 'hx'
+            slot: 'hx',
+            overlap: null
         }, {
             glyph: '21-0',
-            slot: 'xh'
+            slot: 'xh',
+            overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'Cx'
+            slot: 'cx',
+            overlap: 'big'
         }, {
             glyph: '50-0',
-            slot: 'mx'
+            slot: 'mx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xm'
+            slot: 'xm',
+            overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'cx'
+            slot: 'xc',
+            overlap: 'big'
         }, {
             glyph: '50-0',
-            slot: 'sx'
+            slot: 'sx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xs'
+            slot: 'xs',
+            overlap: 'small'
         }, {
             glyph: '~',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: 'ap-0',
-            slot: 'dx'
+            slot: 'dx',
+            overlap: 'big'
         }, {
             glyph: 'mm-0',
-            slot: 'xd'
+            slot: 'xd',
+            overlap: 'small'
         }],
         hhmm12: [{
             glyph: '10-0',
-            slot: 'hx'
+            slot: 'hx',
+            overlap: null
         }, {
             glyph: '21-0',
-            slot: 'xh'
+            slot: 'xh',
+            overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'cx'
+            slot: 'xc',
+            overlap: 'big'
         }, {
             glyph: '50-0',
-            slot: 'mx'
+            slot: 'mx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xm'
+            slot: 'xm',
+            overlap: 'small'
         }, {
             glyph: '~',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: 'ap-0',
-            slot: 'dx'
+            slot: 'dx',
+            overlap: 'big'
         }, {
             glyph: 'mm-0',
-            slot: 'xd'
+            slot: 'xd',
+            overlap: 'small'
         }],
     },
     date: {
         'D/M/Y': [{
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: null
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }, {
             glyph: '/',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '10-0',
-            slot: 'Mx'
+            slot: 'Mx',
+            overlap: 'big'
         }, {
             glyph: '21-0',
-            slot: 'xM'
+            slot: 'xM',
+            overlap: 'small'
         }, {
             glyph: '/',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, ],
         'D.M.Y': [{
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: null
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }, {
             glyph: '.',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '10-0',
-            slot: 'Mx'
+            slot: 'Mx',
+            overlap: 'big'
         }, {
             glyph: '21-0',
-            slot: 'xM'
+            slot: 'xM',
+            overlap: 'small'
         }, {
             glyph: '.',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, ],
         'D-M-Y': [{
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: null
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }, {
             glyph: '-',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '10-0',
-            slot: 'Mx'
+            slot: 'Mx',
+            overlap: 'big'
         }, {
             glyph: '21-0',
-            slot: 'xM'
+            slot: 'xM',
+            overlap: 'small'
         }, {
             glyph: '-',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, ],
         'Y/M/D': [{
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: null
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, {
             glyph: '/',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '10-0',
-            slot: 'Mx'
+            slot: 'Mx',
+            overlap: 'big'
         }, {
             glyph: '21-0',
-            slot: 'xM'
+            slot: 'xM',
+            overlap: 'small'
         }, {
             glyph: '/',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: 'big'
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }],
         'Y-M-D': [{
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: null
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, {
             glyph: '-',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '10-0',
-            slot: 'Mx'
+            slot: 'Mx',
+            overlap: 'big'
         }, {
             glyph: '21-0',
-            slot: 'xM'
+            slot: 'xM',
+            overlap: 'small'
         }, {
             glyph: '-',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: 'big'
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }],
         'Month D,Y': [{
             glyph: 'dj-0',
-            slot: 'Mxx'
+            slot: 'Mxx',
+            overlap: null
         }, {
             glyph: 'ea-0',
-            slot: 'xMx'
+            slot: 'xMx',
+            overlap: 'small'
         }, {
             glyph: 'cn-0',
-            slot: 'xxM'
+            slot: 'xxM',
+            overlap: 'small'
         }, {
             glyph: '~',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: 'big'
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }, {
             glyph: ',',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, ],
         'full': [{
             glyph: 'fs-0',
-            slot: 'Wxx'
+            slot: 'Wxx',
+            overlap: null
         }, {
             glyph: 'ra-0',
-            slot: 'xWx'
+            slot: 'xWx',
+            overlap: 'small'
         }, {
             glyph: 'it-0',
-            slot: 'xxW'
+            slot: 'xxW',
+            overlap: 'small'
         }, {
             glyph: ',',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: 'dj-0',
-            slot: 'Mxx'
+            slot: 'Mxx',
+            overlap: 'big'
         }, {
             glyph: 'ea-0',
-            slot: 'xMx'
+            slot: 'xMx',
+            overlap: 'small'
         }, {
             glyph: 'cn-0',
-            slot: 'xxM'
+            slot: 'xxM',
+            overlap: 'small'
         }, {
             glyph: '~',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '30-0',
-            slot: 'Dx'
+            slot: 'Dx',
+            overlap: 'big'
         }, {
             glyph: '11-0',
-            slot: 'xD'
+            slot: 'xD',
+            overlap: 'small'
         }, {
             glyph: ',',
-            slot: null
+            slot: null,
+            overlap: 'big'
         }, {
             glyph: '12-0',
-            slot: 'Yxxx'
+            slot: 'Yxxx',
+            overlap: 'big'
         }, {
             glyph: '90-0',
-            slot: 'xYxx'
+            slot: 'xYxx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxYx'
+            slot: 'xxYx',
+            overlap: 'small'
         }, {
             glyph: '90-0',
-            slot: 'xxxY'
+            slot: 'xxxY',
+            overlap: 'small'
         }, ],
         'full-de': [{
                 glyph: 'fs-0',
-                slot: 'Wxx'
+                slot: 'Wxx',
+                overlap: null
             }, {
                 glyph: 'ra-0',
-                slot: 'xWx'
+                slot: 'xWx',
+                overlap: 'small'
             }, {
                 glyph: '.',
-                slot: null
+                slot: null,
+                overlap: 'big'
             }, {
                 glyph: ',',
-                slot: null
+                slot: null,
+                overlap: 'big'
             }, {
                 glyph: '30-0',
-                slot: 'Dx'
+                slot: 'Dx',
+                overlap: 'big'
             }, {
                 glyph: '11-0',
-                slot: 'xD'
+                slot: 'xD',
+                overlap: 'small'
             }, {
                 glyph: '.',
-                slot: null
+                slot: null,
+                overlap: 'big'
             }, {
                 glyph: 'dj-0',
-                slot: 'Mxx'
+                slot: 'Mxx',
+                overlap: 'big'
             }, {
                 glyph: 'ea-0',
-                slot: 'xMx'
+                slot: 'xMx',
+                overlap: 'small'
             }, {
                 glyph: 'zn-0',
-                slot: 'xxM'
+                slot: 'xxM',
+                overlap: 'small'
             }, {
                 glyph: '.',
-                slot: 'M!=5'
-            }, // kein Punkt im Monat Mai
+                slot: 'M!=5',
+                overlap: 'small'
+            }, // no dot after "Mai"
             {
                 glyph: '12-0',
-                slot: 'Yxxx'
+                slot: 'Yxxx',
+                overlap: 'small'
             }, {
                 glyph: '90-0',
-                slot: 'xYxx'
+                slot: 'xYxx',
+                overlap: 'small'
             }, {
                 glyph: '90-0',
-                slot: 'xxYx'
+                slot: 'xxYx',
+                overlap: 'small'
             }, {
                 glyph: '90-0',
-                slot: 'xxxY'
+                slot: 'xxxY',
+                overlap: 'small'
             },
         ],
     },
     logo: {
         default: [{
             glyph: 'm',
-            slot: null
+            slot: null,
+            overlap: null
         }, {
             glyph: 'o',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'r',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'p',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'h',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'c',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'l',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'clock-0',
-            slot: 'clock'
+            slot: 'clock',
+            overlap: 'small'
         }, {
             glyph: 'c',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }, {
             glyph: 'k',
-            slot: null
+            slot: null,
+            overlap: 'small'
         }]
-    }
+    },
+    timer: {
+        'ss': [{
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: null
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'mss': [{
+            glyph: '98-0',
+            slot: null,
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xc',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'mmss': [{
+            glyph: '54-0',
+            slot: 'mx',
+            overlap: null
+        }, {
+            glyph: '98-0',
+            slot: 'xm',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xc',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'hmmss': [{
+            glyph: '98-0',
+            slot: 'xh',
+            overlap: null
+        }, {
+            glyph: '::-0',
+            slot: 'cx',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'mx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xm',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'c',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'hhmmss': [{
+            glyph: '21-0',
+            slot: 'hx',
+            overlap: null
+        }, {
+            glyph: '32-0',
+            slot: 'xh',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'cx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'mx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xm',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xc',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'dhhmmss': [{
+            glyph: '98-0',
+            slot: 'xxd',
+            overlap: null
+        }, {
+            glyph: '::-0',
+            slot: 'cxx',
+            overlap: 'big'
+        }, {
+            glyph: '21-0',
+            slot: 'hx',
+            overlap: 'big'
+        }, {
+            glyph: '32-0',
+            slot: 'xh',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xcx',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'mx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xm',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xxc',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'ddhhmmss': [{
+            glyph: '98-0',
+            slot: 'xdx',
+            overlap: null
+        }, {
+            glyph: '98-0',
+            slot: 'xxd',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'cxx',
+            overlap: 'big'
+        }, {
+            glyph: '21-0',
+            slot: 'hx',
+            overlap: 'big'
+        }, {
+            glyph: '32-0',
+            slot: 'xh',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xcx',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'mx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xm',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xxc',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+        'dddhhmmss': [{
+            glyph: '98-0',
+            slot: 'dxx',
+            overlap: null
+        }, {
+            glyph: '98-0',
+            slot: 'xdx',
+            overlap: 'small'
+        }, {
+            glyph: '98-0',
+            slot: 'xxd',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'cxx',
+            overlap: 'big'
+        }, {
+            glyph: '21-0',
+            slot: 'hx',
+            overlap: 'big'
+        }, {
+            glyph: '32-0',
+            slot: 'xh',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xcx',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'mx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xm',
+            overlap: 'small'
+        }, {
+            glyph: '::-0',
+            slot: 'xxc',
+            overlap: 'big'
+        }, {
+            glyph: '54-0',
+            slot: 'sx',
+            overlap: 'big'
+        }, {
+            glyph: '98-0',
+            slot: 'xs',
+            overlap: 'small'
+        }, ],
+    },
 };
-/* Morph.io ist die Schnittstelle an den Zeitserver der PTB, die
-   mit morph-ptb.js aktiviert wird. Hier belegen wir die Schnittstelle
-   statisch vor.
-*/
+/* Morph.io provides the interface to the time server of the PTB activated by
+ * loading morph-ptb.js. Here, we use dummy values:
+ */
 Morph.io = {
     leap: 0,
-    connected: function(c) { return false; }
+    connected: function(c) {
+        return false;
+    }
 };
-
 Morph.init = function() {
     let divs = document.body.getElementsByTagName("div");
-    // wir durchsuchen alle <div>-Elements nach data-type="morph..."
+    // collect and process all <div> elements with 'data-type="morph..."'-tags
     for (let i = 0; i < divs.length; i++) {
         let datatype = divs[i].getAttribute("data-type");
-        // Zur Sicherheit genauer Check:
-        if (datatype == "morphclock" || datatype == "morphdate" || datatype == "morphlogo") {
+        if (this.availableTypes.indexOf(datatype) > -1) {
             let type = datatype.slice(5); // morphclock -> clock etc.
-            Morph.elements[type].push(new MorphDisplay(type, divs[i]).createGlyphs());
+            this.elements[type].push(new MorphDisplay(type, divs[i]).createGlyphs());
         }
     }
 }
@@ -487,13 +883,13 @@ Morph.update = function() {
         Morph.elements[type].forEach(m => m.update());
     }
 }
-// der svg-namespace
-Morph.xmlns = "http://www.w3.org/2000/svg";
-/* Das MorphDisplay-Objekt
-   'type' bestimmt den dargestellten Typ (clock, date, logo),
-   'div' das <div>-Element, das die Glyphen aufnimmt, sowie
-   'glyphs' ein Array der einzelnen MorphGlyph-Objekte
-*/
+/**
+ * the MorphDisplay object
+ * @param type sets the type (clock, date, logo, timer),
+ * @param div <div> element containing the glyphs
+ * @param glyphs array of MorphGlyph objects
+ * @param slots array of corresponding slot information
+ */
 var MorphDisplay = class MorphDisplay {
     constructor(type, div, glyphs = [], slots = []) {
         this.type = type;
@@ -501,86 +897,44 @@ var MorphDisplay = class MorphDisplay {
         this.format = div.getAttribute("data-format") || Morph.data.default[type];
         this.glyphs = glyphs;
         this.slots = slots;
-        /* Die einzelnen Glyphen bzw. SVG-Elemente überlappen sich an den Rändern;
-           Ziffern und Buchstaben um den Faktor smallOverlap, Interpunktionen und
-           Leerzeichen um bigOverlap.
-        */
+        // amount of overlap: small between digits, big for punctuation
         this.smallOverlap = 0.225;
         this.bigOverlap = 2 * this.smallOverlap;
         this.slowMorphStart = 57;
-    }
-    get charWidth() {
-        // number of characters
-        let n_of_chars = Morph.data[this.type][this.format].length;
-        // number of [s]mall/[b]ig [over]laps
-        let n_of_sover = 0;
-        let n_of_bover = 0;
-        if (this.type == "logo") {
-            // n Zeichen -> n-1 Überlappungen
-            n_of_sover = n_of_chars - 1;
-        } else if (this.type == "clock") {
-            // zwei small overlaps, je einer für Stunden und Minuten
-            n_of_sover = 2;
-            // zwei big overlaps für den ':' vor den Minuten
-            n_of_bover = 2;
-            if (this.showDaytime) {
-                // small overlap zwischen 'a|p' and 'm'
-                n_of_sover += 1;
-                // zwei big overlaps für das Leerzeichen vor 'am|pm'
-                n_of_bover += 2;
-            }
-            if (this.showSeconds) {
-                // small overlap für die Sekunden
-                n_of_sover += 1;
-                // zwei big overlaps für den ':' vor den Sekunden
-                n_of_bover += 2;
-            }
-        } else if (this.type == "date") {
-            // 1x Tag, 1x Monat, 3x Jahr
-            n_of_sover = 5;
-            // je 2 pro Trenner (,.-/~)
-            n_of_bover = 4;
-            if (this.showMonth) {
-                // Monat 3stellig statt 2stellig
-                n_of_sover += 1;
-            }
-            if (this.showWeekday) {
-                // 3stelliger Wochentag
-                n_of_sover += 2;
-                // zusätzlicher Trenner nach Wochentag
-                n_of_bover += 2;
-            }
-            if (this.locale == "de") {
-                // zusätzlicher Punkt nach dem Wochentag
-                n_of_bover += 1;
-                // dt. Abkürzungen für den Wochentag sind nur zweistellig
-                n_of_sover -= 1;
+        // special settings for timer
+        if (this.type == "timer") {
+            let starttime = div.getAttribute("data-starttime") || "00:00:00";
+            this.timer.settings.interval = this.timerToSeconds(starttime) * 1000;
+            this.timer.settings.slowMorphStart = 60 - this.slowMorphStart;
+            if (this.format == "auto") {
+                this.format = this.timerAutoFormat(starttime);
             }
         }
-        return 100 / (n_of_chars - n_of_sover * this.smallOverlap - n_of_bover * this.bigOverlap);
+        this.data = Morph.data[this.type][this.format];
+    }
+    get charWidth() {
+        let data = this.data;
+        let num_chars = data.length;
+        // number of [s]mall/[b]ig overlaps
+        let num_s = data.filter(x => x.overlap == 'small').length;
+        let num_b = data.filter(x => x.overlap == 'big').length;
+        return 100 / (num_chars - num_s * this.smallOverlap - num_b * this.bigOverlap);
     }
     get charPos() {
         let positions = [];
         let pos = 0;
         let width = this.charWidth;
-        positions.push(pos);
-        let data = Morph.data[this.type][this.format];
-        for (let i = 1, dlen = data.length; i < dlen; i++) {
-            /* Die folgende if-Anweisung überprüft, ob
-               entweder der Glyph aus einem der Zeichen ,.-:~/ besteht
-               oder der slot nicht null ist
-                    und nicht mit einem x startet
-                    und auch nicht 'clock' lautet.
-               Dann nämlich wird ein großer Überlapp notwendig
-            */
-            let d = data[i];
-            if ([',', '.', '-', ':', '~', '/'].some(x => x == d.glyph) || (d.slot && d.slot.charAt(0) != 'x' && d.slot != 'clock')) {
+        let data = this.data;
+        data.forEach(d => {
+            if (d.overlap == 'big') {
                 pos += width * (1 - this.bigOverlap);
-            } else {
+            } else if (d.overlap == 'small') {
                 pos += width * (1 - this.smallOverlap);
+            } else {
+                pos += 0;
             }
             positions.push(pos);
-        }
+        });
         return positions;
     }
     get height() {
@@ -598,48 +952,95 @@ var MorphDisplay = class MorphDisplay {
     get showSeconds() {
         return (this.type == "clock") && (this.format.indexOf("ss") > -1);
     }
+    get showDoubleMinutes() {
+        return (this.type == "timer") && (this.format.indexOf("mm") > -1);
+    }
+    get showDoubleHours() {
+        return (this.type == "timer") && (this.format.indexOf("hh") > -1);
+    }
     get showMonth() {
-        return Morph.data[this.type][this.format].some(x => x.slot == 'Mxx');
+        return this.data.some(x => x.slot == 'Mxx');
     }
     get showWeekday() {
-        return Morph.data[this.type][this.format].some(x => x.slot == 'Wxx');
+        return this.data.some(x => x.slot == 'Wxx');
+    }
+    get dayDigits() {
+        if (this.type != "timer") {
+            return 0;
+        } else {
+            return this.format.split('d').length - 1;
+        }
     }
 }
-// Erzeuge Glyphen aus den in Morph.data hinterlegten Formaten
+// create glyphs from the information stored in Morph.data
 MorphDisplay.prototype.createGlyphs = function() {
     let width = this.charWidth;
     let xpos = this.charPos;
-    let data = Morph.data[this.type][this.format];
-    for (let i = 0, dlen = data.length; i < dlen; i++) {
-        let newglyph = new MorphGlyph(data[i].glyph, this.div, width + "%", xpos.shift() + "%");
-        let slot = data[i].slot || data[i].glyph;
-        // data[i].slot ist null bei ungemorphten Glyphen, wir wollen
-        // eine aussagekräftigere Klassenbenennung
+    let data = this.data;
+    data.forEach(d => {
+        let newglyph = new MorphGlyph(d.glyph, this.div, width + "%", xpos.shift() + "%");
+        let slot = d.slot || d.glyph;
+        // d.slot is null in case of unchanged glyps; we want a better class name
         newglyph.svg.setAttribute('class', this.type + "-" + this.format + "-" + slot);
         this.glyphs.push(newglyph);
         this.slots.push(slot);
-    }
-    // setze die Höhe des parent-div:
+    });
+    // set height of div:
     this.div.style.height = this.height + "px";
     return this;
 }
-// Funktionen zum Morphen
+// morphing functions
 MorphDisplay.prototype.quickMorph = function(now) {
     return Math.floor(now.milliseconds / 10);
 }
 MorphDisplay.prototype.slowMorph = function(now) {
     let start = this.slowMorphStart;
-    return Math.floor(
-        (((now.seconds + now.milliseconds / 1000) - start) * 100) / (60 - start));
+    return Math.floor((((now.seconds + now.milliseconds / 1000) - start) * 100) / (60 - start));
 }
 MorphDisplay.prototype.addNextDigit = function(x) {
     var res = x * 11 + 1; //(x * 10 + x + 1);
     return res < 10 ? "0" + res : res;
 }
-// Funktionen zum Update
-MorphDisplay.prototype.logo = {};
+MorphDisplay.prototype.subNextDigit = function(x) {
+    var res = x * 11 - 1;
+    return res;
+}
+/* The following function uses the given starting time (for example 1:10:30:15)
+ * splits them in single characters and reverses them:
+ * '5', '1', ':', '0', '3', ':', '0', '1', ':', '1'
+ * the digits were replaced by the current placeholder; a colon switches
+ * to the next placeholder and is not inserted:
+ * 's', 's', 'm', 'm', 'h', 'h', , 'd'
+ * Reversing and joining them results in the format string: dhhmmss.
+ */
+MorphDisplay.prototype.timerAutoFormat = function(arg) {
+    var placeholder = ['s', 'm', 'h', 'd'];
+    var colons = 0;
+    return arg.split('').reverse().map(x => {
+        if (x == ':') {
+            colons++;
+            return '';
+        } else if ('0123456789'.includes(x)) {
+            return placeholder[colons];
+        }
+        return x;
+    }).reverse().join('');
+};
+/* To convert a time string to seconds, we split at the colons and reverse
+ * the array, so we have 0 => s, 1 => m, 2 => h, 3 => d.
+ * Because of m * 60 = s and h * 60 * 60 => s, we use the power function,
+ * multiply and add up for index < 3. A day contains 24 * 60 * 60 seconds,
+ * so we use this factor for the conversion of days.
+ */
+MorphDisplay.prototype.timerToSeconds = function(arg) {
+    return arg.split(':').reverse().reduce(
+        (acc, val, idx) => acc + Number(val) * (idx < 3 ? Math.pow(60, idx) : 86400), 0);
+};
+// functions for the update of the displayed glyphs
 MorphDisplay.prototype.clock = {};
+MorphDisplay.prototype.logo = {};
 MorphDisplay.prototype.date = {};
+MorphDisplay.prototype.timer = {};
 MorphDisplay.prototype.clock.update = function(now) {
     let h = now.hours;
     let m = now.minutes;
@@ -668,8 +1069,8 @@ MorphDisplay.prototype.clock.update = function(now) {
     let maxh = this.format.slice(-2); // 12h oder 24h?
     maxh = (maxh == 24 ? 23 : maxh);
     let maxhx = Math.floor(maxh / 10); // maximal erreichbare Zehnerstelle
+    main['xc'] = '::';
     main['cx'] = '::';
-    main['Cx'] = '::';
     let slow_morph = (s >= this.slowMorphStart);
     // Sekunden
     if (
@@ -692,8 +1093,8 @@ MorphDisplay.prototype.clock.update = function(now) {
     }
     // Der rechte Doppelpunkt läuft synchron mit den
     // Sekunden, der linke ist um 50% phasenverschoben.
-    morph['cx'] = morph['xs'];
-    morph['Cx'] = (this.quickMorph(now) + 50) % 100;
+    morph['xc'] = morph['xs'];
+    morph['cx'] = (this.quickMorph(now) + 50) % 100;
     // Minuten
     slow_morph = slow_morph && (sx == 5);
     if (xm == 9) {
@@ -773,19 +1174,19 @@ MorphDisplay.prototype.date.update = function(now) {
     let xD = D % 10;
     const weekday = {
         en: [
-            // lies ↓ mon ↓ tue ↓ wed ...
+            // read ↓ mon ↓ tue ↓ wed ...
             ['sm', 'mt', 'tw', 'wt', 'tf', 'fs', 'ss'],
             ['uo', 'ou', 'ue', 'eh', 'hr', 'ra', 'au'],
             ['nn', 'ne', 'ed', 'du', 'ui', 'it', 'tn']
         ],
         de: [
-            // lies ↓ mo  ↓ di  ↓ mi ...
+            // read ↓ mo  ↓ di  ↓ mi ...
             ['sm', 'md', 'dm', 'md', 'df', 'fs', 'ss'],
             ['oo', 'oi', 'ii', 'io', 'or', 'ra', 'ao'],
         ]
     };
     const month = {
-        // Monat geht von 1 bis 12, daher ist der Eintrag mit Index 0 leer definiert
+        // month is 1...12, so index 0 is empty
         en: [
             ['', 'jf', 'fm', 'ma', 'am', 'mj', 'jj', 'ja', 'as', 'so', 'on', 'nd', 'dj'],
             ['', 'ae', 'ea', 'ap', 'pa', 'au', 'uu', 'uu', 'ue', 'ec', 'co', 'oe', 'ea'],
@@ -798,8 +1199,8 @@ MorphDisplay.prototype.date.update = function(now) {
         ]
     };
     const lastDayOfMonth = [-1, 31, now.leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    let main = {};
-    let morph = {};
+    let main = {},
+        morph = {};
     let slow_morph = (h == 23 && m == 59 && s >= this.slowMorphStart);
     if (slow_morph) {
         morph['xD'] = this.slowMorph(now);
@@ -931,9 +1332,197 @@ MorphDisplay.prototype.logo.update = function(now) {
     let idx = this.slots.findIndex(x => x == "clock");
     this.glyphs[idx].type = this.glyphs[idx].prefix + glyphnum;
 }
+MorphDisplay.prototype.timer.update = function(_unused) {
+    if (this.timer.settings.isInitialized && (this.timer.settings.isFinished || !this.timer.settings.isRunning)) {
+        return this;
+    }
+    //console.log("Update, status:", this.timer.settings);
+    if (this.timer.settings.isRunning) {
+        let ts = Date.now();
+        let delta = ts - this.timer.settings.offset;
+        this.timer.settings.offset = ts;
+        this.timer.settings.elapsed += delta;
+    }
+    let rest = this.timer.settings.interval - this.timer.settings.elapsed;
+    if (rest < 1) {
+        this.timer.end();
+    } else {
+        let cs = Math.floor(rest / 10) + 99; // centiseconds
+        let d = Math.floor(cs / 8640000);
+        cs -= d * 8640000;
+        let h = Math.floor(cs / 360000);
+        cs -= h * 360000;
+        let m = Math.floor(cs / 6000);
+        cs -= m * 6000;
+        let s = Math.floor(cs / 100);
+        cs -= s * 100;
+        let quickmorph = 99 - cs; // soll vorwärts laufen
+        let dxx = Math.floor(d / 100);
+        let xdx = Math.floor((d % 100) / 10);
+        let xxd = d % 10;
+        let hx = Math.floor(h / 10); // Zehner- und
+        let xh = h % 10; // Einerstelle
+        let mx = Math.floor(m / 10);
+        let xm = m % 10;
+        let sx = Math.floor(s / 10);
+        let xs = s % 10;
+        let main = {},
+            morph = {};
+        main['xxc'] = '::';
+        main['xcx'] = '::';
+        main['cxx'] = '::';
+        console.log(dxx, xdx, xxd, hx, xh, mx, xm, sx, xs, cs, rest, this.slowMorphStart); //, cs, quickmorph);
+        let slow_morph = (s < 60 - this.slowMorphStart); // 2.99 < 3
+        slow_morph = slow_morph && !(m == 0 && h == 0 && d == 0);
+        // Sekunden
+        if (sx == 0) {
+            main['sx'] = sx + "5";
+            if (slow_morph) {
+                morph['xm'] = this.timer.slowMorph(s, cs);
+            }
+        } else {
+            main['sx'] = this.subNextDigit(sx);
+        }
+        morph['xs'] = quickmorph;
+        if (xs == 0) {
+            main['xs'] = xs + "9";
+            morph['sx'] = morph['xs'];
+        } else {
+            main['xs'] = this.subNextDigit(xs);
+        }
+        if (this.timer.settings.isInitialized) {
+            morph['cxx'] = (quickmorph + 2 * this.timer.settings.phaseShift) % 100;
+            morph['xcx'] = (quickmorph + this.timer.settings.phaseShift) % 100;
+            morph['xxc'] = morph['xs'];
+        }
+        // Minuten
+        slow_morph = slow_morph && (sx == 0);
+        if (xm == 0) {
+            main['xm'] = xm + "9";
+            if (slow_morph) {
+                morph['mx'] = this.timer.slowMorph(s, cs);
+            }
+        } else {
+            main['xm'] = this.subNextDigit(xm);
+        }
+        slow_morph = slow_morph && (xm == 0);
+        if (mx == 0) {
+            main['mx'] = mx + "5";
+            if (slow_morph) {
+                morph['xh'] = this.timer.slowMorph(s, cs);
+            }
+        } else {
+            main['mx'] = this.subNextDigit(mx);
+        }
+        slow_morph = slow_morph && (mx == 0);
+        // Stunden
+        if (xh == 0) {
+            if (hx == 0) {
+                // Übergang 00 -> 23
+                main['xh'] = xh + "3";
+            } else {
+                // Übergänge 10 -> 09 bzw. 20 -> 19
+                main['xh'] = xh + "9";
+            }
+            if (slow_morph) {
+                morph['hx'] = this.timer.slowMorph(s, cs);
+            }
+        } else {
+            main['xh'] = this.subNextDigit(xh);
+        }
+        slow_morph = slow_morph && (xh == 0);
+        if (hx == 0) {
+            main['hx'] = hx + "2";
+        } else {
+            main['hx'] = this.subNextDigit(hx);
+        }
+        slow_morph = slow_morph && (hx == 0);
+        // Tage
+        if (xxd == 0) {
+            main['xxd'] = xxd + "9";
+        } else {
+            main['xxd'] = this.subNextDigit(xxd);
+        }
+        if (slow_morph) {
+            morph['xxd'] = this.timer.slowMorph(s, cs);
+        }
+        slow_morph = slow_morph && (xxd == 0);
+        if (xdx == 0) {
+            main['xdx'] = xdx + "9";
+        } else {
+            main['xdx'] = this.subNextDigit(xdx);
+        }
+        if (slow_morph) {
+            morph['xdx'] = this.timer.slowMorph(s, cs);
+        }
+        slow_morph = slow_morph && (xdx == 0);
+        if (dxx == 0) {
+            main['dxx'] = dxx + "9";
+        } else {
+            main['dxx'] = this.subNextDigit(dxx);
+        }
+        if (slow_morph) {
+            morph['dxx'] = this.timer.slowMorph(s, cs);
+        }
+        // wende Änderungen an ...
+        // Wir gehen von den main-Einträgen aus, da es auch Slots
+        // gibt, die null sind
+        if (!this.timer.settings.isInitialized) {
+            // Startglyphen ohne morph-Faktor (wg. hinzuaddierten 990 ms kann der morph-Faktor auch -1 sein)
+            morph = {};
+            let colons = Math.max(this.slots.filter(x => x.indexOf('c') > -1).length, 1);
+            this.timer.settings.phaseShift = Math.floor(100 / colons);
+        }
+        for (let key of Object.keys(main)) {
+            let idx = this.slots.findIndex(x => x == key);
+            if (idx > -1) {
+                this.glyphs[idx].type = main[key] + "-" + (morph[key] || "0");
+            }
+        }
+        this.timer.settings.isInitialized = true;
+    }
+}
+MorphDisplay.prototype.timer.settings = {
+    isInitialized: false,
+    isRunning: false,
+    isFinished: false,
+    elapsed: 0,
+    offset: 0,
+    phaseShift: 0,
+    callbacks: {}
+}
+MorphDisplay.prototype.timer.start = function() {
+    this.settings.offset = Date.now();
+    if (!this.settings.isFinished) {
+        this.settings.isRunning = true;
+    }
+}
+MorphDisplay.prototype.timer.stop = function() {
+    this.settings.isRunning = false;
+}
+MorphDisplay.prototype.timer.reset = function() {
+    this.stop();
+    this.settings.isFinished = false;
+    this.settings.elapsed = 0;
+    this.settings.isInitialized = false;
+}
+MorphDisplay.prototype.timer.end = function() {
+    this.stop();
+    this.timerFinished = true;
+}
+MorphDisplay.prototype.timer.startstop = function() {
+    if (!this.settings.isFinished) {
+        this.settings.isRunning ? this.stop() : this.start();
+    }
+}
+MorphDisplay.prototype.timer.slowMorph = function(secs, centisecs) {
+    let start = this.settings.slowMorphStart;
+    console.log("slowMorph", start, secs, centisecs);
+    return Math.floor(((start - (secs + centisecs / 100)) * 100) / start);
+}
 MorphDisplay.prototype.update = function() {
     let now = new MorphTimeDate();
-    // wir übergeben 'this' an die jeweilige Funktion:
+    // we pass 'this' to the corresponding function:
     this[this.type].update.call(this, now);
 }
 /* Das MorphGlyph-Objekt:
@@ -979,7 +1568,7 @@ var MorphGlyph = class MorphGlyph {
                 svg.removeChild(svg.firstChild);
             }
             if (!Morph.path[t]) {
-                console.log("Glyph ", t, " missing, using '*' instead.");
+                //TODO activate at end!!! XXX console.log("Glyph ", t, " missing, using '*' instead.");
                 t = '*';
             }
             Morph.path[t].forEach(p => svg.appendChild(this.buildPath(p)));
@@ -993,10 +1582,7 @@ MorphGlyph.prototype.buildPath = function(p) {
     const path = document.createElementNS(Morph.xmlns, "path");
     const attrs = ['stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'fill'];
     path.setAttribute('class', "morph-svg-path");
-    for (let i = 0, alen = attrs.length; i < alen; i++) {
-        let attr = attrs[i];
-        path.setAttribute(attr, Morph.path.metainfo[attr]);
-    }
+    attrs.forEach(attr => path.setAttribute(attr, Morph.path.metainfo[attr]));
     path.setAttribute('d', p);
     return path;
 }

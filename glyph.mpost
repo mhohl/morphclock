@@ -7643,7 +7643,13 @@ tmppath0 := aux[BOTTOM]{right}
     .. aux[R_ARC]{right}
     .. aux[RIGHT]{down}
     .. aux[END]{left};
-phi[JOINT] := angle(direction 1 of tmppath0);
+phi1 := angle(direction 1 of tmppath0);
+
+tmppath1 := aux[BOTTOM]{left}
+    .. aux[LEFT]{up}
+    .. aux[L_ARC]{right}
+    .. aux[JOINT];
+phi3 := angle(direction 3 of tmppath1);
 
 for i = start+fpht+1 upto start+2fpht-1:
     beginfig(i);
@@ -7654,7 +7660,7 @@ for i = start+fpht+1 upto start+2fpht-1:
         m := advanced(f);
 
         draw m[aux[BOTTOM],_m_[MID]]{dir m[0,90]}
-            .. m[aux[JOINT],_m_[JOINT]]{dir m[phi[JOINT],90]}
+            .. m[aux[JOINT],_m_[JOINT]]{dir m[phi1,90]}
             .. m[aux[R_ARC],_m_[R_ARC]]{right}
             .. m[aux[RIGHT],_m_[RIGHT]]{down}
             .. m[aux[END],_m_[END]]{dir m[180,270]};
@@ -7662,11 +7668,11 @@ for i = start+fpht+1 upto start+2fpht-1:
         draw m[aux[BOTTOM],_m_[BOTTOM]]{dir m[180,90]}
             .. m[aux[LEFT],_m_[LEFT]]{up}
             .. m[aux[L_ARC],_m_[L_ARC]]{right}
-            .. m[aux[JOINT],_m_[JOINT]];
+            .. m[aux[JOINT],_m_[JOINT]]{dir m[phi3, -90]};
 
-        tmppath1 := m[aux[LEFT],_m_[LEFT]] -- _m_[BEGIN];
+        tmppath2 := m[aux[LEFT],_m_[LEFT]] -- _m_[BEGIN];
 
-        draw subpath (0,(max(0,2m-1))) of tmppath1;
+        draw subpath (0,(max(0,2m-1))) of tmppath2;
         setbounds currentpicture to boundingpath;
     endfig;
 endfor

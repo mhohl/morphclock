@@ -62,6 +62,20 @@ $('[id^=morphdemo_]').click(function() {
         case 'hhmmss24':
             setDIVMorphFormat('morph-container-2', id);
             break;
+        case 'timertoggle':
+            Morph.elements.timer.forEach(m => {
+                if (m.div.id == 'morph-container-3') {
+                    m.timer.startstop();
+                }
+             });
+            break;
+        case 'timerreset':
+            Morph.elements.timer.forEach(m => {
+                if (m.div.id == 'morph-container-3') {
+                    m.timer.reset();
+                }
+             });
+            break;
         default:
             // keine vernünftige Eingabe
     }
