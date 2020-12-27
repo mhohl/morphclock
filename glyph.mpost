@@ -376,6 +376,12 @@ nine[END]    = (-sw,dsc);
 % vordefinierte Pfade
 %
 
+% Bogen bei der 2:
+tmppath[TWO_HOOK] := two[BEGIN]
+    .. two[TOP]
+    .. two[R_ARC]
+    .. tension 2 .. two[JOINT];
+
 % Die Bögen der 3:
 tmppath[THREE_UARC] := three[BEGIN]
     .. three[TOP]
@@ -515,6 +521,80 @@ for i = start+fpht+1 upto start+2fpht-1:
 endfor
 
 %
+% 0 -> 2
+%
+
+outputtemplate := "02-%c.mps";
+
+beginfig(start);
+    draw tmppic;
+endfig;
+
+tmppath0 := zero[TOP]
+    .. zero[RIGHT]
+    .. zero[BOTTOM]
+    .. zero[LEFT]
+    .. cycle;
+
+aux[RIGHT] := (xpart(zero[RIGHT]), ypart(zero[TOP]));
+aux[LEFT] := (xpart(zero[LEFT]), ypart(zero[BOTTOM]));
+aux[MID] := 1/2[aux[LEFT], aux[RIGHT]];
+
+% Ermittle die Schnittpunkte der Diagonalen mit der '0':
+aux1 := tmppath0 intersectiontimes (aux[RIGHT] -- aux[MID]);
+aux2 := tmppath0 intersectiontimes (aux[LEFT] -- aux[MID]);
+tmp1 := xpart(aux1);
+tmp2 := xpart(aux2);
+aux[U_ARC] := point tmp1 of tmppath0;
+aux[D_ARC] := point tmp2 of tmppath0;
+phi[U_ARC] := angle(direction tmp1 of tmppath0);
+phi[D_ARC] := angle(direction tmp2 of tmppath0);
+phi[MID] := angle(aux[D_ARC]-aux[U_ARC]);
+% Winkel bei der 2:
+phi[BEGIN] := angle(direction 0 of tmppath[TWO_HOOK]);
+phi[R_ARC] := angle(direction 2 of tmppath[TWO_HOOK]);
+phi[JOINT] := angle(direction 3 of tmppath[TWO_HOOK]);
+
+for i = start+1 upto start+fpht:
+    beginfig(i);
+        draw_grid(u);
+        pickup pc;
+        f := (i-start)/fpht;
+        m := retarded(f);
+
+        draw tmppath0;
+        draw aux[U_ARC] -- m[aux[U_ARC], aux[D_ARC]];
+        setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+for i = start+fpht+1 upto start+2fpht-1:
+    beginfig(i);
+        draw_grid(u);
+        pickup pc;
+        f := (i-start-fpht)/fpht;
+        m := advanced(f);
+
+        tmppath1 := aux[D_ARC]{dir phi[D_ARC]}
+            .. m[zero[LEFT], two[BEGIN]]{dir m[90, phi[BEGIN]]}
+            .. m[zero[TOP], two[TOP]]
+            .. {dir m[phi[U_ARC], phi[R_ARC]]}
+               m[aux[U_ARC], two[R_ARC]]
+               {dir m[phi[MID], phi[R_ARC]]}
+            .. tension 2
+            .. {dir m[phi[MID], phi[JOINT]]}
+               m[aux[D_ARC], two[JOINT]];
+        draw subpath(m, 4) of tmppath1;
+        tmppath2 := m[aux[D_ARC], two[JOINT]]{dir m[(180+phi[D_ARC]), 360]}
+            .. m[zero[BOTTOM], two[END]]{right}
+            .. zero[RIGHT]
+            .. aux[U_ARC]{dir (180+phi[U_ARC])};
+        draw subpath(0,3-2m) of tmppath2;
+        setbounds currentpicture to boundingpath;
+    endfig;
+endfor
+
+%
 % 0 -> 3
 %
 
@@ -559,7 +639,7 @@ endfor
 % wir bauen den oberen Bogen der '3' nach und fügen vorne
 % der Punkt zero[LEFT] hinzu; der Winkel bei three[BEGIN]
 % muss unverändert zur Original-3 bleiben!
-phi[BEGIN] = angle(direction 0 of tmppath[THREE_UARC]);
+phi[BEGIN] := angle(direction 0 of tmppath[THREE_UARC]);
 tmppath1 := zero[LEFT]
     .. three[BEGIN]{dir phi[BEGIN]}
     .. three[TOP]
@@ -1000,10 +1080,7 @@ endfor
 
 outputtemplate := "2.mps";
 
-tmppath[TWO_HOOK] := two[BEGIN]
-    .. two[TOP]
-    .. two[R_ARC]
-    .. tension 2 .. two[JOINT];
+
 phi[JOINT] := angle(direction 3 of tmppath[TWO_HOOK]);
 
 beginfig(start);
