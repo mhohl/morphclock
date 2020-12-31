@@ -1,4 +1,4 @@
-[data-type^=morph] {
+[data-type^=morph], .morph {
   position: relative;
   white-space: nowrap;
   stroke: black;

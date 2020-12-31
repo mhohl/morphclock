@@ -14,7 +14,7 @@ $("input[name=leap]").change(function() {
     Morph.io.leap = leap;
 });
 MorphDisplay.prototype.update = function() {
-    let now = new MorphTimeDate(offset);
+    let now = new MorphInternalTimeDate(offset);
     // wir übergeben 'this' an die jeweilige Funktion:
     this[this.type].update.call(this, now);
 }
