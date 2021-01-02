@@ -595,16 +595,16 @@ Morph.data = {
     },
     timer: {
         'ss': [{
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: null
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'mss': [{
-            glyph: '98-0',
+            glyph: '09-0',
             slot: null,
             overlap: 'small'
         }, {
@@ -612,20 +612,20 @@ Morph.data = {
             slot: 'xc',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'mmss': [{
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'mx',
             overlap: null
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xm',
             overlap: 'small'
         }, {
@@ -633,16 +633,16 @@ Morph.data = {
             slot: 'xc',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'hmmss': [{
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xh',
             overlap: null
         }, {
@@ -650,11 +650,11 @@ Morph.data = {
             slot: 'cx',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'mx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xm',
             overlap: 'small'
         }, {
@@ -662,20 +662,20 @@ Morph.data = {
             slot: 'c',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'hhmmss': [{
-            glyph: '21-0',
+            glyph: '02-0',
             slot: 'hx',
             overlap: null
         }, {
-            glyph: '32-0',
+            glyph: '03-0',
             slot: 'xh',
             overlap: 'small'
         }, {
@@ -683,11 +683,11 @@ Morph.data = {
             slot: 'cx',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'mx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xm',
             overlap: 'small'
         }, {
@@ -695,16 +695,16 @@ Morph.data = {
             slot: 'xc',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'dhhmmss': [{
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xxd',
             overlap: null
         }, {
@@ -712,11 +712,11 @@ Morph.data = {
             slot: 'cxx',
             overlap: 'big'
         }, {
-            glyph: '21-0',
+            glyph: '02-0',
             slot: 'hx',
             overlap: 'big'
         }, {
-            glyph: '32-0',
+            glyph: '03-0',
             slot: 'xh',
             overlap: 'small'
         }, {
@@ -724,11 +724,11 @@ Morph.data = {
             slot: 'xcx',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'mx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xm',
             overlap: 'small'
         }, {
@@ -736,20 +736,20 @@ Morph.data = {
             slot: 'xxc',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'ddhhmmss': [{
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xdx',
             overlap: null
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xxd',
             overlap: 'small'
         }, {
@@ -757,11 +757,11 @@ Morph.data = {
             slot: 'cxx',
             overlap: 'big'
         }, {
-            glyph: '21-0',
+            glyph: '02-0',
             slot: 'hx',
             overlap: 'big'
         }, {
-            glyph: '32-0',
+            glyph: '03-0',
             slot: 'xh',
             overlap: 'small'
         }, {
@@ -769,11 +769,11 @@ Morph.data = {
             slot: 'xcx',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'mx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xm',
             overlap: 'small'
         }, {
@@ -781,24 +781,24 @@ Morph.data = {
             slot: 'xxc',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
         'dddhhmmss': [{
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'dxx',
             overlap: null
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xdx',
             overlap: 'small'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xxd',
             overlap: 'small'
         }, {
@@ -806,11 +806,11 @@ Morph.data = {
             slot: 'cxx',
             overlap: 'big'
         }, {
-            glyph: '21-0',
+            glyph: '02-0',
             slot: 'hx',
             overlap: 'big'
         }, {
-            glyph: '32-0',
+            glyph: '03-0',
             slot: 'xh',
             overlap: 'small'
         }, {
@@ -818,11 +818,11 @@ Morph.data = {
             slot: 'xcx',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'mx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xm',
             overlap: 'small'
         }, {
@@ -830,11 +830,11 @@ Morph.data = {
             slot: 'xxc',
             overlap: 'big'
         }, {
-            glyph: '54-0',
+            glyph: '05-0',
             slot: 'sx',
             overlap: 'big'
         }, {
-            glyph: '98-0',
+            glyph: '09-0',
             slot: 'xs',
             overlap: 'small'
         }, ],
@@ -852,34 +852,36 @@ Morph.io = {
 /**
  * the MorphDisplay class
  * @param type sets the type (clock, date, logo, timer),
- * @param div <div> element containing the glyphs
+ * @param container HTML element or element id containing the glyphs
  */
 class MorphDisplay {
-    constructor(type, div, format, options) {
+    constructor(type, container, format, options) {
         this.type = type;
-        this.div = div;
-        this.format = format || div.getAttribute("data-format") || Morph.data.default[type];
-        this.glyphs = []; //glyphs;
-        this.slots = []; //slots;
-        this.options = options || {};
-        // amount of overlap: small between digits, big for punctuation
-        this.smallOverlap = 0.225;
-        this.bigOverlap = 2 * this.smallOverlap;
-        this.slowMorphStart = 57;
-        // special settings for timer
-        if (this.type == "timer") {
-            let starttime = div.getAttribute("data-starttime") || "00:00:00";
-            this.interval = this.timerToSeconds(starttime) * 1000;
-            if (this.format == "auto") {
-                this.format = this.timerAutoFormat(starttime);
-            }
+        this.container = typeof container === 'string' ? document.getElementById(container) : container;
+        if (!container) {
+            return;
         }
-        this.data = Morph.data[this.type][this.format];
-        this.createGlyphs();
+        this.glyphs = [];
+        this.slots = [];
+        this.options = options || {};
+        this.slowMorphStart = this.options.slowMorphStart || 57;
+        this.animateColons = this.options.animateColons === false ? false : true;
+        // amount of overlap: small between digits, big for punctuation
+        this.smallOverlap = this.options.smallOverlap || 0.225;
+        this.bigOverlap = this.options.bigOverlap || 2 * this.smallOverlap;
+        // apply format settings and start the update cycle
+        this.applyFormat(format);
         this.launch();
     }
+    get format() {
+        return this._format;
+    }
+    set format(format) {
+        console.log("Format setter!", format);
+        this.applyFormat(format);
+    }
     get charWidth() {
-        let data = this.data || Morph.data[this.type][this.format];
+        let data = this.data;
         let num_chars = data.length;
         // number of [s]mall/[b]ig overlaps
         let num_s = data.filter(x => x.overlap == 'small').length;
@@ -904,10 +906,12 @@ class MorphDisplay {
         return positions;
     }
     get height() {
-        let children = this.div.children;
+        let children = this.container.children;
+        console.log(children);
         if (children.length > 0) return children[0].getBoundingClientRect().height;
         return 0;
     }
+    /*
     get locale() {
         if (this.format == "full-de") return "de";
         return "en";
@@ -937,21 +941,58 @@ class MorphDisplay {
             return this.format.split('d').length - 1;
         }
     }
+    */
     createGlyphs = () => {
         let width = this.charWidth;
         let xpos = this.charPos;
         let data = this.data;
         data.forEach(d => {
-            let newglyph = new MorphGlyph(d.glyph, this.div, width + "%", xpos.shift() + "%");
+            let newglyph = new MorphGlyph(d.glyph, this.container, width + "%", xpos.shift() + "%");
             let slot = d.slot || d.glyph;
             // d.slot is null in case of unchanged glyps; we want a better class name
             newglyph.svg.setAttribute('class', this.type + "-" + this.format + "-" + slot);
             this.glyphs.push(newglyph);
             this.slots.push(slot);
         });
-        // set height of div:
-        this.div.style.height = this.height + "px";
-        //return this;
+        // set height of container:
+        this.container.style.height = this.height + "px";
+        console.log(this.type, "createGlyphs() height", this.height);
+    }
+    applyFormat = (format) => {
+        this._format = format || Morph.data.default[this.type];
+        if (this._format == "auto" && this.type == "timer") {
+            this._format = this.timerAutoFormat(this.startTime || "00:00:00");
+        }
+        this.data = Morph.data[this.type][this._format];
+        this.glyphs.forEach(g => g.delete());
+        this.glyphs = [];
+        this.slots = [];
+        this.createGlyphs();
+    }
+    /* The following function uses the given starting time (for example 1:10:30:15)
+     * splits them in single characters and reverses them:
+     * '5', '1', ':', '0', '3', ':', '0', '1', ':', '1'
+     * the digits were replaced by the current placeholder; a colon switches
+     * to the next placeholder and is not inserted:
+     * 's', 's', 'm', 'm', 'h', 'h', , 'd'
+     * Reversing and joining them results in the format string: dhhmmss.
+     *
+     * ann 2021-01-01: only used in class MorphTimer, but has to be defined
+     * here, because the super constructor calls applyFormat() before the
+     * following methods are defined?
+     */
+    timerAutoFormat = arg => {
+        var placeholder = ['s', 'm', 'h', 'd'];
+        var colons = 0;
+        return arg.split('').reverse().map(x => {
+            if (x == ':') {
+                colons++;
+                return '';
+            } else if ('0123456789'.includes(x)) {
+                return placeholder[colons];
+            }
+            return x;
+        }).reverse().join('');
     }
     quickMorph = now => Math.floor(now.milliseconds / 10);
     slowMorph = now => {
@@ -962,10 +1003,6 @@ class MorphDisplay {
         var res = x * 11 + 1; //(x * 10 + x + 1);
         return res < 10 ? "0" + res : res;
     }
-    subNextDigit = x => {
-        var res = x * 11 - 1;
-        return res;
-    }
     launch = () => {
         var now = new MorphInternalTimeDate();
         this.update(now);
@@ -973,41 +1010,16 @@ class MorphDisplay {
     }
     update = now => {};
 }
-/* The following function uses the given starting time (for example 1:10:30:15)
- * splits them in single characters and reverses them:
- * '5', '1', ':', '0', '3', ':', '0', '1', ':', '1'
- * the digits were replaced by the current placeholder; a colon switches
- * to the next placeholder and is not inserted:
- * 's', 's', 'm', 'm', 'h', 'h', , 'd'
- * Reversing and joining them results in the format string: dhhmmss.
- */
-MorphDisplay.prototype.timerAutoFormat = function(arg) {
-    var placeholder = ['s', 'm', 'h', 'd'];
-    var colons = 0;
-    return arg.split('').reverse().map(x => {
-        if (x == ':') {
-            colons++;
-            return '';
-        } else if ('0123456789'.includes(x)) {
-            return placeholder[colons];
-        }
-        return x;
-    }).reverse().join('');
-};
-/* To convert a time string to seconds, we split at the colons and reverse
- * the array, so we have 0 => s, 1 => m, 2 => h, 3 => d.
- * Because of m * 60 = s and h * 60 * 60 => s, we use the power function,
- * multiply and add up for index < 3. A day contains 24 * 60 * 60 seconds,
- * so we use this factor for the conversion of days.
- */
-MorphDisplay.prototype.timerToSeconds = function(arg) {
-    return arg.split(':').reverse().reduce(
-        (acc, val, idx) => acc + Number(val) * (idx < 3 ? Math.pow(60, idx) : 86400), 0);
-};
 // extended Classes
 class MorphClock extends MorphDisplay {
-    constructor(div, format, options) {
-        super('clock', div, format, options);
+    constructor(container, format, options) {
+        super('clock', container, format, options);
+    }
+    get showDaytime() {
+        return (this.format.indexOf("12") > -1);
+    }
+    get showSeconds() {
+        return (this.format.indexOf("ss") > -1);
     }
     update = now => {
         let h = now.hours;
@@ -1059,10 +1071,12 @@ class MorphClock extends MorphDisplay {
         } else {
             main['xs'] = this.addNextDigit(xs);
         }
-        // the right colon is in sync with the seconds,
-        // the left one has a 50% phase shift
-        morph['xc'] = morph['xs'];
-        morph['cx'] = (this.quickMorph(now) + 50) % 100;
+        if (this.animateColons) {
+            // the right colon is in sync with the seconds,
+            // the left one has a 50% phase shift
+            morph['xc'] = morph['xs'];
+            morph['cx'] = (this.quickMorph(now) + 50) % 100;
+        }
         // minutes
         slow_morph = slow_morph && (sx == 5);
         if (xm == 9) {
@@ -1086,7 +1100,7 @@ class MorphClock extends MorphDisplay {
         // hours
         if (h == maxh || xh == 9) {
             if (h == maxh && this.showDaytime) {
-                // transitiong "12" -> "01"
+                // transition "12" -> "01"
                 main['xh'] = xh + "1";
             } else {
                 main['xh'] = xh + "0";
@@ -1125,8 +1139,12 @@ class MorphClock extends MorphDisplay {
     }
 }
 class MorphDate extends MorphDisplay {
-    constructor(div, format, options) {
-        super('date', div, format, options);
+    constructor(container, format, options) {
+        super('date', container, format, options);
+    }
+    get locale() {
+        if (this.format == "full-de") return "de";
+        return "en";
     }
     update = now => {
         let Y = now.year;
@@ -1299,8 +1317,8 @@ class MorphDate extends MorphDisplay {
     }
 }
 class MorphLogo extends MorphDisplay {
-    constructor(div, format, options) {
-        super('logo', div, format, options);
+    constructor(container, format, options) {
+        super('logo', container, format, options);
     }
     update = now => {
         let m = now.minutes;
@@ -1311,14 +1329,22 @@ class MorphLogo extends MorphDisplay {
     }
 }
 class MorphTimer extends MorphDisplay {
-    constructor(div, format, options) {
-        super('timer', div, format, options);
+    constructor(container, format, options) {
+        super('timer', container, format, options);
+        this.startTime = this.options.startTime || '00:00:00';
         this.isInitialized = false;
         this.isRunning = false;
         this.isFinished = false;
         this.elapsed = 0;
         this.offset = 0;
         this.phaseShift = 0;
+        this.interval = this.timerToSeconds(this.startTime) * 1000;
+    }
+    get showDoubleMinutes() {
+        return (this.format.indexOf("mm") > -1);
+    }
+    get showDoubleHours() {
+        return (this.format.indexOf("hh") > -1);
     }
     start = () => {
         this.offset = Date.now();
@@ -1347,6 +1373,16 @@ class MorphTimer extends MorphDisplay {
     subNextDigit = x => {
         var res = x * 11 - 1;
         return res;
+    }
+    /* To convert a time string to seconds, we split at the colons and reverse
+     * the array, so we have 0 => s, 1 => m, 2 => h, 3 => d.
+     * Because of m * 60 = s and h * 60 * 60 => s, we use the power function,
+     * multiply and add up for index < 3. A day contains 24 * 60 * 60 seconds,
+     * so we use this factor for the conversion of days.
+     */
+    timerToSeconds = arg => {
+        return arg.split(':').reverse().reduce(
+            (acc, val, idx) => acc + Number(val) * (idx < 3 ? Math.pow(60, idx) : 86400), 0);
     }
     update = now => {
         if (this.isInitialized && (this.isFinished || !this.isRunning)) {
@@ -1403,7 +1439,7 @@ class MorphTimer extends MorphDisplay {
             } else {
                 main['xs'] = this.subNextDigit(xs);
             }
-            if (this.isInitialized) {
+            if (this.isInitialized && this.animateColons) {
                 morph['cxx'] = (quickmorph + 2 * this.phaseShift) % 100;
                 morph['xcx'] = (quickmorph + this.phaseShift) % 100;
                 morph['xxc'] = morph['xs'];
@@ -1480,8 +1516,8 @@ class MorphTimer extends MorphDisplay {
             if (!this.isInitialized) {
                 // initialization without morph factors
                 morph = {};
-                let colons = Math.max(this.slots.filter(x => x.indexOf('c') > -1).length, 1);
-                this.phaseShift = Math.floor(100 / colons);
+                let num_colons = Math.max(this.slots.filter(x => x.indexOf('c') > -1).length, 1);
+                this.phaseShift = Math.floor(100 / num_colons);
             }
             for (let key of Object.keys(main)) {
                 let idx = this.slots.findIndex(x => x == key);
@@ -1495,14 +1531,14 @@ class MorphTimer extends MorphDisplay {
 }
 /* the MorphGlyph object:
  * @param _glyphtype type of the glyph,
- * @param div the <div> element containing this glyph
+ * @param container the HTML element containing this glyph
  * @param width of the glyph
  * @param xpos optional positioning parameter in x orientation
  */
 class MorphGlyph {
-    constructor(_glyphtype, div, width, xpos) {
-        this._glyphtype = _glyphtype;
-        this.div = div;
+    constructor(glyphtype, container, width, xpos) {
+        this._glyphtype = glyphtype;
+        this.container = container;
         this.width = width;
         this.xpos = xpos;
         let svg = document.createElementNS(Morph.xmlns, "svg");
@@ -1511,8 +1547,8 @@ class MorphGlyph {
         if (xpos) {
             svg.setAttribute('style', "position: absolute; " + "top: " + "0px" + "; " + "left: " + xpos);
         }
-        div.appendChild(svg);
-        Morph.path[_glyphtype].forEach(p => svg.appendChild(this.buildPath(p)));
+        container.appendChild(svg);
+        Morph.path[this._glyphtype].forEach(p => svg.appendChild(this.buildPath(p)));
         this.svg = svg;
     }
     get prefix() {
@@ -1547,6 +1583,18 @@ class MorphGlyph {
         attrs.forEach(attr => path.setAttribute(attr, Morph.path.metainfo[attr]));
         path.setAttribute('d', p);
         return path;
+    }
+    delete = () => {
+        this._glyphtype = null;
+        this.width = null;
+        this.xpos = null;
+        let container = this.container;
+        // remove all svg elements from the container
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+        this.svg = null;
+        this.container = null;
     }
 }
 /* the MorphInternalTimeDate class is basically a copy of the Date object
