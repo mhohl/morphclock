@@ -5,8 +5,6 @@
 "use strict";
 // the svg namespace:
 Morph.xmlns = "http://www.w3.org/2000/svg";
-// the available types
-Morph.availableTypes = ["morphclock", "morphdate", "morphtimer", "morphlogo"];
 /* Morph.data defines the structure of all shown morph types:
  *   'glyph' is a predefined placeholder for the actual glyph
  *    'slot' indicates type and position of the glyph:
@@ -853,32 +851,55 @@ Morph.io = {
  * the MorphDisplay class
  * @param type sets the type (clock, date, logo, timer),
  * @param container HTML element or element id containing the glyphs
+ * @param args covers the remaining arguments. The API structure for
+ * the derived classes is as follows:
+ * MorphClock(container, format, options)
+ * MorphDate(container, format, options)
+ * MorphLogo(container, format, options)
+ * MorphTimer(container, starttime, format, options)
+ * Since the most important argument (after the container) is the format
+ * in the first three cases, but the starttime (normally with format == 'auto')
+ * in the last case, we use the rest operator and set the index accordingly.
  */
 class MorphDisplay {
-    constructor(type, container, format, options) {
+    constructor(type, container, ...args) {
         this.type = type;
+        if (['clock', 'date', 'logo', 'timer'].indexOf(this.type) == -1) {
+            return;
+        }
         this.container = typeof container === 'string' ? document.getElementById(container) : container;
         if (!container) {
             return;
         }
+        var formatIndex, optionIndex;
+        if (this.type == 'timer') {
+            formatIndex = 1;
+            optionIndex = 2;
+            this.startTime = args[0] || "00:00:00";
+        } else {
+            formatIndex = 0;
+            optionIndex = 1;
+            this.startTime = null;
+        }
         this.glyphs = [];
         this.slots = [];
-        this.options = options || {};
+        this.options = args[optionIndex] || {};
         this.slowMorphStart = this.options.slowMorphStart || 57;
-        this.animateColons = this.options.animateColons === false ? false : true;
+        this.colonAnimate = this.options.colonAnimate === false ? false : true;
+        this.colonPhaseShift = this.options.colonPhaseShift === false ? false : true;
         // amount of overlap: small between digits, big for punctuation
         this.smallOverlap = this.options.smallOverlap || 0.225;
         this.bigOverlap = this.options.bigOverlap || 2 * this.smallOverlap;
         // apply format settings and start the update cycle
-        this.applyFormat(format);
+        this.applyFormat(args[formatIndex]);
         this.launch();
     }
     get format() {
         return this._format;
     }
     set format(format) {
-        console.log("Format setter!", format);
         this.applyFormat(format);
+        this.colonPhaseShiftAmount = this.calcColonPhaseShiftAmount();
     }
     get charWidth() {
         let data = this.data;
@@ -907,41 +928,9 @@ class MorphDisplay {
     }
     get height() {
         let children = this.container.children;
-        console.log(children);
         if (children.length > 0) return children[0].getBoundingClientRect().height;
         return 0;
     }
-    /*
-    get locale() {
-        if (this.format == "full-de") return "de";
-        return "en";
-    }
-    get showDaytime() {
-        return (this.type == "clock") && (this.format.indexOf("12") > -1);
-    }
-    get showSeconds() {
-        return (this.type == "clock") && (this.format.indexOf("ss") > -1);
-    }
-    get showDoubleMinutes() {
-        return (this.type == "timer") && (this.format.indexOf("mm") > -1);
-    }
-    get showDoubleHours() {
-        return (this.type == "timer") && (this.format.indexOf("hh") > -1);
-    }
-    get showMonth() {
-        return this.data.some(x => x.slot == 'Mxx');
-    }
-    get showWeekday() {
-        return this.data.some(x => x.slot == 'Wxx');
-    }
-    get dayDigits() {
-        if (this.type != "timer") {
-            return 0;
-        } else {
-            return this.format.split('d').length - 1;
-        }
-    }
-    */
     createGlyphs = () => {
         let width = this.charWidth;
         let xpos = this.charPos;
@@ -956,18 +945,37 @@ class MorphDisplay {
         });
         // set height of container:
         this.container.style.height = this.height + "px";
-        console.log(this.type, "createGlyphs() height", this.height);
+    }
+    applyColonPhaseShift = (index, unshifted) => {
+        if (this.colonPhaseShift) {
+            return (unshifted + index * this.colonPhaseShiftAmount) % 100;
+        } else {
+            //console.log('phaseshift inactive', index, unshifted);
+            return unshifted;
+        }
     }
     applyFormat = (format) => {
         this._format = format || Morph.data.default[this.type];
+        this.isAutoFormat = false;
         if (this._format == "auto" && this.type == "timer") {
+            this.isAutoFormat = true;
             this._format = this.timerAutoFormat(this.startTime || "00:00:00");
         }
         this.data = Morph.data[this.type][this._format];
-        this.glyphs.forEach(g => g.delete());
+        this.glyphs.forEach(g => g.clear());
         this.glyphs = [];
         this.slots = [];
         this.createGlyphs();
+        // the colonPhaseShiftAmount depends on the format and is updated here
+        this.colonPhaseShiftAmount = this.calcColonPhaseShiftAmount();
+    }
+    calcColonPhaseShiftAmount = () => {
+        let num_colons = this.slots.filter(x => x.indexOf('c') > -1).length;
+        if (num_colons == 0) {
+            return 0;
+        } else {
+            return Math.floor(100 / num_colons);
+        }
     }
     /* The following function uses the given starting time (for example 1:10:30:15)
      * splits them in single characters and reverses them:
@@ -1071,11 +1079,9 @@ class MorphClock extends MorphDisplay {
         } else {
             main['xs'] = this.addNextDigit(xs);
         }
-        if (this.animateColons) {
-            // the right colon is in sync with the seconds,
-            // the left one has a 50% phase shift
-            morph['xc'] = morph['xs'];
-            morph['cx'] = (this.quickMorph(now) + 50) % 100;
+        if (this.colonAnimate) {
+            // we start with the rightmost colon to be in sync with the seconds
+            ['xc', 'cx'].forEach((val, key) => morph[val] = this.applyColonPhaseShift(key, morph['xs']));
         }
         // minutes
         slow_morph = slow_morph && (sx == 5);
@@ -1329,15 +1335,14 @@ class MorphLogo extends MorphDisplay {
     }
 }
 class MorphTimer extends MorphDisplay {
-    constructor(container, format, options) {
-        super('timer', container, format, options);
-        this.startTime = this.options.startTime || '00:00:00';
+    constructor(container, starttime, format, options) {
+        super('timer', container, starttime, format, options);
+        //this.startTime = this.options.startTime || '00:00:00';
         this.isInitialized = false;
         this.isRunning = false;
         this.isFinished = false;
         this.elapsed = 0;
         this.offset = 0;
-        this.phaseShift = 0;
         this.interval = this.timerToSeconds(this.startTime) * 1000;
     }
     get showDoubleMinutes() {
@@ -1439,10 +1444,9 @@ class MorphTimer extends MorphDisplay {
             } else {
                 main['xs'] = this.subNextDigit(xs);
             }
-            if (this.isInitialized && this.animateColons) {
-                morph['cxx'] = (quickmorph + 2 * this.phaseShift) % 100;
-                morph['xcx'] = (quickmorph + this.phaseShift) % 100;
-                morph['xxc'] = morph['xs'];
+            if (this.isInitialized && this.colonAnimate) {
+                // we start with the rightmost colon to be in sync with the seconds
+                ['xxc', 'xcx', 'cxx'].forEach((val, key) => morph[val] = this.applyColonPhaseShift(key, quickmorph));
             }
             // minutes
             morph_now = morph_now && (sx == 0);
@@ -1584,7 +1588,7 @@ class MorphGlyph {
         path.setAttribute('d', p);
         return path;
     }
-    delete = () => {
+    clear = () => {
         this._glyphtype = null;
         this.width = null;
         this.xpos = null;
