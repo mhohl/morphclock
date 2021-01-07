@@ -42,7 +42,7 @@ let clockstart = (h * 60 + m) % 720;
 let startmin = m;
 let startsec = s;
 cglyph.type = cglyph.prefix + clockstart;
-Morph.update = function() {
+animateGlyphs = function() {
     currentTime = new Date();
     m = currentTime.getMinutes();
     s = currentTime.getSeconds();
@@ -64,4 +64,6 @@ Morph.update = function() {
     let offset = ((m - startmin) * 60 + (s - startsec));
     morph = (offset + clockstart) % 720;
     cglyph.type = "clock-" + morph;
+    window.requestAnimationFrame(animateGlyphs);
 }
+animateGlyphs();

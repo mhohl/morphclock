@@ -1,29 +1,16 @@
 /* morphdemo_index.js */
-function setDIVMorphFormat(id, format) {
-    let div = document.getElementById(id);
-    while (div.firstChild) {
-        div.removeChild(div.firstChild);
-    }
-    div.setAttribute("data-format", format);
-    Morph.init();
-}
+var mc = new MorphClock('morphclockdemo');
+var md = new MorphDate('morphdatedemo');
+var ml = new MorphLogo('morphlogodemo');
+var mt = new MorphTimer('morphtimerdemo', "01:00");
 
-function setDIVStrokeColor(id, color) {
-    let div = document.getElementById(id);
-    div.style.stroke = color;
-}
-
-function setDIVWidth(id, width) {
-    let div = document.getElementById(id);
-    let type = div.getAttribute('data-type').slice(5); // entferne 'morph'
-    div.style.width = width;
-    // finde das passende MorphDisplay-Objekt
-    Morph.elements[type].forEach(m => {
-        if (m.div.id == id) {
-            div.style.height = m.height + 'px';
-        }
-    });
-}
+$('#morphdemo_timertoggle').click(function() {
+    console.log("toggle");
+    mt.startstop();
+});
+$('#morphdemo_timerreset').click(function() {
+    mt.reset();
+});
 $('[id^=morphdemo_]').click(function() {
     // filtere 'morphdemo_' weg
     var id = $(this).attr('id').substring(10);
@@ -33,17 +20,17 @@ $('[id^=morphdemo_]').click(function() {
         case 'green':
         case 'blue':
         case 'black':
-            setDIVStrokeColor('morph-container-0', id);
+            ml.container.style.stroke = id;
             break;
         case 'grad':
-            setDIVStrokeColor('morph-container-0', 'url(#Gradient-1)');
+            ml.container.style.stroke = 'url(#Gradient-1)';
             break;
         case '50percent':
         case '75percent':
         case '100percent':
         case '666px':
             var size = id.replace("percent", "%");
-            setDIVWidth('morph-container-0', size);
+            ml.width = size;
             break
         case 'D.M.Y':
         case 'D-M-Y':
@@ -52,29 +39,15 @@ $('[id^=morphdemo_]').click(function() {
         case 'Y/M/D':
         case 'full':
         case 'full-de':
-            setDIVMorphFormat('morph-container-1', id);
+            md.format = id;
             break;
         case 'MonthDY':
-            setDIVMorphFormat('morph-container-1', 'Month D,Y');
+            md.format = 'Month D,Y';
         case 'hhmm12':
         case 'hhmmss12':
         case 'hhmm24':
         case 'hhmmss24':
-            setDIVMorphFormat('morph-container-2', id);
-            break;
-        case 'timertoggle':
-            Morph.elements.timer.forEach(m => {
-                if (m.div.id == 'morph-container-3') {
-                    m.timer.startstop();
-                }
-             });
-            break;
-        case 'timerreset':
-            Morph.elements.timer.forEach(m => {
-                if (m.div.id == 'morph-container-3') {
-                    m.timer.reset();
-                }
-             });
+            mc.format = id;
             break;
         default:
             // keine vernünftige Eingabe

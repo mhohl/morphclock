@@ -13,8 +13,33 @@ $("input[name=leap]").change(function() {
     leap = $(this).val();
     Morph.io.leap = leap;
 });
-MorphDisplay.prototype.update = function() {
-    let now = new MorphInternalTimeDate(offset);
-    // wir übergeben 'this' an die jeweilige Funktion:
-    this[this.type].update.call(this, now);
+mc12 = new MorphClock('morphclockdemo12', 'hhmmss12');
+mc24 = new MorphClock('morphclockdemo24', 'hhmmss24');
+md = new MorphDate('morphdatedemofull', 'full');
+mdde = new MorphDate('morphdatedemofullde', 'full-de');
+ml = new MorphLogo('morphlogodemo');
+mc12.launch = () => {
+    var now = new MorphInternalTimeDate(offset);
+    mc12.update(now);
+    window.requestAnimationFrame(mc12.launch);
+}
+mc24.launch = () => {
+    var now = new MorphInternalTimeDate(offset);
+    mc24.update(now);
+    window.requestAnimationFrame(mc24.launch);
+}
+md.launch = () => {
+    var now = new MorphInternalTimeDate(offset);
+    md.update(now);
+    window.requestAnimationFrame(md.launch);
+}
+mdde.launch = () => {
+    var now = new MorphInternalTimeDate(offset);
+    mdde.update(now);
+    window.requestAnimationFrame(mdde.launch);
+}
+ml.launch = () => {
+    var now = new MorphInternalTimeDate(offset);
+    ml.update(now);
+    window.requestAnimationFrame(ml.launch);
 }

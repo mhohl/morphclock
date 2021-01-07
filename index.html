@@ -74,14 +74,17 @@
                     <h2>morphclock</h2>
                     <p>
                         Die Uhr wird mit
-                        <pre><code>
-&lt;div data-type="morphclock" data-format="</code><var>format</var><code>"&gt;
-                        </code></pre>
+                        <pre>
+<code>&lt;div id="</code><var>id</var><code>"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    var morphclock = new MorphClock(</code><var>id</var><code>, </code><var>[format]</var><code>, </code><var>[options]</var><code>);
+&lt;script&gt;</code>
+                        </pre>
                         eingesetzt und aktiviert.
                     </p>
 
                     <p>
-                        <var>format</var> kann folgende Werte annehmen:
+                        <var>format</var> ist optional und kann folgende Werte annehmen:
                         <ul>
                             <li>
                                 <a href="#morphclock" id="morphdemo_hhmm12">hhmm12</a> für die Anzeige im 12-Stunden-Format ohne Sekunden,
@@ -93,7 +96,7 @@
                                 <a href="#morphclock" id="morphdemo_hhmmss12">hhmmss12</a> für die Anzeige im 12-Stunden-Format mit Sekunden,
                             </li>
                             <li>
-                                <a href="#morphclock" id="morphdemo_hhmmss24">hhmmss24</a> für die Anzeige im 24-Stunden-Format mit Sekunden.
+                                <a href="#morphclock" id="morphdemo_hhmmss24">hhmmss24</a> für die Anzeige im 24-Stunden-Format mit Sekunden <span class="badge badge-info">default</span>.
                             </li>
                         </ul>
                     </p>
@@ -103,8 +106,7 @@
                     </p>
                 </div>
                 <div class="col-md-6">
-                    <div data-type="morphclock" id="morph-container-2"></div>
-                    <!-- ohne data-format -> default -->
+                    <div id="morphclockdemo"></div>
                 </div>
             </div>
             <hr id="morphdate">
@@ -113,16 +115,19 @@
                     <h2>morphdate</h2>
                     <p>
                         Die Datumsanzeige wird mit
-                        <pre><code>
-&lt;div data-type="morphdate" data-format="</code><var>format</var><code>"&gt;
-                        </code></pre>
+                        <pre>
+<code>&lt;div id="</code><var>id</var><code>"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    var morphclock = new MorphDate(</code><var>id</var><code>, </code><var>[format]</var><code>, </code><var>[options]</var><code>);
+&lt;script&gt;</code>
+                        </pre>
                         eingesetzt und aktiviert.
                     </p>
                     <p>
                         <var>format</var> kann folgende Werte annehmen:
                         <ul>
                             <li>
-                                <a href="#morphdate" id="morphdemo_D.M.Y">D.M.Y</a> für die Anzeige im Format <var>dd.mm.yyyy</var>
+                                <a href="#morphdate" id="morphdemo_D.M.Y">D.M.Y</a> für die Anzeige im Format <var>dd.mm.yyyy</var>  <span class="badge badge-info">default</span>
                             </li>
                             <li>
                                 <a href="#morphdate" id="morphdemo_D-M-Y">D-M-Y</a> für die Anzeige im Format <var>dd-mm-yyyy</var>
@@ -149,8 +154,67 @@
                     </p>
                 </div>
                 <div class="col-md-6">
-                    <div data-type="morphdate" id="morph-container-1"></div>
-                    <!-- ohne data-format -> default -->
+                    <div id="morphdatedemo"></div>
+                </div>
+            </div>
+            <hr id="morphtimer">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>morphtimer</h2>
+                    <p>
+                        Die Stoppuhr wird mit
+                        <pre>
+<code>&lt;div id="</code><var>id</var><code>"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    var morphtimer = new MorphTimer(</code><var>id</var><code>, </code><var>starttime</var><code>, </code><var>[format]</var><code>, </code><var>[options]</var><code>);
+&lt;script&gt;</code>
+                        </pre>
+                        eingesetzt und aktiviert.
+                    </p>
+
+                    <p>
+                        <var>format</var> kann folgende Werte annehmen:
+                        <ul>
+                            <li>
+                                <a href="#morphtimer" id="morphdemo_auto">auto</a> für die automatische Bestimmung anhand der Startzeit,
+                            </li>
+                            <li>
+                                <a href="#morphtimer" id="morphdemo_dd">todo</a> für die Anzeige im 24-Stunden-Format ohne Sekunden,
+                            </li>
+                            <li>
+                                <a href="#morphtimer" id="morphdemo_hhmmss12">todo</a> für die Anzeige im 12-Stunden-Format mit Sekunden,
+                            </li>
+                            <li>
+                                <a href="#morphtimer" id="morphdemo_hhmmss24">todo</a> für die Anzeige im 24-Stunden-Format mit Sekunden.
+                            </li>
+                            <li>
+                        </ul>
+                    </p>
+
+                    <p>
+                        Weitere Möglichkeiten für <var>format</var> sind:
+                        <ul>
+                            <li>
+                                todo für ss,
+                            </li>
+                            <li>
+                                todo mss,
+                            </li>
+                            <li>
+                                usw.,
+                            </li>
+                            <li>
+                                usf..
+                            </li>
+                            <li>
+                        </ul>
+                    </p>
+
+                </div>
+                <div class="col-md-6">
+                    <div id="morphtimerdemo"></div>
+                    <button class="btn btn-primary" id="morphdemo_timertoggle">Start/Stop</button>
+                    <button class="btn btn-light" id="morphdemo_timerreset">Reset</button>
                 </div>
             </div>
             <hr  id="morphlogo">
@@ -158,10 +222,13 @@
                 <div class="col-md-6">
                     <h2>morphlogo</h2>
                     <p>
-                        Die Datumsanzeige wird mit
-                        <pre><code>
-&lt;div data-type="morphlogo"&gt;
-                        </code></pre>
+                        Das Logo wird mit
+                        <pre>
+<code>&lt;div id="</code><var>id</var><code>"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+    var morphclock = new MorphLogo(</code><var>id</var><code>, </code><var>[options]</var><code>);
+&lt;script&gt;</code>
+                        </pre>
                         eingesetzt und aktiviert. Das zweite 'o' zeigt die aktuelle Uhrzeit an.
                     </p>
                     <p>
@@ -210,7 +277,7 @@
                     </p>
                 </div>
                 <div class="col-md-6">
-                    <div data-type="morphlogo" id="morph-container-0"></div>
+                    <div id="morphlogodemo"></div>
                 </div>
             </div>
         </main>

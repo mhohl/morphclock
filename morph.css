@@ -1,4 +1,4 @@
-[data-type^=morph], .morph {
+.morphclock, .morphdate, .morphlogo, .morphtimer {
   position: relative;
   white-space: nowrap;
   stroke: black;

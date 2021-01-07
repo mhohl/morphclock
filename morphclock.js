@@ -603,11 +603,11 @@ Morph.data = {
         }, ],
         'mss': [{
             glyph: '09-0',
-            slot: null,
-            overlap: 'small'
+            slot: 'xm',
+            overlap: null
         }, {
             glyph: '::-0',
-            slot: 'xc',
+            slot: 'xxc',
             overlap: 'big'
         }, {
             glyph: '05-0',
@@ -628,7 +628,7 @@ Morph.data = {
             overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'xc',
+            slot: 'xxc',
             overlap: 'big'
         }, {
             glyph: '05-0',
@@ -645,7 +645,7 @@ Morph.data = {
             overlap: null
         }, {
             glyph: '::-0',
-            slot: 'cx',
+            slot: 'xcx',
             overlap: 'big'
         }, {
             glyph: '05-0',
@@ -657,7 +657,7 @@ Morph.data = {
             overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'c',
+            slot: 'xxc',
             overlap: 'big'
         }, {
             glyph: '05-0',
@@ -678,7 +678,7 @@ Morph.data = {
             overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'cx',
+            slot: 'xcx',
             overlap: 'big'
         }, {
             glyph: '05-0',
@@ -690,7 +690,7 @@ Morph.data = {
             overlap: 'small'
         }, {
             glyph: '::-0',
-            slot: 'xc',
+            slot: 'xxc',
             overlap: 'big'
         }, {
             glyph: '05-0',
@@ -855,10 +855,10 @@ Morph.io = {
  * the derived classes is as follows:
  * MorphClock(container, format, options)
  * MorphDate(container, format, options)
- * MorphLogo(container, format, options)
+ * MorphLogo(container, options)
  * MorphTimer(container, starttime, format, options)
  * Since the most important argument (after the container) is the format
- * in the first three cases, but the starttime (normally with format == 'auto')
+ * in the first two cases, but the starttime (normally with format == 'auto')
  * in the last case, we use the rest operator and set the index accordingly.
  */
 class MorphDisplay {
@@ -871,11 +871,12 @@ class MorphDisplay {
         if (!container) {
             return;
         }
+        this.container.classList.add("morph" + this.type);
         var formatIndex, optionIndex;
         if (this.type == 'timer') {
             formatIndex = 1;
             optionIndex = 2;
-            this.startTime = args[0] || "00:00:00";
+            this.startTime = this.calcStartTime(args[0]) || "00:00:00";
         } else {
             formatIndex = 0;
             optionIndex = 1;
@@ -885,8 +886,8 @@ class MorphDisplay {
         this.slots = [];
         this.options = args[optionIndex] || {};
         this.slowMorphStart = this.options.slowMorphStart || 57;
-        this.colonAnimate = this.options.colonAnimate === false ? false : true;
-        this.colonPhaseShift = this.options.colonPhaseShift === false ? false : true;
+        this.colonAnimate = !!(this.options.colonAnimate);
+        this.colonPhaseShift = !!(this.options.colonPhaseShift);
         // amount of overlap: small between digits, big for punctuation
         this.smallOverlap = this.options.smallOverlap || 0.225;
         this.bigOverlap = this.options.bigOverlap || 2 * this.smallOverlap;
@@ -899,22 +900,33 @@ class MorphDisplay {
     }
     set format(format) {
         this.applyFormat(format);
-        this.colonPhaseShiftAmount = this.calcColonPhaseShiftAmount();
+    }
+    set starttime(starttime) {
+        this.startTime = this.calcStartTime(starttime);
+        this.applyFormat(this.isAutoFormat ? 'auto' : this._format);
+        this.isInitialized = false;
+        this.isRunning = false;
+        this.isFinished = false;
+        this.elapsed = 0;
+        this.offset = 0;
+        this.interval = this.timerToSeconds(this.startTime) * 1000;
+    }
+    set width(width) {
+        this.container.style.width = width;
+        this.container.style.height = this.height + "px";
     }
     get charWidth() {
-        let data = this.data;
-        let num_chars = data.length;
+        let num_chars = this.data.length;
         // number of [s]mall/[b]ig overlaps
-        let num_s = data.filter(x => x.overlap == 'small').length;
-        let num_b = data.filter(x => x.overlap == 'big').length;
+        let num_s = this.data.filter(x => x.overlap == 'small').length;
+        let num_b = this.data.filter(x => x.overlap == 'big').length;
         return 100 / (num_chars - num_s * this.smallOverlap - num_b * this.bigOverlap);
     }
     get charPos() {
         let positions = [];
         let pos = 0;
         let width = this.charWidth;
-        let data = this.data;
-        data.forEach(d => {
+        this.data.forEach(d => {
             if (d.overlap == 'big') {
                 pos += width * (1 - this.bigOverlap);
             } else if (d.overlap == 'small') {
@@ -928,14 +940,12 @@ class MorphDisplay {
     }
     get height() {
         let children = this.container.children;
-        if (children.length > 0) return children[0].getBoundingClientRect().height;
-        return 0;
+        return children.length > 0 ? children[0].getBoundingClientRect().height : 0;
     }
     createGlyphs = () => {
         let width = this.charWidth;
         let xpos = this.charPos;
-        let data = this.data;
-        data.forEach(d => {
+        this.data.forEach(d => {
             let newglyph = new MorphGlyph(d.glyph, this.container, width + "%", xpos.shift() + "%");
             let slot = d.slot || d.glyph;
             // d.slot is null in case of unchanged glyps; we want a better class name
@@ -950,7 +960,6 @@ class MorphDisplay {
         if (this.colonPhaseShift) {
             return (unshifted + index * this.colonPhaseShiftAmount) % 100;
         } else {
-            //console.log('phaseshift inactive', index, unshifted);
             return unshifted;
         }
     }
@@ -970,11 +979,39 @@ class MorphDisplay {
         this.colonPhaseShiftAmount = this.calcColonPhaseShiftAmount();
     }
     calcColonPhaseShiftAmount = () => {
+        // this function yields incorrect results for the logo type because
+        // there are 'c's in the slot definitions, but there are no colons
+        // so it does not matter
         let num_colons = this.slots.filter(x => x.indexOf('c') > -1).length;
         if (num_colons == 0) {
             return 0;
         } else {
             return Math.floor(100 / num_colons);
+        }
+    }
+    calcStartTime = (arg) => {
+        if (arg.toString().includes(':') || Number(arg) <= 59) {
+            return arg.toString();
+        } else {
+            // seconds => colon separated time string
+            let s = Number(arg);
+            let d = Math.floor(s / 86400);
+            s -= d * 86400;
+            let h = Math.floor(s / 3600);
+            s -= h * 3600;
+            let m = Math.floor(s / 60);
+            s -= m * 60;
+            let timestring = s < 10 ? "0" + s : s;
+            if (m > 0 || h > 0 || d > 0) {
+                timestring = (m < 10 ? "0" + m : m) + ":" + timestring;
+            }
+            if (h > 0 || d > 0) {
+                timestring = (h < 10 ? "0" + h : h) + ":" + timestring;
+            }
+            if (d > 0) {
+                timestring = d + ":" + timestring;
+            }
+            return timestring;
         }
     }
     /* The following function uses the given starting time (for example 1:10:30:15)
@@ -1059,20 +1096,22 @@ class MorphClock extends MorphDisplay {
         let maxhx = Math.floor(maxh / 10); // max value of hx
         main['xc'] = '::';
         main['cx'] = '::';
-        let slow_morph = (s >= this.slowMorphStart);
+        let quickmorph = this.quickMorph(now);
+        let slowmorph = this.slowMorph(now);
+        let isSlowMorph = (s >= this.slowMorphStart);
         // seconds
         if (
             (sx == 5 && !now.transition['59->60']) || sx == 6) {
             // no positive leap second, therefore 5 -> 0, or
             // during positive leap second 6 -> 0
             main['sx'] = sx + "0";
-            if (slow_morph) {
-                morph['xm'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xm'] = slowmorph;
             }
         } else {
             main['sx'] = this.addNextDigit(sx);
         }
-        morph['xs'] = this.quickMorph(now);
+        morph['xs'] = quickmorph;
         if (xs == 9 || (xs == 0 && s == 60) || (xs == 8 && now.transition['58->00'])) {
             main['xs'] = xs + "0";
             morph['sx'] = morph['xs'];
@@ -1081,28 +1120,29 @@ class MorphClock extends MorphDisplay {
         }
         if (this.colonAnimate) {
             // we start with the rightmost colon to be in sync with the seconds
-            ['xc', 'cx'].forEach((val, key) => morph[val] = this.applyColonPhaseShift(key, morph['xs']));
+            ['xc', 'cx'].forEach(
+                (val, key) => morph[val] = this.applyColonPhaseShift(key, quickmorph));
         }
         // minutes
-        slow_morph = slow_morph && (sx == 5);
+        isSlowMorph = isSlowMorph && (sx == 5);
         if (xm == 9) {
             main['xm'] = xm + "0";
-            if (slow_morph) {
-                morph['mx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['mx'] = slowmorph;
             }
         } else {
             main['xm'] = this.addNextDigit(xm);
         }
-        slow_morph = slow_morph && (xm == 9);
+        isSlowMorph = isSlowMorph && (xm == 9);
         if (mx == 5) {
             main['mx'] = mx + "0";
-            if (slow_morph) {
-                morph['xh'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xh'] = slowmorph;
             }
         } else {
             main['mx'] = this.addNextDigit(mx);
         }
-        slow_morph = slow_morph && (mx == 5);
+        isSlowMorph = isSlowMorph && (mx == 5);
         // hours
         if (h == maxh || xh == 9) {
             if (h == maxh && this.showDaytime) {
@@ -1111,8 +1151,8 @@ class MorphClock extends MorphDisplay {
             } else {
                 main['xh'] = xh + "0";
             }
-            if (slow_morph) {
-                morph['hx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['hx'] = slowmorph;
                 if (h == maxh) {
                     morph['dx'] = morph['hx'];
                     morph['xd'] = morph['hx'];
@@ -1149,8 +1189,7 @@ class MorphDate extends MorphDisplay {
         super('date', container, format, options);
     }
     get locale() {
-        if (this.format == "full-de") return "de";
-        return "en";
+        return this.format == "full-de" ? "de" : "en";
     }
     update = now => {
         let Y = now.year;
@@ -1197,12 +1236,13 @@ class MorphDate extends MorphDisplay {
         const lastDayOfMonth = [-1, 31, now.leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         let main = {},
             morph = {};
-        let slow_morph = (h == 23 && m == 59 && s >= this.slowMorphStart);
-        if (slow_morph) {
-            morph['xD'] = this.slowMorph(now);
-            morph['Wxx'] = this.slowMorph(now);
-            morph['xWx'] = this.slowMorph(now);
-            morph['xxW'] = this.slowMorph(now);
+        let slowmorph = this.slowMorph(now);
+        let isSlowMorph = (h == 23 && m == 59 && s >= this.slowMorphStart);
+        if (isSlowMorph) {
+            morph['xD'] = slowmorph;
+            morph['Wxx'] = slowmorph;
+            morph['xWx'] = slowmorph;
+            morph['xxW'] = slowmorph;
         }
         // Tage
         let loc = this.locale;
@@ -1213,42 +1253,42 @@ class MorphDate extends MorphDisplay {
         }
         if (xD == 9) {
             main['xD'] = xD + "0";
-            if (slow_morph) {
-                morph['Dx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['Dx'] = slowmorph;
             }
         }
         // end of month
         else if (D == lastDayOfMonth[M]) {
             main['xD'] = xD + "1";
-            if (slow_morph) {
-                morph['Dx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['Dx'] = slowmorph;
             }
         } else {
             main['xD'] = this.addNextDigit(xD);
         }
-        slow_morph = slow_morph && (xD == 9 || D == lastDayOfMonth[M]);
+        isSlowMorph = isSlowMorph && (xD == 9 || D == lastDayOfMonth[M]);
         if (Dx == 3) {
             main['Dx'] = Dx + "0";
-            if (slow_morph) {
-                morph['xM'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xM'] = slowmorph;
                 // month names
-                morph['xxM'] = this.slowMorph(now);
-                morph['xMx'] = this.slowMorph(now);
-                morph['Mxx'] = this.slowMorph(now);
+                morph['xxM'] = slowmorph;
+                morph['xMx'] = slowmorph;
+                morph['Mxx'] = slowmorph;
             }
         } else if (M == 2 && D == lastDayOfMonth[M]) {
             main['Dx'] = Dx + "0";
-            if (slow_morph) {
-                morph['xM'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xM'] = slowmorph;
                 // month names
-                morph['xxM'] = this.slowMorph(now);
-                morph['xMx'] = this.slowMorph(now);
-                morph['Mxx'] = this.slowMorph(now);
+                morph['xxM'] = slowmorph;
+                morph['xMx'] = slowmorph;
+                morph['Mxx'] = slowmorph;
             }
         } else {
             main['Dx'] = this.addNextDigit(Dx);
         }
-        slow_morph = slow_morph && (Dx == 3 || (M == 2 && D == lastDayOfMonth[M]));
+        isSlowMorph = isSlowMorph && (Dx == 3 || (M == 2 && D == lastDayOfMonth[M]));
         // months
         main['Mxx'] = month[loc][0][M];
         main['xMx'] = month[loc][1][M];
@@ -1257,50 +1297,50 @@ class MorphDate extends MorphDisplay {
         main['M!=5'] = (M == 5 ? "~" : ".");
         if (xM == 9) {
             main['xM'] = xM + "0";
-            if (slow_morph) {
-                morph['Mx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['Mx'] = slowmorph;
             }
         } else if (M == 12) {
             main['xM'] = xM + "1";
-            if (slow_morph) {
-                morph['Mx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['Mx'] = slowmorph;
             }
         } else {
             main['xM'] = this.addNextDigit(xM);
         }
-        slow_morph = slow_morph && (xM == 9 || M == 12);
+        isSlowMorph = isSlowMorph && (xM == 9 || M == 12);
         if (M == 12) {
             main['Mx'] = Mx + "0";
-            if (slow_morph) {
-                morph['xxxY'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xxxY'] = slowmorph;
             }
         } else {
             main['Mx'] = this.addNextDigit(Mx);
         }
-        slow_morph = slow_morph && (M == 12);
+        isSlowMorph = isSlowMorph && (M == 12);
         // years
         if (xxxY == 9) {
             main['xxxY'] = xxxY + "0";
-            if (slow_morph) {
-                morph['xxYx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xxYx'] = slowmorph;
             }
         } else {
             main['xxxY'] = this.addNextDigit(xxxY);
         }
-        slow_morph = slow_morph && (xxxY == 9);
+        isSlowMorph = isSlowMorph && (xxxY == 9);
         if (xxYx == 9) {
             main['xxYx'] = xxYx + "0";
-            if (slow_morph) {
-                morph['xYxx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['xYxx'] = slowmorph;
             }
         } else {
             main['xxYx'] = this.addNextDigit(xxYx);
         }
-        slow_morph = slow_morph && (xxYx == 9);
+        isSlowMorph = isSlowMorph && (xxYx == 9);
         if (xYxx == 9) {
             main['xYxx'] = xYxx + "0";
-            if (slow_morph) {
-                morph['Yxxx'] = this.slowMorph(now);
+            if (isSlowMorph) {
+                morph['Yxxx'] = slowmorph;
             }
         } else {
             main['xYxx'] = this.addNextDigit(xYxx);
@@ -1323,8 +1363,8 @@ class MorphDate extends MorphDisplay {
     }
 }
 class MorphLogo extends MorphDisplay {
-    constructor(container, format, options) {
-        super('logo', container, format, options);
+    constructor(container, options) {
+        super('logo', container, 'default', options);
     }
     update = now => {
         let m = now.minutes;
@@ -1337,7 +1377,6 @@ class MorphLogo extends MorphDisplay {
 class MorphTimer extends MorphDisplay {
     constructor(container, starttime, format, options) {
         super('timer', container, starttime, format, options);
-        //this.startTime = this.options.startTime || '00:00:00';
         this.isInitialized = false;
         this.isRunning = false;
         this.isFinished = false;
@@ -1345,17 +1384,12 @@ class MorphTimer extends MorphDisplay {
         this.offset = 0;
         this.interval = this.timerToSeconds(this.startTime) * 1000;
     }
-    get showDoubleMinutes() {
-        return (this.format.indexOf("mm") > -1);
-    }
-    get showDoubleHours() {
-        return (this.format.indexOf("hh") > -1);
+    get isPaused() {
+        return !this.isRunning && this.elapsed > 0;
     }
     start = () => {
         this.offset = Date.now();
-        if (!this.isFinished) {
-            this.isRunning = true;
-        }
+        if (!this.isFinished) this.isRunning = true;
     }
     stop = () => {
         this.isRunning = false;
@@ -1371,9 +1405,7 @@ class MorphTimer extends MorphDisplay {
         this.isFinished = true;
     }
     startstop = () => {
-        if (!this.isFinished) {
-            this.isRunning ? this.stop() : this.start();
-        }
+        if (!this.isFinished) this.isRunning ? this.stop() : this.start();
     }
     subNextDigit = x => {
         var res = x * 11 - 1;
@@ -1390,13 +1422,13 @@ class MorphTimer extends MorphDisplay {
             (acc, val, idx) => acc + Number(val) * (idx < 3 ? Math.pow(60, idx) : 86400), 0);
     }
     update = now => {
-        if (this.isInitialized && (this.isFinished || !this.isRunning)) {
-            return this;
+        if (this.isInitialized && (this.isFinished || (!this.isRunning && !this.isPaused))) {
+            return;
         }
+        let currentTimestamp = Date.now();
         if (this.isRunning) {
-            let ts = Date.now();
-            let delta = ts - this.offset;
-            this.offset = ts;
+            let delta = currentTimestamp - this.offset;
+            this.offset = currentTimestamp;
             this.elapsed += delta;
         }
         let rest = this.interval - this.elapsed;
@@ -1413,6 +1445,11 @@ class MorphTimer extends MorphDisplay {
             let s = Math.floor(cs / 100);
             cs -= s * 100;
             let quickmorph = 99 - cs; // runs from 0 .. 99, not backwards
+            let colonmorph = quickmorph;
+            if (this.isPaused) {
+                let diff = Math.floor((currentTimestamp - this.offset) / 10);
+                colonmorph = (diff + quickmorph) % 100;
+            }
             let dxx = Math.floor(d / 100);
             let xdx = Math.floor((d % 100) / 10);
             let xxd = d % 10;
@@ -1446,7 +1483,8 @@ class MorphTimer extends MorphDisplay {
             }
             if (this.isInitialized && this.colonAnimate) {
                 // we start with the rightmost colon to be in sync with the seconds
-                ['xxc', 'xcx', 'cxx'].forEach((val, key) => morph[val] = this.applyColonPhaseShift(key, quickmorph));
+                ['xxc', 'xcx', 'cxx'].forEach(
+                    (val, key) => morph[val] = this.applyColonPhaseShift(key, colonmorph));
             }
             // minutes
             morph_now = morph_now && (sx == 0);
@@ -1518,10 +1556,8 @@ class MorphTimer extends MorphDisplay {
                 morph['dxx'] = quickmorph;
             }
             if (!this.isInitialized) {
-                // initialization without morph factors
+                // initialization without morph values
                 morph = {};
-                let num_colons = Math.max(this.slots.filter(x => x.indexOf('c') > -1).length, 1);
-                this.phaseShift = Math.floor(100 / num_colons);
             }
             for (let key of Object.keys(main)) {
                 let idx = this.slots.findIndex(x => x == key);
@@ -1534,7 +1570,7 @@ class MorphTimer extends MorphDisplay {
     }
 }
 /* the MorphGlyph object:
- * @param _glyphtype type of the glyph,
+ * @param glyphtype type of the glyph,
  * @param container the HTML element containing this glyph
  * @param width of the glyph
  * @param xpos optional positioning parameter in x orientation
@@ -1559,8 +1595,7 @@ class MorphGlyph {
         // part of the glyph name without morph information,
         // i.e. 'am-42' -> 'am-'
         let idx = this._glyphtype.indexOf('-');
-        if (idx > -1) return this._glyphtype.slice(0, idx + 1);
-        return this._glyphtype;
+        return idx > -1 ? this._glyphtype.slice(0, idx + 1) : this._glyphtype;
     }
     // the setter allows for glyph.type = glyph.prefix + morph
     set type(t) {

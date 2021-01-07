@@ -12,7 +12,7 @@ You need metapost and lualatex as well as node.js.
 
 ```
 $ sudo apt install texlive-luatex texlive-metapost npm nodejs
-$ npm install uglify-es -g
+$ npm install terser -g
 ```
 
 The glyphs and the pdf output are created by

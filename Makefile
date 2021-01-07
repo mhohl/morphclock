@@ -24,10 +24,10 @@ morphpaths.js: svg/*.svg extract_paths.js
 	node extract_paths.js > $@
 
 morphclock.min.js: morphpaths.js morphclock.js
-	uglifyjs $^ > $@
+	terser $^ > $@
 
 morphclock-ptb.min.js: morphclock-ptb.js
-	uglifyjs $^ > $@
+	terser $^ > $@
 
 .PHONY: demo test paths min all
 
