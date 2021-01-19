@@ -25,7 +25,7 @@ the complete JavaScript file ready for inclusion into html documents is generate
 $ make all
 ```
 
-Example html files for testing are included in this repository and online at http://hohlart.de/morphclock/.
+Example html files for testing are included in this repository and online at https://hohlart.de/morphclock/.
 
 ## Contributing
 
